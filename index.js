@@ -525,4 +525,4 @@ ${i+1}. **${title} [${diff}] ${shortenmod}** (${star}★)
 
 });
 
-bot.login('NDMzNDYzODcxOTY2MjgxNzMx.Da8OUg.75Wxf_noVjgpa-m7zx7rj61xnh0');
+bot.login(process.env.BOT_TOKEN);
