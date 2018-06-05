@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const osu = require('node-osu');
 const bot = new Discord.Client();
+const {Beatmap, Osu: {DifficultyCalculator,PerformanceCalculator}} = require('pp-calculator');
+const request = require('request-promise-native');
 
 var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"}]
 var storedmapid = []
@@ -140,6 +142,39 @@ Tiny bot command:
             return {shortenmod: shortenmod, bitpresent: bitpresent}
         }
 
+        async function ppandstarcalc(beatmapid,mods,combo,count300,count100,count50,countmiss) {
+            var osu = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
+            var beatmap = Beatmap.fromOsu(osu)
+            var i = 0
+            var object = 0
+            do {
+                i += 1
+            }
+            while(osu.substr(i,12) !== '[HitObjects]');
+            for (var o = i+13; o < osu.length; o++){
+                if (osu.substr(o,1) == '\r') {
+                    object += 1
+                }
+            }
+            var score = {
+                maxcombo: 1700,
+                count50: count50,
+                count100: 12,
+                count300: count300,
+                countMiss: countmiss,
+                mods: mods
+            }
+            if (count300 == 0) {
+                score.count300 = object - count100 - count50
+                object = object - count100 - count50
+            }
+            var diffCalc = DifficultyCalculator.use(beatmap).setMods(score.mods).calculate()
+            var perfCalc = PerformanceCalculator.use(diffCalc).calculate(score)
+            var star = Number(diffCalc.starDifficulty).toFixed(1)
+            var pp = Number(perfCalc.totalPerformance).toFixed(2)
+            return {star: star, pp: pp, object: object}
+        }
+
         async function osu(name, mode, modename) {
                 var user = await osuApi.apiCall('/get_user', {u: `${name}`, m: `${mode}`})
                 if (user.length == 0) {
@@ -250,7 +285,7 @@ Tiny bot command:
                 var fc = recent[0][1].maxCombo
                 var mod = recent[0][0].mods
                 var rank = recent[0][0].rank
-                var star = Number(recent[0][1].difficulty.rating).toFixed(1)
+                var perfect = recent[0][0].perfect
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var modandbit = moddetection(mod)
                 var shortenmod = modandbit.shortenmod
@@ -258,6 +293,19 @@ Tiny bot command:
                 var osuname = getplayer[0].username
                 storedmapid.push(beatmapid)
                 var beatmapidfixed = map[0].beatmapset_id
+                var ppandstar = await ppandstarcalc(beatmapid,bitpresent,combo,count300,count100,count50,countmiss)
+                var star = ppandstar.star
+                var pp = ppandstar.pp
+                var fcppcalc = await ppandstarcalc(beatmapid,bitpresent,fc,0,count100,count50,0)
+                var fccount300 = fcppcalc.object
+                var fcacc = Number((300 * fccount300 + 100 * count100 + 50 * count50) / (300 * (fccount300 + count100 + count50)) * 100).toFixed(2)
+                var fcguess = ``
+                if (rank == 'F') {
+                    pp = 'No PP'
+                }
+                if (perfect == 0) {
+                    fcguess = `[${fcppcalc.pp}pp for ${fcacc}%]`
+                }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Most recent osu! Standard play for ${osuname}:`, `http://s.ppy.sh/a/${userid}.png`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
@@ -266,7 +314,7 @@ Tiny bot command:
 **${beatmap} [${diff}] ${shortenmod} (${star}★)**
 ▸ Scores: ${scores}
 ▸ **Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
-▸ **PP: Not supported ;c**
+▸ **PP: ${pp}** ${fcguess}
 ▸ **Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`)
                 message.channel.send({embed});
             }
@@ -286,7 +334,7 @@ Tiny bot command:
                 var beatmapname = beatmap[0].title
                 var diff = beatmap[0].version
                 var beatmapimageid = beatmap[0].beatmapSetId
-                var star = Number(beatmap[0].difficulty.rating).toFixed(1)
+                var star = 0
                 var osuname = scores[0].user.name
                 var osuid = scores[0].user.id
                 for (var i = 0; i <= scores.length - 1; i++) {
@@ -305,10 +353,18 @@ Tiny bot command:
                     var bitpresent = modandbit.bitpresent
                     var pp = Number(scores[i].pp).toFixed(2)
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var fcppcalc = await ppandstarcalc(storedmapid[storedmapid.length - 1],bitpresent,fc,0,count100,count50,0)
+                    var fccount300 =  fcppcalc.object
+                    star = fcppcalc.star
+                    var fcacc = Number((300 * fccount300 + 100 * count100 + 50 * count50) / (300 * (fccount300 + count100 + count50)) * 100).toFixed(2)
+                    var fcguess = ``
+                    if (perfect == 0) {
+                        fcguess = `[${fcppcalc.pp}pp for ${fcacc}%]`
+                    }
                         highscore += `
 ${i+1}. **${shortenmod}** Score
 ▸ Score: ${score}
-**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc} ▸ PP: ${pp}**
+**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc} ▸ PP: ${pp}** ${fcguess}
 **▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`         
                 }
                 const embed = new Discord.RichEmbed()
@@ -378,12 +434,19 @@ ${i+1}. **${shortenmod}** Score
                     var modandbit = moddetection(mod)
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
-                    var star = Number(best[i][1].difficulty.rating).toFixed(1)
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var fcppcalc = await ppandstarcalc(beatmapid,bitpresent,fc,0,count100,count50,0)
+                    var fccount300 =  fcppcalc.object
+                    var star = fcppcalc.star
+                    var fcacc = Number((300 * fccount300 + 100 * count100 + 50 * count50) / (300 * (fccount300 + count100 + count50)) * 100).toFixed(2)
+                    var fcguess = ``
+                    if (perfect == 0) {
+                        fcguess = `[${fcppcalc.pp}pp for ${fcacc}%]`
+                    }
                     top += `
 ${i+1}. **${title} [${diff}] ${shortenmod}** (${star}★)
 ▸ Score: ${score}
-**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc} ▸ PP: ${pp}**
+**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc} ▸ PP: ${pp}** ${fcguess}
 **▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`
                 }
                 const embed = new Discord.RichEmbed()
