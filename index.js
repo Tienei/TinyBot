@@ -157,9 +157,9 @@ Tiny bot command:
                 }
             }
             var score = {
-                maxcombo: 1700,
+                maxcombo: combo,
                 count50: count50,
-                count100: 12,
+                count100: count100,
                 count300: count300,
                 countMiss: countmiss,
                 mods: mods
