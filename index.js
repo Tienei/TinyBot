@@ -4,9 +4,10 @@ const bot = new Discord.Client();
 const {Beatmap, Osu: {DifficultyCalculator,PerformanceCalculator}} = require('pp-calculator');
 const request = require('request-promise-native');
 
-var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},
+{"username":"228166377502932992","osuname":"zwoooz"},{"username":"244923259001372672","osuname":"Nashiru"}]
 var storedmapid = []
-
+ 
 var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
     notFoundAsError: false,
     completeScores: true
@@ -19,7 +20,7 @@ bot.on('message', (message) => {
     if (message.author.bot == false){
 
         //Normal bot stuff
-
+        
         if (msg.substring(0,4) == '!hug') {
             message.channel.send(`${message.author.username} just gave a hug for ${message.content.substring(5)}! <:toblerone:431170906572849153>`)
         }
@@ -86,7 +87,7 @@ Tiny bot command:
                 do {
                     i = i - 1
                     char = word.substr(i,1)
-                    if (i > 200) {
+                    if (i < 0) {
                         char = untilword
                     }
                 }
@@ -233,7 +234,8 @@ Tiny bot command:
                     if (detected == false) {
                         cache.push({"username":message.author.id,"osuname":osuname})
                     }
-                    message.channel.send(`You account has been linked to osu! username **${osuname}**`) 
+                    message.channel.send(`You account has been linked to osu! username **${osuname}**`)
+                    bot.channels.get('457727640527175694').send(JSON.stringify(cache))
                 }
             }
             osuset()
@@ -520,5 +522,4 @@ ${i+1}. **${title} [${diff}] ${shortenmod}** (${star}★)
     }
 
 });
-
 bot.login(process.env.BOT_TOKEN);
