@@ -227,16 +227,16 @@ Tiny bot command:
                         if (i < cache.length - 1) {
                             if (cache[i].username == message.author.id) {
                                 cache[i].osuname = osuname
-                                bot.channels.get('457727640527175694').send(cache[i])
+                                console.log(cache[i])
                                 detected = true
                             }
                         }
                     }
                     if (detected == false) {
                         cache.push({"username":message.author.id,"osuname":osuname})
-                        bot.channels.get('457727640527175694').send(cache[cache.length])
                     }
                     message.channel.send(`You account has been linked to osu! username **${osuname}**`)
+                    bot.channels.get('457727640527175694').send(JSON.stringify(cache))
                 }
             }
             osuset()
