@@ -4,8 +4,7 @@ const bot = new Discord.Client();
 const {Beatmap, Osu: {DifficultyCalculator,PerformanceCalculator}} = require('pp-calculator');
 const request = require('request-promise-native');
 
-var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},
-{"username":"228166377502932992","osuname":"zwoooz"},{"username":"244923259001372672","osuname":"Gimli"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"244923259001372672","osuname":"Gimli"}]
 var storedmapid = []
  
 var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
@@ -146,17 +145,6 @@ Tiny bot command:
         async function ppandstarcalc(beatmapid,mods,combo,count300,count100,count50,countmiss) {
             var osu = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
             var beatmap = Beatmap.fromOsu(osu)
-            var i = 0
-            var object = 0
-            do {
-                i += 1
-            }
-            while(osu.substr(i,12) !== '[HitObjects]');
-            for (var o = i+13; o < osu.length; o++){
-                if (osu.substr(o,1) == '\r') {
-                    object += 1
-                }
-            }
             var score = {
                 maxcombo: combo,
                 count50: count50,
@@ -173,7 +161,13 @@ Tiny bot command:
             var perfCalc = PerformanceCalculator.use(diffCalc).calculate(score)
             var star = Number(diffCalc.starDifficulty).toFixed(1)
             var pp = Number(perfCalc.totalPerformance).toFixed(2)
-            return {star: star, pp: pp, object: object}
+            var object = Number(diffCalc.beatmap.HitObjects.length)
+            var ar = Number(diffCalc.beatmap.Difficulty.ApproachRate)
+            var cs = Number(diffCalc.beatmap.Difficulty.CircleSize)
+            var hp = Number(diffCalc.beatmap.Difficulty.HPDrainRate)
+            var jump = Number(diffCalc.aimDifficulty)
+            var stream = Number(diffCalc.speedDifficulty)
+            return {star: star, pp: pp, object: object, ar: ar, cs: cs, hp: hp, jump: jump, stream: stream}
         }
 
         async function osu(name, mode, modename) {
@@ -242,7 +236,7 @@ Tiny bot command:
             osuset()
         }
 
-        if (msg.substring(0,4) == '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop') {
+        if (msg.substring(0,4) == '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop' && msg.substring(0,5) !== '!osud') {
             var check = message.content.substring(5)
             var name = playerdetection(check)
             osu(name,0,'Standard')
@@ -265,6 +259,38 @@ Tiny bot command:
             osu(name,3,'Mania')
         } 
 
+        if (msg.substring(0,5) == '!osud') {
+            async function osudetail(err) {
+                message.channel.send('Gathering data... (Please wait about 50 ~ 70 secs)')
+                var check = message.content.substring(6)
+                var name = playerdetection(check)
+                var best = await osuApi.getUserBest({u: `${name}`, limit: 100})
+                var ar = 0
+                var cs = 0
+                var hp = 0
+                var jumps = 0
+                var streams = 0
+                for (var i = 0; i < 100; i++) {
+                    var beatmapid = best[i][1].id
+                    var mod = best[i][0].mods
+                    var bitpresent = moddetection(mod).bitpresent
+                    var detail = await ppandstarcalc(beatmapid,bitpresent)
+                    ar += detail.ar * (100 - i) / 100
+                    cs += detail.cs * (100 - i) / 100
+                    hp += detail.hp * (100 - i) / 100
+                    jumps += detail.jump
+                    streams += detail.stream
+                    console.log(i)
+                }
+                message.channel.send(`
+AR: ${Number(ar / 50.5).toFixed(2)}
+CS: ${Number(cs / 50.5).toFixed(2)}
+HP: ${Number(hp / 50.5).toFixed(2)}
+Jumps: ${Number((jumps / (jumps + streams)) * 100).toFixed(2)}%
+Streams: ${Number((streams / (jumps + streams)) * 100).toFixed(2)}%`)
+            }
+           osudetail()
+        }
         if (msg.substring(0,7) == '!recent') {
             async function recent() {
                 var check = message.content.substring(8);
@@ -495,6 +521,14 @@ ${i+1}. **${title} [${diff}] ${shortenmod}** (${star}★)
             message.channel.send('<@103139260340633600>')
         }
 
+        if (msg.includes('jpgu') == true) {
+            message.channel.send('<@253376598353379328>')
+        }
+
+        if (msg.includes('animu') == true) {
+            message.channel.send('<@237364616798142465>')
+        }
+
         if (msg.includes('senpu') == true) {
             message.channel.send('<@175179081397043200>')
         }
@@ -523,4 +557,5 @@ ${i+1}. **${title} [${diff}] ${shortenmod}** (${star}★)
     }
 
 });
+
 bot.login(process.env.BOT_TOKEN);
