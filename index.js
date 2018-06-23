@@ -145,6 +145,17 @@ Tiny bot command:
         async function ppandstarcalc(beatmapid,mods,combo,count300,count100,count50,countmiss) {
             var osu = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
             var beatmap = Beatmap.fromOsu(osu)
+            var i = 0
+            var object = 0
+             do {
+                 i += 1
+             }
+             while(osu.substr(i,12) !== '[HitObjects]');
+             for (var o = i+13; o < osu.length; o++){
+                 if (osu.substr(o,1) == '\r') {
+                     object += 1
+                 }
+             }
             var score = {
                 maxcombo: combo,
                 count50: count50,
@@ -161,13 +172,7 @@ Tiny bot command:
             var perfCalc = PerformanceCalculator.use(diffCalc).calculate(score)
             var star = Number(diffCalc.starDifficulty).toFixed(1)
             var pp = Number(perfCalc.totalPerformance).toFixed(2)
-            var object = Number(diffCalc.beatmap.HitObjects.length)
-            var ar = Number(diffCalc.beatmap.Difficulty.ApproachRate)
-            var cs = Number(diffCalc.beatmap.Difficulty.CircleSize)
-            var hp = Number(diffCalc.beatmap.Difficulty.HPDrainRate)
-            var jump = Number(diffCalc.aimDifficulty)
-            var stream = Number(diffCalc.speedDifficulty)
-            return {star: star, pp: pp, object: object, ar: ar, cs: cs, hp: hp, jump: jump, stream: stream}
+            return {star: star, pp: pp, object: object}
         }
 
         async function osu(name, mode, modename) {
@@ -236,7 +241,7 @@ Tiny bot command:
             osuset()
         }
 
-        if (msg.substring(0,4) == '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop' && msg.substring(0,5) !== '!osud') {
+        if (msg.substring(0,4) == '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop') {
             var check = message.content.substring(5)
             var name = playerdetection(check)
             osu(name,0,'Standard')
@@ -259,38 +264,6 @@ Tiny bot command:
             osu(name,3,'Mania')
         } 
 
-        if (msg.substring(0,5) == '!osud') {
-            async function osudetail(err) {
-                message.channel.send('Gathering data... (Please wait about 50 ~ 70 secs)')
-                var check = message.content.substring(6)
-                var name = playerdetection(check)
-                var best = await osuApi.getUserBest({u: `${name}`, limit: 100})
-                var ar = 0
-                var cs = 0
-                var hp = 0
-                var jumps = 0
-                var streams = 0
-                for (var i = 0; i < 100; i++) {
-                    var beatmapid = best[i][1].id
-                    var mod = best[i][0].mods
-                    var bitpresent = moddetection(mod).bitpresent
-                    var detail = await ppandstarcalc(beatmapid,bitpresent)
-                    ar += detail.ar * (100 - i) / 100
-                    cs += detail.cs * (100 - i) / 100
-                    hp += detail.hp * (100 - i) / 100
-                    jumps += detail.jump
-                    streams += detail.stream
-                    console.log(i)
-                }
-                message.channel.send(`
-AR: ${Number(ar / 50.5).toFixed(2)}
-CS: ${Number(cs / 50.5).toFixed(2)}
-HP: ${Number(hp / 50.5).toFixed(2)}
-Jumps: ${Number((jumps / (jumps + streams)) * 100).toFixed(2)}%
-Streams: ${Number((streams / (jumps + streams)) * 100).toFixed(2)}%`)
-            }
-           osudetail()
-        }
         if (msg.substring(0,7) == '!recent') {
             async function recent() {
                 var check = message.content.substring(8);
@@ -486,17 +459,6 @@ ${i+1}. **${title} [${diff}] ${shortenmod}** (${star}★)
                 message.channel.send({embed});
             }
             osutop()
-        }
-
-        if (msg.substring(0,21) == '!osuserverleaderboard') {
-            async function osuserverleaderboard() {
-                var player = []
-                for (var i = 0; i < cache.length; i++) {
-                    var user = await osuApi.getUser({u: `${cache.osuname}`})
-
-                }
-            }
-            osuserverleaderboard()
         }
 
         // Word detection
