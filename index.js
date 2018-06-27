@@ -4,7 +4,7 @@ const bot = new Discord.Client();
 const {Beatmap, Osu: {DifficultyCalculator,PerformanceCalculator}} = require('pp-calculator');
 const request = require('request-promise-native');
 
-var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"244923259001372672","osuname":"Gimli"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"}]
 var storedmapid = []
  
 var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
@@ -203,10 +203,8 @@ Tiny bot command:
 ▸**Level:** ${level}
             
 **SS:** ${ss}  **S:** ${s}  **A:** ${a} `)
-                .setTimestamp()
                 .setThumbnail(`http://s.ppy.sh/a/${id}.png`)
                 .setColor('#7f7fff')
-
                 message.channel.send({embed});
         }
 
@@ -226,7 +224,6 @@ Tiny bot command:
                         if (i < cache.length - 1) {
                             if (cache[i].username == message.author.id) {
                                 cache[i].osuname = osuname
-                                console.log(cache[i])
                                 detected = true
                             }
                         }
@@ -313,7 +310,7 @@ Tiny bot command:
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
                 .setColor('#7f7fff')
                 .setDescription(`
-**${beatmap} [${diff}] ${shortenmod} (${star}★)**
+**[${beatmap} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod} (${star}★)**
 ▸ Scores: ${scores}
 ▸ **Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
 ▸ **PP: ${pp}** ${fcguess}
@@ -366,7 +363,8 @@ Tiny bot command:
                         highscore += `
 ${i+1}. **${shortenmod}** Score
 ▸ Score: ${score}
-**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc} ▸ PP: ${pp}** ${fcguess}
+**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
+**▸ PP: ${pp}** ${fcguess}
 **▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`         
                 }
                 const embed = new Discord.RichEmbed()
@@ -446,9 +444,10 @@ ${i+1}. **${shortenmod}** Score
                         fcguess = `[${fcppcalc.pp}pp for ${fcacc}%]`
                     }
                     top += `
-${i+1}. **${title} [${diff}] ${shortenmod}** (${star}★)
+${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}** (${star}★)
 ▸ Score: ${score}
-**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc} ▸ PP: ${pp}** ${fcguess}
+**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
+**▸ PP: ${pp}** ${fcguess}
 **▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`
                 }
                 const embed = new Discord.RichEmbed()
