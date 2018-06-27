@@ -424,7 +424,7 @@ ${i+1}. **${shortenmod}** Score
                     var count300 = Number(best[i][0].counts['300'])
                     var count100 = Number(best[i][0].counts['100'])
                     var count50 = Number(best[i][0].counts['50'])
-                    var countmiss = Number(best[0][0].counts.miss)
+                    var countmiss = Number(best[i][0].counts.miss)
                     var combo = best[i][0].maxCombo
                     var fc = best[i][1].maxCombo
                     var rank = best[i][0].rank
