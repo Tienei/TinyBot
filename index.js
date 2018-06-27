@@ -4,7 +4,7 @@ const bot = new Discord.Client();
 const {Beatmap, Osu: {DifficultyCalculator,PerformanceCalculator}} = require('pp-calculator');
 const request = require('request-promise-native');
 
-var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"}]
 var storedmapid = []
  
 var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
@@ -192,7 +192,7 @@ Tiny bot command:
         async function osu(name, mode, modename) {
                 var user = await osuApi.apiCall('/get_user', {u: `${name}`, m: `${mode}`})
                 if (user.length == 0) {
-                    message.channel.send('Please enter a valid username or use !osuset to set your osu username **-Chino**')
+                    message.channel.send('Invalid user or something **-Chino**')
                 }
                 var username = user[0].username
                 var acc = Number(user[0].accuracy).toFixed(2)
@@ -281,7 +281,7 @@ Tiny bot command:
                 var name = playerdetection(check)
                 var recent = await osuApi.getUserRecent({u: `${name}`})
                 if (recent.length == 0) {
-                    message.channel.send('Please enter a valid username or use !osuset to set your osu username **-Chino**')
+                    message.channel.send('No play found within 24 hours of this user **-Tiny**')
                 }
                 var getplayer = await osuApi.apiCall('/get_user', {u: `${name}`})
                 var beatmapid = recent[0][1].id
@@ -340,7 +340,7 @@ Tiny bot command:
                 var name = playerdetection(check)
                 var scores = await osuApi.getScores({b: `${storedmapid[storedmapid.length - 1]}`, u: `${name}`})
                 if (scores.length == 0) {
-                    message.channel.send('Please enter a valid username or use !osuset to set your osu username **-Chino**')
+                    message.channel.send(`${name} didn't play this map! D: **-Tiny**`)
                 }
                 var beatmap = await osuApi.getBeatmaps({b: `${storedmapid[storedmapid.length - 1]}`})
                 var highscore = ''
@@ -425,7 +425,7 @@ ${i+1}. **${shortenmod}** Score
                 var top = ''
                 var best = await osuApi.getUserBest({u: `${name}`, limit: 100})
                 if (best.length == 0) {
-                    message.channel.send('Please enter a valid username or use !osuset to set your osu username **-Chino**')
+                    message.channel.send(`I think ${name} didn't play anything yet~ **-Chino**`)
                 }
                 var userid = best[0][0].user.id
                 var user = await osuApi.getUser({u: `${userid}`})
