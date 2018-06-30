@@ -22,9 +22,7 @@ bot.on('message', (message) => {
 
         //Normal bot stuff
 
-        refresh = Math.round(Math.random()* 9223372036854775807)
-
-        console.log(refresh)
+        refresh = Math.round(Math.random()* 4294967295)
         
         if (msg.substring(0,4) == '!hug') {
             message.channel.send(`${message.author.username} just gave a hug for ${message.content.substring(5)}! <:toblerone:431170906572849153>`)
