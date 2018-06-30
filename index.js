@@ -376,6 +376,7 @@ Tiny bot command:
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
                     var fcacc = fccalc.acc
                     var star = Number(fccalc.star.total).toFixed(2)
+                    var fcguess = ''
                     if (perfect == 0) {
                         fcguess = `[${fcpp}pp for ${fcacc}%]`
                     }
@@ -459,6 +460,7 @@ ${i+1}. **${shortenmod}** Score
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
                     var fcacc = fccalc.acc
                     var star = Number(fccalc.star.total).toFixed(2)
+                    var fcguess = ''
                     if (perfect == 0) {
                         fcguess = `[${fcpp}pp for ${fcacc}%]`
                     }
