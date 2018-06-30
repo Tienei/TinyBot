@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 const osu = require('node-osu');
 const bot = new Discord.Client();
-const {Beatmap, Osu: {DifficultyCalculator,PerformanceCalculator}} = require('pp-calculator');
 const request = require('request-promise-native');
+const calc = require('ojsama')
 
 var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794}","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"}]
 var storedmapid = []
@@ -12,6 +12,8 @@ var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
     completeScores: true
 });
 
+var refresh = 0
+
 bot.on('message', (message) => {
 
     var msg = message.content.toLowerCase();
@@ -19,6 +21,10 @@ bot.on('message', (message) => {
     if (message.author.bot == false){
 
         //Normal bot stuff
+
+        refresh = Math.round(Math.random()* 9223372036854775807)
+
+        console.log(refresh)
         
         if (msg.substring(0,4) == '!hug') {
             message.channel.send(`${message.author.username} just gave a hug for ${message.content.substring(5)}! <:toblerone:431170906572849153>`)
@@ -156,37 +162,37 @@ Tiny bot command:
             return {shortenmod: shortenmod, bitpresent: bitpresent}
         }
 
-        async function ppandstarcalc(beatmapid,mods,combo,count300,count100,count50,countmiss) {
-            var osu = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
-            var beatmap = Beatmap.fromOsu(osu)
+        async function ppandstarcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode) {
+            let parser = new calc.parser()
+            var map = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
+            parser.feed(map)
             var i = 0
             var object = 0
-             do {
-                 i += 1
-             }
-             while(osu.substr(i,12) !== '[HitObjects]');
-             for (var o = i+13; o < osu.length; o++){
-                 if (osu.substr(o,1) == '\r') {
-                     object += 1
-                 }
-             }
+            do {
+                i += 1
+            }
+            while(map.substr(i,12) !== '[HitObjects]');
+            for (var o = i+13; o < map.length; o++){
+                if (map.substr(o,1) == '\r') {
+                    object += 1
+                }
+            }
+            var accuracy = 0
+            if (mode == 1) {
+                var count300 = object - count100 - count50
+                accuracy = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+            } else {
+                accuracy = acc
+            }
+            var stars = new calc.diff().calc({map: parser.map, mods: mods})
             var score = {
-                maxcombo: combo,
-                count50: count50,
-                count100: count100,
-                count300: count300,
-                countMiss: countmiss,
-                mods: mods
+                stars: stars,
+                combo: combo,
+                nmiss: countmiss,
+                acc_percent: accuracy
             }
-            if (count300 == 0) {
-                score.count300 = object - count100 - count50
-                object = object - count100 - count50
-            }
-            var diffCalc = DifficultyCalculator.use(beatmap).setMods(score.mods).calculate()
-            var perfCalc = PerformanceCalculator.use(diffCalc).calculate(score)
-            var star = Number(diffCalc.starDifficulty).toFixed(1)
-            var pp = Number(perfCalc.totalPerformance).toFixed(2)
-            return {star: star, pp: pp, object: object}
+            var pp = calc.ppv2(score)
+            return {star: stars,pp: pp,acc: accuracy}
         }
 
         async function osu(name, mode, modename) {
@@ -217,7 +223,7 @@ Tiny bot command:
 ▸**Level:** ${level}
             
 **SS:** ${ss}  **S:** ${s}  **A:** ${a} `)
-                .setThumbnail(`http://s.ppy.sh/a/${id}.png`)
+                .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
                 .setColor('#7f7fff')
                 message.channel.send({embed});
         }
@@ -303,24 +309,24 @@ Tiny bot command:
                 var modandbit = moddetection(mod)
                 var shortenmod = modandbit.shortenmod
                 var bitpresent = modandbit.bitpresent
+                var recentcalc = await ppandstarcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
+                var star = Number(recentcalc.star.total).toFixed(2)
+                var pp = Number(recentcalc.pp.total).toFixed(2)
                 var osuname = getplayer[0].username
                 storedmapid.push(beatmapid)
                 var beatmapidfixed = map[0].beatmapset_id
-                var ppandstar = await ppandstarcalc(beatmapid,bitpresent,combo,count300,count100,count50,countmiss)
-                var star = ppandstar.star
-                var pp = ppandstar.pp
-                var fcppcalc = await ppandstarcalc(beatmapid,bitpresent,fc,0,count100,count50,0)
-                var fccount300 = fcppcalc.object
-                var fcacc = Number((300 * fccount300 + 100 * count100 + 50 * count50) / (300 * (fccount300 + count100 + count50)) * 100).toFixed(2)
+                var fccalc = await ppandstarcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                var fcpp = Number(fccalc.pp.total).toFixed(2)
+                var fcacc = fccalc.acc
                 var fcguess = ``
                 if (rank == 'F') {
                     pp = 'No PP'
                 }
                 if (perfect == 0) {
-                    fcguess = `[${fcppcalc.pp}pp for ${fcacc}%]`
+                    fcguess = `[${fcpp}pp for ${fcacc}%]`
                 }
                 const embed = new Discord.RichEmbed()
-                .setAuthor(`Most recent osu! Standard play for ${osuname}:`, `http://s.ppy.sh/a/${userid}.png`)
+                .setAuthor(`Most recent osu! Standard play for ${osuname}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
                 .setColor('#7f7fff')
                 .setDescription(`
@@ -366,13 +372,12 @@ Tiny bot command:
                     var bitpresent = modandbit.bitpresent
                     var pp = Number(scores[i].pp).toFixed(2)
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                    var fcppcalc = await ppandstarcalc(storedmapid[storedmapid.length - 1],bitpresent,fc,0,count100,count50,0)
-                    var fccount300 =  fcppcalc.object
-                    star = fcppcalc.star
-                    var fcacc = Number((300 * fccount300 + 100 * count100 + 50 * count50) / (300 * (fccount300 + count100 + count50)) * 100).toFixed(2)
-                    var fcguess = ``
+                    var fccalc = await ppandstarcalc(storedmapid[storedmapid.length - 1],bitpresent,fc,count100,count50,0,acc,1)
+                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                    var fcacc = fccalc.acc
+                    var star = Number(fccalc.star.total).toFixed(2)
                     if (perfect == 0) {
-                        fcguess = `[${fcppcalc.pp}pp for ${fcacc}%]`
+                        fcguess = `[${fcpp}pp for ${fcacc}%]`
                     }
                         highscore += `
 ${i+1}. **${shortenmod}** Score
@@ -382,7 +387,7 @@ ${i+1}. **${shortenmod}** Score
 **▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`         
                 }
                 const embed = new Discord.RichEmbed()
-                .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}] (${star}★)`, `http://s.ppy.sh/a/${osuid}.png`)
+                .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}] (${star}★)`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
                 .setDescription(highscore)
                 message.channel.send({embed});
@@ -448,14 +453,14 @@ ${i+1}. **${shortenmod}** Score
                     var modandbit = moddetection(mod)
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
+                    storedmapid.push(beatmapid)
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                    var fcppcalc = await ppandstarcalc(beatmapid,bitpresent,fc,0,count100,count50,0)
-                    var fccount300 =  fcppcalc.object
-                    var star = fcppcalc.star
-                    var fcacc = Number((300 * fccount300 + 100 * count100 + 50 * count50) / (300 * (fccount300 + count100 + count50)) * 100).toFixed(2)
-                    var fcguess = ``
+                    var fccalc = await ppandstarcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                    var fcacc = fccalc.acc
+                    var star = Number(fccalc.star.total).toFixed(2)
                     if (perfect == 0) {
-                        fcguess = `[${fcppcalc.pp}pp for ${fcacc}%]`
+                        fcguess = `[${fcpp}pp for ${fcacc}%]`
                     }
                     top += `
 ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}** (${star}★)
@@ -466,7 +471,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Top osu!Standard Plays for ${username}`)
-                .setThumbnail(`http://s.ppy.sh/a/${userid}.png`)
+                .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                 .setColor('#7f7fff')
                 .setDescription(top)
                 message.channel.send({embed});
