@@ -464,6 +464,7 @@ ${i+1}. **${shortenmod}** Score
                     if (perfect == 0) {
                         fcguess = `[${fcpp}pp for ${fcacc}%]`
                     }
+                    storedmapid.push(beatmapid)
                     top += `
 ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}** (${star}★)
 ▸ Score: ${score}
