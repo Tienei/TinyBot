@@ -121,7 +121,7 @@ Tiny bot command:
                 var found = false
                 for (var i = 0; i < cache.length; i++) {
                     if (name.includes('@') == true) {
-                        if (cache[i].username == name.substring(2,name.length - 1)) {
+                        if (name.includes(cache[i].username) == true) {
                             osuname = cache[i].osuname
                             found = true
                         }
