@@ -164,17 +164,8 @@ Tiny bot command:
             let parser = new calc.parser()
             var map = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
             parser.feed(map)
-            var i = 0
-            var object = 0
-            do {
-                i += 1
-            }
-            while(map.substr(i,12) !== '[HitObjects]');
-            for (var o = i+13; o < map.length; o++){
-                if (map.substr(o,1) == '\r') {
-                    object += 1
-                }
-            }
+            var stars = new calc.diff().calc({map: parser.map, mods: mods})
+            var object = Number(stars.objects.length)
             var accuracy = 0
             if (mode == 1) {
                 var count300 = object - count100 - count50
@@ -182,7 +173,6 @@ Tiny bot command:
             } else {
                 accuracy = acc
             }
-            var stars = new calc.diff().calc({map: parser.map, mods: mods})
             var score = {
                 stars: stars,
                 combo: combo,
