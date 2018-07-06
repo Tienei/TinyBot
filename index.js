@@ -137,13 +137,13 @@ Tiny bot command:
         function moddetection(mod) {
             console.log(mod)
             var mods = {
-                Nofail     : "NF", NoFailBit: 1,
+                NoFail     : "NF", NoFailBit: 1,
                 Easy       : "EZ", EasyBit: 2,
                 Hidden     : "HD", HiddenBit: 8,
-                Hardrock   : "HR", HardRockBit: 16,
-                Doubletime : "DT", DoubleTimeBit: 64,
+                HardRock   : "HR", HardRockBit: 16,
+                DoubleTime : "DT", DoubleTimeBit: 64,
                 Relax      : "RX", RelaxBit: 128,
-                Halftime   : "HT", HalfTimeBit: 256,
+                HalfTime   : "HT", HalfTimeBit: 256,
                 Nightcore  : "NC", NightcoreBit: 512,
                 Flashlight : "FL", FlashLightBit: 1024
             }
