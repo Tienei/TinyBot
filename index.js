@@ -135,16 +135,17 @@ Tiny bot command:
         }
 
         function moddetection(mod) {
+            console.log(mod)
             var mods = {
-                NoFail     : "NF", NoFailBit: 1,
+                Nofail     : "NF", NoFailBit: 1,
                 Easy       : "EZ", EasyBit: 2,
                 Hidden     : "HD", HiddenBit: 8,
-                HardRock   : "HR", HardRockBit: 16,
-                DoubleTime : "DT", DoubleTimeBit: 64,
+                Hardrock   : "HR", HardRockBit: 16,
+                Doubletime : "DT", DoubleTimeBit: 64,
                 Relax      : "RX", RelaxBit: 128,
-                HalfTime   : "HT", HalfTimeBit: 256,
+                Halftime   : "HT", HalfTimeBit: 256,
                 Nightcore  : "NC", NightcoreBit: 512,
-                FlashLight : "FL", FlashLightBit: 1024
+                Flashlight : "FL", FlashLightBit: 1024
             }
             var shortenmod = '+';
             var bitpresent = 0
@@ -159,6 +160,7 @@ Tiny bot command:
             }
             return {shortenmod: shortenmod, bitpresent: bitpresent}
         }
+
 
         async function ppandstarcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode) {
             let parser = new calc.parser()
