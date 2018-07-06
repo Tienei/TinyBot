@@ -135,7 +135,6 @@ Tiny bot command:
         }
 
         function moddetection(mod) {
-            console.log(mod)
             var mods = {
                 NoFail     : "NF", NoFailBit: 1,
                 Easy       : "EZ", EasyBit: 2,
