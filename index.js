@@ -19,6 +19,12 @@ bot.on('message', (message) => {
     var msg = message.content.toLowerCase();
 
     if (message.author.bot == false){
+     
+        var random = Math.round(Math.random() * 100)
+        
+        if (random == 89 && message.guild.name == "The Cult Probably") {
+            message.channel.send('Why did you left, Tiny? ;~;')
+        }
 
         //Normal bot stuff
 
