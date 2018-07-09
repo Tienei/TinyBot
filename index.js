@@ -315,7 +315,11 @@ Tiny bot command:
                 var star = Number(recentcalc.star.total).toFixed(2)
                 var pp = Number(recentcalc.pp.total).toFixed(2)
                 var osuname = getplayer[0].username
-                storedmapid.push({id:beatmapid,server:message.guild.id})
+                if (message.guild !== null) {
+                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                } else {
+                    storedmapid.push({id:beatmapid,user:message.author.id})
+                }
                 var beatmapidfixed = map[0].beatmapset_id
                 var fccalc = await ppandstarcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -349,9 +353,20 @@ Tiny bot command:
                 var storedid = 0
                 var i = storedmapid.length
                 for (var i = storedmapid.length-1; i > -1; i--) {
-                    if (message.guild.id == storedmapid[i].server) {
-                        storedid = storedmapid[i].id
-                        break;
+                    if (message.guild !== null) {
+                        if (storedmapid[i].server !== undefined) {
+                            if (message.guild.id == storedmapid[i].server) {
+                                storedid = storedmapid[i].id
+                                break;
+                            }
+                        }
+                    } else {
+                        if (storedmapid[i].user !== undefined) {
+                            if (message.author.id == storedmapid[i].user) {
+                                storedid = storedmapid[i].id
+                                break;
+                            }
+                        }
                     }
                 }
                 var scores = await osuApi.getScores({b: `${storedid}`, u: `${name}`})
@@ -464,7 +479,11 @@ ${i+1}. **${shortenmod}** Score
                     var modandbit = moddetection(mod)
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
-                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                    if (message.guild !== null) {
+                        storedmapid.push({id:beatmapid,server:message.guild.id})
+                    } else {
+                        storedmapid.push({id:beatmapid,user:message.author.id})
+                    }
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                     var fccalc = await ppandstarcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
