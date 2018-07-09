@@ -15,7 +15,7 @@ var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
 var refresh = 0
 
 bot.on('message', (message) => {
-
+    
     var msg = message.content.toLowerCase();
 
     if (message.author.bot == false){
@@ -160,7 +160,6 @@ Tiny bot command:
             return {shortenmod: shortenmod, bitpresent: bitpresent}
         }
 
-
         async function ppandstarcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode) {
             let parser = new calc.parser()
             var map = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
@@ -183,6 +182,7 @@ Tiny bot command:
             var pp = calc.ppv2(score)
             return {star: stars,pp: pp,acc: accuracy}
         }
+
 
         async function osu(name, mode, modename) {
                 var user = await osuApi.apiCall('/get_user', {u: `${name}`, m: `${mode}`})
@@ -247,7 +247,7 @@ Tiny bot command:
             osuset()
         }
 
-        if (msg.substring(0,4) == '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop') {
+        if (msg.substring(0,4) === '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop' && msg.substring(0,5) !== '!osud') {
             var check = message.content.substring(5)
             var name = playerdetection(check)
             osu(name,0,'Standard')
@@ -268,8 +268,21 @@ Tiny bot command:
             var check = message.content.substring(7)
             var name = playerdetection(check)
             osu(name,3,'Mania')
-        } 
+        }
 
+        if (msg.substring(0,5) == '!osud') {
+            async function osud() {
+                var check = message.content.substring(8);
+                var name = playerdetection(check)
+                var best = await osuApi.getUserBest({u: `${name}`, limit: 100})
+                for (var i = 0; i < 100; i++) {
+                    var beatmapid = best[i][1].id
+                    var thing = await ppandstarcalc(beatmapid,0,0,0,0,0,0,0)
+                    console.log(i)
+                }
+            }
+            osud()
+        }
         if (msg.substring(0,7) == '!recent') {
             async function recent() {
                 var check = message.content.substring(8);
@@ -302,7 +315,7 @@ Tiny bot command:
                 var star = Number(recentcalc.star.total).toFixed(2)
                 var pp = Number(recentcalc.pp.total).toFixed(2)
                 var osuname = getplayer[0].username
-                storedmapid.push(beatmapid)
+                storedmapid.push({id:beatmapid,server:message.guild.id})
                 var beatmapidfixed = map[0].beatmapset_id
                 var fccalc = await ppandstarcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -333,11 +346,19 @@ Tiny bot command:
             async function compare() {
                 var check = message.content.substring(9);
                 var name = playerdetection(check)
-                var scores = await osuApi.getScores({b: `${storedmapid[storedmapid.length - 1]}`, u: `${name}`})
+                var storedid = 0
+                var i = storedmapid.length
+                for (var i = storedmapid.length-1; i > -1; i--) {
+                    if (message.guild.id == storedmapid[i].server) {
+                        storedid = storedmapid[i].id
+                        break;
+                    }
+                }
+                var scores = await osuApi.getScores({b: `${storedid}`, u: `${name}`})
                 if (scores.length == 0) {
                     message.channel.send(`${name} didn't play this map! D: **-Tiny**`)
                 }
-                var beatmap = await osuApi.getBeatmaps({b: `${storedmapid[storedmapid.length - 1]}`})
+                var beatmap = await osuApi.getBeatmaps({b: `${storedid}`})
                 var highscore = ''
                 var beatmapname = beatmap[0].title
                 var diff = beatmap[0].version
@@ -361,7 +382,7 @@ Tiny bot command:
                     var bitpresent = modandbit.bitpresent
                     var pp = Number(scores[i].pp).toFixed(2)
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                    var fccalc = await ppandstarcalc(storedmapid[storedmapid.length - 1],bitpresent,fc,count100,count50,0,acc,1)
+                    var fccalc = await ppandstarcalc(storedid,bitpresent,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
                     var fcacc = fccalc.acc
                     var star = Number(fccalc.star.total).toFixed(2)
@@ -443,7 +464,7 @@ ${i+1}. **${shortenmod}** Score
                     var modandbit = moddetection(mod)
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
-                    storedmapid.push(beatmapid)
+                    storedmapid.push({id:beatmapid,server:message.guild.id})
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                     var fccalc = await ppandstarcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -453,7 +474,6 @@ ${i+1}. **${shortenmod}** Score
                     if (perfect == 0) {
                         fcguess = `[${fcpp}pp for ${fcacc}%]`
                     }
-                    storedmapid.push(beatmapid)
                     top += `
 ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}** (${star}★)
 ▸ Score: ${score}
@@ -487,6 +507,10 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
 
         if (msg.includes('tiny') == true && msg.includes('tiny bot') !== true) {
             message.channel.send('<@292523841811513348>')
+        }
+        
+        if (msg.includes('jamu') == true) {
+            message.channel.send('<@103139260340633600>')
         }
 
         if (msg.includes('jpgu') == true) {
