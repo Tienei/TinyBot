@@ -4,7 +4,7 @@ const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 
-var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"205339113858138112","osuname":"PotatoBoy123"},{"username":"179407837557030912","osuname":"im a fancy lad"},{"username":"171377836026888192","osuname":"Pandize"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"205339113858138112","osuname":"PotatoBoy123"},{"username":"179407837557030912","osuname":"im a fancy lad"},{"username":"171377836026888192","osuname":"Pandize"},{"username":"135777011779108865","osuname":"Emychi"}]
 var storedmapid = []
  
 var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
@@ -19,16 +19,12 @@ bot.on('message', (message) => {
     var msg = message.content.toLowerCase();
 
     if (message.author.bot == false){
-     
-        var random = Math.round(Math.random() * 100)
-        
-        if (random == 89 && message.guild.name == "The Cult Probably") {
-            message.channel.send('Why did you left, Tiny? ;~;')
-        }
 
         //Normal bot stuff
 
         refresh = Math.round(Math.random()* 4294967295)
+
+        var random = Math.round(Math.random() * 100)
         
         if (msg.substring(0,4) == '!hug') {
             message.channel.send(`${message.author.username} just gave a hug for ${message.content.substring(5)}! <:toblerone:431170906572849153>`)
@@ -155,6 +151,9 @@ Tiny bot command:
             var shortenmod = '+';
             var bitpresent = 0
             for (var i = 0; i < mod.length; i++) {
+                if (shortenmod.includes('DT') == true && mods[mod[i]] == 'NC') {
+                    shortenmod = shortenmod.substring(0,shortenmod.length - 2)
+                }
                 if (mods[mod[i]]) {
                     shortenmod += mods[mod[i]];
                     bitpresent += mods[mod[i] + "Bit"];
@@ -570,5 +569,4 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
     }
 
 });
-
 bot.login(process.env.BOT_TOKEN);
