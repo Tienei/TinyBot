@@ -533,10 +533,6 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
         if (msg.includes('tiny') == true && msg.includes('tiny bot') !== true) {
             message.channel.send('<@292523841811513348>')
         }
-        
-        if (msg.includes('jamu') == true) {
-            message.channel.send('<@103139260340633600>')
-        }
 
         if (msg.includes('jpgu') == true) {
             message.channel.send('<@253376598353379328>')
