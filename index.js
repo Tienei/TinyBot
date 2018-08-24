@@ -460,7 +460,7 @@ ${i+1}. **${shortenmod}** Score
                     loop = start + 1
                 }
                 if (word.length == 1) {
-                    if (isNaN(word[1]) == true) {
+                    if (isNaN(word[0]) == true) {
                         player = word[0]
                         start = 0
                         loop = 5
