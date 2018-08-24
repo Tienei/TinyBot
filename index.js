@@ -66,7 +66,7 @@ Tiny bot command:
 !recent (username): Check user most recent play
 !compare (username): Compare with other!
 !osutop (username,number[1-100]): Check your top best 100 play!
-[Note]: If your osu username have a space in it, replace it with a "_"
+[Note: If your osu username have a space in it, replace it with a "_"]
 // [Tiny] For 
 !check: Force him to save data in a lazy way uwu`, {code:"css"})
         }
