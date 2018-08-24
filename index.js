@@ -4,7 +4,7 @@ const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 
-var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"205339113858138112","osuname":"PotatoBoy123"},{"username":"179407837557030912","osuname":"im a fancy lad"},{"username":"171377836026888192","osuname":"Pandize"},{"username":"135777011779108865","osuname":"Emychi"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"}]
 var storedmapid = []
  
 var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
@@ -288,6 +288,20 @@ Tiny bot command:
             }
             osud()
         }
+
+        if (msg.substring(0,8) == '!beatmap') {
+            async function beatmap() {
+                var check = message.content.substring(9);
+                var name = playerdetection(check)
+                var beatmap = await osuApi.getBeatmaps({u: name, limit: 50})
+                if (beatmap.length == 0) {
+                    message.channel.send(`${name} didn't map anything yet! Nani? **-Tiny**`)
+                }
+                console.log(beatmap)
+            }
+            beatmap()
+        }
+
         if (msg.substring(0,7) == '!recent') {
             async function recent() {
                 var check = message.content.substring(8);
@@ -356,7 +370,6 @@ Tiny bot command:
                 var check = message.content.substring(9);
                 var name = playerdetection(check)
                 var storedid = 0
-                var i = storedmapid.length
                 for (var i = storedmapid.length-1; i > -1; i--) {
                     if (message.guild !== null) {
                         if (storedmapid[i].server !== undefined) {
@@ -428,36 +441,35 @@ ${i+1}. **${shortenmod}** Score
 
         if (msg.substring(0,7) == '!osutop') {
             async function osutop() {
-                var find1 = worddetection(8,msg,' ','+')
-                var find2 = worddetection(find1.position,msg,' ','+')
-                var name = ''
-                var loop = 0
+                var player = ''
                 var start = 0
-                var find = false
-                for (var i = 0; i <= 100; i++) {
-                    if (Number(find2.word) == i+1) {
-                        name = playerdetection(find1.word)
-                        loop = i + 1
-                        start = i
-                        find = true
-                        break;
-                    } else if (Number(find1.word) == i+1) {
-                        name = playerdetection('')
-                        loop = i + 1
-                        start = i
-                        find = true
-                        break;
-                    } else if (find1.word == '!osutop') {
-                        name = playerdetection('')
-                        loop = 5
-                        find = true
-                        break;
+                var loop = 0
+                let word = []
+                var startword = 8
+                for (var i = 8; i < msg.length; i++) {
+                    if (msg[i] == ' ') {
+                        word.push(msg.substring(startword,i))
+                        startword = i + 1
                     }
                 }
-                if (find == false) {
-                    name = playerdetection(find1.word)
-                    loop = 5
+                word.push(msg.substring(startword,msg.length))
+                if (word.length == 2) {
+                    player = word[0]
+                    start = Number(word[1]) - 1
+                    loop = start + 1
                 }
+                if (word.length == 1) {
+                    if (isNaN(word[1]) == true) {
+                        player = word[0]
+                        start = 0
+                        loop = 5
+                    } else {
+                        player = ''
+                        start = Number(word[0]) - 1
+                        loop = start + 1
+                    }
+                }
+                var name = playerdetection(player)
                 var top = ''
                 var best = await osuApi.getUserBest({u: `${name}`, limit: 100})
                 if (best.length == 0) {
@@ -467,6 +479,7 @@ ${i+1}. **${shortenmod}** Score
                 var user = await osuApi.getUser({u: `${userid}`})
                 var username = user.name
                 for (var i = start; i < loop; i++) {
+                    console.log(i)
                     var title = best[i][1].title
                     var diff = best[i][1].version
                     var beatmapid = best[i][1].id
@@ -532,6 +545,10 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
         if (msg.includes('tiny') == true && msg.includes('tiny bot') !== true) {
             message.channel.send('<@292523841811513348>')
         }
+        
+        if (msg.includes('jamu') == true) {
+            message.channel.send('<@103139260340633600>')
+        }
 
         if (msg.includes('jpgu') == true) {
             message.channel.send('<@253376598353379328>')
@@ -545,7 +562,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             message.channel.send('<@175179081397043200>')
         }
 
-        if (msg.includes('<@433463871966281731>') == true) {
+        if (msg.includes(`<@${bot.user.id}>`) == true) {
             var roll = Math.floor(Math.random()*6)
             var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,`Why you keep pinged me?`,`Stop pinged me! <:chinoangry:450686707881213972>`,`What do you need senpai? <:chinohappy:450684046129758208>`,`<:chinopinged:450680698613792783>`]
             message.channel.send(respone[roll])
