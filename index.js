@@ -470,6 +470,11 @@ ${i+1}. **${shortenmod}** Score
                         loop = start + 1
                     }
                 }
+                if (word.length == 0) {
+                    player = ''
+                    start = 0
+                    loop = 5
+                }
                 var name = playerdetection(player)
                 var top = ''
                 var best = await osuApi.getUserBest({u: `${name}`, limit: 100})
