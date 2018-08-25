@@ -470,7 +470,7 @@ ${i+1}. **${shortenmod}** Score
                         loop = start + 1
                     }
                 }
-                if (word.length == 0) {
+                if (msg.length == 7) {
                     player = ''
                     start = 0
                     loop = 5
