@@ -3,6 +3,7 @@ const osu = require('node-osu');
 const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
+console.log(__dirname)
 global.__base = __dirname + '/';
 const track = require(`${__base}app/lib/date.js`);
 
