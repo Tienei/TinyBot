@@ -4,7 +4,7 @@ const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 
-var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"218885558963798017","osuname":"Ryuriu"},{"username":"205339113858138112","osuname":"PotatoBoy123"}]
 var storedmapid = []
  
 var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
@@ -134,6 +134,33 @@ Tiny bot command:
                     return name;
                 }
                 return osuname;
+            }
+        }
+
+        function rankingletters(letter) {
+            if (letter == "A") {
+                return '<:rankingA:486804739443523584>';
+            }
+            if (letter == "B") {
+                return '<:rankingB:486804764424667136>';
+            }
+            if (letter == "C") {
+                return '<:rankingC:486804776756183040>';
+            }
+            if (letter == "D") {
+                return '<:rankingD:486804789531770881>';
+            }
+            if (letter == "S") {
+                return '<:rankingS:486804806909034496>';
+            }
+            if (letter == "SH") {
+                return '<:rankingSH:486804839016431626>';
+            }
+            if (letter == "X") {
+                return '<:rankingX:486804867554344965>';
+            }
+            if (letter == "XH") {
+                return '<:rankingXH:486804895966691328>';
             }
         }
 
@@ -325,7 +352,8 @@ Tiny bot command:
                 var combo = recent[0][0].maxCombo   
                 var fc = recent[0][1].maxCombo
                 var mod = recent[0][0].mods
-                var rank = recent[0][0].rank
+                var letter = recent[0][0].rank
+                var rank = rankingletters(letter)
                 var perfect = recent[0][0].perfect
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var modandbit = moddetection(mod)
@@ -345,7 +373,7 @@ Tiny bot command:
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
                 var fcacc = fccalc.acc
                 var fcguess = ``
-                if (rank == 'F') {
+                if (letter == 'F') {
                     pp = 'No PP'
                 }
                 if (perfect == 0) {
@@ -408,7 +436,8 @@ Tiny bot command:
                     var countmiss = Number(scores[i].counts.miss)
                     var combo = scores[i].maxCombo
                     var fc = beatmap[0].maxCombo
-                    var rank = scores[i].rank
+                    var letter = scores[i].rank
+                    var rank = rankingletters(letter)
                     var mod = scores[i].mods
                     var perfect = scores[i].perfect
                     var modandbit = moddetection(mod)
@@ -485,7 +514,6 @@ ${i+1}. **${shortenmod}** Score
                 var user = await osuApi.getUser({u: `${userid}`})
                 var username = user.name
                 for (var i = start; i < loop; i++) {
-                    console.log(i)
                     var title = best[i][1].title
                     var diff = best[i][1].version
                     var beatmapid = best[i][1].id
@@ -496,7 +524,8 @@ ${i+1}. **${shortenmod}** Score
                     var countmiss = Number(best[i][0].counts.miss)
                     var combo = best[i][0].maxCombo
                     var fc = best[i][1].maxCombo
-                    var rank = best[i][0].rank
+                    var letter = best[i][0].rank
+                    var rank = rankingletters(letter)
                     var pp = Number(best[i][0].pp).toFixed(2)
                     var mod = best[i][0].mods
                     var perfect = best[i][0].perfect
