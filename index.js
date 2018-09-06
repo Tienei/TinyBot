@@ -14,6 +14,7 @@ var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
 });
 
 var refresh = 0
+const date = require('/app/lib/date.js')
 
 bot.on('message', (message) => {
     
