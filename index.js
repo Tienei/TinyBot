@@ -3,8 +3,6 @@ const osu = require('node-osu');
 const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
-console.log('ok1')
-console.log('ok2')
 
 var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"218885558963798017","osuname":"Ryuriu"},{"username":"205339113858138112","osuname":"PotatoBoy123"}]
 var storedmapid = []
@@ -16,8 +14,6 @@ var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
 
 var refresh = 0
 bot.on('message', (message) => {
-
-    console.log('ok3')
 
     receive = true
     
@@ -197,7 +193,6 @@ Tiny bot command:
 
 
         async function osu(name, mode, modename) {
-            console.log('ok5')
                 var user = await osuApi.apiCall('/get_user', {u: `${name}`, m: `${mode}`})
                 if (user.length == 0) {
                     message.channel.send('Invalid user or something **-Chino**')
@@ -263,7 +258,6 @@ Tiny bot command:
         if (msg.substring(0,4) === '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop' && msg.substring(0,5) !== '!osud') {
             var check = message.content.substring(5)
             var name = playerdetection(check)
-            console.log('ok4')
             osu(name,0,'Standard')
         }
 
@@ -292,7 +286,6 @@ Tiny bot command:
                 for (var i = 0; i < 100; i++) {
                     var beatmapid = best[i][1].id
                     var thing = await ppandstarcalc(beatmapid,0,0,0,0,0,0,0)
-                    console.log(i)
                 }
             }
             osud()
