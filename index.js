@@ -598,4 +598,3 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
 });
 
 bot.login(process.env.BOT_TOKEN);
-const date = require('/app/lib/date.js')
