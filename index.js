@@ -15,7 +15,6 @@ var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
 
 var refresh = 0
 
-
 bot.on('message', (message) => {
     
     var msg = message.content.toLowerCase();
