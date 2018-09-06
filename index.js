@@ -14,7 +14,7 @@ var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
 });
 
 var refresh = 0
-const date = require('/app/lib/date.js')
+
 
 bot.on('message', (message) => {
     
@@ -598,3 +598,4 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
 });
 
 bot.login(process.env.BOT_TOKEN);
+const date = require('/app/lib/date.js')
