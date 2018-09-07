@@ -268,7 +268,7 @@ Tiny bot command:
                         cache.push({"username":message.author.id,"osuname":osuname})
                     }
                     message.channel.send(`You account has been linked to osu! username **${osuname}**`)
-                    bot.channels.get('457727640527175694').send(JSON.stringify(cache))
+                    bot.channels.get('487482583362568212').send(JSON.stringify(cache))
                 }
             }
             osuset()
