@@ -21,11 +21,11 @@ bot.on("ready", (ready) => {
     var month = date.getMonth()
     function getTime() {
         console.log('owo')
-        date = new Date()
+        date = new Date()   
         day = date.getDate()
         month = date.getMonth()
         if (day == 8 && month == 8) {
-            bot.channels.get('442183985536303104').send('Happy Birthday Tiny!!! :tada: :birthday: :tada:')
+            bot.channels.get('487479898903150612').send('Happy Birthday Tiny!!! :tada: :birthday: :tada:')
         }
     }
     
