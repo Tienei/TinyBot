@@ -30,7 +30,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    setInterval(getTime,1500)
+    //setInterval(getTime,1500)
 });
 
 bot.on('message', (message) => {
