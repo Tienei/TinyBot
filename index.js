@@ -5,7 +5,8 @@ const request = require('request-promise-native');
 const calc = require('ojsama')
 
 
-var cache =  [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"}]
+var cache = [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"218885558963798017","osuname":"Ryuriu"},{"username":"205339113858138112","osuname":"PotatoBoy123"}]
+
 var track = []
 var storedmapid = []
  
@@ -41,6 +42,8 @@ bot.on("message", (message) => {
     if (msg.substring(0,5) == '!help') {
         message.channel.send(`
 Tiny bot command:
+//[General]
+!avatar: Check user profile picture
 // [osu!]
 !osu (username): Check user osu status
 !taiko (username): Check user taiko status
@@ -50,6 +53,14 @@ Tiny bot command:
 !compare (username): Compare with other!
 !osutop (username,number[1-100]): Check your top best 100 play!
 [Note: If your osu username have a space in it, replace it with a "_"]`, {code:"css"})
+    }
+
+    // General related
+
+    if(msg.substring(0,7) == '!avatar') {
+        const embed = new Discord.RichEmbed()
+        .setImage(message.author.avatarURL)
+        message.channel.send({embed})
     }
 
     // Osu related
@@ -201,6 +212,36 @@ Tiny bot command:
         message.channel.send({embed});
 
     }   
+
+    if (msg.substring(0,7) == '!osuset') {
+        async function osuset () {
+            var osuname = message.content.substring(8)
+            var detected = false
+            var user = await osuApi.getUser({u: `${osuname}`})
+            var name = user.name
+            if (name == undefined) {
+                message.channel.send('Please enter a valid osu username! >:c')
+            } else {
+                for (var i = 0; i <= cache.length - 1; i++) {
+                    if (cache.length <= 0) {
+                        cache.push({"username":message.author.id,"osuname":osuname})
+                    }
+                    if (i < cache.length - 1) {
+                        if (cache[i].username == message.author.id) {
+                            cache[i].osuname = osuname
+                            detected = true
+                        }
+                    }
+                }
+                if (detected == false) {
+                    cache.push({"username":message.author.id,"osuname":osuname})
+                }
+                message.channel.send(`You account has been linked to osu! username **${osuname}**`)
+                bot.channels.get('487482583362568212').send(`***User set:*** \n ${JSON.stringify(cache)}`)
+            }
+        }
+        osuset()
+    }
 
     if (msg.substring(0,4) === '!osu' && msg.substring(0,7) !== '!osuset' && msg.substring(0,7) !== '!osutop' && msg.substring(0,5) !== '!osud') {
         var check = message.content.substring(5)
@@ -483,6 +524,6 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
         osutop()
     }
 
-});
+})
 
 bot.login(process.env.BOT_TOKEN);
