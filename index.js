@@ -56,15 +56,9 @@ Tiny bot command:
 
     // General related
 
-    if(msg.substring(0,7) == '!avatar') {
-        var image = ''
-        if (msg.substring(8) == '') {
-            image = message.author.avatarURL
-        } else {
-            image = bot.users.get(msg.substring(10,msg.length - 1)).avatarURL
-        }
+     if(msg.substring(0,7) == '!avatar') {
         const embed = new Discord.RichEmbed()
-        .setImage(image)
+        .setImage(message.author.avatarURL)
         message.channel.send({embed})
     }
 
