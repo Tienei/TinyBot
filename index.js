@@ -42,7 +42,7 @@ bot.on("message", (message) => {
         message.channel.send(`
 Tiny bot command:
 //[General]
-!avatar: Check user profile picture
+!avatar (username): Check user profile picture
 // [osu!]
 !osu (username): Check user osu status
 !taiko (username): Check user taiko status
@@ -57,8 +57,14 @@ Tiny bot command:
     // General related
 
     if(msg.substring(0,7) == '!avatar') {
+        var image = ''
+        if (msg.substring(8) == '') {
+            image = message.author.avatarURL
+        } else {
+            image = bot.users.get(msg.substring(10,msg.length - 1)).avatarURL
+        }
         const embed = new Discord.RichEmbed()
-        .setImage(message.author.avatarURL)
+        .setImage(image)
         message.channel.send({embed})
     }
 
@@ -524,5 +530,4 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
     }
 
 })
-
 bot.login(process.env.BOT_TOKEN);
