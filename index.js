@@ -235,7 +235,7 @@ bot.on("message", (message) => {
             var a = user[0].count_rank_a
 
             const embed = new Discord.RichEmbed()
-            .setTitle(`Osu!${modename} status for: ${username}`)
+            .setAuthor(`Osu!${modename} status for: ${username}`,'',`https://osu.ppy.sh/users/${id}`)
             .setDescription(`
     ▸**Performance:** ${pp}pp 
     ▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
@@ -273,7 +273,10 @@ bot.on("message", (message) => {
                     if (detected == false) {
                         cache.push({"username":message.author.id,"osuname":osuname})
                     }
-                    message.channel.send(`You account has been linked to osu! username **${osuname}**`)
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Your account has been linked to osu! username: ${osuname}`,'',`https://osu.ppy.sh/users/${user.id}`)
+                    .setImage(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
+                    message.channel.send({embed})
                     bot.channels.get('487482583362568212').send(`***User set:*** \n ${JSON.stringify(cache)}`)
                 }
             }
