@@ -56,6 +56,7 @@ bot.on("message", (message) => {
         if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Commands for Tiny Bot v2`)
+            .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 --- [General]
 !avatar (username): Check user profile picture
@@ -74,8 +75,6 @@ bot.on("message", (message) => {
             message.channel.send({embed})
         }
 
-        // General related
-
         if(msg.substring(0,7) == '!avatar' && msg.substring(0,7) == command) {
             var image = ''
             var username = ''
@@ -93,6 +92,12 @@ bot.on("message", (message) => {
             .setAuthor(`Avatar for ${username}`)
             .setImage(image)
             message.channel.send({embed})
+        }
+
+        if (msg.includes(`<@${bot.user.id}>`) == true) {
+            var roll = Math.floor(Math.random()*6)
+            var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,`Why you keep pinged me?`,`Stop pinged me! <:chinoangry:450686707881213972>`,`What do you need senpai? <:chinohappy:450684046129758208>`,`<:chinopinged:450680698613792783>`]
+            message.channel.send(respone[roll])
         }
 
         // Osu related
@@ -569,6 +574,7 @@ bot.on("message", (message) => {
             }
             osutop()
         }
+
     }
 
 })
