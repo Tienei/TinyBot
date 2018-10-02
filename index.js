@@ -176,7 +176,7 @@ bot.on("ready", (ready) => {
     ▸ **Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
     ▸ **PP: ${pp} (+${ppgain}pp)** [${fcguess}]
     ▸ **Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`)
-                            message.channel.send({embed});
+                            bot.channels.get(track[player].trackonchannel).send({embed})
                             break;
                         }
                     }
