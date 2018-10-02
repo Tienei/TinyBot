@@ -182,14 +182,14 @@ bot.on("ready", (ready) => {
                 }
             }
         }
-        if (player = track.length - 1) {
+        if (player >= track.length - 1) {
             player = 0
         } else {
             player += 1
         }
     }
 
-    setInterval(realtimeosutrack, 1000)
+    setInterval(realtimeosutrack, 2000)
 });
 
 bot.on("message", (message) => {
