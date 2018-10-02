@@ -89,6 +89,7 @@ async function mapcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode)
     } else {
         accuracy = acc
     }
+    console.log(stars,combo,countmiss,accuracy,map)
     var score = {
         stars: stars,
         combo: combo,
@@ -191,6 +192,7 @@ bot.on("ready", (ready) => {
         player += 1
     }
 
+    setInterval(realtimeosutrack, 10000)
 });
 
 bot.on("message", (message) => {
