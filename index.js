@@ -121,11 +121,22 @@ bot.on("ready", (ready) => {
         var top50 = track[player].top50pp
         console.log(name,top50)
         var recent = await osuApi.getUserRecent({u: name})
+        var beatmapid = recent[0][0].id
+        var count300 = Number(recent[0][0].counts['300'])
+        var count100 = Number(recent[0][0].counts['100'])
+        var count50 = Number(recent[0][0].counts['50'])
+        var countmiss = Number(recent[0][0].counts.miss)
+        var combo = recent[0][0].maxCombo
+        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+        var mod = recent[0][0].mods
+        var modandbit = mods(mod)
+        var bitpresent = modandbit.bitpresent
+        var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
         console.log(recent) 
         console.log('work2')
         if (recent[0][0].date !== track[player].recenttimeplay) {
             console.log('work3')
-            if(recent[0][0].pp.raw > top50) {
+            if(recentcalc.pp > top50) {
                 console.log('work4')
                 track[player].recenttimeplay = recent[0][0].date
                 var best = await osuApi.getUserBest({u: name, limit: 50})
@@ -135,7 +146,6 @@ bot.on("ready", (ready) => {
                         var pp = best[i][0].pp
                         var ppgain = Number(user[0].pp_raw).toFixed(2) - Number(track[plyaer].lasttotalpp)
                         var beatmap = best[i][0].title
-                        var beatmapid = best[i][0].id
                         var beatmapidfixed = best[i][0].beatmapsetId
                         var beatmap = best[0][1].title
                         var diff = best[0][1].version
@@ -180,6 +190,8 @@ bot.on("ready", (ready) => {
         }
         player += 1
     }
+
+    setInterval(realtimeosutrack, 10000)
 });
 
 bot.on("message", (message) => {
