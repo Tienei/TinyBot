@@ -140,7 +140,7 @@ bot.on("ready", (ready) => {
                             var pp = best[i][0].pp
                             var ppgain = Number(user[0].pp_raw).toFixed(2) - Number(track[plyaer].lasttotalpp)
                             var beatmap = best[i][0].title
-                            var beatmapidfixed = best[i][0].beatmapsetId
+                            var beatmapidfixed = best[i][0].beatmapSetId
                             var beatmap = best[0][1].title
                             var diff = best[0][1].version
                             var combo = best[i][0].maxCombo
@@ -184,9 +184,9 @@ bot.on("ready", (ready) => {
             }
         }
     }
+
     setInterval(realtimeosutrack, 10000)
 });
-
 
 bot.on("message", (message) => {
 
@@ -460,8 +460,9 @@ bot.on("message", (message) => {
                     message.channel.send('No play found within 24 hours of this user **-Tiny**')
                 }
                 var getplayer = await osuApi.apiCall('/get_user', {u: name})
-                var beatmapidfixed = recent[0][1].id
-                var beatmapid = recent[0][1].beatmapsetId
+                var beatmapidfixed = recent[0][1].beatmapSetId
+                var beatmapid = recent[0][1].id
+                console.log(beatmapid,beatmapidfixed)
                 var scores = recent[0][0].score
                 var userid = recent[0][0].user.id
                 var beatmap = recent[0][1].title
