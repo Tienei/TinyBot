@@ -116,10 +116,8 @@ bot.on("ready", (ready) => {
     // osutrack
     var player = 0
     async function realtimeosutrack() {
-        console.log('work1')
         var name = track[player].osuname
         var top50 = track[player].top50pp
-        console.log(name,top50)
         var recent = await osuApi.getUserRecent({u: name})
         var beatmapid = recent[0][1].id
         var count300 = Number(recent[0][0].counts['300'])
@@ -132,12 +130,8 @@ bot.on("ready", (ready) => {
         var modandbit = mods(mod)
         var bitpresent = modandbit.bitpresent
         var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
-        console.log(recentcalc) 
-        console.log('work2')
         if (recent[0][0].date !== track[player].recenttimeplay) {
-            console.log('work3')
             if(recentcalc.pp > top50) {
-                console.log('work4')
                 track[player].recenttimeplay = recent[0][0].date
                 var best = await osuApi.getUserBest({u: name, limit: 50})
                 var user = await osuApi.apiCall('/get_user', {u: name})
@@ -188,8 +182,14 @@ bot.on("ready", (ready) => {
                 }
             }
         }
-        player += 1
+        if (player = track.length - 1) {
+            player = 0
+        } else {
+            player += 1
+        }
     }
+
+    setInterval(realtimeosutrack, 200)
 });
 
 bot.on("message", (message) => {
