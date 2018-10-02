@@ -188,8 +188,6 @@ bot.on("ready", (ready) => {
             player += 1
         }
     }
-
-    setInterval(realtimeosutrack, 2000)
 });
 
 bot.on("message", (message) => {
