@@ -89,7 +89,6 @@ async function mapcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode)
     } else {
         accuracy = acc
     }
-    console.log(stars,combo,countmiss,accuracy,map)
     var score = {
         stars: stars,
         combo: combo,
@@ -122,7 +121,7 @@ bot.on("ready", (ready) => {
         var top50 = track[player].top50pp
         console.log(name,top50)
         var recent = await osuApi.getUserRecent({u: name})
-        var beatmapid = recent[0][0].id
+        var beatmapid = recent[0][1].id
         var count300 = Number(recent[0][0].counts['300'])
         var count100 = Number(recent[0][0].counts['100'])
         var count50 = Number(recent[0][0].counts['50'])
@@ -133,7 +132,7 @@ bot.on("ready", (ready) => {
         var modandbit = mods(mod)
         var bitpresent = modandbit.bitpresent
         var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
-        console.log(recent) 
+        console.log(recentcalc) 
         console.log('work2')
         if (recent[0][0].date !== track[player].recenttimeplay) {
             console.log('work3')
@@ -192,6 +191,7 @@ bot.on("ready", (ready) => {
         player += 1
     }
 
+    setInterval(realtimeosutrack, 10000)
 });
 
 bot.on("message", (message) => {
