@@ -461,7 +461,7 @@ bot.on("message", (message) => {
                 }
                 var getplayer = await osuApi.apiCall('/get_user', {u: name})
                 var beatmapidfixed = recent[0][1].id
-                var map = recent[0][1].beatmapsetId
+                var beatmapid = recent[0][1].beatmapsetId
                 var scores = recent[0][0].score
                 var userid = recent[0][0].user.id
                 var beatmap = recent[0][1].title
