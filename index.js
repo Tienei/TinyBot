@@ -195,7 +195,6 @@ bot.on("ready", (ready) => {
         }
     }
     
-    setInterval(realtimeosutrack, 10000)
 });
 
 bot.on("message", (message) => {
