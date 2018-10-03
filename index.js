@@ -130,7 +130,7 @@ bot.on("ready", (ready) => {
             var modandbit = mods(mod)
             var bitpresent = modandbit.bitpresent
             var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
-            if (recent[0][0].date !== track[player].recenttimeplay) {
+            if (String(track[player].recenttimeplay) !== String(recent[0][0].date)) {
                 console.log('new recent')
                 var user = await osuApi.apiCall('/get_user', {u: name})
                 track[player].lasttotalpp = user[0].pp_raw
@@ -194,6 +194,8 @@ bot.on("ready", (ready) => {
             }
         }
     }
+    
+    setInterval(realtimeosutrack, 10000)
 });
 
 bot.on("message", (message) => {
