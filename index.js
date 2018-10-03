@@ -132,9 +132,10 @@ bot.on("ready", (ready) => {
             var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
             if (recent[0][0].date !== track[player].recenttimeplay) {
                 var user = await osuApi.apiCall('/get_user', {u: name})
-                track[i].lasttotalpp = user[0].pp_raw
-                track[i].lastrank = user[0].pp_rank
-                track[i].lastcountryrank = user[0].pp_country_rank
+                track[player].lasttotalpp = user[0].pp_raw
+                track[player].lastrank = user[0].pp_rank
+                track[player].lastcountryrank = user[0].pp_country_rank
+                track[player].recenttimeplay = recent[0][0].date
                 if(recentcalc.pp > top50) {
                     track[player].recenttimeplay = recent[0][0].date
                     var best = await osuApi.getUserBest({u: name, limit: 50})
@@ -180,9 +181,10 @@ bot.on("ready", (ready) => {
     ▸ **PP: ${pp} (+${ppgain}pp)** [${fcguess}]
     ▸ **Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`)
                             bot.channels.get(track[player].trackonchannel).send({embed})
-                            track[i].lasttotalpp = user[0].pp_raw
-                            track[i].lastrank = user[0].pp_rank
-                            track[i].lastcountryrank = user[0].pp_country_rank
+                            track[player].lasttotalpp = user[0].pp_raw
+                            track[player].lastrank = user[0].pp_rank
+                            track[player].lastcountryrank = user[0].pp_country_rank
+                            track[player].recenttimeplay = recent[0][0].date
                             break;
                         }
                     }
