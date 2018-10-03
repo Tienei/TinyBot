@@ -114,8 +114,8 @@ bot.on("ready", (ready) => {
 
     // osutrack
     async function realtimeosutrack() {
-        console.log('trigger')
         for (var player = 0; player < track.length -1; player++) {
+            console.log(track[player].osuname)
             var name = track[player].osuname
             var top50 = track[player].top50pp
             var recent = await osuApi.getUserRecent({u: name})
@@ -131,6 +131,7 @@ bot.on("ready", (ready) => {
             var bitpresent = modandbit.bitpresent
             var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
             if (recent[0][0].date !== track[player].recenttimeplay) {
+                console.log('new recent')
                 var user = await osuApi.apiCall('/get_user', {u: name})
                 track[player].lasttotalpp = user[0].pp_raw
                 track[player].lastrank = user[0].pp_rank
@@ -141,6 +142,7 @@ bot.on("ready", (ready) => {
                     var best = await osuApi.getUserBest({u: name, limit: 50})
                     for (var i = 0; i < best.length; i++) {
                         if (best[i][0].date == recent[0][0].date) {
+                            console.log('new top play')
                             var pp = best[i][0].pp
                             var ppgain = Number(user[0].pp_raw).toFixed(2) - Number(track[plyaer].lasttotalpp)
                             var beatmap = best[i][0].title
