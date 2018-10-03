@@ -114,7 +114,8 @@ bot.on("ready", (ready) => {
 
     // osutrack
     async function realtimeosutrack() {
-        for (var player = 0; player < track.length; player++) {
+        console.log('trigger')
+        for (var player = 0; player < track.length -1; player++) {
             var name = track[player].osuname
             var top50 = track[player].top50pp
             var recent = await osuApi.getUserRecent({u: name})
@@ -183,8 +184,8 @@ bot.on("ready", (ready) => {
             }
         }
     }
-
-    setInterval(realtimeosutrack, 10000)
+    
+    setInterval(realtimeosutrack, 1000)
 });
 
 bot.on("message", (message) => {
