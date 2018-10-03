@@ -114,7 +114,7 @@ bot.on("ready", (ready) => {
 
     // osutrack
     async function realtimeosutrack() {
-        for (var player = 0; player < track.length -1; player++) {
+        for (var player = 0; player <= track.length -1; player++) {
             console.log(track[player].osuname)
             var name = track[player].osuname
             var top50 = track[player].top50pp
