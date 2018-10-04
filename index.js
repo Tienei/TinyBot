@@ -1,3 +1,9 @@
+var cache =   []
+cache = JSON.parse(process.env.OSU_SET)
+var track =  []
+cache = JSON.parse(process.env.TRACK)
+var storedmapid = []
+
 const Discord = require('discord.js');
 const osu = require('node-osu');
 const bot = new Discord.Client();
@@ -8,10 +14,6 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
 });
-
-var cache =   [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"218885558963798017","osuname":"ryuriu"},{"username":"205339113858138112","osuname":"PotatoBoy123"},{"username":"257022908512206849","osuname":"Great Fog"},{"username":"391571903308890113","osuname":"TatsuMon"},{"username":"473484922368294932","osuname":"Shienei"}]
-var track =  [{"osuname":"Tienei","top50pp":"165.637","lasttotalpp":"2922.46","lastrank":"71326","lastcountryrank":"554","trackonchannel":"487482567273086986","recenttimeplay":"2018-10-03T07:13:36.000Z"},{"osuname":"TatsuMon","top50pp":"110.622","lasttotalpp":"1556.85","lastrank":"176533","lastcountryrank":"65","trackonchannel":"487482567273086986","recenttimeplay":"2018-10-03T09:31:30.000Z"},{"osuname":"Ryuriu","top50pp":"163.873","lasttotalpp":"2252.1","lastrank":"111583","lastcountryrank":"18335","trackonchannel":"487482567273086986","recenttimeplay":""},{"osuname":"Shienei","top50pp":"19.3646","lasttotalpp":"253.847","lastrank":"698290","lastcountryrank":"8055","trackonchannel":"487482567273086986","recenttimeplay":""}]
-var storedmapid = []
 
 var refresh = 0
 
@@ -131,9 +133,9 @@ bot.on("ready", (ready) => {
             var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
             if (String(track[player].recenttimeplay) !== String(recent[0][0].date)) {
                 console.log('new recent')
+                track[player].recenttimeplay = recent[0][0].date
                 var user = await osuApi.apiCall('/get_user', {u: name})
                 if(Number(recentcalc.pp.total) > Number(top50)) {
-                    track[player].recenttimeplay = recent[0][0].date
                     var best = await osuApi.getUserBest({u: name, limit: 50})
                     for (var i = 0; i <= best.length; i++) {
                         if (String(best[i][0].date) === String(recent[0][0].date)) {
@@ -188,11 +190,16 @@ bot.on("ready", (ready) => {
                             break;
                         }
                     }
+                } else {
+                    track[player].lasttotalpp = user[0].pp_raw
+                    track[player].lastrank = user[0].pp_rank
+                    track[player].lastcountryrank = user[0].pp_country_rank
                 }
             }
         }
     }
-   
+    
+    setInterval(realtimeosutrack, 10000)
 });
 
 bot.on("message", (message) => {
