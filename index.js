@@ -369,7 +369,7 @@ bot.on("message", (message) => {
             osuset()
         }
 
-        if (msg.substring(0,9) == '!osutrack' && msg.substring(0,9) == command) {
+        if (msg.substring(0,9) == '!osutrack' && msg.substring(0,9) == command && message.channel.id !== undefined) {
             async function osutrack() {
                 var osuname = message.content.substring(10)
                 var detected = false
