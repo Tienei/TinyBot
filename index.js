@@ -1,14 +1,15 @@
+var cache =  []
+cache = JSON.parse(process.env.OSUSET)
+var track =  []
+track = JSON.parse(process.env.TRACK)
+var storedmapid = []
+ 
 const Discord = require('discord.js');
 const osu = require('node-osu');
 const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 
-var cache =  [{"username":"292523841811513348","osuname":"Tienei"},{"username":"413613781793636352","osuname":"yazzymonkey"},{"username":"175179081397043200","osuname":"pykemis"},{"username":"253376598353379328","osuname":"jpg"},{"username":"183918990446428160","osuname":"Pillows"},{"username":"103139260340633600","osuname":"Jamu"},{"username":"384878793795436545","osuname":"jp0806"},{"username":"179059666159009794","osuname":"Loopy542"},{"username":"253376598353379328","osuname":"jpg"},{"username":"254273747484147713","osuname":"Nashiru"},{"username":"244923259001372672","osuname":"gimli"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"228166377502932992","osuname":"zwoooz"},{"username":"339968422332858371","osuname":"Nintelda"},{"username":"327449679790866432","osuname":"KGbalaTOK"},{"username":"81826878335225856","osuname":"OzzyOzborne"},{"username":"218885558963798017","osuname":"ryuriu"},{"username":"205339113858138112","osuname":"PotatoBoy123"},{"username":"257022908512206849","osuname":"Great Fog"},{"username":"391571903308890113","osuname":"TatsuMon"}]
-
-var track =  [{"osuname":"Tienei","top50pp":"165.637","lasttotalpp":"2909.49","lastrank":"71709","lastcountryrank":"554","trackonchannel":"487482567273086986","recenttimeplay":""}]
-var storedmapid = []
- 
 var osuApi = new osu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
@@ -186,17 +187,9 @@ bot.on("ready", (ready) => {
                             track[player].lastrank = user[0].pp_rank
                             track[player].lastcountryrank = user[0].pp_country_rank
                             track[player].top50pp = best[49][0].pp
-                            bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
                             break;
                         }
                     }
-                } else {
-                    console.log('not a new top play')
-                    track[player].lasttotalpp = user[0].pp_raw
-                    track[player].lastrank = user[0].pp_rank
-                    track[player].lastcountryrank = user[0].pp_country_rank
-                    track[player].recenttimeplay = recent[0][0].date
-                    bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
                 }
             }
         }
@@ -384,7 +377,7 @@ bot.on("message", (message) => {
                 } else {
                     for (var i = 0; i <= track.length - 1; i++) {
                         if (track.length <= 0) {
-                            track.push({"osuname":name,"top50pp":best[0][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
+                            track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
                         }
                         if (i < track.length - 1 || track.length == 1) {
                             if (track[i].trackonchannel == message.channel.id && track[i].osuname == name) {
@@ -397,10 +390,10 @@ bot.on("message", (message) => {
                         }
                     }
                     if (detected == false) {
-                        track.push({"osuname":name,"top50pp":best[0][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
+                        track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
                     }
                     message.channel.send(`**${name}** has been tracked on **#${message.channel.name}**`)
-                    bot.channels.get('487482583362568212').send(`***Track set:*** \n ${JSON.stringify(track)}`)
+                    bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
                 }
             }
             osutrack()            
