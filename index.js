@@ -1,7 +1,7 @@
-var cache =   []
+var cache = []
 cache = JSON.parse(process.env.OSU_SET)
-var track =  []
-cache = JSON.parse(process.env.TRACK)
+var track = []
+track = JSON.parse(process.env.TRACK)
 var storedmapid = []
 
 const Discord = require('discord.js');
