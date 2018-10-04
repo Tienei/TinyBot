@@ -126,31 +126,29 @@ bot.on("ready", (ready) => {
             var countmiss = Number(recent[0][0].counts.miss)
             var combo = recent[0][0].maxCombo
             var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-            var mod = recent[0][0].mods
+            var mod = recent[0][0].mods 
             var modandbit = mods(mod)
             var bitpresent = modandbit.bitpresent
             var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
             if (String(track[player].recenttimeplay) !== String(recent[0][0].date)) {
                 console.log('new recent')
                 var user = await osuApi.apiCall('/get_user', {u: name})
-                track[player].lasttotalpp = user[0].pp_raw
-                track[player].lastrank = user[0].pp_rank
-                track[player].lastcountryrank = user[0].pp_country_rank
-                track[player].recenttimeplay = recent[0][0].date
-                if(recentcalc.pp > top50) {
+                if(Number(recentcalc.pp.total) > Number(top50)) {
                     track[player].recenttimeplay = recent[0][0].date
                     var best = await osuApi.getUserBest({u: name, limit: 50})
-                    for (var i = 0; i < best.length; i++) {
-                        if (best[i][0].date == recent[0][0].date) {
+                    for (var i = 0; i <= best.length; i++) {
+                        if (String(best[i][0].date) === String(recent[0][0].date)) {
                             console.log('new top play')
+                            var country = String(user[0].country).toLowerCase()
                             var pp = best[i][0].pp
-                            var ppgain = Number(user[0].pp_raw).toFixed(2) - Number(track[plyaer].lasttotalpp)
-                            var beatmap = best[i][0].title
-                            var beatmapidfixed = best[i][0].beatmapSetId
-                            var beatmap = best[0][1].title
-                            var diff = best[0][1].version
+                            var ppgain = (Number(user[0].pp_raw).toFixed(2) - Number(track[player].lasttotalpp)).toFixed(2)
+                            var beatmap = best[i][1].title
+                            var beatmapidfixed = best[i][1].beatmapSetId
+                            var diff = best[i][1].version
+                            var scores = best[i][0].score
                             var combo = best[i][0].maxCombo
                             var fc = best[i][1].maxCombo
+                            var perfect = best[i][0].perfect
                             var letter = best[i][0].rank
                             var rank = rankingletters(letter)
                             var modandbit = mods(mod)
@@ -162,6 +160,7 @@ bot.on("ready", (ready) => {
                             var countmiss = Number(best[i][0].counts.miss)
                             var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                             var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                            var star = Number(fccalc.star.total).toFixed(2)
                             var fcpp = Number(fccalc.pp.total).toFixed(2)
                             var fcacc = fccalc.acc
                             var fcguess = ``
@@ -172,12 +171,12 @@ bot.on("ready", (ready) => {
                                 fcguess = `${fcpp}pp for ${fcacc}%`
                             }
                             const embed = new Discord.RichEmbed()
-                            .setAuthor(`New #${i} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].username}.png?date=${refresh}`)
+                            .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
                             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
                             .setColor('#7f7fff')
                             .setDescription(`
     **[${beatmap} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod} (${star}★)**
-    **▸ #${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}:: #${track[player].lastcountryrank} → #${user[0].pp_country_rank})
+    **▸ #${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})**
     ▸ Scores: ${scores}
     ▸ **Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
     ▸ **PP: ${pp} (+${ppgain}pp)** [${fcguess}]
@@ -186,15 +185,24 @@ bot.on("ready", (ready) => {
                             track[player].lasttotalpp = user[0].pp_raw
                             track[player].lastrank = user[0].pp_rank
                             track[player].lastcountryrank = user[0].pp_country_rank
-                            track[player].recenttimeplay = recent[0][0].date
+                            track[player].top50pp = best[49][0].pp
+                            bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
                             break;
                         }
                     }
+                } else {
+                    console.log('not a new top play')
+                    track[player].lasttotalpp = user[0].pp_raw
+                    track[player].lastrank = user[0].pp_rank
+                    track[player].lastcountryrank = user[0].pp_country_rank
+                    track[player].recenttimeplay = recent[0][0].date
+                    bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
                 }
             }
         }
     }
     
+    setInterval(realtimeosutrack, 10000)
 });
 
 bot.on("message", (message) => {
