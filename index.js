@@ -3,8 +3,6 @@ cache = JSON.parse(process.env.OSU_SET)
 var track = []
 track = JSON.parse(process.env.TRACK)
 var storedmapid = []
-
-
 const Discord = require('discord.js');
 const osu = require('node-osu');
 const bot = new Discord.Client();
@@ -370,8 +368,8 @@ bot.on("message", (message) => {
             }
         }
 
-        async function recent() {
-            var check = message.content.substring(8);
+        async function recent(start) {
+            var check = message.content.substring(start);
             var name = checkplayer(check)
             var recent = await osuApi.getUserRecent({u: name})
             if (recent.length == 0) {
@@ -473,8 +471,8 @@ bot.on("message", (message) => {
             message.channel.send({embed})
         }
 
-        async function compare() {
-            var check = message.content.substring(9);
+        async function compare(start) {
+            var check = message.content.substring(start);
             var name = checkplayer(check)
             var storedid = 0
             for (var i = storedmapid.length-1; i > -1; i--) {
@@ -700,12 +698,20 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             message.channel.send('Commands work in progress! >.<')
         }
 
-        if ((msg.substring(0,7) == '!recent' || msg.substring(0,2) == '!r') && msg.substring(0,7) == command) {
-            recent()
+        if (msg.substring(0,7) == '!recent' && msg.substring(0,7) == command) {
+            recent(8)
         }
 
-        if ((msg.substring(0,8) == '!compare' || msg.substring(0,2) == '!c') && msg.substring(0,8) == command) {
-            compare()
+        if (msg.substring(0,8) == '!compare' && msg.substring(0,8) == command) {
+            compare(9)
+        }
+
+        if (msg.substring(0,2) == '!r' && msg.substring(0,7) == command) {
+            recent(3)
+        }
+
+        if (msg.substring(0,2) == '!c' && msg.substring(0,8) == command) {
+            compare(3)
         }
 
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
