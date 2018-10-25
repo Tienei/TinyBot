@@ -706,11 +706,11 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             compare(9)
         }
 
-        if (msg.substring(0,2) == '!r' && msg.substring(0,7) == command) {
+        if (msg.substring(0,2) == '!r' && msg.substring(0,2) == command) {
             recent(3)
         }
 
-        if (msg.substring(0,2) == '!c' && msg.substring(0,8) == command) {
+        if (msg.substring(0,2) == '!c' && msg.substring(0,2) == command) {
             compare(3)
         }
 
