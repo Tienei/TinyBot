@@ -7,7 +7,7 @@ const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 
-var osuApi = new osu.Api('70095e8e72a161b213c44dfb47b44daf258c70bb', {
+var osuApi = new osu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
 });
