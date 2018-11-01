@@ -93,7 +93,7 @@ async function mapcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode)
         acc_percent: accuracy
     }
     var pp = calc.ppv2(score)
-    return {star: stars,pp: pp,acc: accuracy}
+    return {star: stars,pp: pp,acc: accuracy, ar: stars.map.ar, od: stars.map.od, hp: stars.map.hp, cs: stars.map.cs}
 }
 
 bot.on("ready", (ready) => {
@@ -110,7 +110,6 @@ bot.on("ready", (ready) => {
     var day = date.getDate()
     var month = date.getMonth()
     function getTime() {
-        console.log('owo')
         date = new Date()   
         day = date.getDate()
         month = date.getMonth()
@@ -246,7 +245,9 @@ bot.on("message", (message) => {
 !recent (username): Check user most recent play
 !compare (username): Compare with other!
 !osutop (username,number[1-100]): Check your top best 100 play!
-[Note: If your osu username have a space in it, replace it with a "_"]`
+Note: 
+- If your osu username have a space in it, replace it with a "_"
+- Every mode (beside Standard) is not fully supported!`
             )
             message.channel.send({embed})
         }
@@ -550,7 +551,7 @@ ${i+1}. **${shortenmod}** Score
             message.channel.send({embed});
         }
 
-                async function osutop() {
+        async function osutop() {
             var player = ''
             var start = 0
             var loop = 0
@@ -641,6 +642,118 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             message.channel.send({embed});
         }
 
+        async function beatmapdetail() {
+            var beatmapid = []
+            var start = 0
+            var mods = []
+            for (var embeds = 0; embeds < message.embeds.length; embeds++) {
+                var type = message.embeds[embeds].url
+                if (type.substring(0,21) == 'https://osu.ppy.sh/b/') {
+                    beatmapid.push(type.substring(21,type.length-4))
+                    for (var i = start; i <= msg.length; i++) {
+                        if (msg.substr(i,21+beatmapid[embeds].length) == type.substring(0,type.length-4)) {
+                            start = i+21+beatmapid[embeds].length+4
+                            break;
+                        }
+                    }
+                    if (msg.substr(start+1,1) == "+") {
+                        for (var i = start+2; i <= msg.length; i++) {
+                            if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
+                                mods.push(msg.substring(start+2,i))
+                                start = i
+                                break;
+                            }
+                        }
+                    } else {
+                        mods.push('No Mod')
+                    }
+                }
+                if (type.substring(0,31) == 'https://osu.ppy.sh/beatmapsets/') {
+                    for (var i = start; i < msg.length; i++) {
+                        if (msg.substr(i,31) == type.substring(0,31)) {
+                            start = i+31
+                            break;
+                        }
+                    }
+                    for (var i = start; i < msg.length; i++) {
+                        if (msg.substr(i,1) == '/') {
+                            start = i+1
+                            break;
+                        }
+                    }
+                    for (var i = start; i <= msg.length; i++) {
+                        if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
+                            beatmapid.push(msg.substring(start,i))
+                            start = i
+                            break;
+                        }
+                    }
+                    if (msg.substr(start+1,1) == "+") {
+                        for (var i = start+2; i <= msg.length; i++) {
+                            if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
+                                mods.push(msg.substring(start+2,i))
+                                start = i
+                                break;
+                            }
+                        }
+                    } else {
+                        mods.push('No Mod')
+                    }
+                }
+            }
+            for (i = 0; i < beatmapid.length; i++) {
+                var bitpresent = 0
+                var mod = {
+                    nf: 1,
+                    ez: 2,
+                    hd: 8,
+                    hr: 16,
+                    dt: 64,
+                    rx: 128,
+                    ht: 256,
+                    nc: 512,
+                    fl: 1024
+                }
+                for (var m = 0; m <= mods[i].length; m++) {
+                    if (mod[mods[i].substr(m*2,2)]) {
+                        bitpresent += mod[mods[i].substr(m*2,2)]
+                    }
+                }
+                var map = await osuApi.getBeatmaps({b: beatmapid[i]})
+                var beatmapidfixed = map[0].beatmapSetId
+                var title = map[0].title
+                var mapper = map[0].creator
+                var totallength = map[0].time.total
+                var bpm = map[0].bpm
+                if (mods[i].includes('dt') == true){
+                    totallength = Number(totallength / 1.5).toFixed(0)
+                    bpm = Number(bpm * 1.5).toFixed(0)
+                }
+                var time = `${Math.floor(totallength / 60)}:${totallength - Math.floor(totallength / 60) * 60}`
+                var version = map[0].version
+                var maxCombo = map[0].maxCombo
+                var acc95 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,95,0)
+                var acc99 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,99,0)
+                var acc100 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,100,0)
+                var ar = acc100.ar
+                var od = acc100.od
+                var hp = acc100.hp
+                var cs = acc100.cs
+                const embed = new Discord.RichEmbed()
+                .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}`)
+                .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+                .setColor('#7f7fff')
+                .setDescription(`
+**Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
+**Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
+<:difficultyIcon:507522545759682561> __${version}__  ▸ **Max Combo:** ${maxCombo}
+▸**AR:** ${ar} ▸**OD:** ${od} ▸**HP:** ${hp} ▸**CS:** ${cs}
+▸**PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`)
+                message.channel.send({embed});
+            }
+
+        }
+
         async function osud() {
             var check = message.content.substring(8);
             var name = checkplayer(check)
@@ -696,7 +809,6 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             var name = checkplayer(check)
             osu(name,3,'Mania')
         }
-
         if (msg.substring(0,5) == '!osud' && msg.substring(0,5) == command) {
             message.channel.send('Commands work in progress! >.<')
         }
@@ -724,6 +836,9 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
             osutop()
         }
+
+        // Detection
+        beatmapdetail()
 
     }
 
