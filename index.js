@@ -1,7 +1,5 @@
 var cache = []
-cache = JSON.parse(process.env.OSU_SET)
 var track = []
-track = JSON.parse(process.env.TRACK)
 var storedmapid = []
 const Discord = require('discord.js');
 const osu = require('node-osu');
@@ -99,6 +97,15 @@ async function mapcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode)
 }
 
 bot.on("ready", (ready) => {
+    async function getData() {
+        var backupmessage = await bot.channels.get('487482583362568212').fetchMessages({limit: 1})
+        var backup = backupmessage.first().content
+        cache = JSON.parse(backup.substring(18))
+        var trackmessage = await bot.channels.get('497302830558871552').fetchMessages({limit: 1})
+        var trackbackup = trackmessage.first().content
+        track = JSON.parse(trackbackup.substring(19))
+    }
+    getData()
     var date = new Date()
     var day = date.getDate()
     var month = date.getMonth()
