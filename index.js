@@ -646,13 +646,13 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             var beatmapid = []
             var start = 0
             var mods = []
-            for (var embeds = 0; embeds < message.embeds.length; embeds++) {
-                var type = message.embeds[embeds].url
-                if (type.substring(0,21) == 'https://osu.ppy.sh/b/') {
-                    beatmapid.push(type.substring(21,type.length-4))
+            for (var m = 0; m < msg.length; m++) {
+                if (msg.substr(m,21) == 'https://osu.ppy.sh/b/') {
+                    start = m + 21
                     for (var i = start; i <= msg.length; i++) {
-                        if (msg.substr(i,21+beatmapid[embeds].length) == type.substring(0,type.length-4)) {
-                            start = i+21+beatmapid[embeds].length+4
+                        if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
+                            beatmapid.push(msg.substring(start,i-4))
+                            start = i
                             break;
                         }
                     }
@@ -660,21 +660,17 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                         for (var i = start+2; i <= msg.length; i++) {
                             if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
                                 mods.push(msg.substring(start+2,i))
-                                start = i
+                                start = i + 1
                                 break;
                             }
                         }
                     } else {
                         mods.push('No Mod')
                     }
+
                 }
-                if (type.substring(0,31) == 'https://osu.ppy.sh/beatmapsets/') {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,31) == type.substring(0,31)) {
-                            start = i+31
-                            break;
-                        }
-                    }
+                if (msg.substr(m,31) == 'https://osu.ppy.sh/beatmapsets/') {
+                    start = m + 31
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == '/') {
                             start = i+1
@@ -692,7 +688,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                         for (var i = start+2; i <= msg.length; i++) {
                             if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
                                 mods.push(msg.substring(start+2,i))
-                                start = i
+                                start = i + 1
                                 break;
                             }
                         }
