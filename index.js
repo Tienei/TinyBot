@@ -543,7 +543,7 @@ ${i+1}. **${shortenmod}** Score
             message.channel.send({embed});
         }
 
-        async function osutop() {
+                async function osutop() {
             var player = ''
             var start = 0
             var loop = 0
@@ -579,7 +579,7 @@ ${i+1}. **${shortenmod}** Score
             }
             var name = checkplayer(player)
             var top = ''
-            var best = await osuApi.getUserBest({u: name, limit: 100})
+            var best = await osuApi.getUserBest({u: name, limit: loop})
             if (best.length == 0) {
                 message.channel.send(`I think ${name} didn't play anything yet~ **-Chino**`)
             }
