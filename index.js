@@ -178,7 +178,7 @@ bot.on("ready", (ready) => {
                                 if (perfect == 0) {
                                     fcguess = `${fcpp}pp for ${fcacc}%`
                                 }
-                                storedmapid.push(beatmapid)
+                                storedmapid.push({id:beatmapid,server:track[player].trackonchannel})
                                 const embed = new Discord.RichEmbed()
                                 .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
                                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
@@ -738,7 +738,11 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 var od = acc100.od
                 var hp = acc100.hp
                 var cs = acc100.cs
-                storedmapid.push(beatmapid[i])
+                if (message.guild !== null) {
+                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                } else {
+                    storedmapid.push({id:beatmapid,user:message.author.id})
+                }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
