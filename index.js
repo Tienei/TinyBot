@@ -48,6 +48,7 @@ function mods(mod) {
     var mods = {
         NoFail     : "NF", NoFailBit: 1,
         Easy       : "EZ", EasyBit: 2,
+        TouchDevice: "TD", TouchDeviceBit: 4,
         Hidden     : "HD", HiddenBit: 8,
         HardRock   : "HR", HardRockBit: 16,
         DoubleTime : "DT", DoubleTimeBit: 64,
@@ -177,6 +178,7 @@ bot.on("ready", (ready) => {
                                 if (perfect == 0) {
                                     fcguess = `${fcpp}pp for ${fcacc}%`
                                 }
+                                storedmapid.push(beatmapid)
                                 const embed = new Discord.RichEmbed()
                                 .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
                                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
@@ -702,6 +704,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 var mod = {
                     nf: 1,
                     ez: 2,
+                    td: 4,
                     hd: 8,
                     hr: 16,
                     dt: 64,
@@ -735,6 +738,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 var od = acc100.od
                 var hp = acc100.hp
                 var cs = acc100.cs
+                storedmapid.push(beatmapid[i])
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
