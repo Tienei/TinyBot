@@ -105,6 +105,7 @@ bot.on("ready", (ready) => {
         var trackmessage = await bot.channels.get('497302830558871552').fetchMessages({limit: 1})
         var trackbackup = trackmessage.first().content
         track = JSON.parse(trackbackup.substring(19))
+        console.log(track.length)
     }
     getData()
     var date = new Date()
@@ -247,6 +248,7 @@ bot.on("message", (message) => {
 !recent (username): Check user most recent play
 !compare (username): Compare with other!
 !osutop (username,number[1-100]): Check your top best 100 play!
+!osutrack (username): Track your osu top play (top 50)
 Note: 
 - If your osu username have a space in it, replace it with a "_"
 - Every mode (beside Standard) is not fully supported!`
@@ -448,11 +450,11 @@ Note:
             if (name == undefined) {
                 message.channel.send('Please enter a valid osu username! >:c')
             } else {
-                for (var i = 0; i <= track.length - 1; i++) {
+                for (var i = 0; i < track.length; i++) {
                     if (track.length <= 0) {
                         track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
                     }
-                    if (i < track.length - 1 || track.length == 1) {
+                    if (i < track.length || track.length == 1) {
                         if (track[i].trackonchannel == message.channel.id && track[i].osuname == name) {
                             track[i].osuname = name
                             track[i].lasttotalpp = user.pp.raw
