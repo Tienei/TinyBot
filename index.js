@@ -249,6 +249,7 @@ bot.on("message", (message) => {
 !compare (username): Compare with other!
 !osutop (username,number[1-100]): Check your top best 100 play!
 !osutrack (username): Track your osu top play (top 50)
+!untrack (username): Remove your osu tracking
 Note: 
 - If your osu username have a space in it, replace it with a "_"
 - Every mode (beside Standard) is not fully supported!`
@@ -469,6 +470,16 @@ Note:
                 }
                 message.channel.send(`**${name}** has been tracked on **#${message.channel.name}**`)
                 bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
+            }
+        }
+
+        async function untrack() {
+            for (var i = 0; i < track.length; i++) {
+                if (track[i].trackonchannel == message.channel.id && track[i].osuname == message.content.substring(9)) {
+                    track.splice(i,1)
+                    message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
+                    bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
+                }
             }
         }
 
@@ -787,6 +798,10 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
 
         if (msg.substring(0,9) == '!osutrack' && msg.substring(0,9) == command && message.channel.name !== undefined) {
             osutrack()            
+        }
+
+        if (msg.substring(0,8) == '!untrack' && msg.substring(0,8) == command && message.channel.name !== undefined) {
+            untrack()
         }
 
         if (msg.substring(0,10) == '!osuavatar' && msg.substring(0,10) == command) {
