@@ -8,7 +8,7 @@ const request = require('request-promise-native');
 const calc = require('ojsama')
 
 var osuApi = new osu.Api(process.env.OSU_KEY, {
-    notFoundAsError: false,
+    notFoundAsError: true,
     completeScores: true
 });
 
@@ -209,7 +209,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    //setInterval(realtimeosutrack, 10000)
+    //setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
