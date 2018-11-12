@@ -244,6 +244,7 @@ bot.on("message", (message) => {
 !taiko (username): Check user taiko status
 !ctb (username): Check user ctb status
 !mania (username): Check user mania status
+!osusig (username): Get your profile signature
 !osuavatar (username): Check osu user profile picture
 !recent (username): Check user most recent play
 !compare (username): Compare with other!
@@ -351,7 +352,15 @@ Note:
 
         }
 
-        async function osuset () {
+        async function osusig() {
+            var osuname = message.content.substring(8)
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Signature for ${osuname}`)
+            .setImage(`http://lemmmy.pw/osusig/sig.php?colour=pink&uname=${osuname}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex`)
+            message.channel.send({embed})
+        }
+
+        async function osuset() {
             var osuname = message.content.substring(8)
             var detected = false
             var user = await osuApi.getUser({u: osuname})
@@ -830,6 +839,11 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             var name = checkplayer(check)
             osu(name,3,'Mania')
         }
+
+        if (msg.substring(0,7) == '!osusig' && msg.substring(0,7) == command) {
+            osusig()
+        }
+
         if (msg.substring(0,5) == '!osud' && msg.substring(0,5) == command) {
             message.channel.send('Commands work in progress! >.<')
         }
