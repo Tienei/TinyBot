@@ -353,10 +353,11 @@ Note:
         }
 
         async function osusig() {
-            var osuname = message.content.substring(8)
+            var check = message.content.substring(8)
+            var name = checkplayer(check)
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Signature for ${osuname}`)
-            .setImage(`http://lemmmy.pw/osusig/sig.php?colour=pink&uname=${osuname}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex`)
+            .setAuthor(`Signature for ${name}`)
+            .setImage(`http://lemmmy.pw/osusig/sig.php?colour=pink&uname=${name}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex`)
             message.channel.send({embed})
         }
 
