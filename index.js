@@ -12,6 +12,7 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
     completeScores: true
 });
 
+
 var refresh = 0
 
 function rankingletters(letter) {
