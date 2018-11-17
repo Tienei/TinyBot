@@ -613,7 +613,7 @@ ${i+1}. **${shortenmod}** Score
             }
             var name = checkplayer(player)
             var top = ''
-            var best = await osuApi.getUserBest({u: name, limit: loop})
+            var best = await osuApi.getUserBest({u: name, limit: loop, m: mode})
             if (best.length == 0) {
                 message.channel.send(`I think ${name} didn't play anything yet~ **-Chino**`)
             }
@@ -650,14 +650,14 @@ ${i+1}. **${shortenmod}** Score
                 var fcacc = fccalc.acc
                 var star = Number(fccalc.star.total).toFixed(2)
                 var fcguess = ''
-                if (perfect == 0) {
-                    fcguess = `${fcpp}pp for ${fcacc}%`
+                if (perfect == 0 && mode == 0) {
+                    fcguess = `[${fcpp}pp for ${fcacc}%]`
                 }
                 top += `
 ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}** (${star}★)
 ▸ Score: ${score}
 **▸ Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
-**▸ PP: ${pp}** [${fcguess}]
+**▸ PP: ${pp}** ${fcguess}
 **▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`
             }
             const embed = new Discord.RichEmbed()
@@ -756,6 +756,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 var version = map[0].version
                 var maxCombo = map[0].maxCombo
                 var acc95 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,95,0)
+                var acc97 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,97,0)
                 var acc99 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,99,0)
                 var acc100 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,100,0)
                 var ar = acc100.ar
@@ -774,9 +775,11 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 .setDescription(`
 **Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
 **Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
-<:difficultyIcon:507522545759682561> __${version}__  ▸ **Max Combo:** ${maxCombo}
+<:difficultyIcon:507522545759682561> __${version}__  
+▸ **Difficulty:** ${acc100.star} ▸ **Max Combo:** ${maxCombo}
 ▸**AR:** ${ar} ▸**OD:** ${od} ▸**HP:** ${hp} ▸**CS:** ${cs}
-▸**PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`)
+▸**PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp
+**99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`)
                 message.channel.send({embed});
             }
 
