@@ -752,7 +752,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                     totallength = Number(totallength / 1.5).toFixed(0)
                     bpm = Number(bpm * 1.5).toFixed(0)
                 }
-                var time = `${Math.floor(totallength / 60)}:${totallength - Math.floor(totallength / 60) * 60}`
+                var time = `${Math.floor(totallength / 60)}:${('0' + totallength - Math.floor(totallength / 60) * 60).slice(-2)}`
                 var version = map[0].version
                 var maxCombo = map[0].maxCombo
                 var acc95 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,95,0)
