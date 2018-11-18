@@ -613,7 +613,7 @@ ${i+1}. **${shortenmod}** Score
             }
             var name = checkplayer(player)
             var top = ''
-            var best = await osuApi.getUserBest({u: name, limit: loop, m: mode})
+            var best = await osuApi.getUserBest({u: name, limit: loop})
             if (best.length == 0) {
                 message.channel.send(`I think ${name} didn't play anything yet~ **-Chino**`)
             }
