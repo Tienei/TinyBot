@@ -650,7 +650,7 @@ ${i+1}. **${shortenmod}** Score
                 var fcacc = fccalc.acc
                 var star = Number(fccalc.star.total).toFixed(2)
                 var fcguess = ''
-                if (perfect == 0 && mode == 0) {
+                if (perfect == 0) {
                     fcguess = `[${fcpp}pp for ${fcacc}%]`
                 }
                 top += `
