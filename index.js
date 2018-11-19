@@ -12,7 +12,7 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
     completeScores: true
 });
 
-$ heroku config:set TEST=owo
+console.log(process.env)
 
 var refresh = 0
 
