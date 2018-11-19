@@ -14,13 +14,6 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
 
 var refresh = 0
 
-const { exec } = require('child_process');
-
-exec('heroku config:set TEST=test', (err, stdout, stderr) => {
-    console.log(`stdout: ${stdout}`);
-    console.log(`stderr: ${stderr}`);
-})
-
 console.log(process.env.TEST)
 function rankingletters(letter) {
     if (letter == "F") {
@@ -217,7 +210,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    //setInterval(realtimeosutrack, 20000)
+    setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
