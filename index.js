@@ -12,6 +12,7 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
     completeScores: true
 });
 
+process.env.TEST = 'test work'
 
 var refresh = 0
 
