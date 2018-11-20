@@ -6,7 +6,7 @@ const osu = require('node-osu');
 const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
-
+const cmd = require('node-cmd')
   cmd.get(
         '$ heroku config:set TEST=test',
         function(err, data, stderr){
