@@ -7,6 +7,13 @@ const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 
+  cmd.get(
+        '$ heroku config:set TEST=test',
+        function(err, data, stderr){
+            console.log('the current working dir is : ',data)
+        }
+    );
+console.log(process.env.TEST)
 var osuApi = new osu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
