@@ -14,7 +14,6 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
 
 var refresh = 0
 
-console.log(process.env.TEST)
 function rankingletters(letter) {
     if (letter == "F") {
         return '**F**';
