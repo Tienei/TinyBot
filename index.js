@@ -209,7 +209,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    //setInterval(realtimeosutrack, 20000)
+    setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
