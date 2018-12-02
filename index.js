@@ -1,11 +1,13 @@
 var cache = []
 var track = []
 var storedmapid = []
+
 const Discord = require('discord.js');
 const osu = require('node-osu');
 const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
+const rippleAPI = require('rippleapi')
 
 var osuApi = new osu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
