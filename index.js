@@ -14,12 +14,6 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
 
 var refresh = 0
 
-async function test() {
-    var user = await rippleAPI.getFullUserByName('Dragneel')
-    console.log(user.std.accuracy)
-}
-test()
-
 function rankingletters(letter) {
     if (letter == "F") {
         return '**F**';
