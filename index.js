@@ -14,6 +14,12 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
 
 var refresh = 0
 
+async function test() {
+    var user = await rippleAPI.getFullUserByName('Dragneel')
+    console.log(user.std.accuracy)
+}
+test()
+
 function rankingletters(letter) {
     if (letter == "F") {
         return '**F**';
@@ -209,7 +215,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    setInterval(realtimeosutrack, 20000)
+    //setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
@@ -352,12 +358,39 @@ Note:
 
         }
 
+        async function ripple() {
+            var user = await rippleAPI.getFullUserByName(message.content.substring(8))
+            if (user.length == 0) {
+                message.channel.send('Invalid user or data not found')
+            }
+            var username = user.username
+            var acc = Number(user.std.accuracy).toFixed(2)
+            var id = user.id
+            var pp = Number(user.std.pp).toFixed(2);
+            var played = user.std.playcount
+            var rank = user.std.global_leaderboard_rank
+            var countryrank = user.std.country_leaderboard_rank
+            var country = user.country.toLowerCase();
+            var level = Number(user.std.level).toFixed(2)
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Ripple Standard status for: ${username}`,'',`https://ripple.moe/u/${id}?mode=0`)
+            .setDescription(`
+▸**Performance:** ${pp}pp 
+▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
+▸**Accuracy:** ${acc}%
+▸**Play count:** ${played}
+▸**Level:** ${level}`)
+            .setThumbnail(`https://a.ripple.moe/${id}?date=${refresh}`)
+            .setColor('#7f7fff')
+            message.channel.send({embed});
+        }
+
         async function osusig() {
             var check = message.content.substring(8)
             var name = checkplayer(check)
             const embed = new Discord.RichEmbed()
             .setAuthor(`Signature for ${name}`)
-            .setImage(`http://lemmmy.pw/osusig/sig.php?colour=pink&uname=${name}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex`)
+            .setImage(`http://lemmmy.pw/osusig/sig.php?colour=pink&uname=${name}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex&date=${refresh}`)
             message.channel.send({embed})
         }
 
@@ -827,6 +860,10 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
             osu(name,0,'Standard')
         }
 
+        if (msg.substring(0,7) == '!ripple' && msg.substring(0,7) == command) {
+            ripple()
+        }
+
         if (msg.substring(0,6) == '!taiko' && msg.substring(0,6) == command) {
             var check = message.content.substring(7)
             var name = checkplayer(check)
@@ -854,6 +891,14 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
 
         if (msg.substring(0,8) == '!beatmap' && msg.substring(0,8) == command) {
             message.channel.send('Commands work in progress! >.<')
+        }
+
+        if (msg.substring(0,9) == '!27112018' && msg.substring(0,9) == command) {
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Did you know that Naomi and Tienei are together on November 27th 2018?
+Naomi if you seeing this here's what i feel about you: <3`)
+            .setImage(`https://thumbs.gfycat.com/PopularHideousAcornweevil-size_restricted.gif`)
+            message.channel.send({embed})
         }
 
         if (msg.substring(0,7) == '!recent' && msg.substring(0,7) == command) {
