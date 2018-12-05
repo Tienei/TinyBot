@@ -855,7 +855,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 var beatmapid = best[i][1].id
                 var mod = best[i][0].mods
                 var modandbit = mods(mod)
-                var thing = await mapcalc(beatmapid,modandbit.shortenmod,0,0,0,0,0,0)
+                var thing = await mapcalc(beatmapid,modandbit.bitpresent,0,0,0,0,0,0)
                 star_avg += thing.star.total
                 aim_avg += thing.star.aim
                 speed_avg += thing.star.speed
