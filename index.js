@@ -211,7 +211,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    setInterval(realtimeosutrack, 20000)
+    //setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
@@ -253,6 +253,7 @@ bot.on("message", (message) => {
 !osutop (username,number[1-100]): Check your top best 100 play!
 !osutrack (username): Track your osu top play (top 50)
 !untrack (username): Remove your osu tracking
+!osud (username): Detail statistics of user
 Note: 
 - If your osu username have a space in it, replace it with a "_"
 - Every mode (beside Standard) is not fully supported!`
@@ -814,13 +815,80 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
         }
 
         async function osud() {
-            var check = message.content.substring(8);
+            var check = message.content.substring(6);
             var name = checkplayer(check)
             var best = await osuApi.getUserBest({u: name, limit: 100})
+            var user = await osuApi.getUser({u: name, event_days: 31})
+            var event = ``
+            var star_avg = 0
+            var aim_avg = 0
+            var speed_avg = 0
+            var cs_avg = 0
+            var ar_avg = 0
+            var od_avg = 0
+            var hp_avg = 0
+            var userid = user.id
+            var username = user.name
+            var rank = user.pp.rank
+            var country = user.country.toLowerCase()
+            var countryrank = user.pp.countryRank
+            var level = user.level
+            var pp = user.pp.raw
+            var acc = user.accuracyFormatted
+            var playcount = user.counts.plays
+            var rankedscore = user.scores.ranked
+            var totalscore = user.scores.total
+            var ss = user.counts.SS
+            var s = user.counts.S 
+            var a = user.counts.A 
+            var events = 0
+            if (user.events.length > 3) {
+                events = 3
+            } else {
+                events = user.events.length
+            }
+            for (var i = 0; i < events; i++) {
+                var text = user.events[i].html.replace(/(<([^>]+)>)/ig,"")
+                event += `\n ${text}`
+            }
             for (var i = 0; i < 100; i++) {
+                console.log(i)
                 var beatmapid = best[i][1].id
                 var thing = await mapcalc(beatmapid,0,0,0,0,0,0,0)
+                star_avg += thing.star.total
+                aim_avg += thing.star.aim
+                speed_avg += thing.star.speed
+                cs_avg += thing.cs
+                ar_avg += thing.ar
+                od_avg += thing.od
+                hp_avg += thing.hp
             }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`osu! Statistics for ${username}`)
+            .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            .setDescription(`**Performance:**
+▸ Global Rank: #${rank} (:flag_${country}:: #${countryrank})
+▸ Level: ${level}
+▸ Total PP: ${pp}
+▸ Accuracy: ${acc}
+▸ Playcount: ${playcount}
+▸ Ranked Score: ${rankedscore}
+▸ Total Score: ${totalscore}
+▸ <:rankingX:486804867554344965>: ${ss} | <:rankingS:486804806909034496>: ${s} | <:rankingA:486804739443523584>: ${a}
+
+**${username} recent events:**
+${event}
+
+**${username} average skill:**
+Star: ${Number(star_avg/99).toFixed(2)}★
+Aim skill: ${Number(aim_avg/99).toFixed(2)}★
+Speed skill: ${Number(speed_avg/99).toFixed(2)}★
+CS: ${Number(cs_avg/99).toFixed(2)}
+AR: ${Number(ar_avg/99).toFixed(2)}
+OD: ${Number(od_avg/99).toFixed(2)}
+HP: ${Number(hp_avg/99).toFixed(2)}`)
+            message.channel.send({embed});
         }
 
         async function beatmap() {
@@ -882,7 +950,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
         }
 
         if (msg.substring(0,5) == '!osud' && msg.substring(0,5) == command) {
-            message.channel.send('Commands work in progress! >.<')
+            osud()
         }
 
         if (msg.substring(0,8) == '!beatmap' && msg.substring(0,8) == command) {
