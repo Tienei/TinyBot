@@ -852,7 +852,6 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 event += `\n ${text}`
             }
             for (var i = 0; i < 100; i++) {
-                console.log(i)
                 var beatmapid = best[i][1].id
                 var thing = await mapcalc(beatmapid,0,0,0,0,0,0,0)
                 star_avg += thing.star.total
