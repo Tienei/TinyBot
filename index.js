@@ -211,7 +211,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    //setInterval(realtimeosutrack, 20000)
+    setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
@@ -817,7 +817,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
         async function osud() {
             var check = message.content.substring(6);
             var name = checkplayer(check)
-            var best = await osuApi.getUserBest({u: name, limit: 100})
+            var best = await osuApi.getUserBest({u: name, limit: 50})
             var user = await osuApi.getUser({u: name, event_days: 31})
             var event = ``
             var star_avg = 0
@@ -851,7 +851,7 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
                 var text = user.events[i].html.replace(/(<([^>]+)>)/ig,"")
                 event += `\n ${text}`
             }
-            for (var i = 0; i < 100; i++) {
+            for (var i = 0; i < 50; i++) {
                 var beatmapid = best[i][1].id
                 var thing = await mapcalc(beatmapid,0,0,0,0,0,0,0)
                 star_avg += thing.star.total
@@ -880,13 +880,13 @@ ${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}*
 ${event}
 
 **${username} average skill:**
-Star: ${Number(star_avg/99).toFixed(2)}★
-Aim skill: ${Number(aim_avg/99).toFixed(2)}★
-Speed skill: ${Number(speed_avg/99).toFixed(2)}★
-CS: ${Number(cs_avg/99).toFixed(2)}
-AR: ${Number(ar_avg/99).toFixed(2)}
-OD: ${Number(od_avg/99).toFixed(2)}
-HP: ${Number(hp_avg/99).toFixed(2)}`)
+Star: ${Number(star_avg/50).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50).toFixed(2)}★
+CS: ${Number(cs_avg/50).toFixed(2)}
+AR: ${Number(ar_avg/50).toFixed(2)}
+OD: ${Number(od_avg/50).toFixed(2)}
+HP: ${Number(hp_avg/50).toFixed(2)}`)
             message.channel.send({embed});
         }
 
