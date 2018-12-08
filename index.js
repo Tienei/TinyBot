@@ -474,7 +474,7 @@ Note:
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
             .setColor('#7f7fff')
             .setDescription(`
-**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) **${shortenmod}** | ***${pp}pp***
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
             message.channel.send({embed})
@@ -679,7 +679,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                     fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 top += `
-${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) **${shortenmod}** | ***${pp}pp***
+${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`
                 
