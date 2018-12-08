@@ -21,28 +21,28 @@ function rankingletters(letter) {
         return '**F**';
     }
     if (letter == "A") {
-        return '<:rankingA:486804739443523584>';
+        return '<:rankingA:520932311613571072>';
     }
     if (letter == "B") {
-        return '<:rankingB:486804764424667136>';
+        return '<:rankingB:520932334061748224>';
     }
     if (letter == "C") {
-        return '<:rankingC:486804776756183040>';
+        return '<:rankingC:520932353103626271>';
     }
     if (letter == "D") {
-        return '<:rankingD:486804789531770881>';
+        return '<:rankingD:520932369172004869>';
     }
     if (letter == "S") {
-        return '<:rankingS:486804806909034496>';
+        return '<:rankingS:520932426449682432>';
     }
     if (letter == "SH") {
-        return '<:rankingSH:486804839016431626>';
+        return '<:rankingSH:520932441687588864>';
     }
     if (letter == "X") {
-        return '<:rankingX:486804867554344965>';
+        return '<:rankingX:520932410746077184>';
     }
     if (letter == "XH") {
-        return '<:rankingXH:486804895966691328>';
+        return '<:rankingXH:520932395080482858>';
     }
 }
 
@@ -211,7 +211,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    setInterval(realtimeosutrack, 20000)
+    //setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
@@ -467,19 +467,17 @@ Note:
                 pp = 'No PP'
             }
             if (perfect == 0) {
-                fcguess = `${fcpp}pp for ${fcacc}%`
+                fcguess = `| **${fcpp}pp for ${fcacc}%**`
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Most recent osu! Standard play for ${osuname}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
             .setColor('#7f7fff')
             .setDescription(`
-**[${beatmap} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod} (${star}★)**
-▸ Scores: ${scores}
-▸ **Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
-▸ **PP: ${pp}** [${fcguess}]
-▸ **Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`)
-            message.channel.send({embed});
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) **${shortenmod}** | ***${pp}pp***
+${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
+            message.channel.send({embed})
         }
 
         async function osutrack() {
@@ -590,14 +588,12 @@ Note:
                 var star = Number(fccalc.star.total).toFixed(2)
                 var fcguess = ''
                 if (perfect == 0) {
-                    fcguess = `${fcpp}pp for ${fcacc}%`
+                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                     highscore += `
-${i+1}. **${shortenmod}** Score
-▸ Score: ${score}
-**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
-**▸ PP: ${pp}** [${fcguess}]
-**▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`         
+${i+1}. **${shortenmod}** Score | ***${pp}pp***
+${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`         
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}] (${star}★)`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
@@ -680,14 +676,13 @@ ${i+1}. **${shortenmod}** Score
                 var star = Number(fccalc.star.total).toFixed(2)
                 var fcguess = ''
                 if (perfect == 0) {
-                    fcguess = `[${fcpp}pp for ${fcacc}%]`
+                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 top += `
-${i+1}. **[${title} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod}** (${star}★)
-▸ Score: ${score}
-**▸ Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
-**▸ PP: ${pp}** ${fcguess}
-**▸ Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`
+${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) **${shortenmod}** | ***${pp}pp***
+${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`
+                
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top osu!Standard Plays for ${username}`)
@@ -885,10 +880,7 @@ ${event}
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)}★
 Speed skill: ${Number(speed_avg/50).toFixed(2)}★
-CS: ${Number(cs_avg/50).toFixed(2)}
-AR: ${Number(ar_avg/50).toFixed(2)}
-OD: ${Number(od_avg/50).toFixed(2)}
-HP: ${Number(hp_avg/50).toFixed(2)}`)
+CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
             message.channel.send({embed});
         }
 
