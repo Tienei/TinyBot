@@ -562,7 +562,6 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
             var beatmapname = beatmap[0].title
             var diff = beatmap[0].version
             var beatmapimageid = beatmap[0].beatmapSetId
-            var star = 0
             var osuname = scores[0].user.name
             var osuid = scores[0].user.id
             for (var i = 0; i <= scores.length - 1; i++) {
@@ -591,12 +590,12 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
                     fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                     highscore += `
-${i+1}. **${shortenmod}** Score | ***${pp}pp***
+${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp***
 ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`         
             }
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}] (${star}★)`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
+            .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
             .setDescription(highscore)
             message.channel.send({embed});
