@@ -348,7 +348,7 @@ Note:
 ▸**Play count:** ${played}
 ▸**Level:** ${level}
         
-**SS:** ${ss}  **S:** ${s}  **A:** ${a} `)
+<:rankingX:520932410746077184>: ${ss}  <:rankingS:520932426449682432>: ${s}  <:rankingA:520932311613571072>: ${a} `)
             .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
             .setColor('#7f7fff')
             message.channel.send({embed});
@@ -681,7 +681,8 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                 top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+`
                 
             }
             const embed = new Discord.RichEmbed()
