@@ -48,16 +48,17 @@ function rankingletters(letter) {
 
 function mods(mod) {
     var mods = {
-        NoFail     : "NF", NoFailBit: 1,
-        Easy       : "EZ", EasyBit: 2,
-        TouchDevice: "TD", TouchDeviceBit: 4,
-        Hidden     : "HD", HiddenBit: 8,
-        HardRock   : "HR", HardRockBit: 16,
-        DoubleTime : "DT", DoubleTimeBit: 64,
-        Relax      : "RX", RelaxBit: 128,
-        HalfTime   : "HT", HalfTimeBit: 256,
-        Nightcore  : "NC", NightcoreBit: 512,
-        Flashlight : "FL", FlashLightBit: 1024
+        NoFail     : "NF",
+        Easy       : "EZ",
+        TouchDevice: "TD",
+        Hidden     : "HD",
+        HardRock   : "HR",
+        SuddenDeath: "SD",
+        DoubleTime : "DT",
+        HalfTime   : "HT",
+        Nightcore  : "NC",
+        Flashlight : "FL",
+        SpunOut    : "SO"
     }
     var shortenmod = '+';
     var bitpresent = 0
@@ -67,7 +68,7 @@ function mods(mod) {
         }
         if (mods[mod[i]]) {
             shortenmod += mods[mod[i]];
-            bitpresent += mods[mod[i] + "Bit"];
+            bitpresent += osu.Constants.Mods[mod[i]]
         }
     }
     if (mod.length == 0 || shortenmod == '+'){
