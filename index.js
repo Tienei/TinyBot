@@ -814,7 +814,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var check = message.content.substring(6);
             var name = checkplayer(check)
             var best = await osuApi.getUserBest({u: name, limit: 50})
-            var user = await osuApi.getUser({u: name, event_days: 31})
+            var user = await osuApi.apiCall('/get_user', {u: name, m: 0, event_days: 31})
             var event = ``
             var star_avg = 0
             var aim_avg = 0
@@ -823,28 +823,31 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var ar_avg = 0
             var od_avg = 0
             var hp_avg = 0
-            var userid = user.id
-            var username = user.name
-            var rank = user.pp.rank
-            var country = user.country.toLowerCase()
-            var countryrank = user.pp.countryRank
-            var level = user.level
-            var pp = user.pp.raw
-            var acc = user.accuracyFormatted
-            var playcount = user.counts.plays
-            var rankedscore = user.scores.ranked
-            var totalscore = user.scores.total
-            var ss = user.counts.SS
-            var s = user.counts.S 
-            var a = user.counts.A 
+            var userid = user[0].user_id
+            var username = user[0].username
+            var rank = user[0].pp_rank
+            var country = user[0].country.toLowerCase()
+            var countryrank = user[0].pp_country_rank
+            var level = user[0].level
+            var pp = user[0].pp_raw
+            var acc = Number(user[0].accuracy).toFixed(2)
+            var playcount = user[0].playcount
+            var rankedscore = user[0].ranked_score
+            var totalscore = user[0].total_score
+            var ss = Number(user[0].count_rank_ss) + Number(user[0].count_rank_ssh)
+            var s = Number(user[0].count_rank_s) + Number(user[0].count_rank_sh) 
+            var a = Number(user[0].count_rank_a)
+            console.log(user[0].total_seconds_played)
+            var totalhourplay = Number(user[0].total_seconds_played / 3600).toFixed(0)
+            var totalrank = ss + s + a
             var events = 0
-            if (user.events.length > 3) {
+            if (user[0].events.length > 3) {
                 events = 3
             } else {
-                events = user.events.length
+                events = user[0].events.length
             }
             for (var i = 0; i < events; i++) {
-                var text = user.events[i].html.replace(/(<([^>]+)>)/ig,"")
+                var text = user[0].events[i].display_html.replace(/(<([^>]+)>)/ig,"")
                 event += `\n ${text}`
             }
             for (var i = 0; i < 50; i++) {
@@ -864,20 +867,18 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             .setAuthor(`osu! Statistics for ${username}`)
             .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setColor('#7f7fff')
-            .setDescription(`**Performance:**
-▸ Global Rank: #${rank} (:flag_${country}:: #${countryrank})
-▸ Level: ${level}
-▸ Total PP: ${pp}
-▸ Accuracy: ${acc}
-▸ Playcount: ${playcount}
-▸ Ranked Score: ${rankedscore}
-▸ Total Score: ${totalscore}
-▸ <:rankingX:486804867554344965>: ${ss} | <:rankingS:486804806909034496>: ${s} | <:rankingA:486804739443523584>: ${a}
+            .setDescription(`***Performance:***
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
+**Level:** ${level}
+**Accuracy:** ${acc}%
+**Playcount:** ${playcount} | **Total Play Time:** ${totalhourplay}h
+**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
+<:rankingX:520932410746077184>: ${ss} (${Number(ss/totalrank*100).toFixed(2)}%) | <:rankingS:520932426449682432>: ${s} (${Number(s/totalrank*100).toFixed(2)}%) | <:rankingA:520932311613571072>: ${a} (${Number(a/totalrank*100).toFixed(2)}%)
 
-**${username} recent events:**
+***${username} recent events:***
 ${event}
 
-**${username} average skill:**
+***${username} average skill:***
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)}★
 Speed skill: ${Number(speed_avg/50).toFixed(2)}★
