@@ -860,7 +860,6 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 var od_avg = 0
                 var hp_avg = 0
                 for (var i = 0; i < 25; i++) {
-                    console.log(i)
                     var thing = await mapcalc(maps[i].beatmapid,maps[i].modandbit.bitpresent,0,0,0,0,0,0)
                     star_avg += thing.star.total
                     aim_avg += thing.star.aim
@@ -882,7 +881,6 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 var od_avg = 0
                 var hp_avg = 0
                 for (var i = 25; i < 50; i++) {
-                    console.log(i)
                     var thing = await mapcalc(maps[i].beatmapid,maps[i].modandbit.bitpresent,0,0,0,0,0,0)
                     star_avg += thing.star.total
                     aim_avg += thing.star.aim
