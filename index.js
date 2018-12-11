@@ -810,19 +810,12 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 
         }
 
-        async function osud() {
+            async function osud() {
             var check = message.content.substring(6);
             var name = checkplayer(check)
             var best = await osuApi.getUserBest({u: name, limit: 50})
             var user = await osuApi.apiCall('/get_user', {u: name, m: 0, event_days: 31})
             var event = ``
-            var star_avg = 0
-            var aim_avg = 0
-            var speed_avg = 0
-            var cs_avg = 0
-            var ar_avg = 0
-            var od_avg = 0
-            var hp_avg = 0
             var userid = user[0].user_id
             var username = user[0].username
             var rank = user[0].pp_rank
@@ -837,7 +830,6 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var ss = Number(user[0].count_rank_ss) + Number(user[0].count_rank_ssh)
             var s = Number(user[0].count_rank_s) + Number(user[0].count_rank_sh) 
             var a = Number(user[0].count_rank_a)
-            console.log(user[0].total_seconds_played)
             var totalhourplay = Number(user[0].total_seconds_played / 3600).toFixed(0)
             var totalrank = ss + s + a
             var events = 0
@@ -850,19 +842,69 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 var text = user[0].events[i].display_html.replace(/(<([^>]+)>)/ig,"")
                 event += `\n ${text}`
             }
+
+            var maps = []
             for (var i = 0; i < 50; i++) {
                 var beatmapid = best[i][1].id
                 var mod = best[i][0].mods
                 var modandbit = mods(mod)
-                var thing = await mapcalc(beatmapid,modandbit.bitpresent,0,0,0,0,0,0)
-                star_avg += thing.star.total
-                aim_avg += thing.star.aim
-                speed_avg += thing.star.speed
-                cs_avg += thing.cs
-                ar_avg += thing.ar
-                od_avg += thing.od
-                hp_avg += thing.hp
+                maps.push({beatmapid: beatmapid, modandbit: modandbit})
             }
+
+            async function calc1() {
+                var star_avg = 0
+                var aim_avg = 0
+                var speed_avg = 0
+                var cs_avg = 0
+                var ar_avg = 0
+                var od_avg = 0
+                var hp_avg = 0
+                for (var i = 0; i < 25; i++) {
+                    console.log(i)
+                    var thing = await mapcalc(maps[i].beatmapid,maps[i].modandbit.bitpresent,0,0,0,0,0,0)
+                    star_avg += thing.star.total
+                    aim_avg += thing.star.aim
+                    speed_avg += thing.star.speed
+                    cs_avg += thing.cs
+                    ar_avg += thing.ar
+                    od_avg += thing.od
+                    hp_avg += thing.hp
+                }
+                return {star_avg, aim_avg, speed_avg, cs_avg, ar_avg, od_avg, hp_avg}
+            }
+
+            async function calc2() {
+                var star_avg = 0
+                var aim_avg = 0
+                var speed_avg = 0
+                var cs_avg = 0
+                var ar_avg = 0
+                var od_avg = 0
+                var hp_avg = 0
+                for (var i = 25; i < 50; i++) {
+                    console.log(i)
+                    var thing = await mapcalc(maps[i].beatmapid,maps[i].modandbit.bitpresent,0,0,0,0,0,0)
+                    star_avg += thing.star.total
+                    aim_avg += thing.star.aim
+                    speed_avg += thing.star.speed
+                    cs_avg += thing.cs
+                    ar_avg += thing.ar
+                    od_avg += thing.od
+                    hp_avg += thing.hp
+                }
+                return {star_avg, aim_avg, speed_avg, cs_avg, ar_avg, od_avg, hp_avg}
+            }
+
+            var calctotal = await Promise.all([calc1(), calc2()])
+            var star_avg = Number(calctotal[0].star_avg + calctotal[1].star_avg)
+            var aim_avg = Number(calctotal[0].aim_avg + calctotal[1].aim_avg)
+            var speed_avg = Number(calctotal[0].speed_avg + calctotal[1].speed_avg)
+            var cs_avg = Number(calctotal[0].cs_avg + calctotal[1].cs_avg)
+            var ar_avg = Number(calctotal[0].ar_avg + calctotal[1].ar_avg)
+            var od_avg = Number(calctotal[0].od_avg + calctotal[1].od_avg)
+            var hp_avg = Number(calctotal[0].hp_avg + calctotal[1].hp_avg)
+
+
             const embed = new Discord.RichEmbed()
             .setAuthor(`osu! Statistics for ${username}`)
             .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
