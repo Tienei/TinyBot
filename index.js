@@ -16,7 +16,6 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
 
 var refresh = 0
 
-
 function rankingletters(letter) {
     if (letter == "F") {
         return '**F**';
@@ -219,7 +218,7 @@ bot.on("ready", (ready) => {
 bot.on("message", (message) => {
 
     var msg = message.content.toLowerCase();
-    refresh = Math.round(Math.random()* 4294967295)
+    refresh = Math.round(Math.random()* 2147483648)
     var command = ''
 
     if (message.author.bot == false){
@@ -250,9 +249,10 @@ bot.on("message", (message) => {
 !mania (username): Check user mania status
 !osusig (username): Get your profile signature
 !osuavatar (username): Check osu user profile picture
-!recent (username): Check user most recent play
-!compare (username): Compare with other!
-!osutop (username,number[1-100]): Check your top best 100 play!
+!recent [!r] (username): Check user most recent play
+!compare [!c] (username): Compare with other
+!osutop (username,number[1-100]): Check your top best 100 play
+!modsosutop [!mosutop] (username, mods): Check your top with mods top play
 !osutrack (username): Track your osu top play (top 50)
 !untrack (username): Remove your osu tracking
 !osud (username): Detail statistics of user
@@ -279,6 +279,20 @@ Note:
             const embed = new Discord.RichEmbed()
             .setAuthor(`Avatar for ${username}`)
             .setImage(image)
+            message.channel.send({embed})
+        }
+
+        if (msg.substring(0,10) == "!changelog" && msg.substring(0,10) == command) {
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Changelog for Tiny Bot v2.2`)
+            .setThumbnail(bot.user.avatarURL)
+            .setDescription(`
+**Christmas Update:**
+- Bot got new profile picture
+- Added !modsosutop
+- Added shorten version of !modsosutop (!mosutop)
+- Added changelog
+- Fixed !osud a bit`)
             message.channel.send({embed})
         }
 
@@ -698,7 +712,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             message.channel.send({embed});
         }
 
-        async function modsosutop() {
+        async function modsosutop(textstart) {
             var getmod = ''
             var mod = []
             var definemod = {
@@ -714,9 +728,9 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 fl: 'Flashlight'
             }
             var word = []
-            var start = 12
+            var start = textstart
             var player = ''
-            for (var i = 12; i < msg.length; i++) {
+            for (var i = textstart; i < msg.length; i++) {
                 if (msg[i] == ' ') {
                     word.push(msg.substring(start,i))
                     start = i + 1
@@ -1089,8 +1103,12 @@ Naomi if you seeing this here's what i feel about you: <3`)
             osutop()
         }
 
-        if (msg.substring(0,11) == "!modsosutop" && msg.substring(0,11) == command) {
-            modsosutop()
+        if (msg.substring(0,11) == '!modsosutop' && msg.substring(0,11) == command) {
+            modsosutop(12)
+        }
+
+        if (msg.substring(0,8) == '!mosutop'  && msg.substring(0,8) == command) {
+            modsosutop(9)
         }
 
         // Detection
