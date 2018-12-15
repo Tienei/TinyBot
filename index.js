@@ -16,6 +16,7 @@ var osuApi = new osu.Api(process.env.OSU_KEY, {
 
 var refresh = 0
 
+
 function rankingletters(letter) {
     if (letter == "F") {
         return '**F**';
@@ -266,7 +267,7 @@ Note:
             var image = ''
             var username = ''
             if (msg.substring(8) == '') {
-                image = message.author.avatarURL
+                image = message.author.avatarURL    
                 username = message.author.username
             } else {
                 user = message.mentions.users.first()
@@ -354,6 +355,10 @@ Note:
             .setColor('#7f7fff')
             message.channel.send({embed});
 
+        }
+
+        if (message.content.includes('owo') == true) {
+            console.log('owo')
         }
 
         async function ripple() {
@@ -465,7 +470,7 @@ Note:
             var fcacc = fccalc.acc
             var fcguess = ``
             if (letter == 'F') {
-                pp = 'No PP'
+                pp = 'No '
             }
             if (perfect == 0) {
                 fcguess = `| **${fcpp}pp for ${fcacc}%**`
@@ -606,7 +611,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
             var player = ''
             var start = 0
             var loop = 0
-            let word = []
+            var word = []
             var startword = 8
             for (var i = 8; i < msg.length; i++) {
                 if (msg[i] == ' ') {
@@ -628,7 +633,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                 } else {
                     player = ''
                     start = Number(word[0]) - 1
-                    loop = start + 1
+                    loop = start + 1    
                 }
             }
             if (msg.length == 7) {
@@ -687,6 +692,110 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top osu!Standard Plays for ${username}`)
+            .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            .setDescription(top)
+            message.channel.send({embed});
+        }
+
+        async function modsosutop() {
+            var getmod = ''
+            var mod = []
+            var definemod = {
+                nf: 'NoFail',
+                ez: 'Easy',
+                td: 'TouchDevice',
+                hd: 'Hidden',
+                hr: 'HardRock',
+                dt: 'DoubleTime',
+                rx: 'Relax',
+                ht: 'HalfTime',
+                nc: 'Nightcore',
+                fl: 'Flashlight'
+            }
+            var word = []
+            var start = 12
+            var player = ''
+            for (var i = 12; i < msg.length; i++) {
+                if (msg[i] == ' ') {
+                    word.push(msg.substring(start,i))
+                    start = i + 1
+                }
+            }
+            word.push(msg.substring(start,msg.length))
+            if (word.length == 2) {
+                player = word[0]
+                getmod = word[1]
+            }
+            if (word.length == 1) {
+                getmod = word[0]
+            }
+            for (var i = 0; i < getmod.length; i=i+2) {
+                if (definemod[getmod.substring(i, i+2)]) {
+                    mod.push(definemod[getmod.substring(i, i+2)])
+                }
+            }
+            var name = checkplayer(player)
+            var best = await osuApi.getUserBest({u: name, limit: 100})
+            var user = await osuApi.getUser({u: name})
+            var top = []
+            var checktop = 0
+            var userid = best[0][0].user.id
+            var username = user.name
+            for (var i = 0; i < best.length; i++) {
+                var bestmod = best[i][0].mods
+                var match = false
+                for (var m = 0; m < mod.length; m++) {
+                    if (bestmod.includes(mod[m]) == true) {               
+                        match = true
+                    } else { 
+                        match = false
+                        break; 
+                    }
+                    
+                }
+                if (match == true && checktop < 5) {
+                    checktop += 1
+                    var title = best[i][1].title
+                    var diff = best[i][1].version
+                    var beatmapid = best[i][1].id
+                    var score = best[i][0].score
+                    var count300 = Number(best[i][0].counts['300'])
+                    var count100 = Number(best[i][0].counts['100'])
+                    var count50 = Number(best[i][0].counts['50'])
+                    var countmiss = Number(best[i][0].counts.miss)
+                    var combo = best[i][0].maxCombo
+                    var fc = best[i][1].maxCombo
+                    var letter = best[i][0].rank
+                    var rank = rankingletters(letter)
+                    var pp = Number(best[i][0].pp).toFixed(2)
+                    var perfect = best[i][0].perfect
+                    var modandbit = mods(bestmod)
+                    var shortenmod = modandbit.shortenmod
+                    var bitpresent = modandbit.bitpresent
+                    if (message.guild !== null) {
+                        storedmapid.push({id:beatmapid,server:message.guild.id})
+                    } else {
+                        storedmapid.push({id:beatmapid,user:message.author.id})
+                    }
+                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                    var fcacc = fccalc.acc
+                    var star = Number(fccalc.star.total).toFixed(2)
+                    var fcguess = ''
+                    if (perfect == 0) {
+                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                    }
+                    top += `
+${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+`
+                }
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Top osu!Standard Plays with ${getmod.toUpperCase()} for ${username}`)
             .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setColor('#7f7fff')
             .setDescription(top)
@@ -810,7 +919,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 
         }
 
-async function osud() {
+        async function osud() {
             var check = message.content.substring(6);
             var name = checkplayer(check)
             var best = await osuApi.getUserBest({u: name, limit: 50})
@@ -818,7 +927,7 @@ async function osud() {
             var event = ``
             var star_avg = 0
             var aim_avg = 0
-            var speed_avg = 0
+            var speed_avg = 0   
             var cs_avg = 0
             var ar_avg = 0
             var od_avg = 0
@@ -874,8 +983,10 @@ async function osud() {
 **Playcount:** ${playcount} | **Total Play Time:** ${totalhourplay}h
 **Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
 <:rankingX:520932410746077184>: ${ss} (${Number(ss/totalrank*100).toFixed(2)}%) | <:rankingS:520932426449682432>: ${s} (${Number(s/totalrank*100).toFixed(2)}%) | <:rankingA:520932311613571072>: ${a} (${Number(a/totalrank*100).toFixed(2)}%)
+
 ***${username} recent events:***
 ${event}
+
 ***${username} average skill:***
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)}★
@@ -892,7 +1003,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 message.channel.send(`${name} didn't map anything yet! Nani? **-Tiny**`)
             }
         }
-
+        
         //Commands
 
         if (msg.substring(0,7) == '!osuset' && msg.substring(0,7) == command) {
@@ -976,6 +1087,10 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
             osutop()
+        }
+
+        if (msg.substring(0,11) == "!modsosutop" && msg.substring(0,11) == command) {
+            modsosutop()
         }
 
         // Detection
