@@ -292,7 +292,8 @@ Note:
 - Added !modsosutop
 - Added shorten version of !modsosutop (!mosutop)
 - Added changelog
-- Fixed !osud a bit`)
+- Fixed !osud a bit
+- Fixed No Mod issue from !mosutop`)
             message.channel.send({embed})
         }
 
@@ -721,11 +722,14 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 td: 'TouchDevice',
                 hd: 'Hidden',
                 hr: 'HardRock',
+                sd: 'SuddenDeath',
                 dt: 'DoubleTime',
                 rx: 'Relax',
                 ht: 'HalfTime',
                 nc: 'Nightcore',
-                fl: 'Flashlight'
+                fl: 'Flashlight',
+                so: 'SpunOut',
+                nomod: 'No Mod'
             }
             var word = []
             var start = textstart
@@ -748,6 +752,9 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 if (definemod[getmod.substring(i, i+2)]) {
                     mod.push(definemod[getmod.substring(i, i+2)])
                 }
+                if (definemod[getmod.substring(i, i+5)]) {
+                    mod.push(definemod[getmod.substring(i, i+5)])
+                }
             }
             var name = checkplayer(player)
             var best = await osuApi.getUserBest({u: name, limit: 100})
@@ -759,14 +766,20 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             for (var i = 0; i < best.length; i++) {
                 var bestmod = best[i][0].mods
                 var match = false
-                for (var m = 0; m < mod.length; m++) {
-                    if (bestmod.includes(mod[m]) == true) {               
+                if (mod.includes('No Mod') == true) {
+                    if (bestmod.length == 0){
                         match = true
-                    } else { 
-                        match = false
-                        break; 
+                    } else {match = false}
+                } else {
+                    for (var m = 0; m < mod.length; m++) {
+                        if (bestmod.includes(mod[m]) == true) {               
+                            match = true
+                        } else { 
+                            match = false
+                            break; 
+                        }
+                        
                     }
-                    
                 }
                 if (match == true && checktop < 5) {
                     checktop += 1
