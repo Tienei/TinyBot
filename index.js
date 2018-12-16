@@ -293,7 +293,8 @@ Note:
 - Added shorten version of !modsosutop (!mosutop)
 - Added changelog
 - Fixed !osud a bit
-- Fixed No Mod issue from !mosutop`)
+- Fixed No Mod issue from !mosutop
+- Fixed beatmap link doesn't work properly`)
             message.channel.send({embed})
         }
 
@@ -843,6 +844,9 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                             break;
                         }
                     }
+                    if (msg.substring(m, msg.length).includes('?m=') == true) {
+                        start += 4
+                    }
                     if (msg.substr(start+1,1) == "+") {
                         for (var i = start+2; i <= msg.length; i++) {
                             if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
@@ -858,6 +862,12 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 }
                 if (msg.substr(m,31) == 'https://osu.ppy.sh/beatmapsets/') {
                     start = m + 31
+                    for (var i = start; i < msg.length; i++) {
+                        if (msg.substr(i,1) == '#') {
+                            start = i+1
+                            break;
+                        }
+                    }
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == '/') {
                             start = i+1
