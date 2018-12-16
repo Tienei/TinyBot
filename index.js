@@ -839,13 +839,16 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                     start = m + 21
                     for (var i = start; i <= msg.length; i++) {
                         if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
-                            beatmapid.push(msg.substring(start,i-4))
-                            start = i
-                            break;
+                            if (msg.substring(start, msg.length).includes('?m=') == true) {
+                                beatmapid.push(msg.substring(start,i-4))
+                                start = i
+                                break;
+                            } else {
+                                beatmapid.push(msg.substring(start,i))
+                                start = i
+                                break;
+                            }
                         }
-                    }
-                    if (msg.substring(m, msg.length).includes('?m=') == true) {
-                        start += 4
                     }
                     if (msg.substr(start+1,1) == "+") {
                         for (var i = start+2; i <= msg.length; i++) {
