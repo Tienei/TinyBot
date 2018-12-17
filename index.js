@@ -294,7 +294,8 @@ Note:
 - Added changelog
 - Fixed !osud a bit
 - Fixed No Mod issue from !mosutop
-- Fixed beatmap link doesn't work properly`)
+- Fixed beatmap link doesn't work properly
+- Changing the style of beatmap link`)
             message.channel.send({embed})
         }
 
@@ -950,10 +951,10 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
 **Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
 <:difficultyIcon:507522545759682561> __${version}__  
-▸ **Difficulty:** ${Number(acc100.star.total).toFixed(2)}★ (Aim: ${Number(acc100.star.aim).toFixed(2)}★, Speed: ${Number(acc100.star.speed).toFixed(2)}★)
-▸ **Max Combo:** ${maxCombo}
-▸**AR:** ${ar} ▸**OD:** ${od} ▸**HP:** ${hp} ▸**CS:** ${cs}
-▸**PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`)
+**Difficulty:** ${Number(acc100.star.total).toFixed(2)}★ (Aim: ${Number(acc100.star.aim).toFixed(2)}★, Speed: ${Number(acc100.star.speed).toFixed(2)}★)
+**Max Combo:** ${maxCombo}
+**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}
+**PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`)
                 message.channel.send({embed});
             }
 
