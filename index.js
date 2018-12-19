@@ -235,7 +235,7 @@ bot.on("message", (message) => {
         }
         // General Related
 
-        if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
+                if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Commands for Tiny Bot v2`)
             .setThumbnail(bot.user.avatarURL)
@@ -249,7 +249,6 @@ bot.on("message", (message) => {
 !ctb (username): Check user ctb status
 !mania (username): Check user mania status
 !osusig (username): Get your profile signature
-!osuavatar (username): Check osu user profile picture
 !recent [!r] (username): Check user most recent play
 !compare [!c] (username): Compare with other
 !osutop (username,number[1-100]): Check your top best 100 play
