@@ -182,7 +182,8 @@ bot.on("ready", (ready) => {
                                 if (perfect == 0) {
                                     fcguess = `${fcpp}pp for ${fcacc}%`
                                 }
-                                storedmapid.push({id:beatmapid,server:track[player].trackonchannel})
+                                var server = bot.channels.get(track[player].trackonchannel).guild.id
+                                storedmapid.push({id:beatmapid,server: server})
                                 const embed = new Discord.RichEmbed()
                                 .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
                                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
@@ -212,7 +213,7 @@ bot.on("ready", (ready) => {
         }
     }
     
-    setInterval(realtimeosutrack, 20000)
+    //setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
@@ -295,7 +296,8 @@ Note:
 - Fixed !osud a bit
 - Fixed No Mod issue from !mosutop
 - Fixed beatmap link doesn't work properly
-- Changing the style of beatmap link`)
+- Changing the style of beatmap link
+- Fixed osu track can't comparable`)
             message.channel.send({embed})
         }
 
@@ -372,10 +374,6 @@ Note:
             .setColor('#7f7fff')
             message.channel.send({embed});
 
-        }
-
-        if (message.content.includes('owo') == true) {
-            console.log('owo')
         }
 
         async function ripple() {
@@ -559,7 +557,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
             var check = message.content.substring(start);
             var name = checkplayer(check)
             var storedid = 0
-            for (var i = storedmapid.length-1; i > -1; i--) {
+            for (var i = storedmapid.length -1 ; i > -1; i--) {
                 if (message.guild !== null) {
                     if (storedmapid[i].server !== undefined) {
                         if (message.guild.id == storedmapid[i].server) {
@@ -987,7 +985,6 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var ss = Number(user[0].count_rank_ss) + Number(user[0].count_rank_ssh)
             var s = Number(user[0].count_rank_s) + Number(user[0].count_rank_sh) 
             var a = Number(user[0].count_rank_a)
-            console.log(user[0].total_seconds_played)
             var totalhourplay = Number(user[0].total_seconds_played / 3600).toFixed(0)
             var totalrank = ss + s + a
             var events = 0
