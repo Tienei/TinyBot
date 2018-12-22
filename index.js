@@ -114,14 +114,27 @@ bot.on("ready", (ready) => {
     var date = new Date()
     var day = date.getDate()
     var month = date.getMonth()
+    var minute = date.getMinutes()
+    var check = false
     function getTime() {
         date = new Date()   
         day = date.getDate()
         month = date.getMonth()
-        if (day == 8 && month == 8) {
-            bot.channels.get('487479898903150612').send('Happy Birthday Tiny!!! :tada: :birthday: :tada:')
+        minute = date.getMinutes()
+        if (day == 25 && month == 12 && minute == 0 && check == false) {
+            bot.channels.get('487479898903150612').send(`@everyone
+This is Tienei/Tiny here and Merry Chirstmas everybody!!! :D I hope you guys have a fantastic, happy day with your friends or your family!
+Dit is Tienei/Tiny hier en Merry Christmas iedereen!!! :D Ik hoop dat jullie een fantastische, gelukkige dag hebben met je vrienden of je familie!
+Это Tienei/Tiny здесь и с Рождеством всех!!! :D Надеюсь, у вас, ребята, фантастический, счастливый день с друзьями или семьей!
+Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap anda mempunyai hari yang hebat dan bahagia dengan rakan-rakan atau keluarga anda! (Especially Naomi wherever you are)`)
+            bot.channels.get('487479898903150612').send('https://media.giphy.com/media/lmsRHBoMSXDm8/giphy.gif')
         }
+        check = true
     }
+
+    setInterval(getTime, 1000)
+
+    setInterval(getTime, 1000)
 
     // osutrack
     async function realtimeosutrack() {
