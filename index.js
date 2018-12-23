@@ -121,7 +121,7 @@ bot.on("ready", (ready) => {
         day = date.getDate()
         month = date.getMonth()
         minute = date.getMinutes()
-        if (day == 25 && month == 11 && minute == 0 && check == false) {
+        if (day == 24 && month == 11 && minute == 0 && check == false) {
             bot.channels.get('487479898903150612').send(`@everyone
 This is Tienei/Tiny here and Merry Chirstmas everybody!!! :D I hope you guys have a fantastic, happy day with your friends or your family!
 Dit is Tienei/Tiny hier en Merry Christmas iedereen!!! :D Ik hoop dat jullie een fantastische, gelukkige dag hebben met je vrienden of je familie!
