@@ -121,7 +121,6 @@ bot.on("ready", (ready) => {
         day = date.getDate()
         month = date.getMonth()
         minute = date.getMinutes()
-        console.log(day)
         if (day == 24 && month == 11 && minute == 0 && check == false) {
             bot.channels.get('487479898903150612').send(`@everyone
 This is Tienei/Tiny here and Merry Chirstmas everybody!!! :D I hope you guys have a fantastic, happy day with your friends or your family!
@@ -133,7 +132,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
         check = true
     }
 
-    setInterval(getTime, 1000)
+    //setInterval(getTime, 1000)
 
     // osutrack
     async function realtimeosutrack() {
