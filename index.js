@@ -114,6 +114,7 @@ bot.on("ready", (ready) => {
     var date = new Date()
     var day = date.getDate()
     var month = date.getMonth()
+    var hour = date.getHours()
     var minute = date.getMinutes()
     var check = false
     function getTime() {
@@ -121,7 +122,8 @@ bot.on("ready", (ready) => {
         day = date.getDate()
         month = date.getMonth()
         minute = date.getMinutes()
-        if (day == 24 && month == 11 && minute == 0 && check == false) {
+        hour = date.getHours()
+        if (day == 1 && month == 0 && hour == 0 && minute == 0 && check == false) {
             bot.channels.get('487479898903150612').send(`@everyone
 This is Tienei/Tiny here and Merry Chirstmas everybody!!! :D I hope you guys have a fantastic, happy day with your friends or your family!
 Dit is Tienei/Tiny hier en Merry Christmas iedereen!!! :D Ik hoop dat jullie een fantastische, gelukkige dag hebben met je vrienden of je familie!
@@ -132,7 +134,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
         check = true
     }
 
-    //setInterval(getTime, 1000)
+    setInterval(getTime, 1000)
 
     // osutrack
     async function realtimeosutrack() {
@@ -246,7 +248,7 @@ bot.on("message", (message) => {
         }
         // General Related
 
-                if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
+        if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Commands for Tiny Bot v2`)
             .setThumbnail(bot.user.avatarURL)
@@ -255,6 +257,7 @@ bot.on("message", (message) => {
 !avatar (username): Check user profile picture
 --- [osu!]
 !osu (username): Check user osu status
+!osuset (username): Link your discord to your osu!
 !osuavatar (username): Check osu user profile picture
 !taiko (username): Check user taiko status
 !ctb (username): Check user ctb status
@@ -263,6 +266,7 @@ bot.on("message", (message) => {
 !recent [!r] (username): Check user most recent play
 !compare [!c] (username): Compare with other
 !osutop (username,number[1-100]): Check your top best 100 play
+!recentosutop (username): Check your top most recent play in top 100
 !modsosutop [!mosutop] (username, mods): Check your top with mods top play
 !osutrack (username): Track your osu top play (top 50)
 !untrack (username): Remove your osu tracking
@@ -293,21 +297,15 @@ Note:
             message.channel.send({embed})
         }
 
-        if (msg.substring(0,10) == "!changelog" && msg.substring(0,10) == command) {
+        if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot v2.2`)
+            .setAuthor(`Changelog for Tiny Bot v2.3`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Christmas Update:**
-- Bot got new profile picture
-- Added !modsosutop
-- Added shorten version of !modsosutop (!mosutop)
-- Added changelog
-- Fixed !osud a bit
-- Fixed No Mod issue from !mosutop
-- Fixed beatmap link doesn't work properly
-- Changing the style of beatmap link
-- Fixed osu track can't comparable`)
+**New Year Update:**
+- Bot still got the same pfp
+- Added !recentosutop
+- Added shorten version of !recentosutop (!rosutop)`)
             message.channel.send({embed})
         }
 
@@ -717,6 +715,67 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top osu!Standard Plays for ${username}`)
+            .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            .setDescription(top)
+            message.channel.send({embed});
+        }
+
+        async function recentosutop(textstart) {
+            var check = message.content.substring(textstart)
+            var name = checkplayer(check)
+            var top = ''
+            var best = await osuApi.getUserBest({u: name, limit:100})
+            var userid = best[0][0].user.id
+            var user = await osuApi.getUser({u: userid})
+            var username = user.name
+            best.sort(function (a,b) {
+                a1 = Date.parse(a[0].date)
+                b1 = Date.parse(b[0].date)
+                return a1 - b1
+            })
+            for (var i = 99; i > 94; i--) {
+                var title = best[i][1].title
+                var diff = best[i][1].version
+                var beatmapid = best[i][1].id
+                var score = best[i][0].score
+                var count300 = Number(best[i][0].counts['300'])
+                var count100 = Number(best[i][0].counts['100'])
+                var count50 = Number(best[i][0].counts['50'])
+                var countmiss = Number(best[i][0].counts.miss)
+                var combo = best[i][0].maxCombo
+                var fc = best[i][1].maxCombo
+                var letter = best[i][0].rank
+                var rank = rankingletters(letter)
+                var pp = Number(best[i][0].pp).toFixed(2)
+                var mod = best[i][0].mods
+                var perfect = best[i][0].perfect
+                var modandbit = mods(mod)
+                var shortenmod = modandbit.shortenmod
+                var bitpresent = modandbit.bitpresent
+                if (message.guild !== null) {
+                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                } else {
+                    storedmapid.push({id:beatmapid,user:message.author.id})
+                }
+                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                var fcpp = Number(fccalc.pp.total).toFixed(2)
+                var fcacc = fccalc.acc
+                var star = Number(fccalc.star.total).toFixed(2)
+                var fcguess = ''
+                if (perfect == 0) {
+                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                }
+                top += `
+**[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+`
+                
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Top osu!Standard most recent plays for ${username}`)
             .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setColor('#7f7fff')
             .setDescription(top)
@@ -1135,6 +1194,14 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
             osutop()
+        }
+
+        if (msg.substring(0,13) == '!recentosutop' && msg.substring(0,13) == command) {
+            recentosutop(14)
+        }
+
+        if (msg.substring(0,8) == '!rosutop' && msg.substring(0,8) == command) {
+            recentosutop(9)
         }
 
         if (msg.substring(0,11) == '!modsosutop' && msg.substring(0,11) == command) {
