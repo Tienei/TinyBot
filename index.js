@@ -305,7 +305,8 @@ Note:
 **New Year Update:**
 - Bot still got the same pfp
 - Added !recentosutop
-- Added shorten version of !recentosutop (!rosutop)`)
+- Added shorten version of !recentosutop (!rosutop)
+- Fixed !recentosutop undetectable when the user doesn't have all top 100`)
             message.channel.send({embed})
         }
 
@@ -734,7 +735,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 b1 = Date.parse(b[0].date)
                 return a1 - b1
             })
-            for (var i = 99; i > 94; i--) {
+            for (var i = best.length-1; i > best.length - 6; i--) {
                 var title = best[i][1].title
                 var diff = best[i][1].version
                 var beatmapid = best[i][1].id
