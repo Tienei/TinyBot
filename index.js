@@ -134,7 +134,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
         check = true
     }
 
-    setInterval(getTime, 1000)
+    //setInterval(getTime, 1000)
 
     // osutrack
     async function realtimeosutrack() {
