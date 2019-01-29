@@ -273,7 +273,7 @@ bot.on("message", (message) => {
 !osud (username): Detail statistics of user
 Note: 
 - If your osu username have a space in it, replace it with a "_"
-- Every mode (beside Standard) is not fully supported!`
+- Every mode (besides Standard) is not fully supported!`
             )
             message.channel.send({embed})
         }
@@ -299,14 +299,13 @@ Note:
 
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot v2.3`)
+            .setAuthor(`Changelog for Tiny Bot v2.4`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**New Year Update:**
+**Lunar New Year Update:**
 - Bot still got the same pfp
-- Added !recentosutop
-- Added shorten version of !recentosutop (!rosutop)
-- Fixed !recentosutop undetectable when the user doesn't have all top 100`)
+- Added !calcpp
+- Fixed !help description`)
             message.channel.send({embed})
         }
 
@@ -622,7 +621,8 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
                     highscore += `
 ${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp***
 ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`         
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+`         
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
@@ -1028,6 +1028,83 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 
         }
 
+        async function calculateplay() {
+            var start = 8
+            var beatmapid = 0
+            var mods = []
+            var acc = 0
+            var combo = 0
+            var miss = 0
+            var bitpresent = 0
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    beatmapid = msg.substring(start,i)
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    mods.push(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    acc = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    combo = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i <= msg.length; i++) {
+                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
+                    miss = Number(msg.substring(start,i))
+                    break
+                }
+            }
+            var mod = {
+                nomod: 0,
+                nf: 1,
+                ez: 2,
+                td: 4,
+                hd: 8,
+                hr: 16,
+                dt: 64,
+                rx: 128,
+                ht: 256,
+                nc: 512,
+                fl: 1024
+            }
+            for (var m = 0; m <= mods[0].length; m++) {
+                if (mod[mods[0].substr(m*2,2)]) {
+                    bitpresent += mod[mods[0].substr(m*2,2)]
+                }
+            }
+            var calc = await mapcalc(beatmapid,bitpresent,combo,0,0,miss,acc,0)
+            var map = await osuApi.getBeatmaps({b: beatmapid})
+            var beatmapidfixed = map[0].beatmapSetId
+            var title = map[0].title
+            var mapper = map[0].creator
+            var version = map[0].version
+            const embed = new Discord.RichEmbed()
+                .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid}`)
+                .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+                .setColor('#7f7fff')
+                .setDescription(`
+Difficulty: *${version}*
+With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and **${miss}** miss:
+-- **${Number(calc.pp.total).toFixed(2)}pp**`)
+            message.channel.send({embed});
+        }
+
         async function osud() {
             var check = message.content.substring(6);
             var name = checkplayer(check)
@@ -1213,10 +1290,15 @@ Naomi if you seeing this here's what i feel about you: <3`)
             modsosutop(9)
         }
 
+        if (msg.substring(0,7) == '!calcpp'  && msg.substring(0,7) == command) {
+            calculateplay()
+        }
+
         // Detection
         beatmapdetail()
 
     }
 
 })
+
 bot.login(process.env.BOT_TOKEN);
