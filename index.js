@@ -254,7 +254,7 @@ bot.on("message", (message) => {
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- [General]**
-!avatar (username): Check user profile picture
+!avatar (username): Check user's profile picture
 
 **--- [osu!]**
 **+ osu! Profile:** !(command) (username): !osu, !taiko, !ctb, !mania
@@ -262,10 +262,10 @@ bot.on("message", (message) => {
 **+ osu! Track:** !(command) (username): !osutrack, !untrack
 **+ Others:**
 !osuset (username): Link your discord to your osu!
-!osuavatar (username): Check osu user profile picture
-!osusig (username): Get your profile signature
-!recent [!r] (username): Check user most recent play
-!compare [!c] (username): Compare with other
+!osuavatar (username): Check osu player's profile picture
+!osusig (username): Get player's profile signature
+!recent [!r] (username): Check player's most recent play
+!compare [!c] (username): Compare with the latest play in chat
 !osud (username): Detail statistics of user
 !calcpp (mods) (acc) (combo) (miss): Calculate a beatmap pp
 
