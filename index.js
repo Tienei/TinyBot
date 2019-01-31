@@ -248,31 +248,30 @@ bot.on("message", (message) => {
         }
         // General Related
 
-        if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
+                if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Commands for Tiny Bot v2`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
---- [General]
+**--- [General]**
 !avatar (username): Check user profile picture
---- [osu!]
-!osu (username): Check user osu status
+
+**--- [osu!]**
+**+ osu! Profile:** !(command) (username): !osu, !taiko, !ctb, !mania
+**+ osu! Top play:** !(command) (username) {extra} (number): !osutop, !recentosutop, !modsosutop {mods}
+**+ osu! Track:** !(command) (username): !osutrack, !untrack
+**+ Others:**
 !osuset (username): Link your discord to your osu!
 !osuavatar (username): Check osu user profile picture
-!taiko (username): Check user taiko status
-!ctb (username): Check user ctb status
-!mania (username): Check user mania status
 !osusig (username): Get your profile signature
 !recent [!r] (username): Check user most recent play
 !compare [!c] (username): Compare with other
-!osutop (username,number[1-100]): Check your top best 100 play
-!recentosutop (username): Check your top most recent play in top 100
-!modsosutop [!mosutop] (username, mods): Check your top with mods top play
-!osutrack (username): Track your osu top play (top 50)
-!untrack (username): Remove your osu tracking
 !osud (username): Detail statistics of user
+!calcpp (mods) (acc) (combo) (miss): Calculate a beatmap pp
+
 Note: 
 - If your osu username have a space in it, replace it with a "_"
+- () means paramater, [] means shorten commands, {} means extra parameter needed 
 - Every mode (besides Standard) is not fully supported!`
             )
             message.channel.send({embed})
@@ -305,7 +304,8 @@ Note:
 **Lunar New Year Update:**
 - Bot still got the same pfp
 - Added !calcpp
-- Fixed !help description`)
+- Fixed !help description
+- Change the design of !help`)
             message.channel.send({embed})
         }
 
