@@ -305,7 +305,9 @@ Note:
 - Bot still got the same pfp
 - Added !calcpp
 - Fixed !help description
-- Change the design of !help`)
+- Change the design of !help
+- Updated the pp calculation
+- Updated !osud star calculation`)
             message.channel.send({embed})
         }
 
