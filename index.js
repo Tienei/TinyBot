@@ -1174,8 +1174,8 @@ ${event}
 
 ***${username} average skill:***
 Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50).toFixed(2)}★
-Speed skill: ${Number(speed_avg/50).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2)*2}★
+Speed skill: ${Number(speed_avg/50).toFixed(2)*2}★
 CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
             message.channel.send({embed});
         }
