@@ -248,13 +248,14 @@ bot.on("message", (message) => {
         }
         // General Related
 
-                if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
+        if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Commands for Tiny Bot v2`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- [General]**
 !avatar (username): Check user's profile picture
+!changelog: Changes of the bot
 
 **--- [osu!]**
 **+ osu! Profile:** !(command) (username): !osu, !taiko, !ctb, !mania
@@ -307,7 +308,8 @@ Note:
 - Fixed !help description
 - Change the design of !help
 - Updated the pp calculation
-- Updated !osud star calculation`)
+- Updated !osud star calculation
+- Fixed !calcpp not calculating SpunOut mod`)
             message.channel.send({embed})
         }
 
@@ -318,7 +320,7 @@ Note:
         }
 
         // Osu related
-
+        
         //Function
         function checkplayer(name) {
             if (name == '') {
@@ -980,7 +982,8 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                     rx: 128,
                     ht: 256,
                     nc: 512,
-                    fl: 1024
+                    fl: 1024,
+                    so: 4096
                 }
                 for (var m = 0; m <= mods[i].length; m++) {
                     if (mod[mods[i].substr(m*2,2)]) {
@@ -1083,7 +1086,8 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 rx: 128,
                 ht: 256,
                 nc: 512,
-                fl: 1024
+                fl: 1024,
+                so: 4096
             }
             for (var m = 0; m <= mods[0].length; m++) {
                 if (mod[mods[0].substr(m*2,2)]) {
@@ -1176,8 +1180,8 @@ ${event}
 
 ***${username} average skill:***
 Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50).toFixed(2)*2}★
-Speed skill: ${Number(speed_avg/50).toFixed(2)*2}★
+Aim skill: ${Number(aim_avg/50).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50).toFixed(2)}★
 CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
             message.channel.send({embed});
         }
@@ -1302,5 +1306,4 @@ Naomi if you seeing this here's what i feel about you: <3`)
     }
 
 })
-
 bot.login(process.env.BOT_TOKEN);
