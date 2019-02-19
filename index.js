@@ -319,7 +319,7 @@ Note:
             Bancho()
         }
 
-        if (msg.includes(`<@${bot.user.id}>`) == true) {
+        if (msg.includes(`<@${bot.user.id}>`) == true || msg.includes(`<@!${bot.user.id}>`) == true) {
             var roll = Math.floor(Math.random()*6)
             var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,`Why you keep pinging me?`,`Stop pinging me! <:chinoangry:450686707881213972>`,`What do you need senpai? <:chinohappy:450684046129758208>`,`<:chinopinged:450680698613792783>`]
             message.channel.send(respone[roll])
