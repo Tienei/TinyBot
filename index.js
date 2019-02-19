@@ -202,12 +202,10 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
                                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
                                 .setColor('#7f7fff')
                                 .setDescription(`
-        **[${beatmap} [${diff}]](https://osu.ppy.sh/b/${beatmapid}) ${shortenmod} (${star}★)**
-        **▸ #${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})**
-        ▸ Scores: ${scores}
-        ▸ **Rank: ${rank} ▸ Combo: ${combo}/${fc}** 
-        ▸ **PP: ${pp} (+${ppgain}pp)** [${fcguess}]
-        ▸ **Accuracy: ${acc}%** [${count300}/${count100}/${count50}/${countmiss}]`)
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ${pp}
+${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] | ${fcguess}
+**#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})**`)
                                 bot.channels.get(track[player].trackonchannel).send({embed})
                                 track[player].lasttotalpp = user[0].pp_raw
                                 track[player].lastrank = user[0].pp_rank
@@ -256,6 +254,8 @@ bot.on("message", (message) => {
 **--- [General]**
 !avatar (username): Check user's profile picture
 !changelog: Changes of the bot
+!help: **Uh then how you open this?**
+!ping: Ping Bancho
 
 **--- [osu!]**
 **+ osu! Profile:** !(command) (username): !osu, !taiko, !ctb, !mania
@@ -267,7 +267,7 @@ bot.on("message", (message) => {
 !osusig (username): Get player's profile signature
 !recent [!r] (username): Check player's most recent play
 !compare [!c] (username): Compare with the latest play in chat
-!osud (username): Detail statistics of user
+!osud (username): Detail statistics of user / Please wait about 30-60 seconds
 !calcpp (mods) (acc) (combo) (miss): Calculate a beatmap pp
 
 Note: 
@@ -299,18 +299,24 @@ Note:
 
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot v2.4`)
+            .setAuthor(`Changelog for Tiny Bot v2.5`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Lunar New Year Update:**
+**Update:**
 - Bot still got the same pfp
-- Added !calcpp
-- Fixed !help description
-- Change the design of !help
-- Updated the pp calculation
-- Updated !osud star calculation
-- Fixed !calcpp not calculating SpunOut mod`)
+- Minor change to !osutrack
+- Added !ping`)
             message.channel.send({embed})
+        }
+
+        if (msg.substring(0,5) == '!ping' && msg.substring(0,5) == command) {
+            async function Bancho() {
+                var timenow = Date.now()
+                var test = await osuApi.getUser({u: "peppy"})
+                var timelater = Date.now()
+                message.channel.send(`Bancho respond! **${timelater - timenow}ms**`)
+            }
+            Bancho()
         }
 
         if (msg.includes(`<@${bot.user.id}>`) == true) {
