@@ -193,7 +193,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
                                 pp = 'No PP'
                                 }
                                 if (perfect == 0) {
-                                    fcguess = `${fcpp}pp for ${fcacc}%`
+                                    fcguess = `| ${fcpp}pp for ${fcacc}%`
                                 }
                                 var server = bot.channels.get(track[player].trackonchannel).guild.id
                                 storedmapid.push({id:beatmapid,server: server})
@@ -203,8 +203,8 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
                                 .setColor('#7f7fff')
                                 .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ${pp}pp
-${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] | ${fcguess}
+${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 **#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})**`)
                                 bot.channels.get(track[player].trackonchannel).send({embed})
                                 track[player].lasttotalpp = user[0].pp_raw
