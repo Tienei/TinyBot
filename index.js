@@ -224,7 +224,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
         }
     }
     
-    setInterval(realtimeosutrack, 20000)
+    //setInterval(realtimeosutrack, 20000)
 });
 
 bot.on("message", (message) => {
@@ -259,7 +259,7 @@ bot.on("message", (message) => {
 
 **--- [osu!]**
 **+ osu! Profile:** !(command) (username): !osu, !taiko, !ctb, !mania
-**+ osu! Top play:** !(command) (username) {extra} (number): !osutop, !recentosutop, !modsosutop {mods}
+**+ osu! Top play:** !(command) (username) (number): !osutop, !taikotop, !ctbtop, !maniatop
 **+ osu! Track:** !(command) (username): !osutrack, !untrack
 **+ Others:**
 !osuset (username): Link your discord to your osu!
@@ -267,6 +267,8 @@ bot.on("message", (message) => {
 !osusig (username): Get player's profile signature
 !recent [!r] (username): Check player's most recent play
 !compare [!c] (username): Compare with the latest play in chat
+!recentosutop [!rosutop] (username): Get player top most recent play
+!modsosutop [!mosutop] (username) (mods): Get player top play with mods
 !osud (username): Detail statistics of user / Please wait about 30-60 seconds
 !calcpp (mods) (acc) (combo) (miss): Calculate a beatmap pp
 
@@ -305,7 +307,10 @@ Note:
 **Update:**
 - Bot still got the same pfp
 - Minor change to !osutrack
-- Added !ping`)
+- Added !ping
+- Added !taikotop
+- Added !ctbtop
+- Added !maniatop`)
             message.channel.send({embed})
         }
 
@@ -641,13 +646,13 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
             message.channel.send({embed});
         }
 
-        async function osutop() {
+        async function osutop(mode, startpos) {
             var player = ''
             var start = 0
             var loop = 0
             var word = []
-            var startword = 8
-            for (var i = 8; i < msg.length; i++) {
+            var startword = startpos
+            for (var i = startword; i < msg.length; i++) {
                 if (msg[i] == ' ') {
                     word.push(msg.substring(startword,i))
                     startword = i + 1
@@ -677,7 +682,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
             }
             var name = checkplayer(player)
             var top = ''
-            var best = await osuApi.getUserBest({u: name, limit: loop})
+            var best = await osuApi.getUserBest({u: name, limit: loop, m: mode})
             if (best.length == 0) {
                 message.channel.send(`I think ${name} didn't play anything yet~ **-Chino**`)
             }
@@ -709,12 +714,22 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                     storedmapid.push({id:beatmapid,user:message.author.id})
                 }
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
-                var fcpp = Number(fccalc.pp.total).toFixed(2)
-                var fcacc = fccalc.acc
-                var star = Number(fccalc.star.total).toFixed(2)
+                var fccalc = ''
+                var fcpp = 0
+                var fcacc = 0
+                var star = 0
+                if (mode == 0) {
+                    fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                    fcpp = Number(fccalc.pp.total).toFixed(2)
+                    fcacc = fccalc.acc
+                    star = Number(fccalc.star.total).toFixed(2)
+                }
+                if (mode == 1 || mode == 2 || mode == 3) {
+                    fc = ''
+                    star = Number(best[i][1].difficulty.rating).toFixed(2)
+                }
                 var fcguess = ''
-                if (perfect == 0) {
+                if (perfect == 0 && mode == 0) {
                     fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 top += `
@@ -1283,7 +1298,19 @@ Naomi if you seeing this here's what i feel about you: <3`)
         }
 
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
-            osutop()
+            osutop(0,8)
+        }
+
+        if (msg.substring(0,9) == '!taikotop' && msg.substring(0,9) == command) {
+            osutop(1,10)
+        }
+
+        if (msg.substring(0,7) == '!ctbtop' && msg.substring(0,7) == command) {
+            osutop(2,8)
+        }
+
+        if (msg.substring(0,9) == '!maniatop' && msg.substring(0,9) == command) {
+            osutop(3,10)
         }
 
         if (msg.substring(0,13) == '!recentosutop' && msg.substring(0,13) == command) {
