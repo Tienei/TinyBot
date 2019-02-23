@@ -646,7 +646,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
             message.channel.send({embed});
         }
 
-        async function osutop(mode, startpos) {
+        async function osutop(mode, startpos, modename) {
             var player = ''
             var start = 0
             var loop = 0
@@ -740,7 +740,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 
             }
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Top osu!Standard Plays for ${username}`)
+            .setAuthor(`Top ${modename}!Standard Plays for ${username}`)
             .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setColor('#7f7fff')
             .setDescription(top)
@@ -1298,19 +1298,19 @@ Naomi if you seeing this here's what i feel about you: <3`)
         }
 
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
-            osutop(0,8)
+            osutop(0,8,'osu')
         }
 
         if (msg.substring(0,9) == '!taikotop' && msg.substring(0,9) == command) {
-            osutop(1,10)
+            osutop(1,10,'taiko')
         }
 
         if (msg.substring(0,7) == '!ctbtop' && msg.substring(0,7) == command) {
-            osutop(2,8)
+            osutop(2,8,'ctb')
         }
 
         if (msg.substring(0,9) == '!maniatop' && msg.substring(0,9) == command) {
-            osutop(3,10)
+            osutop(3,10,'mania')
         }
 
         if (msg.substring(0,13) == '!recentosutop' && msg.substring(0,13) == command) {
