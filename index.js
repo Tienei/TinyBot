@@ -165,7 +165,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
                             if (String(best[i][0].date) === String(recent[0][0].date)) {
                                 console.log('new top play')
                                 var country = String(user[0].country).toLowerCase()
-                                var pp = best[i][0].pp
+                                var pp = Number(best[i][0].pp).toFixed(2)
                                 var ppgain = (Number(user[0].pp_raw).toFixed(2) - Number(track[player].lasttotalpp)).toFixed(2)
                                 var beatmap = best[i][1].title
                                 var beatmapidfixed = best[i][1].beatmapSetId
@@ -202,7 +202,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
                                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
                                 .setColor('#7f7fff')
                                 .setDescription(`
-**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ${pp}pp
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain})
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 **#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})**`)
