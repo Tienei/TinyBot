@@ -299,7 +299,7 @@ Note:
             message.channel.send({embed})
         }
 
-        if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
+                if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Changelog for Tiny Bot v2.5`)
             .setThumbnail(bot.user.avatarURL)
@@ -310,7 +310,9 @@ Note:
 - Added !ping
 - Added !taikotop
 - Added !ctbtop
-- Added !maniatop`)
+- Added !maniatop
+- Fixed Accuracy calculation error
+- Fixed wrong accuracy details display`)
             message.channel.send({embed})
         }
 
@@ -698,6 +700,8 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                 var count100 = Number(best[i][0].counts['100'])
                 var count50 = Number(best[i][0].counts['50'])
                 var countmiss = Number(best[i][0].counts.miss)
+                var countgeki = Number(best[i][0].counts.geki)
+                var countkatu = Number(best[i][0].counts.katu)
                 var combo = best[i][0].maxCombo
                 var fc = best[i][1].maxCombo
                 var letter = best[i][0].rank
@@ -714,30 +718,36 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                     storedmapid.push({id:beatmapid,user:message.author.id})
                 }
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                var fccalc = ''
-                var fcpp = 0
-                var fcacc = 0
                 var star = 0
-                if (mode == 0) {
-                    fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
-                    fcpp = Number(fccalc.pp.total).toFixed(2)
-                    fcacc = fccalc.acc
+                var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                var fcguess = ''
+                if (perfect == 0 && mode == 0) {
+                    var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                    var fcacc = fccalc.acc
                     star = Number(fccalc.star.total).toFixed(2)
+                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 if (mode == 1 || mode == 2 || mode == 3) {
                     fc = ''
                     star = Number(best[i][1].difficulty.rating).toFixed(2)
                 }
-                var fcguess = ''
-                if (perfect == 0 && mode == 0) {
-                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                if (mode == 1) {
+                    acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
+                    accdetail = `[${count300}/${count100}/${countmiss}]`
+                }
+                if (mode == 2) {
+                    acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
+                }
+                if (mode == 3) {
+                    acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
+                    accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
                 }
                 top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc}% ${accdetail} ${fcguess}
 `
-                
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top ${modename}!Standard Plays for ${username}`)
