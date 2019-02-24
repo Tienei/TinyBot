@@ -677,7 +677,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                     loop = start + 1    
                 }
             }
-            if (msg.length == 7) {
+            if (msg.length == startpos - 1) {
                 player = ''
                 start = 0
                 loop = 5
