@@ -720,13 +720,11 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var star = 0
                 var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
-                var fcguess = ''
-                if (perfect == 0 && mode == 0) {
+                if (mode == 0) {
                     var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
                     var fcacc = fccalc.acc
                     star = Number(fccalc.star.total).toFixed(2)
-                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 if (mode == 1 || mode == 2 || mode == 3) {
                     fc = ''
@@ -743,11 +741,15 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                     acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
                     accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
                 }
+                var fcguess = ''
+                if (perfect == 0 && mode == 0) {
+                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                }
                 top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% ${accdetail} ${fcguess}
-`
+`   
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top ${modename}!Standard Plays for ${username}`)
