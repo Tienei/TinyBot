@@ -299,13 +299,13 @@ Note:
             message.channel.send({embed})
         }
 
-                if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
+        if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Changelog for Tiny Bot v2.5`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **Update:**
-- Bot still got the same pfp
+- New pfp for the bot
 - Minor change to !osutrack
 - Added !ping
 - Added !taikotop
