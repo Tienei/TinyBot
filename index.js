@@ -8,6 +8,7 @@ const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 const rippleAPI = require('rippleapi')
+const fs = require('fs')
 
 var osuApi = new osu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
@@ -101,16 +102,21 @@ async function mapcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode)
 }
 
 bot.on("ready", (ready) => {
-    async function getData() {
+    async function getFile() {
+        // Get User data
         var backupmessage = await bot.channels.get('487482583362568212').fetchMessages({limit: 1})
-        var backup = backupmessage.first().content
-        cache = JSON.parse(backup.substring(18))
+        var backup = backupmessage.first().attachments
+        var fileurl = backup.first().url
+        var file = await request.get(fileurl)
+        cache = JSON.parse(file)
+        // Get track data
         var trackmessage = await bot.channels.get('497302830558871552').fetchMessages({limit: 1})
-        var trackbackup = trackmessage.first().content
-        track = JSON.parse(trackbackup.substring(19))
-        console.log(track.length)
+        var trackbackup = trackmessage.first().attachments
+        var trackurl = trackbackup.first().url
+        var trackdata = await request.get(trackurl)
+        track = JSON.parse(trackdata)
     }
-    getData()
+    getFile()
     var date = new Date()
     var day = date.getDate()
     var month = date.getMonth()
@@ -312,7 +318,8 @@ Note:
 - Added !ctbtop
 - Added !maniatop
 - Fixed Accuracy calculation error
-- Fixed wrong accuracy details display`)
+- Fixed wrong accuracy details display
+- Change the way bot saving data (Basically bot can store more than before)`)
             message.channel.send({embed})
         }
 
@@ -463,7 +470,11 @@ Note:
                 .setAuthor(`Your account has been linked to osu! username: ${name}`,'',`https://osu.ppy.sh/users/${user.id}`)
                 .setImage(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
                 message.channel.send({embed})
-                bot.channels.get('487482583362568212').send(`***User set:*** \n ${JSON.stringify(cache)}`)
+                fs.writeFileSync('data.txt', JSON.stringify(cache))
+                bot.channels.get('487482583362568212').send({files: [{
+                    attachment: './data.txt',
+                    name: 'data.txt'
+                }]})
             }
         }
 
@@ -553,7 +564,11 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
                     track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
                 }
                 message.channel.send(`**${name}** has been tracked on **#${message.channel.name}**`)
-                bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
+                fs.writeFileSync('track.txt', JSON.stringify(track))
+                bot.channels.get('497302830558871552').send({files: [{
+                    attachment: './track.txt',
+                    name: 'track.txt'
+                }]})
             }
         }
 
@@ -562,7 +577,11 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
                 if (track[i].trackonchannel == message.channel.id && track[i].osuname == message.content.substring(9)) {
                     track.splice(i,1)
                     message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
-                    bot.channels.get('497302830558871552').send(`***Track set:*** \n ${JSON.stringify(track)}`)
+                    fs.writeFileSync('track.txt', JSON.stringify(track))
+                    bot.channels.get('497302830558871552').send({files: [{
+                        attachment: './track.txt',
+                        name: 'track.txt'
+                    }]})
                 }
             }
         }
