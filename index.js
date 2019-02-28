@@ -563,7 +563,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
                 if (detected == false) {
                     track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
                 }
-                message.channel.send(`**${name}** has been tracked on **#${message.channel.name}**`)
+                message.channel.send(`**${name}** is now being tracked on **#${message.channel.name}**`)
                 fs.writeFileSync('track.txt', JSON.stringify(track))
                 bot.channels.get('497302830558871552').send({files: [{
                     attachment: './track.txt',
