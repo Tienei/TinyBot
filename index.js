@@ -1076,7 +1076,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
 **Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
 <:difficultyIcon:507522545759682561> __${version}__  
-**Difficulty:** ${Number(acc100.star.total).toFixed(2)}★ (Aim: ${Number(acc100.star.aim).toFixed(2)}★, Speed: ${Number(acc100.star.speed).toFixed(2)}★)
+**Difficulty:** ${Number(acc100.star.total).toFixed(2)}★ (Aim: ${Number(acc100.star.aim).toFixed(2) * 2}★, Speed: ${Number(acc100.star.speed).toFixed(2) * 2}★)
 **Max Combo:** ${maxCombo}
 **AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}
 **PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`)
