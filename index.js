@@ -307,19 +307,11 @@ Note:
 
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot v2.5`)
+            .setAuthor(`Changelog for Tiny Bot v2.6`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **Update:**
-- New pfp for the bot
-- Minor change to !osutrack
-- Added !ping
-- Added !taikotop
-- Added !ctbtop
-- Added !maniatop
-- Fixed Accuracy calculation error
-- Fixed wrong accuracy details display
-- Change the way bot saving data (Basically bot can store more than before)`)
+- Added error detecting`)
             message.channel.send({embed})
         }
 
@@ -783,6 +775,9 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var name = checkplayer(check)
             var top = ''
             var best = await osuApi.getUserBest({u: name, limit:100})
+            if (best.length == 0) {
+                message.channel.send(`I think ${name} didn't play anything yet~ **-Chino**`)
+            }
             var userid = best[0][0].user.id
             var user = await osuApi.getUser({u: userid})
             var username = user.name
@@ -947,6 +942,9 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 `
                 }
             }
+            if (top.length == 0) {
+                top += `This user doesn't have any ${getmod.toUpperCase()} top play`
+            }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Top osu!Standard Plays with ${getmod.toUpperCase()} for ${username}`)
             .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
@@ -1043,6 +1041,9 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                     }
                 }
                 var map = await osuApi.getBeatmaps({b: beatmapid[i]})
+                if (map.length == 0) {
+                    message.channel.send('Is this even a valid link?')
+                }
                 var beatmapidfixed = map[0].beatmapSetId
                 var title = map[0].title
                 var mapper = map[0].creator
@@ -1146,8 +1147,11 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                     bitpresent += mod[mods[0].substr(m*2,2)]
                 }
             }
-            var calc = await mapcalc(beatmapid,bitpresent,combo,0,0,miss,acc,0)
             var map = await osuApi.getBeatmaps({b: beatmapid})
+            if (map.length == 0) {
+                message.channel.send('Please check the ID of the map is correct or not')
+            }
+            var calc = await mapcalc(beatmapid,bitpresent,combo,0,0,miss,acc,0)
             var beatmapidfixed = map[0].beatmapSetId
             var title = map[0].title
             var mapper = map[0].creator
@@ -1167,6 +1171,9 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
             var check = message.content.substring(6);
             var name = checkplayer(check)
             var best = await osuApi.getUserBest({u: name, limit: 50})
+            if (best.length == 0) {
+                message.channel.send('Either invalid user or not enough top play to calcuate')
+            }
             var user = await osuApi.apiCall('/get_user', {u: name, m: 0, event_days: 31})
             var event = ``
             var star_avg = 0
