@@ -1073,9 +1073,13 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
         }
 
         async function map(start){
-            var beatmapid = 0
+           var beatmapid = 0
             var mods = []
-            mods.push(msg.substring(start))
+            if (msg.substring(start) == "") {
+                mods.push('No Mod')
+            } else {
+                mods.push(msg.substring(start))
+            }
             var bitpresent = 0
             for (var i = storedmapid.length -1 ; i > -1; i--) {
                 if (message.guild !== null) {
