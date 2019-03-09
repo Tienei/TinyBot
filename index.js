@@ -381,6 +381,7 @@ bot.on("message", (message) => {
 **+ osu! Top play:** !(command) (username) (number): !osutop, !taikotop, !ctbtop, !maniatop
 **+ osu! Track:** !(command) (username): !osutrack, !untrack
 **+ Others:**
+!map [!m]: Get info from the latest map display in the chat
 !osuset (username): Link your discord to your osu!
 !osuavatar (username): Check osu player's profile picture
 !osusig (username): Get player's profile signature
@@ -428,7 +429,8 @@ Note:
 - Added new Map length, BPM, CS, AR, OD, HP calculation
 - Fixed !osud
 - Fixed beatmap detection
-- Added BPM average in !osud`)
+- Added BPM average in !osud
+- Added !map (!m)`)
             message.channel.send({embed})
         }
 
@@ -1070,6 +1072,78 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             message.channel.send({embed});
         }
 
+        async function map(start){
+            var beatmapid = 0
+            var mods = [msg.substring(start)]
+            var bitpresent = 0
+            for (var i = storedmapid.length -1 ; i > -1; i--) {
+                if (message.guild !== null) {
+                    if (storedmapid[i].server !== undefined) {
+                        if (message.guild.id == storedmapid[i].server) {
+                            beatmapid = storedmapid[i].id
+                            break;
+                        }
+                    }
+                } else {
+                    if (storedmapid[i].user !== undefined) {
+                        if (message.author.id == storedmapid[i].user) {
+                            beatmapid = storedmapid[i].id
+                            break;
+                        }
+                    }
+                }
+            }
+            var mod = {
+                nf: 1,
+                ez: 2,
+                td: 4,
+                hd: 8,
+                hr: 16,
+                dt: 64,
+                rx: 128,
+                ht: 256,
+                nc: 512,
+                fl: 1024,
+                so: 4096
+            }
+            for (var m = 0; m <= mods[i].length; m++) {
+                if (mod[mods[i].substr(m*2,2)]) {
+                    bitpresent += mod[mods[i].substr(m*2,2)]
+                }
+            }
+            var map = await osuApi.getBeatmaps({b: beatmapid})
+            var beatmapidfixed = map[0].beatmapSetId
+            var title = map[0].title
+            var mapper = map[0].creator
+            var version = map[0].version
+            var maxCombo = map[0].maxCombo
+            var acc95 = await mapcalc(beatmapid,bitpresent,maxCombo,0,0,0,95,0)
+            var acc97 = await mapcalc(beatmapid,bitpresent,maxCombo,0,0,0,97,0)
+            var acc99 = await mapcalc(beatmapid,bitpresent,maxCombo,0,0,0,99,0)
+            var acc100 = await mapcalc(beatmapid,bitpresent,maxCombo,0,0,0,100,0)
+            var detail = mapdetail(mods[i],map[0].time.total,map[0].bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
+            var totallength = Number(detail.length).toFixed(0)
+            var bpm = Number(detail.bpm).toFixed(0)
+            var ar = Number(detail.ar).toFixed(2)
+            var od = Number(detail.od).toFixed(2)
+            var hp = Number(detail.hp).toFixed(2)
+            var cs = Number(detail.cs).toFixed(2)
+            var time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}`)
+            .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+            .setColor('#7f7fff')
+            .setDescription(`
+**Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
+**Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
+<:difficultyIcon:507522545759682561> __${version}__  
+**Difficulty:** ${Number(acc100.star.total).toFixed(2)}★ (Aim: ${Number(acc100.star.aim).toFixed(2) * 2}★, Speed: ${Number(acc100.star.speed).toFixed(2) * 2}★)
+**Max Combo:** ${maxCombo}
+**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}
+**PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`)
+                message.channel.send({embed});
+        }
+
         async function beatmapdetail() {
             var beatmapid = []
             var start = 0
@@ -1482,6 +1556,14 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,8) == '!mosutop'  && msg.substring(0,8) == command) {
             modsosutop(9)
+        }
+
+        if (msg.substring(0,4) == '!map' && msg.substring(0,4) == command) {
+            map(5)
+        }
+
+        if (msg.substring(0,2) == '!m' && msg.substring(0,2) == command) {
+            map(3)
         }
 
         if (msg.substring(0,7) == '!calcpp'  && msg.substring(0,7) == command) {
