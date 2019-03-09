@@ -427,7 +427,8 @@ Note:
 - Added error detecting
 - Added new Map length, BPM, CS, AR, OD, HP calculation
 - Fixed !osud
-- Fixed beatmap detection`)
+- Fixed beatmap detection
+- Added BPM average in !osud`)
             message.channel.send({embed})
         }
 
@@ -1291,7 +1292,8 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
             var event = ``
             var star_avg = 0
             var aim_avg = 0
-            var speed_avg = 0   
+            var speed_avg = 0
+            var bpm_avg = 0
             var cs_avg = 0
             var ar_avg = 0
             var od_avg = 0
@@ -1327,10 +1329,11 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var mod = best[i][0].mods
                 var modandbit = mods(mod)
                 var thing = await mapcalc(beatmapid,modandbit.bitpresent,0,0,0,0,0,0)
-                var detail = mapdetail(modandbit.shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
+                var detail = mapdetail(modandbit.shortenmod,0,best[i][0].bpm,thing.cs,thing.ar,thing.od,thing.hp)
                 star_avg += thing.star.total
                 aim_avg += thing.star.aim
                 speed_avg += thing.star.speed
+                bpm_avg += detail.bpm
                 cs_avg += detail.cs
                 ar_avg += detail.ar
                 od_avg += detail.od
@@ -1355,7 +1358,7 @@ ${event}
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
 Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
-CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
+BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
             message.channel.send({embed});
         }
 
