@@ -78,6 +78,119 @@ function mods(mod) {
     return {shortenmod: shortenmod, bitpresent: bitpresent}
 }
 
+function mapdetail(mods,length,bpm,cs,ar,od,hp) {
+    var arms = 0
+    var odms = 0
+    mods = mods.toLowerCase()
+    function EZ() {
+        cs = cs / 2
+        ar = ar / 2
+        od = od / 2
+        hp = hp / 2
+    }
+
+    function HT() {
+        length = length * 1.33
+        bpm = bpm / 1.33
+        if (ar < 5) {
+            arms = 1600 + ((5 - ar) * 160)
+        }
+        if (ar == 5) {
+            arms = 1600
+        }
+        if (ar > 5) {
+            arms = 1600 - ((ar - 5) * 200)
+        }
+        if (arms < 1200) {
+            ar = (1200 + 750 - arms) / 150
+        }
+        if (arms == 1200) {
+            ar = 5
+        }
+        if (arms > 1200) {
+            ar = (1200 + 600 - arms) / 120
+        }
+        odms = (50 + 30 * (5 - od) / 5) * 0.75
+        od = (30 + 50 - odms) / 6
+        hp = hp / 1.5
+    }
+
+    function HR() {
+        cs = cs * 1.3
+        ar = ar * 1.4
+        od = od * 1.4
+        hp = hp * 1.4
+        if (ar > 10) {
+            ar = 10
+        }
+        if (od > 10) {
+            od = 10
+        }
+        if (hp > 10) {
+            hp = 10
+        }
+    }
+
+    function DT() {
+        length = length / 1.5
+        bpm = bpm * 1.5
+        if (ar < 5) {
+            arms = 800 + ((5 - ar) * 80)
+        }
+        if (ar == 5) {
+            arms = 800
+        }
+        if (ar > 5) {
+            arms = 800 - ((ar - 5) * 100)
+        }
+        if (arms < 1200) {
+            ar = (1200 + 750 - arms) / 150
+        }
+        if (arms == 1200) {
+            ar = 5
+        }
+        odms = (50 + 30 * (5 - od) / 5) * 0.67
+        od = (30 + 50 - odms) / 6
+
+        hp = hp * 1.5
+    }
+
+    if (mods.includes("ez") == true) {
+        EZ()
+    }
+    if (mods.includes("hr") == true) {
+        HR()
+    }
+    if (mods.includes("ht") == true) {
+        HT()
+    }
+    if (mods.includes("dt") == true || mods.includes("nc") == true) {
+        DT()
+    }
+    if (ar < 0) {
+        ar = 0
+    }
+    if (od < 0) {
+        od = 0
+    }
+    if (hp < 0) {
+        hp = 0
+    }
+    if (cs > 10) {
+        cs = 10
+    }
+    if (ar > 11) {
+        ar = 11
+    }
+    if (od > 11) {
+        od = 11
+    }
+    if (hp > 11) {
+        hp = 11
+    }
+    return {length: length, bpm: bpm, cs: cs, ar: ar, od: od, hp: hp}
+}
+
 async function mapcalc(beatmapid,mods,combo,count100,count50,countmiss,acc,mode) {
     let parser = new calc.parser()
     var map = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
@@ -311,7 +424,10 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **Update:**
-- Added error detecting`)
+- Added error detecting
+- Added new Map length, BPM, CS, AR, OD, HP calculation
+- Fixed !osud
+- Fixed beatmap detection`)
             message.channel.send({embed})
         }
 
@@ -1047,23 +1163,20 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 var beatmapidfixed = map[0].beatmapSetId
                 var title = map[0].title
                 var mapper = map[0].creator
-                var totallength = map[0].time.total
-                var bpm = map[0].bpm
-                if (mods[i].includes('dt') == true){
-                    totallength = Number(totallength / 1.5).toFixed(0)
-                    bpm = Number(bpm * 1.5).toFixed(0)
-                }
-                var time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
                 var version = map[0].version
                 var maxCombo = map[0].maxCombo
                 var acc95 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,95,0)
                 var acc97 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,97,0)
                 var acc99 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,99,0)
                 var acc100 = await mapcalc(beatmapid[i],bitpresent,maxCombo,0,0,0,100,0)
-                var ar = acc100.ar
-                var od = acc100.od
-                var hp = acc100.hp
-                var cs = acc100.cs
+                var detail = mapdetail(mods[i],map[0].time.total,map[0].bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
+                var totallength = Number(detail.length).toFixed(0)
+                var bpm = Number(detail.bpm).toFixed(0)
+                var ar = Number(detail.ar).toFixed(2)
+                var od = Number(detail.od).toFixed(2)
+                var hp = Number(detail.hp).toFixed(2)
+                var cs = Number(detail.cs).toFixed(2)
+                var time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
                 if (message.guild !== null) {
                     storedmapid.push({id:beatmapid,server:message.guild.id})
                 } else {
@@ -1214,13 +1327,14 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var mod = best[i][0].mods
                 var modandbit = mods(mod)
                 var thing = await mapcalc(beatmapid,modandbit.bitpresent,0,0,0,0,0,0)
+                var detail = mapdetail(modandbit.shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
                 star_avg += thing.star.total
                 aim_avg += thing.star.aim
                 speed_avg += thing.star.speed
-                cs_avg += thing.cs
-                ar_avg += thing.ar
-                od_avg += thing.od
-                hp_avg += thing.hp
+                cs_avg += detail.cs
+                ar_avg += detail.ar
+                od_avg += detail.od
+                hp_avg += detail.hp
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`osu! Statistics for ${username}`)
