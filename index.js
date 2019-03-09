@@ -381,7 +381,7 @@ bot.on("message", (message) => {
 **+ osu! Top play:** !(command) (username) (number): !osutop, !taikotop, !ctbtop, !maniatop
 **+ osu! Track:** !(command) (username): !osutrack, !untrack
 **+ Others:**
-!map [!m]: Get info from the latest map display in the chat
+!map [!m] (mods): Get info from the latest map display in the chat
 !osuset (username): Link your discord to your osu!
 !osuavatar (username): Check osu player's profile picture
 !osusig (username): Get player's profile signature
