@@ -1329,7 +1329,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var mod = best[i][0].mods
                 var modandbit = mods(mod)
                 var thing = await mapcalc(beatmapid,modandbit.bitpresent,0,0,0,0,0,0)
-                var detail = mapdetail(modandbit.shortenmod,0,Number(best[i][0].bpm),thing.cs,thing.ar,thing.od,thing.hp)
+                var detail = mapdetail(modandbit.shortenmod,0,Number(best[i][1].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                 star_avg += thing.star.total
                 aim_avg += thing.star.aim
                 speed_avg += thing.star.speed
