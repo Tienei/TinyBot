@@ -1073,7 +1073,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
         }
 
         async function map(start){
-           var beatmapid = 0
+            var beatmapid = 0
             var mods = []
             if (msg.substring(start) == "") {
                 mods.push('No Mod')
@@ -1111,9 +1111,10 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 fl: 1024,
                 so: 4096
             }
-            for (var m = 0; m <= mods[i].length; m++) {
-                if (mod[mods[i].substr(m*2,2)]) {
-                    bitpresent += mod[mods[i].substr(m*2,2)]
+            console.log(mods)
+            for (var m = 0; m <= mods[0].length; m++) {
+                if (mod[mods[0].substr(m*2,2)]) {
+                    bitpresent += mod[mods[0].substr(m*2,2)]
                 }
             }
             var map = await osuApi.getBeatmaps({b: beatmapid})
@@ -1126,7 +1127,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var acc97 = await mapcalc(beatmapid,bitpresent,maxCombo,0,0,0,97,0)
             var acc99 = await mapcalc(beatmapid,bitpresent,maxCombo,0,0,0,99,0)
             var acc100 = await mapcalc(beatmapid,bitpresent,maxCombo,0,0,0,100,0)
-            var detail = mapdetail(mods[i],map[0].time.total,map[0].bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
+            var detail = mapdetail(mods[0],map[0].time.total,map[0].bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
             var totallength = Number(detail.length).toFixed(0)
             var bpm = Number(detail.bpm).toFixed(0)
             var ar = Number(detail.ar).toFixed(2)
@@ -1139,7 +1140,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
             .setColor('#7f7fff')
             .setDescription(`
-**Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
+**Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[0].toUpperCase()}
 **Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
 <:difficultyIcon:507522545759682561> __${version}__  
 **Difficulty:** ${Number(acc100.star.total).toFixed(2)}★ (Aim: ${Number(acc100.star.aim).toFixed(2) * 2}★, Speed: ${Number(acc100.star.speed).toFixed(2) * 2}★)
