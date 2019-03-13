@@ -430,7 +430,8 @@ Note:
 - Fixed !osud
 - Fixed beatmap detection
 - Added BPM average in !osud
-- Added !map (!m)`)
+- Added !map (!m)
+- Fixed !rosutop not showing number rank`)
             message.channel.send({embed})
         }
 
@@ -900,6 +901,9 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var userid = best[0][0].user.id
             var user = await osuApi.getUser({u: userid})
             var username = user.name
+            for (var i = 0; i < 100; i++) {
+                best[i][0].top = i+1
+            }
             best.sort(function (a,b) {
                 a1 = Date.parse(a[0].date)
                 b1 = Date.parse(b[0].date)
@@ -939,7 +943,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                     fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 top += `
-**[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${best[i][0].top}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 `
