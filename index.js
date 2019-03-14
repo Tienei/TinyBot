@@ -400,6 +400,19 @@ Note:
             message.channel.send({embed})
         }
 
+        if(msg.substring(0,7) == '!credit' && msg.substring(0,7) == command) {
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Special thanks to:`)
+            .setThumbnail(bot.user.avatarURL)
+            .setDescription(`
+**--- Command idea from:**
+Yeong Yuseong (!calcpp), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud)
+
+**--- Tester:**
+ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
+            message.channel.send({embed})
+        }
+
         if(msg.substring(0,7) == '!avatar' && msg.substring(0,7) == command) {
             var image = ''
             var username = ''
@@ -431,7 +444,10 @@ Note:
 - Fixed beatmap detection
 - Added BPM average in !osud
 - Added !map (!m)
-- Fixed !rosutop not showing number rank`)
+- Fixed !rosutop not showing number rank
+- Added accuracy skill in !osud
+- Re-added PP calculation in !recent (!r)
+- Added !credit`)
             message.channel.send({embed})
         }
 
@@ -622,6 +638,7 @@ Note:
             var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
             var star = Number(recentcalc.star.total).toFixed(2)
             var pp = Number(recentcalc.pp.total).toFixed(2)
+            var nopp = ''
             var osuname = getplayer[0].username
             if (message.guild !== null) {
                 storedmapid.push({id:beatmapid,server:message.guild.id})
@@ -633,7 +650,7 @@ Note:
             var fcacc = fccalc.acc
             var fcguess = ``
             if (letter == 'F') {
-                pp = 'No '
+                nopp = '(No pp)'
             }
             if (perfect == 0) {
                 fcguess = `| **${fcpp}pp for ${fcacc}%**`
@@ -643,7 +660,7 @@ Note:
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
             .setColor('#7f7fff')
             .setDescription(`
-**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
             message.channel.send({embed})
@@ -1377,6 +1394,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
             var star_avg = 0
             var aim_avg = 0
             var speed_avg = 0
+            var acc_avg = 0
             var bpm_avg = 0
             var cs_avg = 0
             var ar_avg = 0
@@ -1412,11 +1430,17 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var beatmapid = best[i][1].id
                 var mod = best[i][0].mods
                 var modandbit = mods(mod)
+                var count300 = Number(best[i][0].counts['300'])
+                var count100 = Number(best[i][0].counts['100'])
+                var count50 = Number(best[i][0].counts['50'])
+                var countmiss = Number(best[i][0].counts.miss)
+                var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var thing = await mapcalc(beatmapid,modandbit.bitpresent,0,0,0,0,0,0)
                 var detail = mapdetail(modandbit.shortenmod,0,Number(best[i][1].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                 star_avg += thing.star.total
                 aim_avg += thing.star.aim
                 speed_avg += thing.star.speed
+                acc_avg += (Math.pow(scoreacc, 3)/Math.pow(100, 3)) * 1.1 * thing.star.total
                 bpm_avg += detail.bpm
                 cs_avg += detail.cs
                 ar_avg += detail.ar
@@ -1442,6 +1466,7 @@ ${event}
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
 Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
+Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
             message.channel.send({embed});
         }
