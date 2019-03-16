@@ -437,17 +437,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setAuthor(`Changelog for Tiny Bot v2.6`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Update:**
-- Added error detecting
-- Added new Map length, BPM, CS, AR, OD, HP calculation
-- Fixed !osud
-- Fixed beatmap detection
-- Added BPM average in !osud
-- Added !map (!m)
-- Fixed !rosutop not showing number rank
-- Added accuracy skill in !osud
-- Re-added PP calculation in !recent (!r)
-- Added !credit`)
+**Akatsuki and Ripple Update:**
+Coming soon!`)
             message.channel.send({embed})
         }
 
