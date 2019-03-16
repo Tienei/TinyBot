@@ -434,7 +434,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot v2.6`)
+            .setAuthor(`Changelog for Tiny Bot v2.7`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **Akatsuki and Ripple Update:**
