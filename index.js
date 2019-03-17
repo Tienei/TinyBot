@@ -754,7 +754,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
                 fcguess = `| **${fcpp}pp for ${fcacc}%**`
             }
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Most recent osu! Standard play for ${message.content.substring(start)}:`, `https://a.akatsuki.pw/${userid}.png?date=${refresh}`)
+            .setAuthor(`Most recent Akatsuki Standard play for ${message.content.substring(start)}:`, `https://a.akatsuki.pw/${userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
             .setColor('#7f7fff')
             .setDescription(`
