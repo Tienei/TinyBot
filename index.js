@@ -95,7 +95,7 @@ function bittomods(number) {
         30: 'EZ',
         31: 'NF'
     }
-    for (var i = 0; i < fullbit.length; i++) {
+    for (var i = 31; i >= 0; i--) {
         if (fullbit[i] == 1) {
             shortenmod += modlist[i+1]
         }
