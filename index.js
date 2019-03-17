@@ -470,7 +470,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setDescription(`
 **Akatsuki and Ripple Update:**
 - Added !akatsuki
-- Added !recentakatsuki (!rakat)`)
+- Added !recentakatsuki (!rakat)
+- !compare now sorted by pp`)
             message.channel.send({embed})
         }
 
