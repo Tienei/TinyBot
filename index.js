@@ -3,7 +3,7 @@ var track = []
 var storedmapid = []
 
 const Discord = require('discord.js');
-const osu = require('node-osu');
+const nodeosu = require('node-osu');
 const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
