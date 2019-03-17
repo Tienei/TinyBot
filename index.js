@@ -69,13 +69,41 @@ function mods(mod) {
         }
         if (mods[mod[i]]) {
             shortenmod += mods[mod[i]];
-            bitpresent += osu.Constants.Mods[mod[i]]
+            bitpresent += nodeosu.Constants.Mods[mod[i]]
         }
     }
     if (mod.length == 0 || shortenmod == '+'){
         shortenmod += 'No Mod';
     }
     return {shortenmod: shortenmod, bitpresent: bitpresent}
+}
+
+function bittomods(number) {
+    var bit = number.toString(2)
+    var shortenmod = "+"
+    var fullbit = "0000000000000000000000000000000".substr(bit.length) + bit
+    var modlist = {
+        19: 'SO',
+        21: 'FL',
+        22: 'NC',
+        23: 'HT',
+        25: 'DT',
+        26: 'SD',
+        27: 'HR',
+        28: 'HD',
+        29: 'TD',
+        30: 'EZ',
+        31: 'NF'
+    }
+    for (var i = 0; i < fullbit.length; i++) {
+        if (fullbit[i] == 1) {
+            shortenmod += modlist[i+1]
+        }
+    }
+    if (number == 0) {
+        shortenmod += 'No Mod'
+    }
+    return shortenmod
 }
 
 function mapdetail(mods,length,bpm,cs,ar,od,hp) {
@@ -392,6 +420,9 @@ bot.on("message", (message) => {
 !osud (username): Detail statistics of user / Please wait about 30-60 seconds
 !calcpp (mods) (acc) (combo) (miss): Calculate a beatmap pp
 
+**--- [Akatsuki]**
+Just add "akatsuki" (full command) or "akat" (shorten command) in front of osu! commands
+
 Note: 
 - If your osu username have a space in it, replace it with a "_"
 - () means paramater, [] means shorten commands, {} means extra parameter needed 
@@ -438,7 +469,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **Akatsuki and Ripple Update:**
-Coming soon!`)
+- Added !akatsuki
+- Added !recentakatsuki (!rakat)`)
             message.channel.send({embed})
         }
 
@@ -554,6 +586,32 @@ Coming soon!`)
             message.channel.send({embed});
         }
 
+        async function akatsuki() {
+            var data = await request.get(`https://akatsuki.pw/api/v1/users/full?name=${message.content.substring(10)}`)
+            var user = JSON.parse(data)
+            var username = user.username
+            var id = user.id
+            var acc = Number(user.std.accuracy).toFixed(2)
+            var level = Number(user.std.level).toFixed(2)
+            var played = user.std.playcount
+            var pp = user.std.pp
+            var rank = user.std.global_leaderboard_rank
+            var countryrank = user.std.country_leaderboard_rank
+            var country = String(user.country).toLowerCase()
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Akatsuki status for: ${username}`,'',`https://akatsuki.pw/u/${id}`)
+            .setDescription(`
+▸**Performance:** ${pp}pp 
+▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
+▸**Accuracy:** ${acc}%
+▸**Play count:** ${played}
+▸**Level:** ${level}
+`)
+            .setThumbnail(`https://a.akatsuki.pw/${id}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            message.channel.send({embed});
+        }
+
         async function osusig() {
             var check = message.content.substring(8)
             var name = checkplayer(check)
@@ -607,7 +665,6 @@ Coming soon!`)
             var getplayer = await osuApi.apiCall('/get_user', {u: name})
             var beatmapidfixed = recent[0][1].beatmapSetId
             var beatmapid = recent[0][1].id
-            console.log(beatmapid,beatmapidfixed)
             var scores = recent[0][0].score
             var userid = recent[0][0].user.id
             var beatmap = recent[0][1].title
@@ -653,6 +710,56 @@ Coming soon!`)
             .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
+            message.channel.send({embed})
+        }
+
+        async function akatsukirecent(start) {
+            var data = await request.get(`https://akatsuki.pw/api/v1/users/scores/recent?name=${message.content.substring(start)}`)
+            var recent = JSON.parse(data)
+            var userid = recent.scores[0].id
+            var beatmapid = recent.scores[0].beatmap.beatmap_id
+            var beatmapsetid = recent.scores[0].beatmap.beatmapset_id
+            var beatmap = recent.scores[0].beatmap.song_name
+            var score = recent.scores[0].score
+            var combo = recent.scores[0].max_combo
+            var fc = recent.scores[0].beatmap.max_combo
+            var count300 = Number(recent.scores[0].count_300)
+            var count100 = Number(recent.scores[0].count_100)
+            var count50 = Number(recent.scores[0].count_50)
+            var countmiss = Number(recent.scores[0].count_miss)
+            var perfect = recent.scores[0].full_combo
+            var letter = recent.scores[0].rank
+            var rank = rankingletters(letter)
+            var bit = recent.scores[0].mods
+            var mods = bittomods(bit)   
+            var acc = Number(recent.scores[0].accuracy).toFixed(2)
+            var recentcalc = await mapcalc(beatmapid,bit,combo,count100,count50,countmiss,acc,0)
+            var star = Number(recentcalc.star.total).toFixed(2)
+            var pp = Number(recentcalc.pp.total).toFixed(2)
+            if (message.guild !== null) {
+                storedmapid.push({id:beatmapid,server:message.guild.id})
+            } else {
+                storedmapid.push({id:beatmapid,user:message.author.id})
+            }
+            var fccalc = await mapcalc(beatmapid,bit,fc,count100,count50,0,acc,1)
+            var fcpp = Number(fccalc.pp.total).toFixed(2)
+            var fcacc = fccalc.acc
+            var fcguess = ``
+            var nopp = ''
+            if (letter == 'F') {
+                nopp = '(No pp)'
+            }
+            if (perfect == 0) {
+                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Most recent osu! Standard play for ${message.content.substring(start)}:`, `https://a.akatsuki.pw/${userid}.png?date=${refresh}`)
+            .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
+            .setColor('#7f7fff')
+            .setDescription(`
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mods} | ***${pp}pp*** ${nopp}
+${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
             message.channel.send({embed})
         }
@@ -1499,6 +1606,10 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             ripple()
         }
 
+        if (msg.substring(0,9) == '!akatsuki' && msg.substring(0,9) == command) {
+            akatsuki()
+        }
+
         if (msg.substring(0,6) == '!taiko' && msg.substring(0,6) == command) {
             var check = message.content.substring(7)
             var name = checkplayer(check)
@@ -1538,6 +1649,14 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,7) == '!recent' && msg.substring(0,7) == command) {
             recent(8)
+        }
+
+        if (msg.substring(0,15) == '!recentakatsuki' && msg.substring(0,15) == command) {
+            akatsukirecent(16)
+        }
+
+        if (msg.substring(0,6) == '!rakat' && msg.substring(0,6) == command) {
+            akatsukirecent(7)
         }
 
         if (msg.substring(0,8) == '!compare' && msg.substring(0,8) == command) {
