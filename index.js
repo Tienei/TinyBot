@@ -846,6 +846,11 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 }
             }
             var scores = await osuApi.getScores({b: storedid, u: `${name}`})
+            scores.sort(function (a,b) {
+                a1 = Number(a.pp)
+                b1 = Number(b.pp)
+                return b1 - a1
+            })
             if (scores.length == 0) {
                 message.channel.send(`${name} didn't play this map! D: **-Tiny**`)
             }
