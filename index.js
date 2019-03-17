@@ -10,7 +10,7 @@ const calc = require('ojsama')
 const rippleAPI = require('rippleapi')
 const fs = require('fs')
 
-var osuApi = new osu.Api(process.env.OSU_KEY, {
+var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
 });
