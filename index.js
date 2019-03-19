@@ -418,14 +418,17 @@ bot.on("message", (message) => {
 !recentosutop [!rosutop] (username): Get player top most recent play
 !modsosutop [!mosutop] (username) (mods): Get player top play with mods
 !osud (username): Detail statistics of user / Please wait about 30-60 seconds
-!calcpp (mods) (acc) (combo) (miss): Calculate a beatmap pp
+!calcpp (map id) (mods) (acc) (combo) (miss): Calculate a beatmap pp
 
 **--- [Akatsuki]**
-Just add "akatsuki" (full command) or "akat" (shorten command) in front of osu! commands
+Available: !akat, !akatrx, !akatr, !akatavatar
+
+**--- [Ripple]**
+Available: !ripple
 
 Note: 
 - If your osu username have a space in it, replace it with a "_"
-- () means paramater, [] means shorten commands, {} means extra parameter needed 
+- () means paramater, [] means shorten commands
 - Every mode (besides Standard) is not fully supported!`
             )
             message.channel.send({embed})
@@ -437,7 +440,7 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Command idea from:**
-Yeong Yuseong (!calcpp), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud)
+Yeong Yuseong (!calcpp, !compare sorted by pp), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -470,7 +473,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setDescription(`
 **Akatsuki and Ripple Update:**
 - Added !akatsuki
-- Added !recentakatsuki (!rakat)
+- Added !akatuskirecent (!akatr)
+- Added !akatrx
+- Added !akatavatar
 - !compare now sorted by pp`)
             message.channel.send({embed})
         }
@@ -491,9 +496,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             message.channel.send(respone[roll])
         }
 
-        // Osu related
+        // Osu Commands
         
-        //Function
         function checkplayer(name) {
             if (name == '') {
                 var osuname = ''
@@ -558,59 +562,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setColor('#7f7fff')
             message.channel.send({embed});
 
-        }
-
-        async function ripple() {
-            var user = await rippleAPI.getFullUserByName(message.content.substring(8))
-            if (user.length == 0) {
-                message.channel.send('Invalid user or data not found')
-            }
-            var username = user.username
-            var acc = Number(user.std.accuracy).toFixed(2)
-            var id = user.id
-            var pp = Number(user.std.pp).toFixed(2);
-            var played = user.std.playcount
-            var rank = user.std.global_leaderboard_rank
-            var countryrank = user.std.country_leaderboard_rank
-            var country = user.country.toLowerCase();
-            var level = Number(user.std.level).toFixed(2)
-            const embed = new Discord.RichEmbed()
-            .setAuthor(`Ripple Standard status for: ${username}`,'',`https://ripple.moe/u/${id}?mode=0`)
-            .setDescription(`
-▸**Performance:** ${pp}pp 
-▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
-▸**Accuracy:** ${acc}%
-▸**Play count:** ${played}
-▸**Level:** ${level}`)
-            .setThumbnail(`https://a.ripple.moe/${id}?date=${refresh}`)
-            .setColor('#7f7fff')
-            message.channel.send({embed});
-        }
-
-        async function akatsuki() {
-            var data = await request.get(`https://akatsuki.pw/api/v1/users/full?name=${message.content.substring(10)}`)
-            var user = JSON.parse(data)
-            var username = user.username
-            var id = user.id
-            var acc = Number(user.std.accuracy).toFixed(2)
-            var level = Number(user.std.level).toFixed(2)
-            var played = user.std.playcount
-            var pp = user.std.pp
-            var rank = user.std.global_leaderboard_rank
-            var countryrank = user.std.country_leaderboard_rank
-            var country = String(user.country).toLowerCase()
-            const embed = new Discord.RichEmbed()
-            .setAuthor(`Akatsuki status for: ${username}`,'',`https://akatsuki.pw/u/${id}`)
-            .setDescription(`
-▸**Performance:** ${pp}pp 
-▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
-▸**Accuracy:** ${acc}%
-▸**Play count:** ${played}
-▸**Level:** ${level}
-`)
-            .setThumbnail(`https://a.akatsuki.pw/${id}.png?date=${refresh}`)
-            .setColor('#7f7fff')
-            message.channel.send({embed});
         }
 
         async function osusig() {
@@ -711,56 +662,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
-            message.channel.send({embed})
-        }
-
-        async function akatsukirecent(start) {
-            var data = await request.get(`https://akatsuki.pw/api/v1/users/scores/recent?name=${message.content.substring(start)}`)
-            var recent = JSON.parse(data)
-            var userid = recent.scores[0].id
-            var beatmapid = recent.scores[0].beatmap.beatmap_id
-            var beatmapsetid = recent.scores[0].beatmap.beatmapset_id
-            var beatmap = recent.scores[0].beatmap.song_name
-            var score = recent.scores[0].score
-            var combo = recent.scores[0].max_combo
-            var fc = recent.scores[0].beatmap.max_combo
-            var count300 = Number(recent.scores[0].count_300)
-            var count100 = Number(recent.scores[0].count_100)
-            var count50 = Number(recent.scores[0].count_50)
-            var countmiss = Number(recent.scores[0].count_miss)
-            var perfect = recent.scores[0].full_combo
-            var letter = recent.scores[0].rank
-            var rank = rankingletters(letter)
-            var bit = recent.scores[0].mods
-            var mods = bittomods(bit)   
-            var acc = Number(recent.scores[0].accuracy).toFixed(2)
-            var recentcalc = await mapcalc(beatmapid,bit,combo,count100,count50,countmiss,acc,0)
-            var star = Number(recentcalc.star.total).toFixed(2)
-            var pp = Number(recentcalc.pp.total).toFixed(2)
-            if (message.guild !== null) {
-                storedmapid.push({id:beatmapid,server:message.guild.id})
-            } else {
-                storedmapid.push({id:beatmapid,user:message.author.id})
-            }
-            var fccalc = await mapcalc(beatmapid,bit,fc,count100,count50,0,acc,1)
-            var fcpp = Number(fccalc.pp.total).toFixed(2)
-            var fcacc = fccalc.acc
-            var fcguess = ``
-            var nopp = ''
-            if (letter == 'F') {
-                nopp = '(No pp)'
-            }
-            if (perfect == 0) {
-                fcguess = `| **${fcpp}pp for ${fcacc}%**`
-            }
-            const embed = new Discord.RichEmbed()
-            .setAuthor(`Most recent Akatsuki Standard play for ${message.content.substring(start)}:`, `https://a.akatsuki.pw/${userid}.png?date=${refresh}`)
-            .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
-            .setColor('#7f7fff')
-            .setDescription(`
-**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mods} | ***${pp}pp*** ${nopp}
-${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
             message.channel.send({embed})
         }
@@ -1583,8 +1484,154 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 message.channel.send(`${name} didn't map anything yet! Nani? **-Tiny**`)
             }
         }
+
+        // Akatsuki Commands
+
+        async function akatuskiavatar() {
+            var data = await request.get(`https://akatsuki.pw/api/v1/users?name=${message.content.substring(12)}`)
+            var user = JSON.parse(data)
+            var username = user.username
+            var id = user.id
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Avatar for ${username}`)
+            .setImage(`https://a.akatsuki.pw/${id}.png?date=${refresh}.png`)
+            message.channel.send({embed})
+        }
+
+        async function akatsuki() {
+            var data = await request.get(`https://akatsuki.pw/api/v1/users/full?name=${message.content.substring(10)}`)
+            var user = JSON.parse(data)
+            var username = user.username
+            var id = user.id
+            var acc = Number(user.std.accuracy).toFixed(2)
+            var level = Number(user.std.level).toFixed(2)
+            var played = user.std.playcount
+            var pp = user.std.pp
+            var rank = user.std.global_leaderboard_rank
+            var countryrank = user.std.country_leaderboard_rank
+            var country = String(user.country).toLowerCase()
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Akatsuki status for: ${username}`,'',`https://akatsuki.pw/u/${id}`)
+            .setDescription(`
+▸**Performance:** ${pp}pp 
+▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
+▸**Accuracy:** ${acc}%
+▸**Play count:** ${played}
+▸**Level:** ${level}
+`)
+            .setThumbnail(`https://a.akatsuki.pw/${id}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            message.channel.send({embed});
+        }
+
+        async function akatsukirelax() {
+            var data = await request.get(`https://akatsuki.pw/api/v1/users/rxfull?name=${message.content.substring(8)}`)
+            var user = JSON.parse(data)
+            var username = user.username
+            var id = user.id
+            var acc = Number(user.std.accuracy).toFixed(2)
+            var level = Number(user.std.level).toFixed(2)
+            var played = user.std.playcount
+            var pp = user.std.pp
+            var rank = user.std.global_leaderboard_rank
+            var countryrank = user.std.country_leaderboard_rank
+            var country = String(user.country).toLowerCase()
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Akatsuki status for: ${username}`,'',`https://akatsuki.pw/u/${id}`)
+            .setDescription(`
+▸**Performance:** ${pp}pp 
+▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
+▸**Accuracy:** ${acc}%
+▸**Play count:** ${played}
+▸**Level:** ${level}
+`)
+            .setThumbnail(`https://a.akatsuki.pw/${id}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            message.channel.send({embed});
+        }
+
+        async function akatsukirecent(start) {
+            var data = await request.get(`https://akatsuki.pw/api/v1/users/scores/recent?name=${message.content.substring(start)}`)
+            var recent = JSON.parse(data)
+            var userid = recent.scores[0].id
+            var beatmapid = recent.scores[0].beatmap.beatmap_id
+            var beatmapsetid = recent.scores[0].beatmap.beatmapset_id
+            var beatmap = recent.scores[0].beatmap.song_name
+            var score = recent.scores[0].score
+            var combo = recent.scores[0].max_combo
+            var fc = recent.scores[0].beatmap.max_combo
+            var count300 = Number(recent.scores[0].count_300)
+            var count100 = Number(recent.scores[0].count_100)
+            var count50 = Number(recent.scores[0].count_50)
+            var countmiss = Number(recent.scores[0].count_miss)
+            var perfect = recent.scores[0].full_combo
+            var letter = recent.scores[0].rank
+            var rank = rankingletters(letter)
+            var bit = recent.scores[0].mods
+            var mods = bittomods(bit)   
+            var acc = Number(recent.scores[0].accuracy).toFixed(2)
+            var recentcalc = await mapcalc(beatmapid,bit,combo,count100,count50,countmiss,acc,0)
+            var star = Number(recentcalc.star.total).toFixed(2)
+            var pp = Number(recentcalc.pp.total).toFixed(2)
+            if (message.guild !== null) {
+                storedmapid.push({id:beatmapid,server:message.guild.id})
+            } else {
+                storedmapid.push({id:beatmapid,user:message.author.id})
+            }
+            var fccalc = await mapcalc(beatmapid,bit,fc,count100,count50,0,acc,1)
+            var fcpp = Number(fccalc.pp.total).toFixed(2)
+            var fcacc = fccalc.acc
+            var fcguess = ``
+            var nopp = ''
+            if (letter == 'F') {
+                nopp = '(No pp)'
+            }
+            if (perfect == 0) {
+                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Most recent Akatsuki Standard play for ${message.content.substring(start)}:`, `https://a.akatsuki.pw/${userid}.png?date=${refresh}`)
+            .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
+            .setColor('#7f7fff')
+            .setDescription(`
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mods} | ***${pp}pp*** ${nopp}
+${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
+            message.channel.send({embed})
+        }
+
+        // Ripple Commands
+
+        async function ripple() {
+            var user = await rippleAPI.getFullUserByName(message.content.substring(8))
+            if (user.length == 0) {
+                message.channel.send('Invalid user or data not found')
+            }
+            var username = user.username
+            var acc = Number(user.std.accuracy).toFixed(2)
+            var id = user.id
+            var pp = Number(user.std.pp).toFixed(2);
+            var played = user.std.playcount
+            var rank = user.std.global_leaderboard_rank
+            var countryrank = user.std.country_leaderboard_rank
+            var country = user.country.toLowerCase();
+            var level = Number(user.std.level).toFixed(2)
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Ripple Standard status for: ${username}`,'',`https://ripple.moe/u/${id}?mode=0`)
+            .setDescription(`
+▸**Performance:** ${pp}pp 
+▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
+▸**Accuracy:** ${acc}%
+▸**Play count:** ${played}
+▸**Level:** ${level}`)
+            .setThumbnail(`https://a.ripple.moe/${id}?date=${refresh}`)
+            .setColor('#7f7fff')
+            message.channel.send({embed});
+        }
         
-        //Commands
+        // Execute Function
+
+        // Osu
 
         if (msg.substring(0,7) == '!osuset' && msg.substring(0,7) == command) {
             osuset()
@@ -1606,14 +1653,6 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             var check = message.content.substring(5)
             var name = checkplayer(check)
             osu(name,0,'Standard')
-        }
-
-        if (msg.substring(0,7) == '!ripple' && msg.substring(0,7) == command) {
-            ripple()
-        }
-
-        if (msg.substring(0,9) == '!akatsuki' && msg.substring(0,9) == command) {
-            akatsuki()
         }
 
         if (msg.substring(0,6) == '!taiko' && msg.substring(0,6) == command) {
@@ -1655,14 +1694,6 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,7) == '!recent' && msg.substring(0,7) == command) {
             recent(8)
-        }
-
-        if (msg.substring(0,15) == '!recentakatsuki' && msg.substring(0,15) == command) {
-            akatsukirecent(16)
-        }
-
-        if (msg.substring(0,6) == '!rakat' && msg.substring(0,6) == command) {
-            akatsukirecent(7)
         }
 
         if (msg.substring(0,8) == '!compare' && msg.substring(0,8) == command) {
@@ -1721,7 +1752,35 @@ Naomi if you seeing this here's what i feel about you: <3`)
             calculateplay()
         }
 
-        // Detection
+        // Akatsuki
+
+        if (msg.substring(0,11) == '!akatavatar' && msg.substring(0,11) == command) {
+            akatuskiavatar()
+        }
+
+        if (msg.substring(0,9) == '!akatsuki' && msg.substring(0,9) == command) {
+            akatsuki()
+        }
+
+        if (msg.substring(0,7) == '!akatrx' && msg.substring(0,7) == command) {
+            akatsukirelax()
+        }
+
+        if (msg.substring(0,15) == '!akatsukirecent' && msg.substring(0,15) == command) {
+            akatsukirecent(16)
+        }
+
+        if (msg.substring(0,6) == '!akatr' && msg.substring(0,6) == command) {
+            akatsukirecent(7)
+        }
+
+        // Ripple
+
+        if (msg.substring(0,7) == '!ripple' && msg.substring(0,7) == command) {
+            ripple()
+        }
+
+        // Beatmap Detection
         beatmapdetail()
 
     }
