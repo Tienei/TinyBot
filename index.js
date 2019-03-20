@@ -440,7 +440,7 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud), Shienei (!c Unranked pp calculation)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -478,7 +478,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !akatavatar
 - !compare now sorted by pp
 - Added map completion percentage for !r
-- Added new ranking letter for F`)
+- Added new ranking letter for F
+- Added unranked pp calculation for !c`)
             message.channel.send({embed})
         }
 
@@ -788,6 +789,11 @@ ${mapcompleted}`)
                 var bitpresent = modandbit.bitpresent
                 var pp = Number(scores[i].pp).toFixed(2)
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                var unrankedpp = ''
+                if (beatmap[0].approvalStatus !== "Ranked") {
+                    var comparepp = await mapcalc(storedid,bitpresent,combo,count100,count50,countmiss,acc,0)
+                    unrankedpp = `(Unranked: ${Number(comparepp.pp.total).toFixed(2)}pp)`
+                }
                 var fccalc = await mapcalc(storedid,bitpresent,fc,count100,count50,0,acc,1)
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
                 var fcacc = fccalc.acc
@@ -797,7 +803,7 @@ ${mapcompleted}`)
                     fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                     highscore += `
-${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp***
+${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
 ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 `         
