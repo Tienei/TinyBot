@@ -19,7 +19,7 @@ var refresh = 0
 
 function rankingletters(letter) {
     if (letter == "F") {
-        return '**F**';
+        return '<:rankingF:557836461077168138>';
     }
     if (letter == "A") {
         return '<:rankingA:520932311613571072>';
@@ -477,7 +477,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !akatrx
 - Added !akatavatar
 - !compare now sorted by pp
-- Added map completion percentage for !r`)
+- Added map completion percentage for !r
+- Added new ranking letter for F`)
             message.channel.send({embed})
         }
 
