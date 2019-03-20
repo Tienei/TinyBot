@@ -643,7 +643,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             var pp = Number(recentcalc.pp.total).toFixed(2)
             var nopp = ''
             var end = recentcalc.star.objects[recentcalc.star.objects.length - 1].obj.time - recentcalc.star.objects[0].obj.time
-            var point = recentcalc.star.objects[count300 + count100 + count50 + countmiss].obj.time - recentcalc.star.objects[0].obj.time
+            var point = recentcalc.star.objects[count300 + count100 + count50 + countmiss - 1].obj.time - recentcalc.star.objects[0].obj.time
             var mapcomplete = Number((point / end) * 100).toFixed(2)
             var mapcompleted = ''
             var osuname = getplayer[0].username
