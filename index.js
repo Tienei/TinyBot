@@ -440,7 +440,7 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -476,7 +476,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !akatuskirecent (!akatr)
 - Added !akatrx
 - Added !akatavatar
-- !compare now sorted by pp`)
+- !compare now sorted by pp
+- Added map completion percentage for !r`)
             message.channel.send({embed})
         }
 
@@ -639,6 +640,10 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             var star = Number(recentcalc.star.total).toFixed(2)
             var pp = Number(recentcalc.pp.total).toFixed(2)
             var nopp = ''
+            var end = recentcalc.star.objects[recentcalc.star.objects.length - 1].obj.time - recentcalc.star.objects[0].obj.time
+            var point = recentcalc.star.objects[count300 + count100 + count50 + countmiss].obj.time - recentcalc.star.objects[0].obj.time
+            var mapcomplete = Number((point / end) * 100).toFixed(2)
+            var mapcompleted = ''
             var osuname = getplayer[0].username
             if (message.guild !== null) {
                 storedmapid.push({id:beatmapid,server:message.guild.id})
@@ -651,6 +656,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             var fcguess = ``
             if (letter == 'F') {
                 nopp = '(No pp)'
+                mapcompleted = `**Map Completion:** ${mapcomplete}%`
             }
             if (perfect == 0) {
                 fcguess = `| **${fcpp}pp for ${fcacc}%**`
@@ -662,7 +668,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${mapcompleted}`)
             message.channel.send({embed})
         }
 
