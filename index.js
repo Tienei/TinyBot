@@ -421,7 +421,7 @@ bot.on("message", (message) => {
 !calcpp (map id) (mods) (acc) (combo) (miss): Calculate a beatmap pp
 
 **--- [Akatsuki]**
-Available: !akat, !akatrx, !akatr, !akatavatar
+Available: !akat, !akatrx, !akatr, !akatavatar, !akatd
 
 **--- [Ripple]**
 Available: !ripple
@@ -479,7 +479,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - !compare now sorted by pp
 - Added map completion percentage for !r
 - Added new ranking letter for F
-- Added unranked pp calculation for !c`)
+- Added unranked pp calculation for !c
+- Added !akatd`)
             message.channel.send({embed})
         }
 
@@ -1614,6 +1615,74 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
             message.channel.send({embed})
         }
 
+        async function akatd() {
+            var data1 = await request.get(`https://akatsuki.pw/api/v1/users/scores/best?name=${message.content.substring(7)}`)
+            var data2 = await request.get(`https://akatsuki.pw/api/v1/users/full?name=${message.content.substring(7)}`)
+            var best = JSON.parse(data1)
+            var user = JSON.parse(data2)
+            if (best.length == 0) {
+                message.channel.send('Either invalid user or not enough top play to calcuate')
+            }
+            var star_avg = 0
+            var aim_avg = 0
+            var speed_avg = 0
+            var acc_avg = 0
+            var cs_avg = 0
+            var ar_avg = 0
+            var od_avg = 0
+            var hp_avg = 0
+            var userid = user.id
+            var username = user.username
+            var rank = user.std.global_leaderboard_rank
+            var country = user.country.toLowerCase()
+            var countryrank = null
+            var level = user.std.level
+            var pp = user.std.pp
+            var acc = Number(user.std.accuracy).toFixed(2)
+            var playcount = user.std.playcount
+            var rankedscore = user.std.ranked_score
+            var totalscore = user.std.total_score
+
+            for (var i = 0; i < 50; i++) {
+                var beatmapid = best.scores[i].beatmap.beatmap_id
+                var mod = best.scores[i].mods
+                var shortenmod = bittomods(mod)
+                var count300 = Number(best.scores[i].count_300)
+                var count100 = Number(best.scores[i].count_100)
+                var count50 = Number(best.scores[i].count_50)
+                var countmiss = Number(best.scores[i].count_miss)
+                var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                var thing = await mapcalc(beatmapid,mod,0,0,0,0,0,0)
+                var detail = mapdetail(shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
+                star_avg += thing.star.total
+                aim_avg += thing.star.aim
+                speed_avg += thing.star.speed
+                acc_avg += (Math.pow(scoreacc, 3)/Math.pow(100, 3)) * 1.1 * thing.star.total
+                cs_avg += detail.cs
+                ar_avg += detail.ar
+                od_avg += detail.od
+                hp_avg += detail.hp
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`osu! Statistics for ${username}`)
+            .setThumbnail(`https://a.akatsuki.pw/${userid}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            .setDescription(`***Performance:***
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
+**Level:** ${level}
+**Accuracy:** ${acc}%
+**Playcount:** ${playcount}
+**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
+
+***${username} average skill:***
+Star: ${Number(star_avg/50).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
+Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
+Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
+CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
+            message.channel.send({embed});
+        }
+
         // Ripple Commands
 
         async function ripple() {
@@ -1786,6 +1855,10 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,6) == '!akatr' && msg.substring(0,6) == command) {
             akatsukirecent(7)
+        }
+
+        if (msg.substring(0,6) == '!akatd' && msg.substring(0,6) == command) {
+            akatd()
         }
 
         // Ripple
