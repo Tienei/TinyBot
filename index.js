@@ -1664,7 +1664,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 hp_avg += detail.hp
             }
             const embed = new Discord.RichEmbed()
-            .setAuthor(`osu! Statistics for ${username}`)
+            .setAuthor(`Akatuski Statistics for ${username}`)
             .setThumbnail(`https://a.akatsuki.pw/${userid}.png?date=${refresh}`)
             .setColor('#7f7fff')
             .setDescription(`***Performance:***
