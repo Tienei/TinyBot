@@ -1177,7 +1177,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
             var cs = Number(detail.cs).toFixed(2)
             var time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
             const embed = new Discord.RichEmbed()
-            .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}`)
+            .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
             .setColor('#7f7fff')
             .setDescription(`
