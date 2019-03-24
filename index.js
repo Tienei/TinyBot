@@ -419,6 +419,7 @@ bot.on("message", (message) => {
 !modsosutop [!mosutop] (username) (mods): Get player top play with mods
 !osud (username): Detail statistics of user / Please wait about 30-60 seconds
 !calcpp (map id) (mods) (acc) (combo) (miss): Calculate a beatmap pp
+!scores (map link) (name): Get a player scores from a beatmap
 
 **--- [Akatsuki]**
 Available: !akat, !akatrx, !akatr, !akatavatar, !akatd
@@ -440,7 +441,7 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop), Great Fog (!m, partial !osud), Shienei (!c Unranked pp calculation)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Great Fog (!m, partial !osud), Shienei (!c Unranked pp calculation)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -480,7 +481,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added map completion percentage for !r
 - Added new ranking letter for F
 - Added unranked pp calculation for !c
-- Added !akatd`)
+- Added !akatd
+- Added !scores`)
             message.channel.send({embed})
         }
 
@@ -501,6 +503,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
         }
 
         // Osu Commands
+
+        var urlcommand = false
         
         function checkplayer(name) {
             if (name == '') {
@@ -688,6 +692,7 @@ ${mapcompleted}`)
                 for (var i = 0; i < track.length; i++) {
                     if (track.length <= 0) {
                         track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
+                        detected = true
                     }
                     if (i < track.length || track.length == 1) {
                         if (track[i].trackonchannel == message.channel.id && track[i].osuname == name) {
@@ -1491,6 +1496,119 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             message.channel.send({embed});
         }
 
+        async function osuscore() {
+            urlcommand = true
+            var beatmapid = 0
+            var check = ''
+            var start = 0
+            if (msg.substr(8,21) == 'https://osu.ppy.sh/b/') {
+                start = 8 + 21
+                for (var i = start; i <= msg.length; i++) {
+                    if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
+                        if (msg.substring(start, msg.length).includes('?m=') == true) {
+                            beatmapid = msg.substring(start,i-4)
+                            start = i
+                            break;
+                        } else {
+                            beatmapid = msg.substring(start,i)
+                            start = i
+                            break;
+                        }
+                    }
+                }
+                check = msg.substring(start + 1, msg.length)
+            }
+            if (msg.substr(8,31) == 'https://osu.ppy.sh/beatmapsets/') {
+                start = 8 + 31
+                for (var i = start; i < msg.length; i++) {
+                    if (msg.substr(i,1) == '#') {
+                        start = i+1
+                        break;
+                        }
+                    }
+                for (var i = start; i < msg.length; i++) {
+                    if (msg.substr(i,1) == '/') {
+                        start = i+1
+                        break;
+                    }
+                }
+                for (var i = start; i <= msg.length; i++) {
+                    if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
+                        beatmapid = msg.substring(start,i)
+                        start = i
+                        break;
+                    }
+                }
+                check = msg.substring(start + 1, msg.length)
+            }
+            var name = checkplayer(check)
+            var scores = await osuApi.getScores({b: beatmapid, u: name})
+            console.log(scores)
+            scores.sort(function (a,b) {
+                a1 = Number(a.pp)
+                b1 = Number(b.pp)
+                return b1 - a1
+            })
+            if (scores.length == 0) {
+                message.channel.send(`${name} didn't play this map! D: **-Tiny**`)
+            }
+            var beatmap = await osuApi.getBeatmaps({b: beatmapid})
+            var highscore = ''
+            var beatmapname = beatmap[0].title
+            var diff = beatmap[0].version
+            var beatmapimageid = beatmap[0].beatmapSetId
+            var osuname = scores[0].user.name
+            var osuid = scores[0].user.id
+            for (var i = 0; i <= scores.length - 1; i++) {
+                var score = scores[i].score
+                var count300 = Number(scores[i].counts['300'])
+                var count100 = Number(scores[i].counts['100'])
+                var count50 = Number(scores[i].counts['50'])
+                var countmiss = Number(scores[i].counts.miss)
+                var combo = scores[i].maxCombo
+                var fc = beatmap[0].maxCombo
+                var letter = scores[i].rank
+                var rank = rankingletters(letter)
+                var mod = scores[i].mods
+                var perfect = scores[i].perfect
+                var modandbit = mods(mod)
+                var shortenmod = modandbit.shortenmod
+                var bitpresent = modandbit.bitpresent
+                var pp = Number(scores[i].pp).toFixed(2)
+                if (message.guild !== null) {
+                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                } else {
+                    storedmapid.push({id:beatmapid,user:message.author.id})
+                }
+                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                var unrankedpp = ''
+                if (beatmap[0].approvalStatus !== "Ranked") {
+                    var comparepp = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
+                    unrankedpp = `(Unranked: ${Number(comparepp.pp.total).toFixed(2)}pp)`
+                }
+                var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                var fcpp = Number(fccalc.pp.total).toFixed(2)
+                var fcacc = fccalc.acc
+                var star = Number(fccalc.star.total).toFixed(2)
+                var fcguess = ''
+                if (perfect == 0) {
+                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                }
+                    highscore += `
+${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
+${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+`         
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
+            .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
+            .setDescription(highscore)
+            message.channel.send({embed});
+            urlcommand = false
+
+        }
+
         async function beatmap() {
             var check = message.content.substring(9);
             var name = checkplayer(check)
@@ -1835,6 +1953,10 @@ Naomi if you seeing this here's what i feel about you: <3`)
             calculateplay()
         }
 
+        if (msg.substring(0,7) == '!scores' && msg.substring(0,7) == command) {
+            osuscore()
+        }
+
         // Akatsuki
 
         if (msg.substring(0,11) == '!akatavatar' && msg.substring(0,11) == command) {
@@ -1868,7 +1990,9 @@ Naomi if you seeing this here's what i feel about you: <3`)
         }
 
         // Beatmap Detection
-        beatmapdetail()
+        if (urlcommand == false) {
+            beatmapdetail()
+        }
 
     }
 
