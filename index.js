@@ -1874,7 +1874,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 fcguess = `| **${fcpp}pp for ${fcacc}%**`
             }
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Most recent Akatsuki Standard play for ${message.content.substring(8)}:`, `https://a.ripple.moe/${userid}.png?date=${refresh}`)
+            .setAuthor(`Most recent ripple play for ${message.content.substring(8)}:`, `https://a.ripple.moe/${userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
             .setColor('#7f7fff')
             .setDescription(`
@@ -1933,7 +1933,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 hp_avg += detail.hp
             }
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Akatuski Statistics for ${username}`)
+            .setAuthor(`ripple Statistics for ${username}`)
             .setThumbnail(`https://a.ripple.moe/${userid}.png?date=${refresh}`)
             .setColor('#7f7fff')
             .setDescription(`***Performance:***
