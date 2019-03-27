@@ -425,7 +425,7 @@ bot.on("message", (message) => {
 Available: !akat, !akatrx, !akatr, !akatavatar, !akatd
 
 **--- [Ripple]**
-Available: !ripple
+Available: !ripple, !rippler, !rippled
 
 Note: 
 - If your osu username have a space in it, replace it with a "_"
@@ -483,7 +483,10 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added unranked pp calculation for !c
 - Added !akatd
 - Added !scores
-- New calculation for Aim, Speed, Acc (!osud)`)
+- New calculation for Aim, Speed, Acc (!osud)
+- Added !rippler
+- Added !rippled
+**Note: New Speed Calculation doesn't apply on Akatuski and ripple!**`)
             message.channel.send({embed})
         }
 
@@ -1774,9 +1777,9 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 var thing = await mapcalc(beatmapid,mod,0,0,0,0,0,0)
                 var detail = mapdetail(shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
                 star_avg += thing.star.total
-                aim_avg += thing.star.aim
+                aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
                 speed_avg += thing.star.speed
-                acc_avg += (Math.pow(scoreacc, 3)/Math.pow(100, 3)) * 1.1 * thing.star.total
+                acc_avg += (Math.pow(scoreacc, 3)/Math.pow(100, 3)) * 1.1 * thing.star.total * (Math.pow(detail.od, 0.05) / (Math.pow(6, 0.05)))
                 cs_avg += detail.cs
                 ar_avg += detail.ar
                 od_avg += detail.od
@@ -1828,6 +1831,124 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
 ▸**Level:** ${level}`)
             .setThumbnail(`https://a.ripple.moe/${id}?date=${refresh}`)
             .setColor('#7f7fff')
+            message.channel.send({embed});
+        }
+
+        async function ripplerecent() {
+            var data = await request.get(`https://ripple.moe/api/v1/users/scores/recent?name=${message.content.substring(8)}`)
+            var recent = JSON.parse(data)
+            var userid = recent.scores[0].id
+            var beatmapid = recent.scores[0].beatmap.beatmap_id
+            var beatmapsetid = recent.scores[0].beatmap.beatmapset_id
+            var beatmap = recent.scores[0].beatmap.song_name
+            var score = recent.scores[0].score
+            var combo = recent.scores[0].max_combo
+            var fc = recent.scores[0].beatmap.max_combo
+            var count300 = Number(recent.scores[0].count_300)
+            var count100 = Number(recent.scores[0].count_100)
+            var count50 = Number(recent.scores[0].count_50)
+            var countmiss = Number(recent.scores[0].count_miss)
+            var perfect = recent.scores[0].full_combo
+            var letter = recent.scores[0].rank
+            var rank = rankingletters(letter)
+            var bit = recent.scores[0].mods
+            var mods = bittomods(bit)   
+            var acc = Number(recent.scores[0].accuracy).toFixed(2)
+            var recentcalc = await mapcalc(beatmapid,bit,combo,count100,count50,countmiss,acc,0)
+            var star = Number(recentcalc.star.total).toFixed(2)
+            var pp = Number(recentcalc.pp.total).toFixed(2)
+            if (message.guild !== null) {
+                storedmapid.push({id:beatmapid,server:message.guild.id})
+            } else {
+                storedmapid.push({id:beatmapid,user:message.author.id})
+            }
+            var fccalc = await mapcalc(beatmapid,bit,fc,count100,count50,0,acc,1)
+            var fcpp = Number(fccalc.pp.total).toFixed(2)
+            var fcacc = fccalc.acc
+            var fcguess = ``
+            var nopp = ''
+            if (letter == 'F') {
+                nopp = '(No pp)'
+            }
+            if (perfect == 0) {
+                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Most recent Akatsuki Standard play for ${message.content.substring(8)}:`, `https://a.ripple.moe/${userid}.png?date=${refresh}`)
+            .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
+            .setColor('#7f7fff')
+            .setDescription(`
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mods} | ***${pp}pp*** ${nopp}
+${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
+            message.channel.send({embed})
+        }
+
+        async function rippled() {
+            var data1 = await request.get(`https://ripple.moe/api/v1/users/scores/best?name=${message.content.substring(9)}`)
+            var data2 = await request.get(`https://ripple.moe/api/v1/users/full?name=${message.content.substring(9)}`)
+            var best = JSON.parse(data1)
+            var user = JSON.parse(data2)
+            if (best.length == 0) {
+                message.channel.send('Either invalid user or not enough top play to calcuate')
+            }
+            var star_avg = 0
+            var aim_avg = 0
+            var speed_avg = 0
+            var acc_avg = 0
+            var cs_avg = 0
+            var ar_avg = 0
+            var od_avg = 0
+            var hp_avg = 0
+            var userid = user.id
+            var username = user.username
+            var rank = user.std.global_leaderboard_rank
+            var country = user.country.toLowerCase()
+            var countryrank = null
+            var level = user.std.level
+            var pp = user.std.pp
+            var acc = Number(user.std.accuracy).toFixed(2)
+            var playcount = user.std.playcount
+            var rankedscore = user.std.ranked_score
+            var totalscore = user.std.total_score
+
+            for (var i = 0; i < 50; i++) {
+                var beatmapid = best.scores[i].beatmap.beatmap_id
+                var mod = best.scores[i].mods
+                var shortenmod = bittomods(mod)
+                var count300 = Number(best.scores[i].count_300)
+                var count100 = Number(best.scores[i].count_100)
+                var count50 = Number(best.scores[i].count_50)
+                var countmiss = Number(best.scores[i].count_miss)
+                var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                var thing = await mapcalc(beatmapid,mod,0,0,0,0,0,0)
+                var detail = mapdetail(shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
+                star_avg += thing.star.total
+                aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
+                speed_avg += thing.star.speed
+                acc_avg += (Math.pow(scoreacc, 3)/Math.pow(100, 3)) * 1.1 * thing.star.total * (Math.pow(detail.od, 0.05) / (Math.pow(6, 0.05)))
+                cs_avg += detail.cs
+                ar_avg += detail.ar
+                od_avg += detail.od
+                hp_avg += detail.hp
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Akatuski Statistics for ${username}`)
+            .setThumbnail(`https://a.ripple.moe/${userid}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            .setDescription(`***Performance:***
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
+**Level:** ${level}
+**Accuracy:** ${acc}%
+**Playcount:** ${playcount}
+**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
+
+***${username} average skill:***
+Star: ${Number(star_avg/50).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
+Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
+Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
+CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
             message.channel.send({embed});
         }
         
@@ -1988,6 +2109,14 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,7) == '!ripple' && msg.substring(0,7) == command) {
             ripple()
+        }
+
+        if (msg.substring(0,8) == '!rippler' && msg.substring(0,8) == command) {
+            ripplerecent()
+        }
+
+        if (msg.substring(0,8) == '!rippled' && msg.substring(0,8) == command) {
+            rippled()
         }
 
         // Beatmap Detection
