@@ -1738,8 +1738,8 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
         }
 
         async function akatd() {
-            var data1 = await request.get(`https://akatsuki.pw/api/v1/users/scores/best?name=${message.content.substring(7)}`)
-            var data2 = await request.get(`https://akatsuki.pw/api/v1/users/full?name=${message.content.substring(7)}`)
+            var data1 = await request.get(`https://akatsuki.pw/api/v1/users/scores/best?name=${message.content.substring(7)}&mode=0`)
+            var data2 = await request.get(`https://akatsuki.pw/api/v1/users/full?name=${message.content.substring(7)}&mode=0`)
             var best = JSON.parse(data1)
             var user = JSON.parse(data2)
             if (best.length == 0) {
@@ -1885,8 +1885,8 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
         }
 
         async function rippled() {
-            var data1 = await request.get(`https://ripple.moe/api/v1/users/scores/best?name=${message.content.substring(9)}`)
-            var data2 = await request.get(`https://ripple.moe/api/v1/users/full?name=${message.content.substring(9)}`)
+            var data1 = await request.get(`https://ripple.moe/api/v1/users/scores/best?name=${message.content.substring(9)}&mode=0`)
+            var data2 = await request.get(`https://ripple.moe/api/v1/users/full?name=${message.content.substring(9)}&mode=0`)
             var best = JSON.parse(data1)
             var user = JSON.parse(data2)
             if (best.length == 0) {
