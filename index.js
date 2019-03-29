@@ -380,7 +380,7 @@ bot.on("message", (message) => {
     refresh = Math.round(Math.random()* 2147483648)
     var command = ''
 
-    if (message.author.bot == false){
+    if (message.author.bot == false && message.author.id == "292523841811513348"){
 
         for (var i = 0; i < msg.length; i++) {
             if (msg[i] == ' ') {
@@ -469,24 +469,11 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot v2.7`)
+            .setAuthor(`Changelog for Tiny Bot v2.8`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Akatsuki and Ripple Update:**
-- Added !akatsuki
-- Added !akatuskirecent (!akatr)
-- Added !akatrx
-- Added !akatavatar
-- !compare now sorted by pp
-- Added map completion percentage for !r
-- Added new ranking letter for F
-- Added unranked pp calculation for !c
-- Added !akatd
-- Added !scores
-- New calculation for Aim, Speed, Acc (!osud)
-- Added !rippler
-- Added !rippled
-**Note: New Speed Calculation doesn't apply on Akatuski and ripple!**`)
+**April Fools Update:**
+- Fixed mod detection in beatmap detector, !m (Invalid mod autocorrect to No Mod)`)
             message.channel.send({embed})
         }
 
@@ -1161,11 +1148,15 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 fl: 1024,
                 so: 4096
             }
-            console.log(mods)
+            var validmod = false
             for (var m = 0; m <= mods[0].length; m++) {
                 if (mod[mods[0].substr(m*2,2)]) {
                     bitpresent += mod[mods[0].substr(m*2,2)]
+                    validmod = true
                 }
+            }
+            if (validmod == false) {
+                mods[0] = 'No Mod'
             }
             var map = await osuApi.getBeatmaps({b: beatmapid})
             var beatmapidfixed = map[0].beatmapSetId
@@ -1282,10 +1273,15 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                     fl: 1024,
                     so: 4096
                 }
+                var validmod = false
                 for (var m = 0; m <= mods[i].length; m++) {
                     if (mod[mods[i].substr(m*2,2)]) {
                         bitpresent += mod[mods[i].substr(m*2,2)]
+                        validmod = true
                     }
+                }
+                if (validmod == false) {
+                    mods[0] = 'No Mod'
                 }
                 var map = await osuApi.getBeatmaps({b: beatmapid[i]})
                 if (map.length == 0) {
@@ -2127,4 +2123,5 @@ Naomi if you seeing this here's what i feel about you: <3`)
     }
 
 })
+
 bot.login(process.env.BOT_TOKEN);
