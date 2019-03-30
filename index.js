@@ -109,7 +109,7 @@ function bittomods(number) {
 function timeago(time) {
     var dateago = new Date(time).getTime()
     var datenow = new Date().getTime()
-    var datenew = new Date(datenow - 21600000 - dateago)
+    var datenew = new Date(datenow - 28800000 - dateago)
     var sec = datenew.getUTCMilliseconds()
     var min = datenew.getUTCMinutes()
     var hour = datenew.getUTCHours()
