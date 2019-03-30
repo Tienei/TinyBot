@@ -682,6 +682,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             if (letter == 'F') {
                 nopp = '(No pp)'
                 mapcompleted = `**Map Completion:** ${mapcomplete}%`
+                date = '| ' + date
             }
             if (perfect == 0) {
                 fcguess = `| **${fcpp}pp for ${fcacc}%**`
@@ -694,8 +695,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
-${mapcompleted}
-${date}`)
+${mapcompleted} ${date}
+`)
             message.channel.send({embed})
         }
 
