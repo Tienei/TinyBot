@@ -106,6 +106,31 @@ function bittomods(number) {
     return shortenmod
 }
 
+function timeago(time) {
+    var dateago = new Date(time).getTime()
+    var datenow = new Date().getTime()
+    var datenew = new Date(datenow - 25200000 - dateago)
+    var sec = datenew.getUTCMilliseconds()
+    var min = datenew.getUTCMinutes()
+    var hour = datenew.getUTCHours()
+    var day = (datenew.getUTCDate() - 1)
+    var month = datenew.getUTCMonth()
+    var year = (datenew.getUTCFullYear() - 1970)
+    var text = ''
+    if (year > 0) {
+        text = `${year} year and ${month} month ago`
+    } else if (month > 0) {
+        text = `${month} month and ${day} day ago`
+    } else if (day > 0) {
+        text = `${day} day and ${hour} hour ago`
+    } else if (hour > 0)  {
+        text = `${hour} hour and ${min} minute ago`
+    } else {
+        text = `${min} minute and ${sec} second ago`
+    }
+    return text
+}
+
 function mapdetail(mods,length,bpm,cs,ar,od,hp) {
     var arms = 0
     var odms = 0
@@ -441,7 +466,7 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Great Fog (!m, partial !osud), Shienei (!c Unranked pp calculation)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Great Fog (!m, partial !osud), Shienei (!c Unranked pp calculation), jpg (Time ago)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -473,7 +498,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **April Fools Update:**
-- Fixed mod detection in beatmap detector, !m (Invalid mod autocorrect to No Mod)`)
+- Fixed mod detection in beatmap detector, !m (Invalid mod autocorrect to No Mod)
+- Added "Time ago" for every score`)
             message.channel.send({embed})
         }
 
@@ -634,6 +660,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             var modandbit = mods(mod)
             var shortenmod = modandbit.shortenmod
             var bitpresent = modandbit.bitpresent
+            var date = timeago(recent[0][0].date)
             var recentcalc = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
             var star = Number(recentcalc.star.total).toFixed(2)
             var pp = Number(recentcalc.pp.total).toFixed(2)
@@ -667,7 +694,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
-${mapcompleted}`)
+${mapcompleted}
+${date}`)
             message.channel.send({embed})
         }
 
@@ -784,6 +812,7 @@ ${mapcompleted}`)
                 var modandbit = mods(mod)
                 var shortenmod = modandbit.shortenmod
                 var bitpresent = modandbit.bitpresent
+                var date = timeago(scores[i].date)
                 var pp = Number(scores[i].pp).toFixed(2)
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var unrankedpp = ''
@@ -803,6 +832,7 @@ ${mapcompleted}`)
 ${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
 ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
 `         
             }
             const embed = new Discord.RichEmbed()
@@ -876,6 +906,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
                 var modandbit = mods(mod)
                 var shortenmod = modandbit.shortenmod
                 var bitpresent = modandbit.bitpresent
+                var date = timeago(best[i][0].date)
                 if (message.guild !== null) {
                     storedmapid.push({id:beatmapid,server:message.guild.id})
                 } else {
@@ -913,6 +944,7 @@ ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% ${accdetail} ${fcguess}
+${date}
 `   
             }
             const embed = new Discord.RichEmbed()
@@ -961,6 +993,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                 var modandbit = mods(mod)
                 var shortenmod = modandbit.shortenmod
                 var bitpresent = modandbit.bitpresent
+                var date = timeago(best[i][0].date)
                 if (message.guild !== null) {
                     storedmapid.push({id:beatmapid,server:message.guild.id})
                 } else {
@@ -979,6 +1012,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 ${best[i][0].top}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
 `
                 
             }
@@ -1077,6 +1111,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
                     var modandbit = mods(bestmod)
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
+                    var date = timeago(best[i][0].date)
                     if (message.guild !== null) {
                         storedmapid.push({id:beatmapid,server:message.guild.id})
                     } else {
@@ -1095,6 +1130,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
 `
                 }
             }
@@ -1574,6 +1610,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 var modandbit = mods(mod)
                 var shortenmod = modandbit.shortenmod
                 var bitpresent = modandbit.bitpresent
+                var date = timeago(scores[i].date)
                 var pp = Number(scores[i].pp).toFixed(2)
                 if (message.guild !== null) {
                     storedmapid.push({id:beatmapid,server:message.guild.id})
@@ -1598,6 +1635,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
 ${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
 ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
 `         
             }
             const embed = new Discord.RichEmbed()
