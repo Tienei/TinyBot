@@ -110,7 +110,7 @@ function timeago(time) {
     var dateago = new Date(time).getTime()
     var datenow = new Date().getTime()
     var datenew = new Date(datenow - 28800000 - dateago)
-    var sec = datenew.getUTCMilliseconds()
+    var sec = datenew.getUTCSeconds()
     var min = datenew.getUTCMinutes()
     var hour = datenew.getUTCHours()
     var day = (datenew.getUTCDate() - 1)
