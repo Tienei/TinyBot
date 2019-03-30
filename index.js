@@ -1870,7 +1870,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
         }
 
         async function ripplerecent() {
-            var data = await request.get(`https://ripple.moe/api/v1/users/scores/recent?name=${message.content.substring(8)}`)
+            var data = await request.get(`https://ripple.moe/api/v1/users/scores/recent?name=${message.content.substring(9)}`)
             var recent = JSON.parse(data)
             var userid = recent.scores[0].id
             var beatmapid = recent.scores[0].beatmap.beatmap_id
