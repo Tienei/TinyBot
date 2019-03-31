@@ -107,9 +107,13 @@ function bittomods(number) {
 }
 
 function timeago(time) {
+    // get host timezone
+    var timezone = new Date().getTimezoneOffset()
+    var mstimezone = Math.abs(Number(timezone) * 60000 - 3600000)
+    // get played time
     var dateago = new Date(time).getTime()
     var datenow = new Date().getTime()
-    var datenew = new Date(datenow - 28800000 - dateago)
+    var datenew = new Date(datenow - dateago - mstimezone)
     var sec = datenew.getUTCSeconds()
     var min = datenew.getUTCMinutes()
     var hour = datenew.getUTCHours()
@@ -128,9 +132,9 @@ function timeago(time) {
     } else {
         text = `${min} minute and ${sec} second ago`
     }
+    console.log(timezone, mstimezone)
     return text
 }
-
 function mapdetail(mods,length,bpm,cs,ar,od,hp) {
     var arms = 0
     var odms = 0
