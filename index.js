@@ -87,6 +87,7 @@ function bittomods(number) {
         21: 'FL',
         22: 'NC',
         23: 'HT',
+        24: 'RX',
         25: 'DT',
         26: 'SD',
         27: 'HR',
@@ -447,7 +448,7 @@ bot.on("message", (message) => {
 !scores (map link) (name): Get a player scores from a beatmap
 
 **--- [Akatsuki]**
-Available: !akat, !akatrx, !akatr, !akatavatar, !akatd
+Available: !akat, !akatrx, !akatrxtop, !akatr, !akatavatar, !akatd
 
 **--- [Ripple]**
 Available: !ripple, !rippler, !rippled
@@ -1772,6 +1773,84 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
             message.channel.send({embed})
         }
 
+        async function akatrxtop() {
+            var player = ''
+            var start = 0
+            var loop = 0
+            var word = []
+            var startpos = 11
+            var startword = startpos
+            for (var i = startword; i < msg.length; i++) {
+                if (msg[i] == ' ') {
+                    word.push(msg.substring(startword,i))
+                    startword = i + 1
+                }
+            }
+            word.push(msg.substring(startword,msg.length))
+            if (word.length == 2) {
+                player = word[0]
+                start = Number(word[1]) - 1
+                loop = start + 1
+            }
+            if (word.length == 1) {
+                if (isNaN(word[0]) == true) {
+                    player = word[0]
+                    start = 0
+                    loop = 5
+                } else {
+                    player = ''
+                    start = Number(word[0]) - 1
+                    loop = start + 1    
+                }
+            }
+            if (msg.length == startpos - 1) {
+                player = ''
+                start = 0
+                loop = 5
+            }
+            var top = ``
+            var data = await request.get(`https://akatsuki.pw/api/v1/users/scores/best?name=${player}&rx=1`)
+            var best = JSON.parse(data)
+            var userid = best.scores[0].id
+            for (var i = start; i < loop; i++) {
+                var title = best.scores[i].beatmap.song_name
+                var beatmapid = best.scores[i].beatmap.beatmap_id
+                var score = best.scores[i].score
+                var count300 = Number(best.scores[i].count_300)
+                var count100 = Number(best.scores[i].count_100)
+                var count50 = Number(best.scores[i].count_50)
+                var countmiss = Number(best.scores[i].count_miss)
+                var combo = best.scores[i].max_combo
+                var fc = best.scores[i].beatmap.max_combo
+                var letter = best.scores[i].rank
+                var rank = rankingletters(letter)
+                var pp = Number(best.scores[i].pp).toFixed(2)
+                var mod = best.scores[i].mods
+                var shortenmod = bittomods(mod)
+                var date = timeago(best.scores[i].time)
+                if (message.guild !== null) {
+                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                } else {
+                    storedmapid.push({id:beatmapid,user:message.author.id})
+                }
+                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                var starcalc = await mapcalc(beatmapid,mod,0,0,0,0,0,0)
+                var star = Number(starcalc.star.total).toFixed(2)
+                var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                top += `
+${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% ${accdetail}
+${date}
+`           }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Top Akatsuki Relax Plays for ${player}`)
+            .setThumbnail(`http://a.akatuski.pw/${userid}.png?date=${refresh}`)
+            .setColor('#7f7fff')
+            .setDescription(top)
+            message.channel.send({embed});
+        }
+
         async function akatd() {
             var data1 = await request.get(`https://akatsuki.pw/api/v1/users/scores/best?name=${message.content.substring(7)}&mode=0`)
             var data2 = await request.get(`https://akatsuki.pw/api/v1/users/full?name=${message.content.substring(7)}&mode=0`)
@@ -2134,6 +2213,10 @@ Naomi if you seeing this here's what i feel about you: <3`)
 
         if (msg.substring(0,6) == '!akatr' && msg.substring(0,6) == command) {
             akatsukirecent(7)
+        }
+
+        if (msg.substring(0,10) == '!akatrxtop' && msg.substring(0,10) == command) {
+            akatrxtop()
         }
 
         if (msg.substring(0,6) == '!akatd' && msg.substring(0,6) == command) {
