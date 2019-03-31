@@ -109,7 +109,7 @@ function bittomods(number) {
 function timeago(time) {
     // get host timezone
     var timezone = new Date().getTimezoneOffset()
-    var mstimezone = Math.abs(Number(timezone) * 60000 - 3600000)
+    var mstimezone = Number(timezone) * 60000 - 3600000
     // get played time
     var dateago = new Date(time).getTime()
     var datenow = new Date().getTime()
