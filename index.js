@@ -500,7 +500,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setDescription(`
 **April Fools Update:**
 - Fixed mod detection in beatmap detector, !m (Invalid mod autocorrect to No Mod)
-- Added "Time ago" for every score`)
+- Added "Time ago" for every score
+- Added !akatrxtop`)
             message.channel.send({embed})
         }
 
