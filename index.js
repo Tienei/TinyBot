@@ -397,7 +397,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
         }
     }
     
-    setInterval(realtimeosutrack, 20000)
+    setInterval(realtimeosutrack, 25000)
 });
 
 bot.on("message", (message) => {
