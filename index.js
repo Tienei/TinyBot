@@ -501,7 +501,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 **April Fools Update:**
 - Fixed mod detection in beatmap detector, !m (Invalid mod autocorrect to No Mod)
 - Added "Time ago" for every score
-- Added !akatrxtop`)
+- Added !akatrxtop
+- Fixed mistaken loved pp calculation for approved`)
             message.channel.send({embed})
         }
 
@@ -819,9 +820,9 @@ ${mapcompleted} ${date}
                 var pp = Number(scores[i].pp).toFixed(2)
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var unrankedpp = ''
-                if (beatmap[0].approvalStatus !== "Ranked") {
+                if (beatmap[0].approvalStatus !== "Ranked" && beatmap[0].approvalStatus !== "Approved") {
                     var comparepp = await mapcalc(storedid,bitpresent,combo,count100,count50,countmiss,acc,0)
-                    unrankedpp = `(Unranked: ${Number(comparepp.pp.total).toFixed(2)}pp)`
+                    unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
                 }
                 var fccalc = await mapcalc(storedid,bitpresent,fc,count100,count50,0,acc,1)
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -1582,7 +1583,6 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             }
             var name = checkplayer(check)
             var scores = await osuApi.getScores({b: beatmapid, u: name})
-            console.log(scores)
             scores.sort(function (a,b) {
                 a1 = Number(a.pp)
                 b1 = Number(b.pp)
@@ -1622,9 +1622,9 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 }
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var unrankedpp = ''
-                if (beatmap[0].approvalStatus !== "Ranked") {
+                if (beatmap[0].approvalStatus !== "Ranked" && beatmap[0].approvalStatus !== "Approved") {
                     var comparepp = await mapcalc(beatmapid,bitpresent,combo,count100,count50,countmiss,acc,0)
-                    unrankedpp = `(Unranked: ${Number(comparepp.pp.total).toFixed(2)}pp)`
+                    unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
                 }
                 var fccalc = await mapcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
