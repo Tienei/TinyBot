@@ -1715,7 +1715,7 @@ ${date}
                             if (clean.substring(i-3, i) == check) {
                                 information.prize[check] = clean.substring(prize+9,i+1)
                                 var plus = clean.toLowerCase().indexOf('badge', prize)
-                                if (plus > prize && plus < prize + 25) {
+                                if (plus > prize && plus < prize + 50) {
                                     information.prize[check] += ' + badge'
                                 }
                                 if (information.prize[check].toLowerCase().includes('place') == true) {
