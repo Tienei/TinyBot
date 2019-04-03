@@ -9,6 +9,7 @@ const request = require('request-promise-native');
 const calc = require('ojsama')
 const rippleAPI = require('rippleapi')
 const fs = require('fs')
+const san = require('sanitize-html')
 
 var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
@@ -502,7 +503,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Fixed mod detection in beatmap detector, !m (Invalid mod autocorrect to No Mod)
 - Added "Time ago" for every score
 - Added !akatrxtop
-- Fixed mistaken loved pp calculation for approved`)
+- Fixed mistaken loved pp calculation for approved
+- Added tournament detection (Beta)`)
             message.channel.send({embed})
         }
 
@@ -1659,6 +1661,129 @@ ${date}
             }
         }
 
+        async function tourneydetail() {
+            var error, respone, html = await request(message.embeds[0].url)
+            const information = {
+                tourneyname: '',
+                tourneytype: '',
+                range: '',
+                prize: {},
+                score: '',
+                customrange: {}
+            }
+            var start = 0
+            var clean = san(html, {allowedTags: []})
+            if (clean.substring(17500).includes('tournament') == true) {
+                var name = message.embeds[0].title.indexOf('forums')
+                information.tourneyname = message.embeds[0].title.substring(0, name - 3)
+                var range = clean.toLowerCase().indexOf('range')
+                if (range == -1) {
+                    range = clean.toLowerCase().indexOf('rank')
+                }
+                if (range == -1) {
+                    information.range = "Can't get range data"
+                } 
+                if (range !== -1) {
+                    for (var i = range; i < clean.length; i++) {
+                        if (String(Number(clean.substr(i,1))) !== "NaN" && clean.substr(i,1) !== " ") {
+                            start = i
+                            break
+                        }
+                    }
+                    for (var i = start; i < clean.length; i++) {
+                        if (String(Number(clean.substr(i,1))) !== "NaN" && clean.substr(i,1) !== " ") {
+                            start = i
+                            break
+                        }
+                    }
+                    for (var i = start; i < clean.length; i++) {
+                        if (String(Number(clean.substr(i+1,1))) == "NaN" && clean.substr(i+1,1) !== "k" && clean.substr(i+1,1) !== "~"  && clean.substr(i+1,1) !== " "  && clean.substr(i+1,1) !== "-"  && clean.substr(i+1,1) !== "."  && clean.substr(i+1,1) !== ",") {
+                            information.range = clean.substring(start,i)
+                            break
+                        }
+                        if (clean.substr(i-1,2) == "k.") {
+                            information.range = clean.substring(start,i)
+                            break
+                        }
+                    }
+                }
+                var prize = clean.toLowerCase().indexOf('supporter')
+                var check = '1st'
+                if (prize !== -1) {
+                    for (var p = 0; p < 5; p++) {
+                        for (var i = prize; i > prize - 100; i--) {
+                            if (clean.substring(i-3, i) == check) {
+                                information.prize[check] = clean.substring(prize+9,i+1)
+                                var plus = clean.toLowerCase().indexOf('badge', prize)
+                                if (plus > prize && plus < prize + 25) {
+                                    information.prize[check] += ' + badge'
+                                }
+                                if (information.prize[check].toLowerCase().includes('place') == true) {
+                                    var pos = information.prize[check].toLowerCase().indexOf('place')
+                                    information.prize[check] =  information.prize[check].substring(pos+7)
+                                }
+                                prize = clean.toLowerCase().indexOf('supporter', prize + 10)
+                                break
+                            }
+                        }
+                        if (p == 0) {
+                            check = '2nd'
+                        }
+                        if (p == 1) {
+                            check = '3rd'
+                        }
+                        if (p == 2) {
+                            check = '4th'
+                        }
+                        if (p == 3) {
+                            check = '5th'
+                        }
+                    }
+                }
+                for (var i = 1; i < 9; i++) {
+                    if (clean.toLowerCase().includes(`${i}v${i}`) == true) {
+                        information.tourneytype = `${i}v${i}`
+                        break
+                    }
+                }
+                if (clean.toLowerCase().includes('scorev2') == true || clean.toLowerCase().includes('score v2') == true) {
+                    information.score = 'ScoreV2'
+                }
+                if (clean.toLowerCase().includes('scorev1') == true || clean.toLowerCase().includes('score v1') == true) {
+                    information.score = 'ScoreV1'
+                }
+                // Init
+                if (information.score == ' ' || information.score == '' ) {
+                    information.score = 'ScoreV2?'
+                }
+                var prizetext = ''
+                var prefix = 'st'
+                if (information.prize[0] !== undefined) {
+                    for (var i = 1; i < 6; i++) {
+                        if (information.prize[i-1] !== undefined) {
+                            prizetext += `${i}${prefix}: ${information.prize[i-1]}
+                            `
+                        }
+                    }
+                }
+                if (prizetext == '') {
+                    prizetext = "Can't get prize data"
+                }
+                const embed = new Discord.RichEmbed()
+                .setAuthor(information.tourneyname)
+                .setDescription(`
+**--- [tl;dr]**
+
+**Range:** ${information.range}
+**Type:** ${information.tourneytype}
+**Score:** ${information.score}
+**Prize:** 
+${prizetext}`)
+                .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Osu%21Logo_%282015%29.svg/600px-Osu%21Logo_%282015%29.svg.png')
+                message.channel.send({embed})
+            }
+        }
+
         // Akatsuki Commands
 
         async function akatuskiavatar() {
@@ -2238,9 +2363,20 @@ Naomi if you seeing this here's what i feel about you: <3`)
             rippled()
         }
 
+        // Detection
+        var embed = message.embeds
         // Beatmap Detection
         if (urlcommand == false) {
-            beatmapdetail()
+            if (embed.length > 0) {
+                if (message.embeds[0].url.substring(0,31) == "https://osu.ppy.sh/beatmapsets/" || message.embeds[0].url.substring(0,30) == "http://osu.ppy.sh/beatmapsets/") {
+                    beatmapdetail()
+                }
+            }
+        }
+        // Tourney Detection
+        if (embed.length > 0) {
+            if (message.embeds[0].url.substring(0,43) == "https://osu.ppy.sh/community/forums/topics/" || message.embeds[0].url.substring(0,42) == "http://osu.ppy.sh/community/forums/topics/")
+            tourneydetail()
         }
 
     }
