@@ -1757,14 +1757,26 @@ ${date}
                     information.score = 'ScoreV2?'
                 }
                 var prizetext = ''
-                var prefix = 'st'
-                if (information.prize[0] !== undefined) {
-                    for (var i = 1; i < 6; i++) {
-                        if (information.prize[i-1] !== undefined) {
-                            prizetext += `${i}${prefix}: ${information.prize[i-1]}
+                var prefix = '1st'
+                if (information.prize[prefix] !== undefined) {
+                    for (var i = 0; i < 5; i++) {
+                        if (information.prize[prefix] !== undefined) {
+                            prizetext += `${prefix}: ${information.prize[prefix]}
                             `
                         }
-                    }
+                        if (i == 0) {
+                            prefix = '2nd'
+                        }
+                        if (i == 1) {
+                            prefix = '3rd'
+                        }
+                        if (i == 2) {
+                            prefix = '4th'
+                        }
+                        if (i == 3) {
+                            prefix = '5th'
+                        }
+                    }   
                 }
                 if (prizetext == '') {
                     prizetext = "Can't get prize data"
