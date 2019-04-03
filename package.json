@@ -17,7 +17,8 @@
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "request-promise-native": "^1.0.5",
-    "rippleapi": "^1.1.0"
+    "rippleapi": "^1.1.0",
+    "sanitize-html": "^1.20.0"
   }
 }
 
