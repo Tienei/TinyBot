@@ -2379,11 +2379,7 @@ Naomi if you seeing this here's what i feel about you: <3`)
         var embed = message.embeds
         // Beatmap Detection
         if (urlcommand == false) {
-            if (embed.length > 0) {
-                if (message.embeds[0].url.substring(0,31) == "https://osu.ppy.sh/beatmapsets/" || message.embeds[0].url.substring(0,30) == "http://osu.ppy.sh/beatmapsets/") {
-                    beatmapdetail()
-                }
-            }
+            beatmapdetail()
         }
         // Tourney Detection
         if (embed.length > 0) {
