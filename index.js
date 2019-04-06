@@ -398,7 +398,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
         }
     }
     
-    //setInterval(realtimeosutrack, 25000)
+    setInterval(realtimeosutrack, 25000)
 });
 
 bot.on("message", (message) => {
@@ -499,12 +499,13 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setAuthor(`Changelog for Tiny Bot v2.8`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**April Fools Update:**
+**April Update:**
 - Fixed mod detection in beatmap detector, !m (Invalid mod autocorrect to No Mod)
 - Added "Time ago" for every score
 - Added !akatrxtop
 - Fixed mistaken loved pp calculation for approved
-- Added tournament detection (Beta)`)
+- Added tournament detection (Beta)
+- New efficent way to save and store data`)
             message.channel.send({embed})
         }
 
@@ -530,7 +531,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
         
         function checkplayer(name) {
             if (name == '') {
-                // New
                 var osuname = cache[message.author.id].osuname
                 if (osuname !== undefined) {
                     return osuname
@@ -538,7 +538,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                     return name
                 }
             } else {
-                // New
                 var osuname = ''
                 var id = ''
                 if (name.includes('@') == true) {
@@ -606,7 +605,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             if (name == undefined) {
                 message.channel.send('Please enter a valid osu username! >:c')
             } else {
-                // New
                 if (cache.length = 0) {
                     cache[message.author.id] = {osuname: name}
                 }
@@ -615,8 +613,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                 } else {
                     cache[message.author.id] = {osuname: name}
                 }
-                console.log(cache)
-                //
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Your account has been linked to osu! username: ${name}`,'',`https://osu.ppy.sh/users/${user.id}`)
                 .setImage(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
