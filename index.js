@@ -1,4 +1,4 @@
-var cache = []
+var cache = {}
 var track = []
 var storedmapid = []
 
@@ -398,7 +398,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
         }
     }
     
-    setInterval(realtimeosutrack, 25000)
+    //setInterval(realtimeosutrack, 25000)
 });
 
 bot.on("message", (message) => {
@@ -407,7 +407,7 @@ bot.on("message", (message) => {
     refresh = Math.round(Math.random()* 2147483648)
     var command = ''
 
-    if (message.author.bot == false){
+    if (message.author.bot == false && message.author.id == "292523841811513348"){
 
         for (var i = 0; i < msg.length; i++) {
             if (msg[i] == ' ') {
@@ -530,33 +530,29 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
         
         function checkplayer(name) {
             if (name == '') {
-                var osuname = ''
-                var found = false
-                for (var i = 0; i < cache.length; i++) {
-                    if (cache[i].username == message.author.id) {
-                        osuname = cache[i].osuname
-                        found = true
-                    }
+                // New
+                var osuname = cache[message.author.id].osuname
+                if (osuname !== undefined) {
+                    return osuname
+                } else {
+                    return name
                 }
-                if (found == false) {
-                    return name;
-                }
-                return osuname;
             } else {
+                // New
                 var osuname = ''
-                var found = false
-                for (var i = 0; i < cache.length; i++) {
-                    if (name.includes('@') == true) {
-                        if (name.includes(cache[i].username) == true) {
-                            osuname = cache[i].osuname
-                            found = true
-                        }
-                    }
+                var id = ''
+                if (name.includes('@') == true) {
+                   var id = message.mentions.users.first().id
+                   osuname = cache[id].osuname
+                   if (osuname !== undefined) {
+                       return osuname
+                   } else {
+                       return name
+                   }
+                } else {
+                    return name
                 }
-                if (found == false) {
-                    return name;
-                }
-                return osuname;
+
             }
         }
 
@@ -605,26 +601,22 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         async function osuset() {
             var osuname = message.content.substring(8)
-            var detected = false
             var user = await osuApi.getUser({u: osuname})
             var name = user.name
             if (name == undefined) {
                 message.channel.send('Please enter a valid osu username! >:c')
             } else {
-                for (var i = 0; i <= cache.length - 1; i++) {
-                    if (cache.length <= 0) {
-                        cache.push({"username":message.author.id,"osuname":name})
-                    }
-                    if (i < cache.length - 1 || cache.length == 1) {
-                        if (cache[i].username == message.author.id) {
-                            cache[i].osuname = name
-                            detected = true
-                        }
-                    }
+                // New
+                if (cache.length = 0) {
+                    cache[message.author.id] = {osuname: name}
                 }
-                if (detected == false) {
-                    cache.push({"username":message.author.id,"osuname":name})
+                if (cache[message.author.id].osuname) {
+                    cache[message.author.id].osuname = name
+                } else {
+                    cache[message.author.id] = {osuname: name}
                 }
+                console.log(cache)
+                //
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Your account has been linked to osu! username: ${name}`,'',`https://osu.ppy.sh/users/${user.id}`)
                 .setImage(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
