@@ -447,6 +447,7 @@ bot.on("message", (message) => {
 !osud (username): Detail statistics of user / Please wait about 30-60 seconds
 !calcpp (map id) (mods) (acc) (combo) (miss): Calculate a beatmap pp
 !scores (map link) (name): Get a player scores from a beatmap
+!acc (300) (100) (50) (miss): Calculate accuracy
 
 **--- [Akatsuki]**
 Available: !akat, !akatrx, !akatrxtop, !akatr, !akatavatar, !akatd
@@ -468,7 +469,7 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Great Fog (!m, partial !osud), Shienei (!c Unranked pp calculation), jpg (Time ago)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Great Fog (!m, partial !osud, !acc), Shienei (!c Unranked pp calculation), jpg (Time ago)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -505,7 +506,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !akatrxtop
 - Fixed mistaken loved pp calculation for approved
 - Added tournament detection (Beta)
-- New efficent way to save and store data`)
+- New efficent way to save and store data
+- Added !acc`)
             message.channel.send({embed})
         }
 
@@ -1640,6 +1642,45 @@ ${date}
 
         }
 
+        function acccalc() {
+            var count300 = 0
+            var count100 = 0
+            var count50 = 0
+            var countmiss = 0
+            var start = 5
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    count300 = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    count100 = Number(msg.substring(start, i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    count50 = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
+                    countmiss = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+            message.channel.send(`**Accuracy:** ${acc}%`)
+
+        }
+
         async function beatmap() {
             var check = message.content.substring(9);
             var name = checkplayer(check)
@@ -2245,6 +2286,10 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
 
         if (msg.substring(0,8) == '!beatmap' && msg.substring(0,8) == command) {
             message.channel.send('Commands work in progress! >.<')
+        }
+
+        if (msg.substring(0,4) == '!acc' && msg.substring(0,4) == command) {
+            acccalc()
         }
 
         if (msg.substring(0,9) == '!27112018' && msg.substring(0,9) == command) {
