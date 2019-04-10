@@ -333,6 +333,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
                     console.log('new recent')
                     track[player].recenttimeplay = recent[0][0].date
                     var user = await osuApi.apiCall('/get_user', {u: name})
+                    var totalpp = user
                     if(Number(recentcalc.pp.total) > Number(top50)) {
                         var best = await osuApi.getUserBest({u: name, limit: 50})
                         for (var i = 0; i <= best.length; i++) {
@@ -379,7 +380,7 @@ Ini adalah Tienei/Tiny di sini dan semua orang Merry Christmas!!! :D Saya harap 
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
-**#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})**`)
+**#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})** | Total PP: **${user[0].pp_raw}**`)
                                 bot.channels.get(track[player].trackonchannel).send({embed})
                                 track[player].lasttotalpp = user[0].pp_raw
                                 track[player].lastrank = user[0].pp_rank
@@ -469,7 +470,7 @@ Note:
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Great Fog (!m, partial !osud, !acc), Shienei (!c Unranked pp calculation), jpg (Time ago)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Great Fog (!m, partial !osud, !acc, total pp in !osud), Shienei (!c Unranked pp calculation), jpg (Time ago)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -507,7 +508,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Fixed mistaken loved pp calculation for approved
 - Added tournament detection (Beta)
 - New efficent way to save and store data
-- Added !acc`)
+- Added !acc
+- Added total pp (by Fog)`)
             message.channel.send({embed})
         }
 
