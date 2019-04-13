@@ -509,7 +509,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added tournament detection (Beta)
 - New efficent way to save and store data
 - Added !acc
-- Added total pp (by Fog)`)
+- Added total pp (by Fog)
+- Added check profile name and id for osu`)
             message.channel.send({embed})
         }
 
@@ -543,7 +544,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                 }
             } else {
                 var osuname = ''
-                var id = ''
                 if (name.includes('@') == true) {
                    var id = message.mentions.users.first().id
                    osuname = cache[id].osuname
@@ -553,7 +553,25 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                        return name
                    }
                 } else {
-                    return name
+                    var member = message.channel.members.array()
+                    for (var i in member) {
+                        if (member[i].nickname == name) {
+                            osuname = cache[member[i].id].osuname
+                            break
+                        }
+                        if (member[i].user.username == name) {
+                            osuname = cache[member[i].id].osuname
+                            break
+                        }
+                    }
+                    if (isFinite(name) == true && osuname == "") {
+                        osuname = cache[name].osuname
+                    }
+                    if (osuname !== undefined || osuname !== "") {
+                        return osuname
+                    } else {
+                        return name
+                    }
                 }
 
             }
