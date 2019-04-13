@@ -510,7 +510,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - New efficent way to save and store data
 - Added !acc
 - Added total pp (by Fog)
-- Added check profile name and id for osu`)
+- Added check profile name and id for osu
+**Bot v3 is currently making along side with v2!**`)
             message.channel.send({embed})
         }
 
