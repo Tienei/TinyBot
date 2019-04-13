@@ -554,17 +554,6 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                        return name
                    }
                 } else {
-                    var member = message.channel.members.array()
-                    for (var i in member) {
-                        if (member[i].nickname == name) {
-                            osuname = cache[member[i].id].osuname
-                            break
-                        }
-                        if (member[i].user.username == name) {
-                            osuname = cache[member[i].id].osuname
-                            break
-                        }
-                    }
                     if (isFinite(name) == true && osuname == "") {
                         osuname = cache[name].osuname
                     }
