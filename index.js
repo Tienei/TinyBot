@@ -632,13 +632,13 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Osu!${modename} status for: ${username}`,'',`https://osu.ppy.sh/users/${id}`)
                     .setDescription(`
-        ▸**Performance:** ${pp}pp 
-        ▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
-        ▸**Accuracy:** ${acc}%
-        ▸**Play count:** ${played}
-        ▸**Level:** ${level}
+▸**Performance:** ${pp}pp 
+▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
+▸**Accuracy:** ${acc}%
+▸**Play count:** ${played}
+▸**Level:** ${level}
                 
-        <:rankingX:520932410746077184>: ${ss}  <:rankingS:520932426449682432>: ${s}  <:rankingA:520932311613571072>: ${a} `)
+<:rankingX:520932410746077184>: ${ss}  <:rankingS:520932426449682432>: ${s}  <:rankingA:520932311613571072>: ${a} `)
                     .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
                     .setColor('#7f7fff')
                     message.channel.send({embed});
@@ -1628,11 +1628,11 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                         fcguess = `| **${fcpp}pp for ${fcacc}%**`
                     }
                         highscore += `
-    ${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
-    ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
-    **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
-    ${date}
-    `         
+${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
+${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
+`         
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
