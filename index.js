@@ -510,8 +510,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - New efficent way to save and store data
 - Added !acc
 - Added total pp (by Fog)
-- Added check profile name and id for osu
-**Bot v3 is currently making along side with v2!**`)
+- Added check profile name and id for osu (Bugged)
+- Fixed !osuset and check player
+**Bot v3 is currently being made alongside v2**`)
             message.channel.send({embed})
         }
 
@@ -537,8 +538,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
         
         function checkplayer(name) {
             if (name == '') {
-                var osuname = cache[message.author.id].osuname
-                if (osuname !== undefined) {
+                var osuname = ''
+                if (cache[message.author.id] !== undefined) {
+                    osuname = cache[message.author.id].osuname
                     return osuname
                 } else {
                     return name
@@ -548,11 +550,11 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                 var id = ''
                 if (name.includes('@') == true) {
                    var id = message.mentions.users.first().id
-                   osuname = cache[id].osuname
-                   if (osuname !== undefined) {
-                       return osuname
+                   if (cache[id] !== undefined) {
+                        osuname = cache[id].osuname
+                        return osuname
                    } else {
-                       return name
+                        return name
                    }
                 } else {
                     return name
@@ -614,7 +616,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                 if (cache.length = 0) {
                     cache[message.author.id] = {osuname: name}
                 }
-                if (cache[message.author.id].osuname) {
+                if (cache[message.author.id] !== undefined) {
                     cache[message.author.id].osuname = name
                 } else {
                     cache[message.author.id] = {osuname: name}
@@ -1070,7 +1072,7 @@ ${date}
             var name = checkplayer(player)
             var best = await osuApi.getUserBest({u: name, limit: 100})
             var user = await osuApi.getUser({u: name})
-            var top = []
+            var top = ''
             var checktop = 0
             var userid = best[0][0].user.id
             var username = user.name
