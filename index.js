@@ -862,6 +862,7 @@ ${date}
                 var m = msg.includes('-m')
                 var check = ''
                 var top = ''
+                var modename = ''
                 if ((msg.indexOf('-p') !== start && p !== false) || (msg.indexOf('-r') !== start &&  r !== false) || (msg.indexOf('-m') !== start && m !== false)) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
@@ -888,7 +889,6 @@ ${date}
                             break
                         }
                     }
-                    var modename = ''
                     var best = await osuApi.getUserBest({u: name, limit: n+1, m: mode})
                     var userid = best[0][0].user.id
                     var user = await osuApi.getUser({u: name})
@@ -959,7 +959,7 @@ ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 ${date}
 `   
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top ${modename}!Standard Plays for ${username}`)
+                    .setAuthor(`Top osu!${modename} Plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                     .setColor('#7f7fff')
                     .setDescription(top)
@@ -1204,7 +1204,7 @@ ${date}
 `   
                     }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top ${modename}!Standard Plays for ${username}`)
+                    .setAuthor(`Top osu!${modename} Plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                     .setColor('#7f7fff')
                     .setDescription(top)
