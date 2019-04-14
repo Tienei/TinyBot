@@ -16,7 +16,6 @@ var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 });
 
 var refresh = 0
-let parser = ''
 
 function rankingletters(letter) {
     if (letter == "F") {
@@ -248,12 +247,13 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp) {
 
 
 async function precalc(beatmapid) {
-    parser = new calc.parser()
+    var parser = new calc.parser()
     var map = await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)
     parser.feed(map)
+    return parser
 }
 
-function ppcalc(mods,combo,count100,count50,countmiss,acc,mode) {
+function ppcalc(parser,mods,combo,count100,count50,countmiss,acc,mode) {
     var stars = new calc.diff().calc({map: parser.map, mods: mods})
     var object = Number(stars.objects.length)
     var accuracy = 0
@@ -308,8 +308,8 @@ bot.on("ready", (ready) => {
                 var mod = recent[0][0].mods 
                 var modandbit = mods(mod)
                 var bitpresent = modandbit.bitpresent
-                await precalc(beatmapid)
-                var recentcalc = ppcalc(bitpresent,combo,count100,count50,countmiss,acc,0)
+                var parser = await precalc(beatmapid)
+                var recentcalc = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
                 if (String(track[player].recenttimeplay) !== String(recent[0][0].date)) {
                     console.log('new recent')
                     track[player].recenttimeplay = recent[0][0].date
@@ -339,7 +339,7 @@ bot.on("ready", (ready) => {
                                 var count50 = Number(best[i][0].counts['50'])
                                 var countmiss = Number(best[i][0].counts.miss)
                                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                                var fccalc = ppcalc(bitpresent,fc,count100,count50,0,acc,1)
+                                var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                                 var star = Number(fccalc.star.total).toFixed(2)
                                 var fcpp = Number(fccalc.pp.total).toFixed(2)
                                 var fcacc = fccalc.acc
@@ -569,8 +569,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                         var count50 = Number(best[i][0].counts['50'])
                         var countmiss = Number(best[i][0].counts.miss)
                         var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                        await precalc(beatmapid)
-                        var thing = ppcalc(modandbit.bitpresent,0,0,0,0,0,0)
+                        var parser = await precalc(beatmapid)
+                        var thing = ppcalc(parser,modandbit.bitpresent,0,0,0,0,0,0)
                         var detail = mapdetail(modandbit.shortenmod,0,Number(best[i][1].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                         star_avg += thing.star.total
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
@@ -725,8 +725,8 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 var shortenmod = modandbit.shortenmod
                 var bitpresent = modandbit.bitpresent
                 var date = timeago(recent[0][0].date)
-                await precalc(beatmapid)
-                var recentcalc = ppcalc(bitpresent,combo,count100,count50,countmiss,acc,0)
+                var parser = await precalc(beatmapid)
+                var recentcalc = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
                 var star = Number(recentcalc.star.total).toFixed(2)
                 var pp = Number(recentcalc.pp.total).toFixed(2)
                 var nopp = ''
@@ -740,7 +740,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 } else {
                     storedmapid.push({id:beatmapid,user:message.author.id})
                 }
-                var fccalc = ppcalc(bitpresent,fc,count100,count50,0,acc,1)
+                var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
                 var fcacc = fccalc.acc
                 var fcguess = ``
@@ -806,7 +806,7 @@ ${mapcompleted} ${date}
                 var beatmapimageid = beatmap[0].beatmapSetId
                 var osuname = scores[0].user.name
                 var osuid = scores[0].user.id
-                await precalc(storedid)
+                var parser = await precalc(storedid)
                 for (var i = 0; i <= scores.length - 1; i++) {
                     var score = scores[i].score
                     var count300 = Number(scores[i].counts['300'])
@@ -827,10 +827,10 @@ ${mapcompleted} ${date}
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                     var unrankedpp = ''
                     if (beatmap[0].approvalStatus !== "Ranked" && beatmap[0].approvalStatus !== "Approved") {
-                        var comparepp = ppcalc(bitpresent,combo,count100,count50,countmiss,acc,0)
+                        var comparepp = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
                         unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
                     }
-                    var fccalc = ppcalc(bitpresent,fc,count100,count50,0,acc,1)
+                    var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
                     var fcacc = fccalc.acc
                     var star = Number(fccalc.star.total).toFixed(2)
@@ -924,8 +924,8 @@ ${date}
                     var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                     if (mode == 0) {
                         modename = 'Standard'
-                        await precalc(beatmapid)
-                        var fccalc = ppcalc(bitpresent,fc,count100,count50,0,acc,1)
+                        var parser = await precalc(beatmapid)
+                        var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                         var fcpp = Number(fccalc.pp.total).toFixed(2)
                         var fcacc = fccalc.acc
                         star = Number(fccalc.star.total).toFixed(2)
@@ -1006,8 +1006,8 @@ ${date}
                             storedmapid.push({id:beatmapid,user:message.author.id})
                         }
                         var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                        await precalc(beatmapid)     
-                        var fccalc = ppcalc(bitpresent,fc,count100,count50,0,acc,1)
+                        var parser = await precalc(beatmapid)     
+                        var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                         var fcpp = Number(fccalc.pp.total).toFixed(2)
                         var fcacc = fccalc.acc
                         var star = Number(fccalc.star.total).toFixed(2)
@@ -1109,8 +1109,8 @@ ${date}
                                 storedmapid.push({id:beatmapid,user:message.author.id})
                             }
                             var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                            await precalc(beatmapid)
-                            var fccalc = ppcalc(beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                            var parser = await precalc(beatmapid)
+                            var fccalc = ppcalc(parser,beatmapid,bitpresent,fc,count100,count50,0,acc,1)
                             var fcpp = Number(fccalc.pp.total).toFixed(2)
                             var fcacc = fccalc.acc
                             var star = Number(fccalc.star.total).toFixed(2)
@@ -1171,8 +1171,8 @@ ${date}
                         var star = 0
                         var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                         if (mode == 0) {
-                            await precalc(beatmapid)
-                            var fccalc = ppcalc(bitpresent,fc,count100,count50,0,acc,1)
+                            var parser = await precalc(beatmapid)
+                            var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                             var fcpp = Number(fccalc.pp.total).toFixed(2)
                             var fcacc = fccalc.acc
                             star = Number(fccalc.star.total).toFixed(2)
@@ -1271,11 +1271,11 @@ ${date}
                 var mapper = map[0].creator
                 var version = map[0].version
                 var maxCombo = map[0].maxCombo
-                await precalc(beatmapid)
-                var acc95 = ppcalc(bitpresent,maxCombo,0,0,0,95,0)
-                var acc97 = ppcalc(bitpresent,maxCombo,0,0,0,97,0)
-                var acc99 = ppcalc(bitpresent,maxCombo,0,0,0,99,0)
-                var acc100 = ppcalc(bitpresent,maxCombo,0,0,0,100,0)
+                var parser = await precalc(beatmapid)
+                var acc95 = ppcalc(parser,bitpresent,maxCombo,0,0,0,95,0)
+                var acc97 = ppcalc(parser,bitpresent,maxCombo,0,0,0,97,0)
+                var acc99 = ppcalc(parser,bitpresent,maxCombo,0,0,0,99,0)
+                var acc100 = ppcalc(parser,bitpresent,maxCombo,0,0,0,100,0)
                 var detail = mapdetail(mods[0],map[0].time.total,map[0].bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
                 var totallength = Number(detail.length).toFixed(0)
                 var bpm = Number(detail.bpm).toFixed(0)
@@ -1404,11 +1404,11 @@ ${date}
                     var mapper = map[0].creator
                     var version = map[0].version
                     var maxCombo = map[0].maxCombo
-                    await precalc(beatmapid[i])
-                    var acc95 = ppcalc(bitpresent,maxCombo,0,0,0,95,0)
-                    var acc97 = ppcalc(bitpresent,maxCombo,0,0,0,97,0)
-                    var acc99 = ppcalc(bitpresent,maxCombo,0,0,0,99,0)
-                    var acc100 = ppcalc(bitpresent,maxCombo,0,0,0,100,0)
+                    var parser = await precalc(beatmapid[i])
+                    var acc95 = ppcalc(parser,bitpresent,maxCombo,0,0,0,95,0)
+                    var acc97 = ppcalc(parser,bitpresent,maxCombo,0,0,0,97,0)
+                    var acc99 = ppcalc(parser,bitpresent,maxCombo,0,0,0,99,0)
+                    var acc100 = ppcalc(parser,bitpresent,maxCombo,0,0,0,100,0)
                     var detail = mapdetail(mods[i],map[0].time.total,map[0].bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
                     var totallength = Number(detail.length).toFixed(0)
                     var bpm = Number(detail.bpm).toFixed(0)
@@ -1507,8 +1507,8 @@ ${date}
                 if (map.length == 0) {
                     message.channel.send('Please check the ID of the map is correct or not')
                 }
-                await precalc(beatmapid)
-                var calc = ppcalc(bitpresent,combo,0,0,miss,acc,0)
+                var parser = await precalc(beatmapid)
+                var calc = ppcalc(parser,bitpresent,combo,0,0,miss,acc,0)
                 var beatmapidfixed = map[0].beatmapSetId
                 var title = map[0].title
                 var mapper = map[0].creator
@@ -1590,7 +1590,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var beatmapimageid = beatmap[0].beatmapSetId
                 var osuname = scores[0].user.name
                 var osuid = scores[0].user.id
-                await precalc(beatmapid)
+                var parser = await precalc(beatmapid)
                 for (var i = 0; i <= scores.length - 1; i++) {
                     var score = scores[i].score
                     var count300 = Number(scores[i].counts['300'])
@@ -1616,10 +1616,10 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                     var unrankedpp = ''
                     if (beatmap[0].approvalStatus !== "Ranked" && beatmap[0].approvalStatus !== "Approved") {
-                        var comparepp = ppcalc(bitpresent,combo,count100,count50,countmiss,acc,0)
+                        var comparepp = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
                         unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
                     }
-                    var fccalc = ppcalc(bitpresent,fc,count100,count50,0,acc,1)
+                    var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
                     var fcacc = fccalc.acc
                     var star = Number(fccalc.star.total).toFixed(2)
@@ -1863,8 +1863,8 @@ ${prizetext}`)
                         var count50 = Number(best.scores[i].count_50)
                         var countmiss = Number(best.scores[i].count_miss)
                         var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                        await precalc(beatmapid)
-                        var thing = ppcalc(mod,0,0,0,0,0,0)
+                        var parser = await precalc(beatmapid)
+                        var thing = ppcalc(parser,mod,0,0,0,0,0,0)
                         var detail = mapdetail(shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
                         star_avg += thing.star.total
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
@@ -1954,8 +1954,8 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 var bit = recent.scores[0].mods
                 var mods = bittomods(bit)   
                 var acc = Number(recent.scores[0].accuracy).toFixed(2)
-                await precalc(beatmapid)
-                var recentcalc = ppcalc(bit,combo,count100,count50,countmiss,acc,0)
+                var parser = await precalc(beatmapid)
+                var recentcalc = ppcalc(parser,bit,combo,count100,count50,countmiss,acc,0)
                 var star = Number(recentcalc.star.total).toFixed(2)
                 var pp = Number(recentcalc.pp.total).toFixed(2)
                 if (message.guild !== null) {
@@ -1963,7 +1963,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 } else {
                     storedmapid.push({id:beatmapid,user:message.author.id})
                 }
-                var fccalc = ppcalc(bit,fc,count100,count50,0,acc,1)
+                var fccalc = ppcalc(parser,bit,fc,count100,count50,0,acc,1)
                 var fcpp = Number(fccalc.pp.total).toFixed(2)
                 var fcacc = fccalc.acc
                 var fcguess = ``
@@ -2049,8 +2049,8 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                         storedmapid.push({id:beatmapid,user:message.author.id})
                     }
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                    await precalc(beatmapid)
-                    var starcalc = ppcalc(beatmapid,mod,0,0,0,0,0,0)
+                    var parser = await precalc(beatmapid)
+                    var starcalc = ppcalc(parser,beatmapid,mod,0,0,0,0,0,0)
                     var star = Number(starcalc.star.total).toFixed(2)
                     var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                     top += `
@@ -2091,8 +2091,8 @@ ${date}
                             storedmapid.push({id:beatmapid,user:message.author.id})
                         }
                         var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                        await precalc(beatmapid)
-                        var starcalc = ppcalc(beatmapid,mod,0,0,0,0,0,0)
+                        var parser = await precalc(beatmapid)
+                        var starcalc = ppcalc(parser,beatmapid,mod,0,0,0,0,0,0)
                         var star = Number(starcalc.star.total).toFixed(2)
                         var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                         top += `
