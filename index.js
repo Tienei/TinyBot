@@ -449,7 +449,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setAuthor(`Changelog for Tiny Bot pre-v3.0`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Bot has re-write and updated to pre-v3! That mean bot will be somewhat faster speed and a lot less buggy**`)
+**Bot has been re-write and updated to pre-v3! That mean bot will be somewhat faster speed and a lot less buggy**`)
             message.channel.send({embed})
         }
 
