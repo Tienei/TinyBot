@@ -545,6 +545,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                 }
             } else {
                 var osuname = ''
+                var id = ''
                 if (name.includes('@') == true) {
                    var id = message.mentions.users.first().id
                    osuname = cache[id].osuname
@@ -554,14 +555,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                        return name
                    }
                 } else {
-                    if (isFinite(name) == true && osuname == "") {
-                        osuname = cache[name].osuname
-                    }
-                    if (osuname !== undefined || osuname !== "") {
-                        return osuname
-                    } else {
-                        return name
-                    }
+                    return name
                 }
 
             }
