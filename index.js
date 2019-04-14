@@ -1827,7 +1827,7 @@ ${prizetext}`)
                     servername = 'Ripple'
                 }
                 if (d == true) {
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0`)
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=50`)
                     var data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
