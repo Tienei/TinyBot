@@ -386,7 +386,7 @@ bot.on("message", (message) => {
     refresh = Math.round(Math.random()* 2147483648)
     var command = ''
 
-    if (message.author.bot == false && message.author.id == "292523841811513348"){
+    if (message.author.bot == false){
         for (var i = 0; i < msg.length; i++) {
             if (msg[i] == ' ') {
                 command = msg.substring(0,i)
