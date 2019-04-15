@@ -2226,7 +2226,7 @@ ${date}
             otherserveravatar(12,'akatsuki.pw')
         }
         if (msg.substring(0,9) == '!akatsuki' && msg.substring(0,9) == command) {
-            otherserveravatar(10,'akatsuki.pw')
+            otherserverosu(10,'akatsuki.pw')
         }
         if (msg.substring(0,6) == '!akatr' && msg.substring(0,6) == command) {
             otherserverrecent(7,'akatsuki.pw')
@@ -2238,7 +2238,7 @@ ${date}
         // Ripple
 
         if (msg.substring(0,13) == '!rippleavatar' && msg.substring(0,13) == command) {
-            otherserverosu(14,'ripple.moe')
+            otherserveravatar(14,'ripple.moe')
         }
         if (msg.substring(0,7) == '!ripple' && msg.substring(0,7) == command) {
             otherserverosu(8,'ripple.moe')
@@ -2249,7 +2249,7 @@ ${date}
         if (msg.substring(0,10) == '!rippletop' && msg.substring(0,10) == command) {
             otherservertop(11,'ripple.moe')
         }
-
+        
         // Detection
         var embed = message.embeds
         // Beatmap Detection
