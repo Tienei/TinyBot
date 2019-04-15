@@ -449,7 +449,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setAuthor(`Changelog for Tiny Bot pre-v3.0`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Bot has been re-write and updated to pre-v3! That mean bot will be somewhat faster speed and a lot less buggy**`)
+**Bot has been re-write and updated to pre-v3! That mean bot will be somewhat faster speed and a lot less buggy**
+- Added error detecting
+- Added !akatop, !rippletop`)
             message.channel.send({embed})
         }
 
@@ -617,6 +619,9 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                         modename = 'Mania'
                     }
                     var username = user.name
+                    if (username == undefined) {
+                        throw 'User not found!'
+                    }
                     var acc = Number(user.accuracy).toFixed(2)
                     var id = user.id
                     var pp = Number(user.pp.raw).toFixed(2);
@@ -673,7 +678,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             var user = await osuApi.getUser({u: osuname})
             var name = user.name
             if (name == undefined) {
-                message.channel.send('Please enter a valid osu username! >:c')
+                throw 'Please enter a valid osu username! >:c'
             } else {
                 if (cache.length = 0) {
                     cache[message.author.id] = {osuname: name}
@@ -701,7 +706,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 var name = checkplayer(check)
                 var recent = await osuApi.getUserRecent({u: name, limit: 1})
                 if (recent.length == 0) {
-                    message.channel.send('No play found within 24 hours of this user **-Tiny**')
+                    throw 'No play found within 24 hours of this user **-Tiny**'
                 }
                 var getplayer = await osuApi.getUser({u: name})
                 var beatmapidfixed = recent[0][1].beatmapSetId
@@ -797,7 +802,7 @@ ${mapcompleted} ${date}
                     return b1 - a1
                 })
                 if (scores.length == 0) {
-                    message.channel.send(`${name} didn't play this map! D: **-Tiny**`)
+                    throw `${name} didn't play this map! D: **-Tiny**`
                 }
                 var beatmap = await osuApi.getBeatmaps({b: storedid})
                 var highscore = ''
@@ -967,7 +972,7 @@ ${date}
                 } else if (r == true && p == false && m == false && mode == 0) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
                     if (best.length == 0) {
-                        message.channel.send(`I think ${name} didn't play anything yet~ **-Chino**`)
+                        throw `I think ${name} didn't play anything yet~ **-Chino**`
                     }
                     var userid = best[0][0].user.id
                     var user = await osuApi.getUser({u: userid})
@@ -1397,7 +1402,7 @@ ${date}
                     }
                     var map = await osuApi.getBeatmaps({b: beatmapid[i]})
                     if (map.length == 0) {
-                        message.channel.send('Is this even a valid link?')
+                        throw 'Is this even a valid link?'
                     }
                     var beatmapidfixed = map[0].beatmapSetId
                     var title = map[0].title
@@ -1505,7 +1510,7 @@ ${date}
                 }
                 var map = await osuApi.getBeatmaps({b: beatmapid})
                 if (map.length == 0) {
-                    message.channel.send('Please check the ID of the map is correct or not')
+                    throw 'Please check the ID of the map is correct or not'
                 }
                 var parser = await precalc(beatmapid)
                 var calc = ppcalc(parser,bitpresent,combo,0,0,miss,acc,0)
@@ -1581,7 +1586,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     return b1 - a1
                 })
                 if (scores.length == 0) {
-                    message.channel.send(`${name} didn't play this map! D: **-Tiny**`)
+                    throw `${name} didn't play this map! D: **-Tiny**`
                 }
                 var beatmap = await osuApi.getBeatmaps({b: beatmapid})
                 var highscore = ''
@@ -1644,6 +1649,45 @@ ${date}
                 urlcommand = false
                 message.channel.send(String(error))
             }
+        }
+
+        function acccalc() {
+            var count300 = 0
+            var count100 = 0
+            var count50 = 0
+            var countmiss = 0
+            var start = 5
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    count300 = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    count100 = Number(msg.substring(start, i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    count50 = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
+                    countmiss = Number(msg.substring(start,i))
+                    start = i + 1
+                    break
+                }
+            }
+            var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+            message.channel.send(`**Accuracy:** ${acc}%`)
+
         }
 
         async function tourneydetail() {
@@ -1832,7 +1876,7 @@ ${prizetext}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     if (best.length == 0) {
-                        message.channel.send('Either invalid user or not enough top play to calcuate')
+                        throw 'Either invalid user or not enough top play to calcuate'
                     }
                     var star_avg = 0
                     var aim_avg = 0
@@ -2172,6 +2216,9 @@ ${date}
         if (msg.substring(0,7) == '!scores' && msg.substring(0,7) == command) {
             osuscore()
         }
+        if (msg.substring(0,4) == '!acc' && msg.substring(0,4) == command) {
+            acccalc()
+        }
 
         // Akatuski
 
@@ -2188,7 +2235,7 @@ ${date}
             otherservertop(9,'akatsuki.pw')
         }
 
-        // Riple
+        // Ripple
 
         if (msg.substring(0,13) == '!rippleavatar' && msg.substring(0,13) == command) {
             otherserverosu(14,'ripple.moe')
