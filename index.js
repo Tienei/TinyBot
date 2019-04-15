@@ -402,7 +402,38 @@ bot.on("message", (message) => {
             .setAuthor(`Commands for Tiny Bot pre-v3`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Currently being made! Sowwy :(`
+**--- [General]**
+**!avatar (username):** Check user's profile picture
+**!changelog:** Changes of the bot
+**!help:** Uh then how you open this?
+**!ping:** Ping Bancho
+
+**--- [osu!]**
+**+ osu! Profile: !(command) (username) (attributes):** !osu, !taiko, !ctb, !mania
+**+ osu! Top play: !(command) (username) (attributes):** !osutop, !taikotop, !ctbtop, !maniatop
+**+ osu! Track: !(command) (username):** !osutrack, !untrack
+**+ Others:**
+**!map [!m] (mods):** Get info from the latest map display in the chat
+**!osuset (username):** Link your discord to your osu!
+**!osuavatar (username):** Check osu player's profile picture
+**!osusig (username):** Get player's profile signature
+**!recent [!r] (username):** Check player's most recent play
+**!compare [!c] (username):** Compare with the latest play in chat
+**!calcpp (map id) (mods) (acc) (combo) (miss):** Calculate a beatmap pp
+**!scores (map link) (name):** Get a player scores from a beatmap
+**!acc (300) (100) (50) (miss):** Calculate accuracy
+
+**--- [Akatsuki]**
+Available: !akatsuki, !akatr, !akatavatar, !akattop
+
+**--- [Ripple]**
+Available: !ripple, !rippler, !rippleavatart, !rippletop
+
+**--- [Attributes]**
+**-p (Number):** Top __ of player
+**-r:** Recent top play (Standard only)
+**-m (Mods):** Mods top play (Standard only)
+**-d:** Detailed stats of player (Standard only)`
             )
             message.channel.send({embed})
         }
