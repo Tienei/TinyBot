@@ -1895,10 +1895,10 @@ ${prizetext}`)
                     }
                 }
                 var servername = ''
-                if (serverlink = 'akatsuki.pw') {
+                if (serverlink == 'akatsuki.pw') {
                     servername = 'Akatsuki'
                 }
-                if (serverlink = 'ripple.moe') {
+                if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
                 }
                 if (d == true) {
@@ -2005,10 +2005,10 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
                 var servername = ''
-                if (serverlink = 'akatsuki.pw') {
+                if (serverlink == 'akatsuki.pw') {
                     servername = 'Akatsuki'
                 }
-                if (serverlink = 'ripple.moe') {
+                if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
                 }
                 var userid = user.id
@@ -2086,10 +2086,10 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     }
                 }
                 var servername = ''
-                if (serverlink = 'akatsuki.pw') {
+                if (serverlink == 'akatsuki.pw') {
                     servername = 'Akatsuki'
                 }
-                if (serverlink = 'ripple.moe') {
+                if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
                 }
                 if (p == true) {
