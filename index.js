@@ -1860,6 +1860,56 @@ ${prizetext}`)
             }
         }
 
+        async function osutrack() {
+            var osuname = message.content.substring(10)
+            var detected = false
+            var user = await osuApi.getUser({u: osuname})
+            var name = user.name
+            var best = await osuApi.getUserBest({u: osuname, limit: 50})
+            if (name == undefined) {
+                message.channel.send('Please enter a valid osu username! >:c')
+            } else {
+                for (var i = 0; i < track.length; i++) {
+                    if (track.length <= 0) {
+                        track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
+                        detected = true
+                    }
+                    if (i < track.length || track.length == 1) {
+                        if (track[i].trackonchannel == message.channel.id && track[i].osuname == name) {
+                            track[i].osuname = name
+                            track[i].lasttotalpp = user.pp.raw
+                            track[i].lastrank = user.pp.rank
+                            track[i].lastcountryrank = user.pp.countryRank
+                            detected = true
+                        }
+                    }
+                }
+                if (detected == false) {
+                    track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
+                }
+                message.channel.send(`**${name}** is now being tracked on **#${message.channel.name}**`)
+                fs.writeFileSync('track.txt', JSON.stringify(track))
+                bot.channels.get('497302830558871552').send({files: [{
+                    attachment: './track.txt',
+                    name: 'track.txt'
+                }]})
+            }
+        }
+
+        async function untrack() {
+            for (var i = 0; i < track.length; i++) {
+                if (track[i].trackonchannel == message.channel.id && track[i].osuname == message.content.substring(9)) {
+                    track.splice(i,1)
+                    message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
+                    fs.writeFileSync('track.txt', JSON.stringify(track))
+                    bot.channels.get('497302830558871552').send({files: [{
+                        attachment: './track.txt',
+                        name: 'track.txt'
+                    }]})
+                }
+            }
+        }
+
         // Other server (Akatsuki, Ripple) Function
 
         async function otherserveravatar(start, serverlink) {
@@ -2250,6 +2300,12 @@ ${date}
         if (msg.substring(0,4) == '!acc' && msg.substring(0,4) == command) {
             acccalc()
         }
+        if (msg.substring(0,9) == '!osutrack' && msg.substring(0,9) == command && message.channel.name !== undefined) {
+            osutrack()            
+        }
+        if (msg.substring(0,8) == '!untrack' && msg.substring(0,8) == command && message.channel.name !== undefined) {
+            untrack()
+        }
 
         // Akatuski
 
@@ -2280,7 +2336,7 @@ ${date}
         if (msg.substring(0,10) == '!rippletop' && msg.substring(0,10) == command) {
             otherservertop(11,'ripple.moe')
         }
-        
+
         // Detection
         var embed = message.embeds
         // Beatmap Detection
@@ -2294,5 +2350,6 @@ ${date}
         }
     }
 })
+
 
 bot.login(process.env.BOT_TOKEN);
