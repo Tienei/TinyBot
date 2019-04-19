@@ -361,7 +361,9 @@ bot.on("ready", (ready) => {
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 **#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})** | Total PP: **${user[0].pp_raw}**`)
-                                bot.channels.get(track[player].trackonchannel).send({embed})
+                                for (var i = 0; i < track[player].trackonchannel.length; i++) {
+                                    bot.channels.get(track[player].trackonchannel[i]).send({embed})
+                                }
                                 track[player].lasttotalpp = user[0].pp_raw
                                 track[player].lastrank = user[0].pp_rank
                                 track[player].lastcountryrank = user[0].pp_country_rank
@@ -482,7 +484,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setDescription(`
 **Bot has been re-write and updated to pre-v3! That mean bot will be somewhat faster speed and a lot less buggy**
 - Added error detecting
-- Added !akatop, !rippletop`)
+- Added !akatop, !rippletop
+- Updated osu tracking`)
             message.channel.send({embed})
         }
 
@@ -1627,7 +1630,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var osuname = scores[0].user.name
                 var osuid = scores[0].user.id
                 var parser = await precalc(beatmapid)
-                for (var i = 0; i <= scores.length - 1; i++) {
+                for (var i = 0; i < scores.length; i++) {
                     var score = scores[i].score
                     var count300 = Number(scores[i].counts['300'])
                     var count100 = Number(scores[i].counts['100'])
@@ -1870,22 +1873,28 @@ ${prizetext}`)
                 message.channel.send('Please enter a valid osu username! >:c')
             } else {
                 for (var i = 0; i < track.length; i++) {
-                    if (track.length <= 0) {
-                        track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
+                    if (track[i].osuname == name) {
                         detected = true
-                    }
-                    if (i < track.length || track.length == 1) {
-                        if (track[i].trackonchannel == message.channel.id && track[i].osuname == name) {
+                        if (track[i].trackonchannel.includes(message.channel.id) == true) {
                             track[i].osuname = name
+                            track[i].top50pp = best[49][0].pp
                             track[i].lasttotalpp = user.pp.raw
                             track[i].lastrank = user.pp.rank
                             track[i].lastcountryrank = user.pp.countryRank
-                            detected = true
+                            break
+                        } else {
+                            track[i].osuname = name
+                            track[i].top50pp = best[49][0].pp
+                            track[i].lasttotalpp = user.pp.raw
+                            track[i].lastrank = user.pp.rank
+                            track[i].lastcountryrank = user.pp.countryRank
+                            track[i].trackonchannel.push(message.channel.id)
+                            break
                         }
                     }
                 }
                 if (detected == false) {
-                    track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": message.channel.id,"recenttimeplay": ""})
+                    track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": [message.channel.id],"recenttimeplay": ""})
                 }
                 message.channel.send(`**${name}** is now being tracked on **#${message.channel.name}**`)
                 fs.writeFileSync('track.txt', JSON.stringify(track))
@@ -1898,14 +1907,27 @@ ${prizetext}`)
 
         async function untrack() {
             for (var i = 0; i < track.length; i++) {
-                if (track[i].trackonchannel == message.channel.id && track[i].osuname == message.content.substring(9)) {
-                    track.splice(i,1)
-                    message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
-                    fs.writeFileSync('track.txt', JSON.stringify(track))
-                    bot.channels.get('497302830558871552').send({files: [{
-                        attachment: './track.txt',
-                        name: 'track.txt'
-                    }]})
+                if (track[i].osuname == message.content.substring(9)) {
+                    if (track[i].trackonchannel.includes(message.channel.id) == true && track[i].trackonchannel.length > 1) {
+                        track[i].trackonchannel.splice(track[i].trackonchannel.indexOf(message.channel.id), 1)
+                        message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
+                        fs.writeFileSync('track.txt', JSON.stringify(track))
+                        bot.channels.get('497302830558871552').send({files: [{
+                            attachment: './track.txt',
+                            name: 'track.txt'
+                        }]})
+                        break
+                    } else {
+                        track.splice(i,1)
+                        message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
+                        fs.writeFileSync('track.txt', JSON.stringify(track))
+                        bot.channels.get('497302830558871552').send({files: [{
+                            attachment: './track.txt',
+                            name: 'track.txt'
+                        }]})
+                        break
+                    }
+                    
                 }
             }
         }
@@ -2350,6 +2372,5 @@ ${date}
         }
     }
 })
-
 
 bot.login(process.env.BOT_TOKEN);
