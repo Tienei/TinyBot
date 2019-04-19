@@ -543,13 +543,13 @@ Problem: ${error}`)
             for (var i = start; i < msg.length; i++) {
                 if (msg.substr(i,1) == ' ') {
                     channelid = msg.substring(start,i)
-                    start = i
+                    start = i + 1
                     break
                 }
             }
-            for (var i = start; i < msg.length; i++) {
+            for (var i = start; i <= msg.length; i++) {
                 if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
-                    statuscode = Number(msg.substring(start,i))
+                    statuscode = msg.substring(start,i)
                     break
                 }
             }
