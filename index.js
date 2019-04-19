@@ -1149,7 +1149,7 @@ ${date}
                             }
                             var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                             var parser = await precalc(beatmapid)
-                            var fccalc = ppcalc(parser,beatmapid,bitpresent,fc,count100,count50,0,acc,1)
+                            var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                             var fcpp = Number(fccalc.pp.total).toFixed(2)
                             var fcacc = fccalc.acc
                             var star = Number(fccalc.star.total).toFixed(2)
