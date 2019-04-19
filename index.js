@@ -409,6 +409,7 @@ bot.on("message", (message) => {
 **!changelog:** Changes of the bot
 **!help:** Uh then how you open this?
 **!ping:** Ping Bancho
+**!report (error):** Report to the bot owner about the error
 
 **--- [osu!]**
 **+ osu! Profile: !(command) (username) (attributes):** !osu, !taiko, !ctb, !mania
@@ -485,7 +486,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 **Bot has been re-write and updated to pre-v3! That mean bot will be somewhat faster speed and a lot less buggy**
 - Added error detecting
 - Added !akatop, !rippletop
-- Updated osu tracking`)
+- Updated osu tracking
+- Added !report`)
             message.channel.send({embed})
         }
 
@@ -497,6 +499,67 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                 message.channel.send(`Bancho respond! **${timelater - timenow}ms**`)
             }
             Bancho()
+        }
+
+        if (msg.substring(0,7) == '!report' && msg.substring(0,7) == command && message.guild !== null) {
+            var error = message.content.substring(8)
+            var channelid = message.channel.id
+            var user = message.author.username
+            var pfp = message.author.avatarURL
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Username: ${user}`, pfp)
+            .setColor('#7f7fff')
+            .setDescription(`
+Channel ID: **${channelid}**
+Problem: ${error}`)
+            bot.channels.get('564396177878155284').send({embed})
+            message.channel.send('Error has been reported')
+        }
+
+        if (msg.substring(0,8) == '!respond' && msg.substring(0,8) == command && message.author.id == "292523841811513348") {
+            var start = 9
+            var error = ''
+            var channelid = ''
+            var statuscode = ''
+            var defindcode = {
+                0: 'Fixed',
+                1: 'Currently being fixed',
+                2: 'Unfixable',
+                3: 'Spam'
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == '"') {
+                    start = i + 1
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == '"') {
+                    error = message.content.substring(start,i)
+                    start = i + 2
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ') {
+                    channelid = msg.substring(start,i)
+                    start = i
+                    break
+                }
+            }
+            for (var i = start; i < msg.length; i++) {
+                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
+                    statuscode = Number(msg.substring(start,i))
+                    break
+                }
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`${message.author.username} respond`, message.author.avatarURL)
+            .setColor('#7f7fff')
+            .setDescription(`
+Error: ${error}
+Status: **${defindcode[statuscode]}**`)
+            bot.channels.get(channelid).send({embed})
         }
 
         if (msg.includes(`<@${bot.user.id}>`) == true || msg.includes(`<@!${bot.user.id}>`) == true) {
