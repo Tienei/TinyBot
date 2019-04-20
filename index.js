@@ -292,7 +292,7 @@ bot.on("ready", (ready) => {
 
     // osutrack
     async function realtimeosutrack() {
-        for (var player = 0; player <= track.length -1; player++) {
+        for (var player = 0; player < track.length ; player++) {
             console.log(track[player].osuname)
             var name = track[player].osuname
             var top50 = track[player].top50pp
@@ -316,7 +316,7 @@ bot.on("ready", (ready) => {
                     var user = await osuApi.apiCall('/get_user', {u: name})
                     if(Number(recentcalc.pp.total) > Number(top50)) {
                         var best = await osuApi.getUserBest({u: name, limit: 50})
-                        for (var i = 0; i <= best.length; i++) {
+                        for (var i = 0; i < best.length; i++) {
                             if (String(best[i][0].date) === String(recent[0][0].date)) {
                                 console.log('new top play')
                                 var country = String(user[0].country).toLowerCase()
