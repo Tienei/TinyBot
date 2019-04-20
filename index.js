@@ -349,9 +349,7 @@ bot.on("ready", (ready) => {
                                 }
                                 if (perfect == 0) {
                                     fcguess = `| ${fcpp}pp for ${fcacc}%`
-                                }
-                                var server = bot.channels.get(track[player].trackonchannel).guild.id
-                                storedmapid.push({id:beatmapid,server: server})
+                                }               
                                 const embed = new Discord.RichEmbed()
                                 .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
                                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
@@ -362,6 +360,8 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 **#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})** | Total PP: **${user[0].pp_raw}**`)
                                 for (var i = 0; i < track[player].trackonchannel.length; i++) {
+                                    var server = bot.channels.get(track[player].trackonchannel[i]).guild.id
+                                    storedmapid.push({id:beatmapid,server: server})
                                     bot.channels.get(track[player].trackonchannel[i]).send({embed})
                                 }
                                 track[player].lasttotalpp = user[0].pp_raw
