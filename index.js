@@ -596,7 +596,6 @@ Status: **${defindcode[statuscode]}**`)
             if (ee[msg].type == "normal") {
                 message.channel.send(ee[msg].respond)   
             }
-            console.log(storedee)
         }
 
         // Osu related
