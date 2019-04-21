@@ -16,7 +16,7 @@ var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     completeScores: true
 });
 
-var ee = process.env.EASTER_EGG
+var ee = JSON.parse(process.env.EASTER_EGG)
 
 var refresh = 0
 
