@@ -1,6 +1,7 @@
 var cache = {}
 var track = []
 var storedmapid = []
+var storedee = {}
 
 const Discord = require('discord.js');
 const nodeosu = require('node-osu');
@@ -14,6 +15,8 @@ var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
 });
+
+var ee = process.env.EASTER_EGG
 
 var refresh = 0
 
@@ -487,7 +490,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added error detecting
 - Added !akatop, !rippletop
 - Updated osu tracking
-- Added !report`)
+- Added !report
+- Added easter egg`)
             message.channel.send({embed})
         }
 
@@ -566,6 +570,33 @@ Status: **${defindcode[statuscode]}**`)
             var roll = Math.floor(Math.random()*6)
             var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,`Why you keep pinging me?`,`Stop pinging me! <:chinoangry:450686707881213972>`,`What do you need senpai? <:chinohappy:450684046129758208>`,`<:chinopinged:450680698613792783>`]
             message.channel.send(respone[roll])
+        }
+
+        if (msg.substring(0,3) == '!ee' && msg.substring(0,3) == command) {
+            var number = storedee[message.author.id]
+            message.channel.send(`You have found: **${number.match(/1/g).length} easter egg(s)**`)
+        }
+
+        if (ee[msg] !== undefined) {
+            var number = "0000"
+            if (storedee[message.author.id] == undefined) {
+                storedee[message.author.id] = number
+            }
+            if (storedee[message.author.id].length < 4) {
+                storedee[message.author.id] = storedee[message.author.id].substring(0, storedee[message.author.id].length) + number.substring(storedee[message.author.id].length)
+            }
+            if (storedee[message.author.id].substring(ee[msg].bit, ee[msg].bit + 1) == '0') {
+                storedee[message.author.id] = storedee[message.author.id].substring(0, ee[msg].bit) + "1" + storedee[message.author.id].substring(ee[msg].bit + 1)
+                fs.writeFileSync('ee.txt', JSON.stringify(storedee))
+                bot.channels.get('569168849992417315').send({files: [{
+                    attachment: './ee.txt',
+                    name: 'ee.txt'
+                }]})
+            }
+            if (ee[msg].type == "normal") {
+                message.channel.send(ee[msg].respond)   
+            }
+            console.log(storedee)
         }
 
         // Osu related
