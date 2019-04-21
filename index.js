@@ -572,11 +572,17 @@ Status: **${defindcode[statuscode]}**`)
             message.channel.send(respone[roll])
         }
 
-        if (msg.substring(0,3) == '!ee' && msg.substring(0,3) == command) {
-            var number = storedee[message.author.id]
-            message.channel.send(`You have found: **${number.match(/1/g).length} easter egg(s)**`)
-        }
+        // Easter Egg
 
+        if (msg.substring(0,3) == '!ee' && msg.substring(0,3) == command) {
+            if (storedee[message.author.id] !== undefined) {
+                var number = storedee[message.author.id]
+                message.channel.send(`You have found: **${number.match(/1/g).length} easter egg(s)**`)
+            } else {
+                message.channel.send("You didn't found any!")
+            }
+        }
+        
         if (ee[msg] !== undefined) {
             var number = "0000"
             if (storedee[message.author.id] == undefined) {
