@@ -773,7 +773,7 @@ Status: **${defindcode[statuscode]}**`)
                 var number = storedee[message.author.id]
                 message.channel.send(`You have found: **${number.match(/1/g).length} easter egg(s)**`)
             } else {
-                message.channel.send("You didn't found any!")
+                message.channel.send("You haven't found any!")
             }
         }
 
