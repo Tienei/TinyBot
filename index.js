@@ -290,6 +290,12 @@ bot.on("ready", (ready) => {
         var trackurl = trackbackup.first().url
         var trackdata = await request.get(trackurl)
         track = JSON.parse(trackdata)
+        // Get easter egg data
+        var eemessage = await bot.channels.get('569168849992417315').fetchMessages({limit: 1})
+        var eebackup = eemessage.first().attachments
+        var eeurl = eebackup.first().url
+        var eedata = await request.get(eeurl)
+        storedee = JSON.parse(eedata)
     }
     getFile()
 
