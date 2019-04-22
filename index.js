@@ -402,47 +402,231 @@ bot.on("message", (message) => {
             }
         }
 
-        if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
+if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
+            var help = {
+                'avatar': {
+                    helpcommand: '!avatar (user)',
+                    description: "View a user's discord avatar",
+                    option: 'user: User you want to view (Has to be @user)',
+                    example: '!avatar @Tienei#0000'
+                },
+                'changelog': {
+                    helpcommand: '!changelog',
+                    description: 'View update and fix for the bot',
+                    option: 'None',
+                    example: '!changelog'
+                },
+                'help': {
+                    helpcommand: '!help (command)',
+                    description: 'Get a full command list or view a specific command help',
+                    option: 'command: Command help you wanted to see',
+                    example: '!help osu'
+                },
+                'ping': {
+                    helpcommand: '!ping',
+                    description: 'Ping Bancho (probably making Bancho mad sometimes lol)',
+                    option: 'None',
+                    example: '!ping'
+                },
+                'report': {
+                    helpcommand: '!report (error)',
+                    description: 'Report an error or bug to the owner',
+                    option: 'error: Type any error or bug you found',
+                    example: '!report osu is broken'
+                },
+                'ee': {
+                    helpcommand: '!ee',
+                    description: 'View how many easter eggs you got',
+                    option: 'None',
+                    example: '!ee'
+                },
+                'osu': {
+                    helpcommand: '!osu (username) (options)',
+                    description: 'Get an osu!Standard profile',
+                    option: 'username: osu!username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
+                    example: '!osu Tienei -d'
+                },
+                'taiko': {
+                    helpcommand: '!taiko (username)',
+                    description: 'Get an osu!Taiko profile',
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!taiko Tienei'
+                },
+                'ctb': {
+                    helpcommand: '!ctb (username)',
+                    description: 'Get an osu!Catch the beat profile',
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!ctb Tienei'
+                },
+                'mania': {
+                    helpcommand: '!mania (username)',
+                    description: 'Get an osu!Mania profile',
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!mania Tienei'
+                },
+                'osutop': {
+                    helpcommand: '!osutop (username) (options)',
+                    description: "View a player's osu!Standard top play",
+                    option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play: `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
+                    example: '!osutop Tienei -m HDHR'
+                },
+                'taikotop': {
+                    helpcommand: '!taikotop (username) (options)',
+                    description: "View a player's osu!Taiko top play",
+                    option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                    example: '!taikotop Tienei -p 8'
+                },
+                'ctbtop': {
+                    helpcommand: '!ctbtop (username) (options)',
+                    description: "View a player's osu!Catch the beat top play",
+                    option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                    example: '!ctbtop Tienei -p 9'
+                },
+                'maniatop': {
+                    helpcommand: '!maniatop (username) (options)',
+                    description: "View a player's osu!Mania top play",
+                    option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                    example: '!maniatop Tienei -p 4'
+                },
+                'osutrack': {
+                    helpcommand: '!osutrack (username)',
+                    description: "Track a player's osu!Standard top 50",
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!osutrack Tienei'
+                },
+                'untrack': {
+                    helpcommand: '!untrack (username)',
+                    description: "Unrack a player from the database",
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!untrack Tienei'
+                },
+                'recent': {
+                    helpcommand: '![recent|r] (username) (options)',
+                    description: "Get player's most recent play",
+                    option: 'username: osu!username of the player (Space replaced with "_")\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`',
+                    example: '!r Tienei -b'
+                },
+                'compare': {
+                    helpcommand: '![compare|c] (username) ',
+                    description: "Compare to the last play in the chat",
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!c Tienei'
+                },
+                'osuset': {
+                    helpcommand: '!osuset (username)',
+                    description: 'Link your profile to an osu! player',
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!osuset Tienei'
+                },
+                'osuavatar': {
+                    helpcommand: '!osuavatar (username)',
+                    description: "Get player's osu! avatar",
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!osuavatar Tienei'
+                },
+                'osusig': {
+                    helpcommand: '!osusig (username)',
+                    description: "Generate a signature of a player's profile",
+                    option: 'username: osu!username of the player (Space replaced with "_")',
+                    example: '!osusig Tienei'
+                },
+                'map': {
+                    helpcommand: '![map|m] (options)',
+                    description: "Get detailed info of the map of the last play in the server",
+                    option: 'Mods: Detailed info of the map with mods `(Shorten mods)`',
+                    example: '!m HDDT'
+                },
+                'calcpp': {
+                    helpcommand: '!calcpp (map id) (mods) (acc) (combo) (miss)',
+                    description: "Calculate a play's pp",
+                    option: '**Needs all option to be caculated**',
+                    example: '!calcpp 1157868 nomod 100 1642 0'
+                },
+                'scores': {
+                    helpcommand: '!scores (map link) (username)',
+                    description: "Get player's play on a specific map",
+                    option: 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_")',
+                    example: '!scores https://osu.ppy.sh/b/1157868 Cookiezi'
+                },
+                'acc': {
+                    helpcommand: '!acc (300) (100) (50) (miss)',
+                    description: "Accuracy calculator",
+                    option: '**Needs all option to be calculated**',
+                    example: '!acc 918 23 2 0'
+                },
+                'akatsuki': {
+                    helpcommand: '!akatuski (username) (options)',
+                    description: 'Get an Akatuski Standard profile',
+                    option: 'username: Akatsuki username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
+                    example: '!akatsuki Tienei -d'
+                },
+                'akatr': {
+                    helpcommand: '!akatr (username)',
+                    description: "Get player's most recent play",
+                    option: 'username: Akatsuki username of the player (Space replaced with "_")',
+                    example: '!akatr Tienei'
+                },
+                'akattop': {
+                    helpcommand: '!akattop (username) (options)',
+                    description: "View a player's Akatsuki Standard top play",
+                    option: 'username: Akatsuki username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                    example: '!akattop Tienei -p 8'
+                },
+                'akatavatar': {
+                    helpcommand: '!akatavatar (username)',
+                    description: "Get player's Akatsuki avatar",
+                    option: 'username: Akatsuki username of the player (Space replaced with "_")',
+                    example: '!akatavatar Tienei'
+                },
+                'ripple': {
+                    helpcommand: '!ripple (username) (options)',
+                    description: 'Get an  Ripple Standard profile',
+                    option: 'username: Ripple username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
+                    example: '!ripple Tienei -d'
+                },
+                'rippler': {
+                    helpcommand: '!rippler (username)',
+                    description: "Get player's most recent play",
+                    option: 'username: Ripple username of the player (Space replaced with "_")',
+                    example: '!rippler Tienei'
+                },
+                'rippletop': {
+                    helpcommand: '!rippletop (username) (options)',
+                    description: "View a player's Ripple Standard top play",
+                    option: 'username: Ripple username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                    example: '!rippletop Tienei -p 8'
+                },
+                'rippleavatar': {
+                    helpcommand: '!rippleavatar (username)',
+                    description: "Get player's Ripple avatar",
+                    option: 'username: Ripple username of the player (Space replaced with "_")',
+                    example: '!rippleavatar Tienei'
+                }
+            }
+            var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee`'
+            var osuhelp = '**--- [osu!]:**\n`!osu` `!taiko` `!ctb` `!mania` `!osutop` `!taikotop` `!ctbtop` `!maniatop` `!osutrack` `!untrack` `!map` `!osuset` `!osuavatar` `!osusig` `!recent` `!compare` `!calcpp` `!scores` `!acc`'
+            var akatsukihelp = '**--- [Akatsuki]**\n`!akatsuki` `!akatr` `!akatavatar` `!akattop`'
+            var ripplehelp = '**--- [Ripple]**\n`!ripple` `!rippler` `!rippleavatart` `!rippletop`'
+            var text = ''
+            if (msg.substring(6) == '') {
+                text = `${generalhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}`
+            } else {
+                var getcmd = msg.substring(6)
+                if (getcmd == 'r') {
+                    getcmd = 'recent'
+                }
+                if (getcmd == 'c') {
+                    getcmd = 'compare'
+                }
+                if (getcmd == 'm') {
+                    getcmd = 'map'
+                }
+                text = '```' + help[getcmd].helpcommand + '```' + `\n${help[getcmd].description}\n\n**---[Options]:**\n${help[getcmd].option}\n\n**---[Example]:**\n` + help[getcmd].example
+            }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Commands for Tiny Bot pre-v3`)
             .setThumbnail(bot.user.avatarURL)
-            .setDescription(`
-**--- [General]**
-**!avatar (username):** Check user's profile picture
-**!changelog:** Changes of the bot
-**!help:** Uh then how you open this?
-**!ping:** Ping Bancho
-**!report (error):** Report to the bot owner about the error
-**!ee:** Easter egg founded
-
-**--- [osu!]**
-**+ osu! Profile: !(command) (username) (attributes):** !osu, !taiko, !ctb, !mania
-**+ osu! Top play: !(command) (username) (attributes):** !osutop, !taikotop, !ctbtop, !maniatop
-**+ osu! Track: !(command) (username):** !osutrack, !untrack
-**+ Others:**
-**!map [!m] (mods):** Get info from the latest map display in the chat
-**!osuset (username):** Link your discord to your osu!
-**!osuavatar (username):** Check osu player's profile picture
-**!osusig (username):** Get player's profile signature
-**!recent [!r] (username) (attributes):** Check player's most recent play
-**!compare [!c] (username):** Compare with the latest play in chat
-**!calcpp (map id) (mods) (acc) (combo) (miss):** Calculate a beatmap pp
-**!scores (map link) (name):** Get a player scores from a beatmap
-**!acc (300) (100) (50) (miss):** Calculate accuracy
-
-**--- [Akatsuki]**
-Available: !akatsuki, !akatr, !akatavatar, !akattop
-
-**--- [Ripple]**
-Available: !ripple, !rippler, !rippleavatart, !rippletop
-
-**--- [Attributes]**
-**-b:** Recent best
-**-p (Number):** Top __ of player
-**-r:** Recent top play (Standard only)
-**-m (Mods):** Mods top play (Standard only)
-**-d:** Detailed stats of player (Standard only)`
-            )
+            .setDescription(text)
             message.channel.send({embed})
         }
 
@@ -494,7 +678,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Updated osu tracking
 - Added !report
 - Added easter egg
-- Added !recent -b`)
+- Added !recent -b
+- Redesign !help`)
             message.channel.send({embed})
         }
 
