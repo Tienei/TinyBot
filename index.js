@@ -391,7 +391,7 @@ bot.on("message", (message) => {
     refresh = Math.round(Math.random()* 2147483648)
     var command = ''
 
-    if (message.author.bot == false){
+    if (message.author.bot == false && message.author.id == "292523841811513348"){
         for (var i = 0; i < msg.length; i++) {
             if (msg[i] == ' ') {
                 command = msg.substring(0,i)
@@ -413,6 +413,7 @@ bot.on("message", (message) => {
 **!help:** Uh then how you open this?
 **!ping:** Ping Bancho
 **!report (error):** Report to the bot owner about the error
+**!ee:** Easter egg founded
 
 **--- [osu!]**
 **+ osu! Profile: !(command) (username) (attributes):** !osu, !taiko, !ctb, !mania
@@ -423,7 +424,7 @@ bot.on("message", (message) => {
 **!osuset (username):** Link your discord to your osu!
 **!osuavatar (username):** Check osu player's profile picture
 **!osusig (username):** Get player's profile signature
-**!recent [!r] (username):** Check player's most recent play
+**!recent [!r] (username) (attributes):** Check player's most recent play
 **!compare [!c] (username):** Compare with the latest play in chat
 **!calcpp (map id) (mods) (acc) (combo) (miss):** Calculate a beatmap pp
 **!scores (map link) (name):** Get a player scores from a beatmap
@@ -436,6 +437,7 @@ Available: !akatsuki, !akatr, !akatavatar, !akattop
 Available: !ripple, !rippler, !rippleavatart, !rippletop
 
 **--- [Attributes]**
+**-b:** Recent best
 **-p (Number):** Top __ of player
 **-r:** Recent top play (Standard only)
 **-m (Mods):** Mods top play (Standard only)
@@ -491,7 +493,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !akatop, !rippletop
 - Updated osu tracking
 - Added !report
-- Added easter egg`)
+- Added easter egg
+- Added !recent -b`)
             message.channel.send({embed})
         }
 
@@ -579,10 +582,10 @@ Status: **${defindcode[statuscode]}**`)
                 var number = storedee[message.author.id]
                 message.channel.send(`You have found: **${number.match(/1/g).length} easter egg(s)**`)
             } else {
-                message.channel.send("You haven't found any!")
+                message.channel.send("You didn't found any!")
             }
         }
-        
+
         if (ee[msg] !== undefined) {
             var number = "0000"
             if (storedee[message.author.id] == undefined) {
@@ -835,72 +838,154 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
 
         async function recent(start) {
             try {
-                var check = message.content.substring(start);
-                var name = checkplayer(check)
-                var recent = await osuApi.getUserRecent({u: name, limit: 1})
-                if (recent.length == 0) {
-                    throw 'No play found within 24 hours of this user **-Tiny**'
-                }
-                var getplayer = await osuApi.getUser({u: name})
-                var beatmapidfixed = recent[0][1].beatmapSetId
-                var beatmapid = recent[0][1].id
-                var scores = recent[0][0].score
-                var userid = recent[0][0].user.id
-                var beatmap = recent[0][1].title
-                var diff = recent[0][1].version
-                var count300 = Number(recent[0][0].counts['300'])
-                var count100 = Number(recent[0][0].counts['100'])
-                var count50 = Number(recent[0][0].counts['50'])
-                var countmiss = Number(recent[0][0].counts.miss)
-                var combo = recent[0][0].maxCombo   
-                var fc = recent[0][1].maxCombo
-                var mod = recent[0][0].mods
-                var letter = recent[0][0].rank
-                var rank = rankingletters(letter)
-                var perfect = recent[0][0].perfect
-                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                var modandbit = mods(mod)
-                var shortenmod = modandbit.shortenmod
-                var bitpresent = modandbit.bitpresent
-                var date = timeago(recent[0][0].date)
-                var parser = await precalc(beatmapid)
-                var recentcalc = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
-                var star = Number(recentcalc.star.total).toFixed(2)
-                var pp = Number(recentcalc.pp.total).toFixed(2)
-                var nopp = ''
-                var end = recentcalc.star.objects[recentcalc.star.objects.length - 1].obj.time - recentcalc.star.objects[0].obj.time
-                var point = recentcalc.star.objects[count300 + count100 + count50 + countmiss - 1].obj.time - recentcalc.star.objects[0].obj.time
-                var mapcomplete = Number((point / end) * 100).toFixed(2)
-                var mapcompleted = ''
-                var osuname = getplayer.name
-                if (message.guild !== null) {
-                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                var b = msg.includes('-b')
+                var check = ''
+                if (msg.indexOf('-b') !== start && b !== false) {
+                    for (var i = start; i < msg.length; i++) {
+                        if (msg.substr(i,1) == ' ') {
+                            check = msg.substring(start, i)
+                            break
+                        }
+                    }
+                } else if (msg.indexOf('-b') == start) {
+                    check = ''
                 } else {
-                    storedmapid.push({id:beatmapid,user:message.author.id})
+                    for (var i = start; i < msg.length; i++) {
+                        if (msg.substr(i+1,1) == '') {
+                            check = msg.substring(start, i+1)
+                            break
+                        }
+                    }
                 }
-                var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
-                var fcpp = Number(fccalc.pp.total).toFixed(2)
-                var fcacc = fccalc.acc
-                var fcguess = ``
-                if (letter == 'F') {
-                    nopp = '(No pp)'
-                    mapcompleted = `**Map Completion:** ${mapcomplete}%`
-                    date = '| ' + date
-                }
-                if (perfect == 0) {
-                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
-                }
-                const embed = new Discord.RichEmbed()
-                .setAuthor(`Most recent osu! Standard play for ${osuname}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                .setColor('#7f7fff')
-                .setDescription(`
+                var name = checkplayer(check)
+                if (b == true) {
+                    var best = await osuApi.getUserBest({u: name, limit:100})
+                    if (best.length == 0) {
+                        throw `I think ${name} didn't play anything yet~ **-Chino**`
+                    }
+                    var userid = best[0][0].user.id
+                    var user = await osuApi.getUser({u: userid})
+                    var username = user.name
+                    for (var i = 0; i < 100; i++) {
+                        best[i][0].top = i+1
+                    }
+                    best.sort(function (a,b) {
+                        a1 = Date.parse(a[0].date)
+                        b1 = Date.parse(b[0].date)
+                        return b1 - a1
+                    })
+                    var title = best[0][1].title
+                    var diff = best[0][1].version
+                    var beatmapid = best[0][1].id
+                    var beatmapidfixed = best[0][1].beatmapSetId
+                    var score = best[0][0].score
+                    var count300 = Number(best[0][0].counts['300'])
+                    var count100 = Number(best[0][0].counts['100'])
+                    var count50 = Number(best[0][0].counts['50'])
+                    var countmiss = Number(best[0][0].counts.miss)
+                    var combo = best[0][0].maxCombo
+                    var fc = best[0][1].maxCombo
+                    var letter = best[0][0].rank
+                    var rank = rankingletters(letter)
+                    var pp = Number(best[0][0].pp).toFixed(2)
+                    var mod = best[0][0].mods
+                    var perfect = best[0][0].perfect
+                    var modandbit = mods(mod)
+                    var shortenmod = modandbit.shortenmod
+                    var bitpresent = modandbit.bitpresent
+                    var date = timeago(best[0][0].date)
+                    if (message.guild !== null) {
+                        storedmapid.push({id:beatmapid,server:message.guild.id})
+                    } else {
+                        storedmapid.push({id:beatmapid,user:message.author.id})
+                    }
+                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var parser = await precalc(beatmapid)     
+                    var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                    var fcacc = fccalc.acc
+                    var star = Number(fccalc.star.total).toFixed(2)
+                    var fcguess = ''
+                    if (perfect == 0) {
+                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Top ${best[0][0].top} osu!Standard play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+                    .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+                    .setColor('#7f7fff')
+                    .setDescription(`
+**[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${rank} *${diff}* | **Scores:** ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
+`)
+                    message.channel.send({embed})
+                } else {
+                    var recent = await osuApi.getUserRecent({u: name, limit: 1})
+                    if (recent.length == 0) {
+                        throw 'No play found within 24 hours of this user **-Tiny**'
+                    }
+                    var getplayer = await osuApi.getUser({u: name})
+                    var beatmapidfixed = recent[0][1].beatmapSetId
+                    var beatmapid = recent[0][1].id
+                    var scores = recent[0][0].score
+                    var userid = recent[0][0].user.id
+                    var beatmap = recent[0][1].title
+                    var diff = recent[0][1].version
+                    var count300 = Number(recent[0][0].counts['300'])
+                    var count100 = Number(recent[0][0].counts['100'])
+                    var count50 = Number(recent[0][0].counts['50'])
+                    var countmiss = Number(recent[0][0].counts.miss)
+                    var combo = recent[0][0].maxCombo   
+                    var fc = recent[0][1].maxCombo
+                    var mod = recent[0][0].mods
+                    var letter = recent[0][0].rank
+                    var rank = rankingletters(letter)
+                    var perfect = recent[0][0].perfect
+                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var modandbit = mods(mod)
+                    var shortenmod = modandbit.shortenmod
+                    var bitpresent = modandbit.bitpresent
+                    var date = timeago(recent[0][0].date)
+                    var parser = await precalc(beatmapid)
+                    var recentcalc = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
+                    var star = Number(recentcalc.star.total).toFixed(2)
+                    var pp = Number(recentcalc.pp.total).toFixed(2)
+                    var nopp = ''
+                    var end = recentcalc.star.objects[recentcalc.star.objects.length - 1].obj.time - recentcalc.star.objects[0].obj.time
+                    var point = recentcalc.star.objects[count300 + count100 + count50 + countmiss - 1].obj.time - recentcalc.star.objects[0].obj.time
+                    var mapcomplete = Number((point / end) * 100).toFixed(2)
+                    var mapcompleted = ''
+                    var osuname = getplayer.name
+                    if (message.guild !== null) {
+                        storedmapid.push({id:beatmapid,server:message.guild.id})
+                    } else {
+                        storedmapid.push({id:beatmapid,user:message.author.id})
+                    }
+                    var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                    var fcacc = fccalc.acc
+                    var fcguess = ``
+                    if (letter == 'F') {
+                        nopp = '(No pp)'
+                        mapcompleted = `**Map Completion:** ${mapcomplete}%`
+                        date = '| ' + date
+                    }
+                    if (perfect == 0) {
+                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Most recent osu! Standard play for ${osuname}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+                    .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+                    .setColor('#7f7fff')
+                    .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${mapcompleted} ${date}
 `)
-                message.channel.send({embed})
+                    message.channel.send({embed})
+                }
             } catch (error) {
                 message.channel.send(String(error))
             }
