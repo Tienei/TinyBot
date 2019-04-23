@@ -442,14 +442,14 @@ if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
                 },
                 'ee': {
                     helpcommand: '!ee',
-                    description: 'View how many easter eggs you got',
+                    description: 'View how many easter eggs you have',
                     option: 'None',
                     example: '!ee'
                 },
                 'osu': {
                     helpcommand: '!osu (username) (options)',
                     description: 'Get an osu!Standard profile',
-                    option: 'username: osu!username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
+                    option: 'username: osu!username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the details of the player `(no param)`',
                     example: '!osu Tienei -d'
                 },
                 'taiko': {
@@ -538,14 +538,14 @@ if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
                 },
                 'map': {
                     helpcommand: '![map|m] (options)',
-                    description: "Get detailed info of the map of the last play in the server",
-                    option: 'Mods: Detailed info of the map with mods `(Shorten mods)`',
+                    description: "Get details info of the map of the last play in the server",
+                    option: 'Mods: details info of the map with mods `(Shorten mods)`',
                     example: '!m HDDT'
                 },
                 'calcpp': {
                     helpcommand: '!calcpp (map id) (mods) (acc) (combo) (miss)',
                     description: "Calculate a play's pp",
-                    option: '**Needs all option to be caculated**',
+                    option: '**Needs all options to be calculated**',
                     example: '!calcpp 1157868 nomod 100 1642 0'
                 },
                 'scores': {
@@ -557,13 +557,13 @@ if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
                 'acc': {
                     helpcommand: '!acc (300) (100) (50) (miss)',
                     description: "Accuracy calculator",
-                    option: '**Needs all option to be calculated**',
+                    option: '**Needs all options to be calculated**',
                     example: '!acc 918 23 2 0'
                 },
                 'akatsuki': {
-                    helpcommand: '!akatuski (username) (options)',
+                    helpcommand: '!akatsuki (username) (options)',
                     description: 'Get an Akatuski Standard profile',
-                    option: 'username: Akatsuki username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
+                    option: 'username: Akatsuki username of the player (Space replaced with "_")\nDetails `(-d)`: Get all the details of the player `(no param)`',
                     example: '!akatsuki Tienei -d'
                 },
                 'akatr': {
@@ -611,8 +611,8 @@ if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
             }
             var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee`'
             var osuhelp = '**--- [osu!]:**\n`!osu` `!taiko` `!ctb` `!mania` `!osutop` `!taikotop` `!ctbtop` `!maniatop` `!osutrack` `!untrack` `!map` `!osuset` `!osuavatar` `!osusig` `!recent` `!compare` `!calcpp` `!scores` `!acc`'
-            var akatsukihelp = '**--- [Akatsuki]**\n`!akatsuki` `!akatr` `!akatavatar` `!akattop`'
-            var ripplehelp = '**--- [Ripple]**\n`!ripple` `!rippler` `!rippleavatart` `!rippletop`'
+            var akatsukihelp = '**--- [Akatsuki]:**\n`!akatsuki` `!akatr` `!akatavatar` `!akattop`'
+            var ripplehelp = '**--- [Ripple]:**\n`!ripple` `!rippler` `!rippleavatar` `!rippletop`'
             var text = ''
             if (msg.substring(6) == '') {
                 text = `${generalhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}`
