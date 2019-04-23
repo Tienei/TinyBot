@@ -862,11 +862,12 @@ Status: **${defindcode[statuscode]}**`)
                                 }
                             }
                         }
-                    } else {
-                        throw 'No user was found!'
                     }
                 } else {
                     text = aloneaction
+                }
+                if (text == '') {
+                    throw 'No user was found!'
                 }
                 var data = await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=10&media_filter=minimal`)
                 var gif = JSON.parse(data)
