@@ -1847,18 +1847,8 @@ ${date}
                     }
                     if (msg.substr(m,31) == 'https://osu.ppy.sh/beatmapsets/') {
                         start = m + 31
-                        for (var i = start; i < msg.length; i++) {
-                            if (msg.substr(i,1) == '#') {
-                                start = i+1
-                                break;
-                            }
-                        }
-                        for (var i = start; i < msg.length; i++) {
-                            if (msg.substr(i,1) == '/') {
-                                start = i+1
-                                break;
-                            }
-                        }
+                        start = msg.indexOf('#', start) + 1
+                        start = msg.indexOf('/', start) + 1
                         for (var i = start; i <= msg.length; i++) {
                             if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
                                 beatmapid.push(msg.substring(start,i))
@@ -2061,18 +2051,8 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 }
                 if (msg.substr(8,31) == 'https://osu.ppy.sh/beatmapsets/') {
                     start = 8 + 31
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,1) == '#') {
-                            start = i+1
-                            break;
-                            }
-                        }
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,1) == '/') {
-                            start = i+1
-                            break;
-                        }
-                    }
+                    start = msg.indexOf('#', start) + 1
+                    start = msg.indexOf('/', start) + 1
                     for (var i = start; i <= msg.length; i++) {
                         if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
                             beatmapid = msg.substring(start,i)
