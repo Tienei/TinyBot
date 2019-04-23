@@ -715,14 +715,15 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setAuthor(`Changelog for Tiny Bot pre-v3.0`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Bot has been re-write and updated to pre-v3! That mean bot will be somewhat faster speed and a lot less buggy**
+**Bot has been re-written and updated to pre-v3! That mean the bot will be somewhat faster and a lot less buggy**
 - Added error detecting
 - Added !akatop, !rippletop
 - Updated osu tracking
 - Added !report
 - Added easter egg
 - Added !recent -b
-- Redesign !help`)
+- Redesign !help
+- Added !hug, !cuddle, !slap, !kiss`)
             message.channel.send({embed})
         }
 
@@ -871,7 +872,7 @@ Status: **${defindcode[statuscode]}**`)
                 var gif = JSON.parse(data)
                 const embed = new Discord.RichEmbed()
                 .setDescription(text)
-                .setImage(gif.results[Math.floor(Math.random()*10)].media[0].gif.url)
+                .setImage(gif.results[Math.floor(Math.random()*9)].media[0].gif.url)
                 message.channel.send({embed})
            } catch (error) {
                message.channel.send(String(error))
