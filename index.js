@@ -590,6 +590,12 @@ bot.on("message", (message) => {
                         option: '**Needs all options to be calculated**',
                         example: '!acc 918 23 2 0'
                     },
+                    'rec': {
+                        helpcommand: '!rec',
+                        description: "Recommends you an osu beatmap",
+                        option: 'None',
+                        example: '!rec'
+                    },
                     //Akatsuki
                     'akatsuki': {
                         helpcommand: '!akatsuki (username) (options)',
@@ -643,7 +649,7 @@ bot.on("message", (message) => {
                 }
                 var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee`'
                 var funhelp = '**--- [Fun]:**\n`!hug` `!cuddle` `!slap` `!kiss`'
-                var osuhelp = '**--- [osu!]:**\n`!osu` `!taiko` `!ctb` `!mania` `!osutop` `!taikotop` `!ctbtop` `!maniatop` `!osutrack` `!untrack` `!map` `!osuset` `!osuavatar` `!osusig` `!recent` `!compare` `!calcpp` `!scores` `!acc`'
+                var osuhelp = '**--- [osu!]:**\n`!osu` `!taiko` `!ctb` `!mania` `!osutop` `!taikotop` `!ctbtop` `!maniatop` `!osutrack` `!untrack` `!map` `!osuset` `!osuavatar` `!osusig` `!recent` `!compare` `!calcpp` `!scores` `!acc` `!rec`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`!akatsuki` `!akatr` `!akatavatar` `!akattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`!ripple` `!rippler` `!rippleavatar` `!rippletop`'
                 var text = ''
@@ -723,7 +729,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added easter egg
 - Added !recent -b
 - Redesign !help
-- Added !hug, !cuddle, !slap, !kiss`)
+- Added !hug, !cuddle, !slap, !kiss
+- Added !rec (recommendation)`)
             message.channel.send({embed})
         }
 
@@ -2382,6 +2389,141 @@ ${prizetext}`)
             }
         }
 
+        async function recommendation() {
+            try {
+                if (cache[message.author.id] == undefined) {
+                    throw "You didn't link your profile to osu"
+                }
+                var name = cache[message.author.id].osuname
+                var best = await osuApi.getUserBest({u: name, limit: 25})
+                var otherbest = ''
+                var minPP = 0
+                var averageAcc = 0
+                var averageCombo = 0
+                var averageMiss = 0
+                for (var i = 0; i < best.length; i ++) {
+                    minPP += Number(best[i][0].pp)
+                    var count300 = Number(best[0][0].counts['300'])
+                    var count100 = Number(best[0][0].counts['100'])
+                    var count50 = Number(best[0][0].counts['50'])
+                    var countmiss = Number(best[0][0].counts.miss)
+                    averageAcc += Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
+                    averageCombo += Number(best[i][1].maxCombo)
+                    averageMiss += countmiss
+                }
+                minPP = minPP / best.length * 0.97
+                var maxPP = minPP * 1.25
+                averageAcc = averageAcc / best.length
+                if (averageAcc > 100) {averageAcc = 100}
+                averageCombo = Number((averageCombo / best.length * 1.9).toFixed(0))
+                averageMiss = Number((averageMiss / best.length).toFixed(0))
+                var pos = Math.floor(Math.random() * 24)
+                var pickedTopPlay = best[pos][1].id
+                var mod = mods(best[pos][0].mods).bitpresent
+                var pick = Math.floor(Math.random() * 1.99)
+                var topplayfrom = ''
+                if (pick == 0) {
+                    // Get own top play
+                    averageAcc *= 1.02
+                    for (var i = 0; i < 10; i++) {
+                        var parser = await precalc(pickedTopPlay)
+                        var recommend = ppcalc(parser, mod, best[pos][1].maxCombo, 0, 0, 0, averageAcc, 0)
+                        if (recommend.pp.total >= minPP && recommend.pp.total <= maxPP && recommend.pp.total > best[pos][0].pp) {
+                            topplayfrom = 'own'
+                            break
+                        } else {
+                            pos = Math.floor(Math.random() * 24)
+                            pickedTopPlay = best[pos][1].id
+                            mod = mods(best[pos][0].mods).bitpresent
+                        }
+                    }
+                } else if (pick == 1) {
+                    averageAcc *= 0.99
+                    // Get other top play
+                    var beatmapTopPlay = await osuApi.getScores({b: pickedTopPlay, m: mod, limit: 100})
+                    beatmapTopPlay.sort(function(a,b) {return Math.abs(minPP - a) - Math.abs(minPP - b)})
+                    beatmapTopPlay.splice(24,75)
+                    var getRandomPlayer = beatmapTopPlay[Math.floor(Math.random() * 24)].user.id
+                    otherbest = await osuApi.getUserBest({u: getRandomPlayer, limit: 100})
+                    otherbest.sort(function(a,b) {return Math.abs(minPP - a) - Math.abs(minPP - b)})
+                    otherbest.splice(24,75)
+                    pickedTopPlay = otherbest[pos][1].id
+                    mod = mods(otherbest[pos][0].mods).bitpresent
+                    for (var i = 0; i < 10; i++) {
+                        // Mod Play
+                        var parser = await precalc(pickedTopPlay)
+                        var recommend = ppcalc(parser, mod, otherbest[pos][1].maxCombo, 0, 0, 0, averageAcc, averageMiss)
+                        if (recommend.pp.total >= minPP && recommend.pp.total <= maxPP && otherbest[pos][1].maxCombo < averageCombo) {
+                            topplayfrom = 'other'
+                            break
+                        }
+                        // No mod play
+                        mod = 0
+                        recommend = ppcalc(parser, mod, otherbest[pos][1].maxCombo, 0, 0, 0, averageAcc, averageMiss)
+                        if (recommend.pp.total >= minPP && recommend.pp.total <= maxPP && otherbest[pos][1].maxCombo < averageCombo) {
+                            topplayfrom = 'other'
+                            break
+                        } else {
+                            pos = Math.floor(Math.random() * 24)
+                            pickedTopPlay = otherbest[pos][1].id
+                            mod = mods(otherbest[pos][0].mods).bitpresent
+                            
+                        }
+                    }
+                }
+            
+                // Gather data
+            
+                var maprecommendeded = ''
+                var misses = 0
+                if (topplayfrom == 'own') {
+                    maprecommendeded = best[pos]
+                } else if (topplayfrom == 'other') {
+                    maprecommendeded = otherbest[pos]
+                    misses = averageMiss
+                } else {
+                    throw 'No recommended map was found'
+                }
+                var beatmapidfixed = maprecommendeded[1].beatmapSetId
+                var title = maprecommendeded[1].title
+                var mapper = maprecommendeded[1].creator
+                var version = maprecommendeded[1].version
+                var maxCombo = maprecommendeded[1].maxCombo
+                var shortenmod = bittomods(mod)
+                var parser = await precalc(pickedTopPlay)
+                var acc95 = ppcalc(parser,mod,maxCombo,0,0,0,95,0)
+                var acc97 = ppcalc(parser,mod,maxCombo,0,0,0,97,0)
+                var acc99 = ppcalc(parser,mod,maxCombo,0,0,0,99,0)
+                var acc100 = ppcalc(parser,mod,maxCombo,0,0,0,100,0)
+                var pppredicttoget = ppcalc(parser,mod,maxCombo,0,0,0,averageAcc,misses)
+                var detail = mapdetail(shortenmod,maprecommendeded[1].time.total,maprecommendeded[1].bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
+                var totallength = Number(detail.length).toFixed(0)
+                var bpm = Number(detail.bpm).toFixed(0)
+                var ar = Number(detail.ar).toFixed(2)
+                var od = Number(detail.od).toFixed(2)
+                var hp = Number(detail.hp).toFixed(2)
+                var cs = Number(detail.cs).toFixed(2)
+                var time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
+                const embed = new Discord.RichEmbed()
+                .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${pickedTopPlay}`)
+                .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+                .setColor('#7f7fff')
+                .setDescription(`
+**Length:** ${time} **BPM:** ${bpm} **Mods:** ${shortenmod}
+**Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
+<:difficultyIcon:507522545759682561> __${version}__  
+**Difficulty:** ${Number(acc100.star.total).toFixed(2)}★ (Aim: ${Number(acc100.star.aim).toFixed(2) * 2}★, Speed: ${Number(acc100.star.speed).toFixed(2) * 2}★)
+**Max Combo:** ${maxCombo}
+**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}
+**PP:** | **95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp
+**Predicted PP you'll get: ${Number(pppredicttoget.pp.total).toFixed(2)}pp**`)
+                message.channel.send('Found 1 map')
+                message.channel.send({embed});
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
         // Other server (Akatsuki, Ripple) Function
 
         async function otherserveravatar(start, serverlink) {
@@ -2777,6 +2919,9 @@ ${date}
         }
         if (msg.substring(0,8) == '!untrack' && msg.substring(0,8) == command && message.channel.name !== undefined) {
             untrack()
+        }
+        if (msg.substring(0,84) == '!rec' && msg.substring(0,4) == command) {
+            recommendation()
         }
 
         // Akatuski
