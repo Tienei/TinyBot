@@ -2774,6 +2774,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     var count100 = Number(best.scores[n].count_100)
                     var count50 = Number(best.scores[n].count_50)
                     var countmiss = Number(best.scores[n].count_miss)
+                    var perfect = best.scores[n].full_combo
                     var combo = best.scores[n].max_combo
                     var fc = best.scores[n].beatmap.max_combo
                     var letter = best.scores[n].rank
@@ -2789,13 +2790,18 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     }
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                     var parser = await precalc(beatmapid)
-                    var starcalc = ppcalc(parser,beatmapid,mod,0,0,0,0,0,0)
-                    var star = Number(starcalc.star.total).toFixed(2)
-                    var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                    var fccalc = ppcalc(parser,mod,fc,count100,count50,0,acc,1)
+                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                    var fcacc = fccalc.acc
+                    var fcguess = ``
+                    if (perfect == 0) {
+                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                    }
+                    var star = Number(fccalc.star.total).toFixed(2)
                     top += `
 ${n+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% ${accdetail}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `
                 const embed = new Discord.RichEmbed()
@@ -2831,13 +2837,18 @@ ${date}
                         }
                         var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                         var parser = await precalc(beatmapid)
-                        var starcalc = ppcalc(parser,beatmapid,mod,0,0,0,0,0,0)
-                        var star = Number(starcalc.star.total).toFixed(2)
-                        var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                        var fccalc = ppcalc(parser,mod,fc,count100,count50,0,acc,1)
+                        var fcpp = Number(fccalc.pp.total).toFixed(2)
+                        var fcacc = fccalc.acc
+                        var fcguess = ``
+                        if (perfect == 0) {
+                            fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                        }
+                        var star = Number(fccalc.star.total).toFixed(2)
                         top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% ${accdetail}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `                   }
                     const embed = new Discord.RichEmbed()
