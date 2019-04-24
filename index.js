@@ -2411,7 +2411,7 @@ ${prizetext}`)
                     averageCombo += Number(best[i][1].maxCombo)
                     averageMiss += countmiss
                 }
-                minPP = minPP / best.length * 0.97
+                minPP = minPP / best.length * 0.9
                 var maxPP = minPP * 1.25
                 averageAcc = averageAcc / best.length
                 if (averageAcc > 100) {averageAcc = 100}
