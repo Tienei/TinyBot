@@ -2395,7 +2395,7 @@ ${prizetext}`)
                     throw "You didn't link your profile to osu"
                 }
                 var name = cache[message.author.id].osuname
-                var best = await osuApi.getUserBest({u: name, limit: 25})
+                var best = await osuApi.getUserBest({u: name, limit: 50})
                 var otherbest = ''
                 var minPP = 0
                 var averageAcc = 0
@@ -2411,13 +2411,13 @@ ${prizetext}`)
                     averageCombo += Number(best[i][1].maxCombo)
                     averageMiss += countmiss
                 }
-                minPP = minPP / best.length * 0.9
+                minPP = minPP / best.length * 0.95
                 var maxPP = minPP * 1.25
                 averageAcc = averageAcc / best.length
                 if (averageAcc > 100) {averageAcc = 100}
                 averageCombo = Number((averageCombo / best.length * 1.9).toFixed(0))
                 averageMiss = Number((averageMiss / best.length).toFixed(0))
-                var pos = Math.floor(Math.random() * 24)
+                var pos = Math.floor(Math.random() * 49)
                 var pickedTopPlay = best[pos][1].id
                 var mod = mods(best[pos][0].mods).bitpresent
                 var pick = Math.floor(Math.random() * 24.99)
@@ -2432,7 +2432,7 @@ ${prizetext}`)
                             topplayfrom = 'own'
                             break
                         } else {
-                            pos = Math.floor(Math.random() * 24)
+                            pos = Math.floor(Math.random() * 49)
                             pickedTopPlay = best[pos][1].id
                             mod = mods(best[pos][0].mods).bitpresent
                         }
@@ -2442,11 +2442,11 @@ ${prizetext}`)
                     // Get other top play
                     var beatmapTopPlay = await osuApi.getScores({b: pickedTopPlay, m: mod, limit: 100})
                     beatmapTopPlay.sort(function(a,b) {return Math.abs(minPP - a) - Math.abs(minPP - b)})
-                    beatmapTopPlay.splice(24,75)
-                    var getRandomPlayer = beatmapTopPlay[Math.floor(Math.random() * 24)].user.id
+                    beatmapTopPlay.splice(49,50)
+                    var getRandomPlayer = beatmapTopPlay[Math.floor(Math.random() * 49)].user.id
                     otherbest = await osuApi.getUserBest({u: getRandomPlayer, limit: 100})
                     otherbest.sort(function(a,b) {return Math.abs(minPP - a) - Math.abs(minPP - b)})
-                    otherbest.splice(24,75)
+                    otherbest.splice(49,50)
                     pickedTopPlay = otherbest[pos][1].id
                     mod = mods(otherbest[pos][0].mods).bitpresent
                     for (var i = 0; i < 10; i++) {
@@ -2464,7 +2464,7 @@ ${prizetext}`)
                             topplayfrom = 'other'
                             break
                         } else {
-                            pos = Math.floor(Math.random() * 24)
+                            pos = Math.floor(Math.random() * 49)
                             pickedTopPlay = otherbest[pos][1].id
                             mod = mods(otherbest[pos][0].mods).bitpresent
                             
