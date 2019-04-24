@@ -2420,7 +2420,7 @@ ${prizetext}`)
                 var pos = Math.floor(Math.random() * 24)
                 var pickedTopPlay = best[pos][1].id
                 var mod = mods(best[pos][0].mods).bitpresent
-                var pick = Math.floor(Math.random() * 4.99)
+                var pick = Math.floor(Math.random() * 24.99)
                 var topplayfrom = ''
                 if (pick == 0) {
                     // Get own top play
