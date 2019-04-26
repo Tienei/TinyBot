@@ -730,7 +730,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !recent -b
 - Redesign !help
 - Added !hug, !cuddle, !slap, !kiss
-- Added !rec (recommendation)`)
+- Added !rec (recommendation)
+- Fixed Usernames with "-r" ("-d","-b","-p") in front don't register properly (Reported by Yeong, jp0806)`)
             message.channel.send({embed})
         }
 
@@ -934,15 +935,17 @@ Status: **${defindcode[statuscode]}**`)
         async function osu(start,mode) {
             try {
                 var d = msg.includes('-d')
+                var dpos = start
+                if (msg.substr(msg.indexOf('-d'),3) !== " " || msg.substr(msg.indexOf('-d'),3) !== "") {dpos = msg.indexOf('-d', start+2); dpos > -1 ? d = true : d = false}
                 var check = ''
-                if (msg.indexOf('-d') !== start && d !== false) {
+                if (dpos !== start && d !== false) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
                             check = msg.substring(start, i)
                             break
                         }
                     }
-                } else if (msg.indexOf('-d') == start) {
+                } else if (dpos == start) {
                     check = ''
                 } else {
                     for (var i = start; i < msg.length; i++) {
@@ -1132,15 +1135,17 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
         async function recent(start) {
             try {
                 var b = msg.includes('-b')
+                var bpos = start
+                if (msg.substr(msg.indexOf('-b'),3) !== " " || msg.substr(msg.indexOf('-b'),3) !== "") {bpos = msg.indexOf('-b', start+2); bpos > -1 ? b = true : b = false}
                 var check = ''
-                if (msg.indexOf('-b') !== start && b !== false) {
+                if (bpos !== start && b !== false) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
                             check = msg.substring(start, i)
                             break
                         }
                     }
-                } else if (msg.indexOf('-b') == start) {
+                } else if (bpos == start) {
                     check = ''
                 } else {
                     for (var i = start; i < msg.length; i++) {
@@ -1376,17 +1381,21 @@ ${date}
                 var p = msg.includes('-p')
                 var r = msg.includes('-r')
                 var m = msg.includes('-m')
+                var ppos, rpos, mpos = start
+                if (msg.substr(msg.indexOf('-p'),3) !== " " || msg.substr(msg.indexOf('-p'),3) !== "") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
+                if (msg.substr(msg.indexOf('-r'),3) !== " " || msg.substr(msg.indexOf('-r'),3) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
+                if (msg.substr(msg.indexOf('-m'),3) !== " " || msg.substr(msg.indexOf('-m'),3) !== "") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
                 var check = ''
                 var top = ''
                 var modename = ''
-                if ((msg.indexOf('-p') !== start && p !== false) || (msg.indexOf('-r') !== start &&  r !== false) || (msg.indexOf('-m') !== start && m !== false)) {
+                if ((ppos !== start && p !== false) || (rpos !== start &&  r !== false) || (mpos !== start && m !== false)) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
                             check = msg.substring(start, i)
                             break
                         }
                     }
-                } else if (msg.indexOf('-p') == start || msg.indexOf('-r') == start || msg.indexOf('-m') == start) {
+                } else if (ppos == start || rpos == start || mpos == start) {
                     check = ''
                 } else {
                     for (var i = start; i < msg.length; i++) {
@@ -1396,12 +1405,24 @@ ${date}
                         }
                     }
                 }
+                if (mode == 0) {
+                    modename = 'Standard'
+                }
+                if (mode == 1) {
+                    modename = 'Taiko'
+                }
+                if (mode == 2) {
+                    modename = 'CTB'
+                }
+                if (mode == 3) {
+                    modename = 'Mania'
+                }
                 var name = checkplayer(check)
                 if (p == true && m == false && r == false) {
                     var n = 0
-                    for (var i = msg.indexOf('-p') + 3; i < msg.length; i++) {
+                    for (var i = ppos + 3; i < msg.length; i++) {
                         if (msg.substr(i+1,1) == '') {
-                            n = Number(msg.substring(msg.indexOf('-p') + 3, i+1)) -1
+                            n = Number(msg.substring(ppos + 3, i+1)) -1
                             break
                         }
                     }
@@ -1439,7 +1460,6 @@ ${date}
                     var star = 0
                     var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                     if (mode == 0) {
-                        modename = 'Standard'
                         var parser = await precalc(beatmapid)
                         var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                         var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -1451,16 +1471,13 @@ ${date}
                         star = Number(best[n][1].difficulty.rating).toFixed(2)
                     }
                     if (mode == 1) {
-                        modename = 'Taiko'
                         acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
                         accdetail = `[${count300}/${count100}/${countmiss}]`
                     }
                     if (mode == 2) {
-                        modename = 'CTB'
                         acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
                     }
                     if (mode == 3) {
-                        modename = 'Mania'
                         acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
                         accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
                     }
@@ -1562,9 +1579,9 @@ ${date}
                         so: 'SpunOut',
                         nomod: 'No Mod'
                     }
-                    for (var i = msg.indexOf('-m') + 3; i < msg.length; i++) {
+                    for (var i = mpos + 3; i < msg.length; i++) {
                         if (msg.substr(i+1,1) == '') {
-                            getmod = msg.substring(msg.indexOf('-m') + 3, i+1)
+                            getmod = msg.substring(mpos + 3, i+1)
                             break
                         }
                     }
@@ -1727,7 +1744,7 @@ ${date}
                     message.channel.send({embed});
                 }
             } catch (error) {
-                console.log(String(error))
+                message.channel.send(String(error))
             }
         }
 
@@ -2540,15 +2557,17 @@ ${prizetext}`)
         async function otherserverosu(start, serverlink) {
             try {
                 var d = msg.includes('-d')
+                var dpos = 0
+                if (msg.substr(msg.indexOf('-d'),3) !== " " || msg.substr(msg.indexOf('-d'),3) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
                 var check = ''
-                if (msg.indexOf('-d') !== start && d !== false) {
+                if (dpos !== start && d !== false) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
                             check = msg.substring(start, i)
                             break
                         }
                     }
-                } else if (msg.indexOf('-d') == start) {
+                } else if (dpos == start) {
                     check = ''
                 } else {
                     for (var i = start; i < msg.length; i++) {
@@ -2730,16 +2749,18 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
         async function otherservertop(start, serverlink) {
             try {
                 var p = msg.includes('-p')
+                var ppos = 0
+                if (msg.substr(msg.indexOf('-p'),3) !== " " || msg.substr(msg.indexOf('-p'),3) !== "") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 var check = ''
                 var top = ''
-                if (msg.indexOf('-p') !== start && p !== false) {
+                if (ppos !== start && p !== false) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
                             check = msg.substring(start, i)
                             break
                         }
                     }
-                } else if (msg.indexOf('-p') == start) {
+                } else if (ppos == start) {
                     check = ''
                 } else {
                     for (var i = start; i < msg.length; i++) {
@@ -2758,9 +2779,9 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 }
                 if (p == true) {
                     var n = 0
-                    for (var i = msg.indexOf('-p') + 3; i < msg.length; i++) {
+                    for (var i = ppos + 3; i < msg.length; i++) {
                         if (msg.substr(i+1,1) == '') {
-                            n = Number(msg.substring(msg.indexOf('-p') + 3, i+1)) -1
+                            n = Number(msg.substring(ppos + 3, i+1)) -1
                             break
                         }
                     }
