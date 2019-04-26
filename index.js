@@ -936,7 +936,7 @@ Status: **${defindcode[statuscode]}**`)
             try {
                 var d = msg.includes('-d')
                 var dpos = start
-                if (msg.substr(msg.indexOf('-d'),3) !== " " || msg.substr(msg.indexOf('-d'),3) !== "") {dpos = msg.indexOf('-d', start+2); dpos > -1 ? d = true : d = false}
+                if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); dpos > -1 ? d = true : d = false}
                 var check = ''
                 if (dpos !== start && d !== false) {
                     for (var i = start; i < msg.length; i++) {
@@ -1136,7 +1136,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             try {
                 var b = msg.includes('-b')
                 var bpos = start
-                if (msg.substr(msg.indexOf('-b'),3) !== " " || msg.substr(msg.indexOf('-b'),3) !== "") {bpos = msg.indexOf('-b', start+2); bpos > -1 ? b = true : b = false}
+                if (msg.substr(msg.indexOf('-b')+2,1) !== "") {bpos = msg.indexOf('-b', start+2); bpos > -1 ? b = true : b = false}
                 var check = ''
                 if (bpos !== start && b !== false) {
                     for (var i = start; i < msg.length; i++) {
@@ -1381,10 +1381,10 @@ ${date}
                 var p = msg.includes('-p')
                 var r = msg.includes('-r')
                 var m = msg.includes('-m')
-                var ppos, rpos, mpos = start
-                if (msg.substr(msg.indexOf('-p'),3) !== " " || msg.substr(msg.indexOf('-p'),3) !== "") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
-                if (msg.substr(msg.indexOf('-r'),3) !== " " || msg.substr(msg.indexOf('-r'),3) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
-                if (msg.substr(msg.indexOf('-m'),3) !== " " || msg.substr(msg.indexOf('-m'),3) !== "") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
+                var ppos, rpos, mpos = start    
+                if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
+                if (msg.substr(msg.indexOf('-r')+2,1) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
+                if (msg.substr(msg.indexOf('-m')+2,1) !== " ") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
                 var check = ''
                 var top = ''
                 var modename = ''
@@ -2558,7 +2558,7 @@ ${prizetext}`)
             try {
                 var d = msg.includes('-d')
                 var dpos = 0
-                if (msg.substr(msg.indexOf('-d'),3) !== " " || msg.substr(msg.indexOf('-d'),3) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
+                if (msg.substr(msg.indexOf('-d')+2,3) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
                 var check = ''
                 if (dpos !== start && d !== false) {
                     for (var i = start; i < msg.length; i++) {
@@ -2750,7 +2750,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
             try {
                 var p = msg.includes('-p')
                 var ppos = 0
-                if (msg.substr(msg.indexOf('-p'),3) !== " " || msg.substr(msg.indexOf('-p'),3) !== "") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
+                if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 var check = ''
                 var top = ''
                 if (ppos !== start && p !== false) {
