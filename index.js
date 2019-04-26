@@ -2558,7 +2558,7 @@ ${prizetext}`)
             try {
                 var d = msg.includes('-d')
                 var dpos = 0
-                if (msg.substr(msg.indexOf('-d')+2,3) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
+                if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
                 var check = ''
                 if (dpos !== start && d !== false) {
                     for (var i = start; i < msg.length; i++) {
