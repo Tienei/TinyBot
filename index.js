@@ -731,7 +731,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Redesign !help
 - Added !hug, !cuddle, !slap, !kiss
 - Added !rec (recommendation)
-- Fixed Usernames with "-r" ("-d","-b","-p") in front don't register properly (Reported by Yeong, jp0806)`)
+- Fixed Usernames with "-r" ("-d","-b","-p") in front don't register properly (Reported by Yeong, jp0806)
+- Fixed options again (Sorry guys im dumb ;~;)`)
             message.channel.send({embed})
         }
 
@@ -935,7 +936,7 @@ Status: **${defindcode[statuscode]}**`)
         async function osu(start,mode) {
             try {
                 var d = msg.includes('-d')
-                var dpos = start
+                var dpos = msg.indexOf('-d')
                 if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); dpos > -1 ? d = true : d = false}
                 var check = ''
                 if (dpos !== start && d !== false) {
@@ -1135,7 +1136,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
         async function recent(start) {
             try {
                 var b = msg.includes('-b')
-                var bpos = start
+                var bpos = msg.indexOf('-b')
                 if (msg.substr(msg.indexOf('-b')+2,1) !== "") {bpos = msg.indexOf('-b', start+2); bpos > -1 ? b = true : b = false}
                 var check = ''
                 if (bpos !== start && b !== false) {
@@ -1381,7 +1382,7 @@ ${date}
                 var p = msg.includes('-p')
                 var r = msg.includes('-r')
                 var m = msg.includes('-m')
-                var ppos, rpos, mpos = start    
+                var ppos = msg.indexOf('-p'), rpos = msg.indexOf('-r'), mpos = msg.indexOf('-m')
                 if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 if (msg.substr(msg.indexOf('-r')+2,1) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
                 if (msg.substr(msg.indexOf('-m')+2,1) !== " ") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
@@ -2557,7 +2558,7 @@ ${prizetext}`)
         async function otherserverosu(start, serverlink) {
             try {
                 var d = msg.includes('-d')
-                var dpos = 0
+                var dpos = msg.indexOf('-d')
                 if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
                 var check = ''
                 if (dpos !== start && d !== false) {
@@ -2733,7 +2734,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                     fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 const embed = new Discord.RichEmbed()
-                .setAuthor(`Most recent ripple play for ${username}:`, `https://a.${serverlink}/${userid}.png?date=${refresh}`)
+                .setAuthor(`Most recent ${servername} play for ${username}:`, `https://a.${serverlink}/${userid}.png?date=${refresh}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
                 .setColor('#7f7fff')
                 .setDescription(`
@@ -2749,7 +2750,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
         async function otherservertop(start, serverlink) {
             try {
                 var p = msg.includes('-p')
-                var ppos = 0
+                var ppos = msg.indexOf('-p')
                 if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 var check = ''
                 var top = ''
@@ -2873,7 +2874,7 @@ ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
 ${date}
 `                   }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top Akatsuki Relax Plays for ${check}`)
+                    .setAuthor(`Top ${servername} Relax Plays for ${check}`)
                     .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
                     .setColor('#7f7fff')
                     .setDescription(top)
