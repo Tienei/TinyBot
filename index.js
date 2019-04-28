@@ -398,7 +398,7 @@ bot.on("message", (message) => {
     refresh = Math.round(Math.random()* 2147483648)
     var command = ''
 
-    if (message.author.bot == false){
+    if (message.author.bot == false && message.author.id == "292523841811513348"){
         for (var i = 0; i < msg.length; i++) {
             if (msg[i] == ' ') {
                 command = msg.substring(0,i)
@@ -757,7 +757,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         if (msg.substring(0,5) == '!ping' && msg.substring(0,5) == command) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 5 seconds before using this again!'
                 }
                 setCommandCooldown(command, 5000)
@@ -775,7 +775,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         if (msg.substring(0,7) == '!report' && msg.substring(0,7) == command && message.guild !== null) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 30 seconds before using this again!'
                 }
                 setCommandCooldown(command, 30000)
@@ -1174,7 +1174,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
 
         async function recent(start) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
@@ -1335,7 +1335,7 @@ ${mapcompleted} ${date}
 
         async function compare(start) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
@@ -1426,7 +1426,7 @@ ${date}
 
         async function osutop(mode, start) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
@@ -1802,7 +1802,7 @@ ${date}
 
         async function map(start){
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 5 seconds before using this again!'
                 }
                 setCommandCooldown(command, 5000)
@@ -2022,7 +2022,7 @@ ${date}
 
         async function calculateplay() {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
@@ -2112,7 +2112,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
 
         async function osuscore() {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
@@ -2486,7 +2486,7 @@ ${prizetext}`)
 
         async function recommendation() {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 5 seconds before using this again!'
                 }
                 setCommandCooldown(command, 5000)
@@ -2638,7 +2638,7 @@ ${prizetext}`)
 
         async function otherserverosu(start, serverlink) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
@@ -2769,7 +2769,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
 
         async function otherserverrecent(start,serverlink) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
@@ -2838,7 +2838,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
 
         async function otherservertop(start, serverlink) {
             try {
-                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
