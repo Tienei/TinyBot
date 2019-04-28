@@ -864,7 +864,7 @@ Status: **${defindcode[statuscode]}**`)
             if (storedee[message.author.id] == undefined) {
                 storedee[message.author.id] = number
             }
-            if (storedee[message.author.id].length < 4) {
+            if (storedee[message.author.id].length < number.length) {
                 storedee[message.author.id] = storedee[message.author.id].substring(0, storedee[message.author.id].length) + number.substring(storedee[message.author.id].length)
             }
             if (storedee[message.author.id].substring(ee[msg].bit, ee[msg].bit + 1) == '0') {
