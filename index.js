@@ -465,6 +465,12 @@ bot.on("message", (message) => {
                         option: 'error: Type any error or bug you found',
                         example: '!report osu is broken'
                     },
+                    'bot': {
+                        helpcommand: '!bot',
+                        description: 'Get invitation of the bot',
+                        option: 'None',
+                        example: '!bot'
+                    },
                     'ee': {
                         helpcommand: '!ee',
                         description: 'View how many easter eggs you have',
@@ -756,6 +762,13 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Fixed options again (Sorry guys im dumb ;~;)
 - Fixed !map
 - Added cooldown for commands`)
+            message.channel.send({embed})
+        }
+
+        if (msg.substring(0,7) == "!bot" && msg.substring(0,7) == command) {
+            const embed = new Discord.RichEmbed()
+            .setThumbnail(bot.user.avatarURL)
+            .setDescription(`Here's my bot invite link: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)`)
             message.channel.send({embed})
         }
 
