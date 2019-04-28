@@ -750,7 +750,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !rec (recommendation)
 - Fixed Usernames with "-r" ("-d","-b","-p") in front don't register properly (Reported by Yeong, jp0806)
 - Fixed options again (Sorry guys im dumb ;~;)
-- Fixed !map`)
+- Fixed !map
+- Added cooldown for commands`)
             message.channel.send({embed})
         }
 
