@@ -18,6 +18,7 @@ var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 });
 
 var ee = JSON.parse(process.env.EASTER_EGG)
+var eenumber = ''
 
 var refresh = 0
 
@@ -297,6 +298,9 @@ bot.on("ready", (ready) => {
         var eeurl = eebackup.first().url
         var eedata = await request.get(eeurl)
         storedee = JSON.parse(eedata)
+        for (var i = 0 ; i < Object.keys(ee).length; i++) {
+            eenumber += '0'
+        }
     }
     getFile()
 
@@ -860,7 +864,7 @@ Status: **${defindcode[statuscode]}**`)
         }
 
         if (ee[msg] !== undefined) {
-            var number = "00000"
+            var number = eenumber
             if (storedee[message.author.id] == undefined) {
                 storedee[message.author.id] = number
             }
