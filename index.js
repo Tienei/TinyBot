@@ -860,7 +860,7 @@ Status: **${defindcode[statuscode]}**`)
         }
 
         if (ee[msg] !== undefined) {
-            var number = "0000"
+            var number = "00000"
             if (storedee[message.author.id] == undefined) {
                 storedee[message.author.id] = number
             }
