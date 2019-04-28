@@ -732,7 +732,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !hug, !cuddle, !slap, !kiss
 - Added !rec (recommendation)
 - Fixed Usernames with "-r" ("-d","-b","-p") in front don't register properly (Reported by Yeong, jp0806)
-- Fixed options again (Sorry guys im dumb ;~;)`)
+- Fixed options again (Sorry guys im dumb ;~;)
+- Fixed !map`)
             message.channel.send({embed})
         }
 
@@ -2933,10 +2934,10 @@ ${date}
             osutop(3,10)
         }
         if (msg.substring(0,4) == '!map' && msg.substring(0,4) == command) {
-            map()
+            map(5)
         }
         if (msg.substring(0,2) == '!m' && msg.substring(0,2) == command) {
-            map()
+            map(3)
         }
         if (msg.substring(0,7) == '!calcpp' && msg.substring(0,7) == command) {
             calculateplay()
