@@ -303,6 +303,13 @@ bot.on("ready", (ready) => {
         }
     }
     getFile()
+    
+    // Server count
+
+    function servercount() {
+        bot.channels.get("572093442042232842").setName(`Server Count: ${bot.guilds.size}`)
+    }
+    setInterval(servercount, 10000)
 
     // osutrack
     async function realtimeosutrack() {
