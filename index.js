@@ -2,6 +2,7 @@ var cache = {}
 var track = []
 var storedmapid = []
 var storedee = {}
+var cooldown = {}
 
 const Discord = require('discord.js');
 const nodeosu = require('node-osu');
@@ -408,6 +409,22 @@ bot.on("message", (message) => {
             }
         }
 
+        function setCommandCooldown(cdcommand,time) {
+            if (cooldown[message.author.id] == undefined) {
+                cooldown[message.author.id] = [cdcommand]
+            } else {
+                cooldown[message.author.id].push(cdcommand)
+            }
+            setTimeout(() => {
+                if (cooldown[message.author.id].length > 1) {
+                    var pos = cooldown[message.author.id].indexOf(cdcommand)
+                    cooldown[message.author.id].splice(pos,1)
+                } else {
+                    delete cooldown[message.author.id]
+                }
+            }, time)
+        }
+
         // General related
 
         if (msg.substring(0,5) == '!help' && msg.substring(0,5) == command) {
@@ -526,13 +543,13 @@ bot.on("message", (message) => {
                     },
                     'osutrack': {
                         helpcommand: '!osutrack (username)',
-                        description: "Track a player's osu!Standard top 50",
+                        description: "Track a player's osu!Standard top 50 (Required Administration)",
                         option: 'username: osu!username of the player (Space replaced with "_")',
                         example: '!osutrack Tienei'
                     },
                     'untrack': {
                         helpcommand: '!untrack (username)',
-                        description: "Untrack a player from the database",
+                        description: "Untrack a player from the database (Required Administration)",
                         option: 'username: osu!username of the player (Space replaced with "_")',
                         example: '!untrack Tienei'
                     },
@@ -738,28 +755,44 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
         }
 
         if (msg.substring(0,5) == '!ping' && msg.substring(0,5) == command) {
-            async function Bancho() {
-                var timenow = Date.now()
-                var test = await osuApi.getUser({u: "peppy"})
-                var timelater = Date.now()
-                message.channel.send(`Bancho respond! **${timelater - timenow}ms**`)
+            try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 5 seconds before using this again!'
+                }
+                setCommandCooldown(command, 5000)
+                async function Bancho() {
+                    var timenow = Date.now()
+                    var test = await osuApi.getUser({u: "peppy"})
+                    var timelater = Date.now()
+                    message.channel.send(`Bancho respond! **${timelater - timenow}ms**`) 
+                }
+                Bancho()
+            } catch (error) {
+                message.channel.send(String(error))
             }
-            Bancho()
         }
 
         if (msg.substring(0,7) == '!report' && msg.substring(0,7) == command && message.guild !== null) {
-            var error = message.content.substring(8)
-            var channelid = message.channel.id
-            var user = message.author.username
-            var pfp = message.author.avatarURL
-            const embed = new Discord.RichEmbed()
-            .setAuthor(`Username: ${user}`, pfp)
-            .setColor('#7f7fff')
-            .setDescription(`
-Channel ID: **${channelid}**
-Problem: ${error}`)
-            bot.channels.get('564396177878155284').send({embed})
-            message.channel.send('Error has been reported')
+            try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 30 seconds before using this again!'
+                }
+                setCommandCooldown(command, 30000)
+                var error = message.content.substring(8)
+                var channelid = message.channel.id
+                var user = message.author.username
+                var pfp = message.author.avatarURL
+                const embed = new Discord.RichEmbed()
+                .setAuthor(`Username: ${user}`, pfp)
+                .setColor('#7f7fff')
+                .setDescription(`
+    Channel ID: **${channelid}**
+    Problem: ${error}`)
+                bot.channels.get('564396177878155284').send({embed})
+                message.channel.send('Error has been reported')
+            } catch (error) {
+                message.channel.send(String(error))
+            }
         }
 
         if (msg.substring(0,8) == '!respond' && msg.substring(0,8) == command && message.author.id == "292523841811513348") {
@@ -936,6 +969,10 @@ Status: **${defindcode[statuscode]}**`)
 
         async function osu(start,mode) {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var d = msg.includes('-d')
                 var dpos = msg.indexOf('-d')
                 if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); dpos > -1 ? d = true : d = false}
@@ -1136,6 +1173,10 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
 
         async function recent(start) {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var b = msg.includes('-b')
                 var bpos = msg.indexOf('-b')
                 if (msg.substr(msg.indexOf('-b')+2,1) !== "") {bpos = msg.indexOf('-b', start+2); bpos > -1 ? b = true : b = false}
@@ -1293,6 +1334,10 @@ ${mapcompleted} ${date}
 
         async function compare(start) {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var check = message.content.substring(start);
                 var name = checkplayer(check)
                 var storedid = 0
@@ -1380,6 +1425,10 @@ ${date}
 
         async function osutop(mode, start) {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var p = msg.includes('-p')
                 var r = msg.includes('-r')
                 var m = msg.includes('-m')
@@ -1752,6 +1801,10 @@ ${date}
 
         async function map(start){
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 5 seconds before using this again!'
+                }
+                setCommandCooldown(command, 5000)
                 var beatmapid = 0
                 var mods = []
                 if (msg.substring(start) == "") {
@@ -1968,6 +2021,10 @@ ${date}
 
         async function calculateplay() {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var start = 8
                 var beatmapid = 0
                 var mods = []
@@ -2054,6 +2111,10 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
 
         async function osuscore() {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 urlcommand = true
                 var beatmapid = 0
                 var check = ''
@@ -2340,76 +2401,94 @@ ${prizetext}`)
         }
 
         async function osutrack() {
-            var osuname = message.content.substring(10)
-            var detected = false
-            var user = await osuApi.getUser({u: osuname})
-            var name = user.name
-            var best = await osuApi.getUserBest({u: osuname, limit: 50})
-            if (name == undefined) {
-                message.channel.send('Please enter a valid osu username! >:c')
-            } else {
-                for (var i = 0; i < track.length; i++) {
-                    if (track[i].osuname == name) {
-                        detected = true
-                        if (track[i].trackonchannel.includes(message.channel.id) == true) {
-                            track[i].osuname = name
-                            track[i].top50pp = best[49][0].pp
-                            track[i].lasttotalpp = user.pp.raw
-                            track[i].lastrank = user.pp.rank
-                            track[i].lastcountryrank = user.pp.countryRank
-                            break
-                        } else {
-                            track[i].osuname = name
-                            track[i].top50pp = best[49][0].pp
-                            track[i].lasttotalpp = user.pp.raw
-                            track[i].lastrank = user.pp.rank
-                            track[i].lastcountryrank = user.pp.countryRank
-                            track[i].trackonchannel.push(message.channel.id)
-                            break
+            try {
+                if (message.member.hasPermission("ADMINISTRATOR") == false) {
+                    throw 'You need to have administrator to set osutrack'
+                }
+                var osuname = message.content.substring(10)
+                var detected = false
+                var user = await osuApi.getUser({u: osuname})
+                var name = user.name
+                var best = await osuApi.getUserBest({u: osuname, limit: 50})
+                if (name == undefined) {
+                    throw 'Please enter a valid osu username! >:c'
+                } else {
+                    for (var i = 0; i < track.length; i++) {
+                        if (track[i].osuname == name) {
+                            detected = true
+                            if (track[i].trackonchannel.includes(message.channel.id) == true) {
+                                track[i].osuname = name
+                                track[i].top50pp = best[49][0].pp
+                                track[i].lasttotalpp = user.pp.raw
+                                track[i].lastrank = user.pp.rank
+                                track[i].lastcountryrank = user.pp.countryRank
+                                break
+                            } else {
+                                track[i].osuname = name
+                                track[i].top50pp = best[49][0].pp
+                                track[i].lasttotalpp = user.pp.raw
+                                track[i].lastrank = user.pp.rank
+                                track[i].lastcountryrank = user.pp.countryRank
+                                track[i].trackonchannel.push(message.channel.id)
+                                break
+                            }
                         }
                     }
+                    if (detected == false) {
+                        track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": [message.channel.id],"recenttimeplay": ""})
+                    }
+                    message.channel.send(`**${name}** is now being tracked on **#${message.channel.name}**`)
+                    fs.writeFileSync('track.txt', JSON.stringify(track))
+                    bot.channels.get('497302830558871552').send({files: [{
+                        attachment: './track.txt',
+                        name: 'track.txt'
+                    }]})
                 }
-                if (detected == false) {
-                    track.push({"osuname":name,"top50pp":best[49][0].pp,"lasttotalpp":user.pp.raw,"lastrank":user.pp.rank,"lastcountryrank":user.pp.countryRank,"trackonchannel": [message.channel.id],"recenttimeplay": ""})
-                }
-                message.channel.send(`**${name}** is now being tracked on **#${message.channel.name}**`)
-                fs.writeFileSync('track.txt', JSON.stringify(track))
-                bot.channels.get('497302830558871552').send({files: [{
-                    attachment: './track.txt',
-                    name: 'track.txt'
-                }]})
+            } catch(error) {
+                message.channel.send(String(error))
             }
         }
 
         async function untrack() {
-            for (var i = 0; i < track.length; i++) {
-                if (track[i].osuname == message.content.substring(9)) {
-                    if (track[i].trackonchannel.includes(message.channel.id) == true && track[i].trackonchannel.length > 1) {
-                        track[i].trackonchannel.splice(track[i].trackonchannel.indexOf(message.channel.id), 1)
-                        message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
-                        fs.writeFileSync('track.txt', JSON.stringify(track))
-                        bot.channels.get('497302830558871552').send({files: [{
-                            attachment: './track.txt',
-                            name: 'track.txt'
-                        }]})
-                        break
-                    } else {
-                        track.splice(i,1)
-                        message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
-                        fs.writeFileSync('track.txt', JSON.stringify(track))
-                        bot.channels.get('497302830558871552').send({files: [{
-                            attachment: './track.txt',
-                            name: 'track.txt'
-                        }]})
-                        break
-                    }
-                    
+            try {
+                if (message.member.hasPermission("ADMINISTRATOR") == false) {
+                    throw 'You need to have administrator to set untrack'
                 }
+                for (var i = 0; i < track.length; i++) {
+                    if (track[i].osuname == message.content.substring(9)) {
+                        if (track[i].trackonchannel.includes(message.channel.id) == true && track[i].trackonchannel.length > 1) {
+                            track[i].trackonchannel.splice(track[i].trackonchannel.indexOf(message.channel.id), 1)
+                            message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
+                            fs.writeFileSync('track.txt', JSON.stringify(track))
+                            bot.channels.get('497302830558871552').send({files: [{
+                                attachment: './track.txt',
+                                name: 'track.txt'
+                            }]})
+                            break
+                        } else {
+                            track.splice(i,1)
+                            message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
+                            fs.writeFileSync('track.txt', JSON.stringify(track))
+                            bot.channels.get('497302830558871552').send({files: [{
+                                attachment: './track.txt',
+                                name: 'track.txt'
+                            }]})
+                            break
+                        }
+                        
+                    }
+                }
+            } catch (error) {
+                message.channel.send(String(error))
             }
         }
 
         async function recommendation() {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 5 seconds before using this again!'
+                }
+                setCommandCooldown(command, 5000)
                 if (cache[message.author.id] == undefined) {
                     throw "You didn't link your profile to osu"
                 }
@@ -2558,6 +2637,10 @@ ${prizetext}`)
 
         async function otherserverosu(start, serverlink) {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var d = msg.includes('-d')
                 var dpos = msg.indexOf('-d')
                 if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
@@ -2685,6 +2768,10 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
 
         async function otherserverrecent(start,serverlink) {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${message.content.substring(start)}`)
                 var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${message.content.substring(start)}`)
                 var recent = JSON.parse(data1)
@@ -2750,6 +2837,10 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
 
         async function otherservertop(start, serverlink) {
             try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexof(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
                 var p = msg.includes('-p')
                 var ppos = msg.indexOf('-p')
                 if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
