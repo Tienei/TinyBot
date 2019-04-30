@@ -958,6 +958,12 @@ Status: **${defindcode[statuscode]}**`)
                     } else {
                         delete customcmd[message.guild.id]
                     }
+                    message.channel.send('Custom command was removed')
+                    fs.writeFileSync('customcmd.txt', JSON.stringify(customcmd))
+                    bot.channels.get('572585703989575683').send({files: [{
+                    attachment: './customcmd.txt',
+                    name: 'customcmd.txt'
+                    }]})
                 }
             } catch (error) {
                 message.channel.send(String(error))
