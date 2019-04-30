@@ -3,6 +3,7 @@ var track = []
 var storedmapid = []
 var storedee = {}
 var cooldown = {}
+var customcmd = {}
 
 const Discord = require('discord.js');
 const nodeosu = require('node-osu');
@@ -301,6 +302,12 @@ bot.on("ready", (ready) => {
         for (var i = 0 ; i < Object.keys(ee).length; i++) {
             eenumber += '0'
         }
+        // Get custom commands data
+        var ccmessage = await bot.channels.get('572585703989575683').fetchMessages({limit: 1})
+        var ccbackup = ccmessage.first().attachments
+        var ccurl = ccbackup.first().url
+        var ccdata = await request.get(ccurl)
+        customcmd = JSON.parse(ccdata)
     }
     getFile()
     
