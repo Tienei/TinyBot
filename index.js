@@ -484,6 +484,12 @@ bot.on("message", (message) => {
                         option: 'None',
                         example: '!ee'
                     },
+                    'customcmd': {
+                        helpcommand: '!customcmd (action) (command)',
+                        description: 'Set a custom commands (Required Administration)',
+                        option: 'action: ``add`` ``list`` ``remove``\ncommand: Set a command you liked (do ``!help definedvar`` for more information)',
+                        example: '!customcmd add !hi Hello $0 and welcome to {server.name}'
+                    },
                     // Fun
                     'hug': {
                         helpcommand: '!hug (user)',
@@ -685,16 +691,24 @@ bot.on("message", (message) => {
                         description: "Get player's Ripple avatar",
                         option: 'username: Ripple username of the player (Space replaced with "_")',
                         example: '!rippleavatar Tienei'
+                    },
+                    //Other
+                    'definevar': {
+                        helpcommand: 'Defined Variable for Custom command',
+                        description: 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence``\nchannel: ``selfname`` ``selflink`` ``members``\nserver: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``',
+                        option: '{require:admin}: Need Administrator to enable the command\n{$N}: Get text in message seperated by space (Not include command)',
+                        example: 'do ``!help customcmd``'
                     }
                 }
-                var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee`'
+                var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee` `!customcmd`'
                 var funhelp = '**--- [Fun]:**\n`!hug` `!cuddle` `!slap` `!kiss`'
                 var osuhelp = '**--- [osu!]:**\n`!osu` `!taiko` `!ctb` `!mania` `!osutop` `!taikotop` `!ctbtop` `!maniatop` `!osutrack` `!untrack` `!map` `!osuset` `!osuavatar` `!osusig` `!recent` `!compare` `!calcpp` `!scores` `!acc` `!rec`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`!akatsuki` `!akatr` `!akatavatar` `!akattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`!ripple` `!rippler` `!rippleavatar` `!rippletop`'
+                var otherhelp = '**--- [Other]:**\n`definevar`'
                 var text = ''
                 if (msg.substring(6) == '') {
-                    text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}`
+                    text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}`
                 } else {
                     var getcmd = msg.substring(6)
                     if (help[getcmd] == undefined) {
@@ -762,7 +776,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **Bot is officially updated to v3 and also public!**
-- Added !osutracklist`)
+- Added !osutracklist
+- Added !customcmd`)
             message.channel.send({embed})
         }
 
@@ -864,6 +879,145 @@ Status: **${defindcode[statuscode]}**`)
             var roll = Math.floor(Math.random()*6)
             var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,`Why you keep pinging me?`,`Stop pinging me! <:chinoangry:450686707881213972>`,`What do you need senpai? <:chinohappy:450684046129758208>`,`<:chinopinged:450680698613792783>`]
             message.channel.send(respone[roll])
+        }
+
+        // Custom commands
+
+        if (msg.substring(0,10) == '!customcmd' && msg.substring(0,10) == command) {
+            try {
+                if (message.member.hasPermission("ADMINISTRATOR") == false) {
+                    throw 'You need to have administrator to set custom command'
+                }
+                var start = 11
+                var option = ''
+                for (var i = start; i <= msg.length; i++) {
+                    if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
+                        option = msg.substring(start,i)
+                        start = i + 1
+                        break
+                    }
+                }
+                if (option == "add") {
+                    var cmd = ""
+                    var respond = ""
+                    for (var i = start; i < msg.length; i++) {
+                        if (msg.substr(i,1) == ' ') {
+                            cmd = message.content.substring(start,i)
+                            respond = message.content.substring(i+1)
+                            break
+                        }
+                    }
+                    if (customcmd[message.guild.id] !== undefined) {
+                        if (customcmd[message.guild.id].find(savedcmd => savedcmd.cmd == cmd) !== undefined) {
+                            customcmd[message.guild.id].find(savedcmd => savedcmd.cmd == cmd).respond = respond
+                        } else {
+                            customcmd[message.guild.id].push({cmd: cmd, respond: respond})
+                        }
+                    } else {
+                        customcmd[message.guild.id] = [{cmd: cmd, respond: respond}]
+                    }
+                    message.channel.send('Custom command was added')
+                    fs.writeFileSync('customcmd.txt', JSON.stringify(customcmd))
+                    bot.channels.get('572585703989575683').send({files: [{
+                    attachment: './customcmd.txt',
+                    name: 'customcmd.txt'
+                    }]})
+                }
+                if (option == "list") {
+                    var savedcmd = ""
+                    for (var i = 0; i < customcmd[message.guild.id].length; i++) {
+                        savedcmd += "``" + customcmd[message.guild.id][i].cmd + "``: " + customcmd[message.guild.id][i].respond
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setThumbnail(message.guild.iconURL)
+                    .setColor('#7f7fff')
+                    .setDescription(savedcmd)
+                    message.channel.send({embed})
+                }
+                if (option == "remove") {
+                    var cmd = ""
+                    for (var i = start; i <= msg.length; i++) {
+                        if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
+                            cmd = msg.substring(start,i)
+                            break
+                        }
+                    }
+                    if (customcmd[message.guild.id].length > 1) {
+                        for (var i = 0; i < customcmd[message.guild.id].length; i++) {
+                            if (customcmd[message.guild.id][i] == cmd) {
+                                customcmd[message.guild.id].splice(i,1)
+                            }
+                        }
+                    } else {
+                        delete customcmd[message.guild.id]
+                    }
+                }
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        if (customcmd[message.guild.id] !== undefined && customcmd[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
+            try {
+                var respond = customcmd[message.guild.id].find(cmd => cmd.cmd == command).respond
+                var define = {
+                    "user": {
+                        "selfname": message.author.name,
+                        "selfping": `<@${message.author.id}>`,
+                        "selfcreatedtime": message.author.createdAt,
+                        "selfpresence": message.author.presence.status,
+                        "othercreatedtime": message.mentions.users.size > 0 ? message.mentions.users.first().createdAt : null,
+                        "otherpresence": message.mentions.users.size > 0 ? message.mentions.users.first().presence.status : null
+                    },
+                    "channel": {
+                        "selfname": message.channel.name,
+                        "selflink": `<@${message.channel.id}>`,
+                        "members": message.channel.members
+                    },
+                    "server": {
+                        "name": message.guild.name,
+                        "members": message.guild.members.size,
+                        "channels": message.guild.channels.size,
+                        "roles": message.guild.roles.size,
+                        "defaultchannel": message.guild.defaultChannel,
+                        "owner": message.guild.owner,
+                        "region": message.guild.region,
+                        "createdtime": message.guild.createdAt
+                    }
+                }
+                var requireAdmin = false
+                for (var s = 0; s < respond.length; s++) {
+                    if (respond.substr(s,1) == '{') {
+                        for (var e = s; e < respond.length; e++) {
+                            if (respond.substr(e,1) == '}') {
+                                var type = respond.substring(s+1,e)
+                                type = type.replace(".", " ")
+                                type = type.split(" ")
+                                if (type[0].substring(0,1) == "$") {
+                                    var number = Number(type[0].substring(1))
+                                    var option = message.content.split(" ", 100)
+                                    option.splice(0,1)
+                                    respond = respond.replace(respond.substring(s,e+1), option[number])
+                                } else if (type[0] == "require:admin") {
+                                    requireAdmin = true
+                                } else {
+                                    respond = respond.replace(respond.substring(s,e+1), define[type[0]][type[1]])
+                                }
+                                s = e
+                                break
+                            }
+                        }
+                    }
+                }
+                if (requireAdmin == true) {
+                    if (message.member.hasPermission("ADMINISTRATOR") == false) {
+                        throw "You need administrator enabled to use this!"
+                    }
+                }
+                message.channel.send(respond)
+            } catch (error) {
+                message.channel.send(String(error))
+            }
         }
 
         // Easter Egg
