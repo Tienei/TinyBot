@@ -975,7 +975,7 @@ Status: **${defindcode[statuscode]}**`)
                 var respond = customcmd[message.guild.id].find(cmd => cmd.cmd == command).respond
                 var define = {
                     "user": {
-                        "selfname": message.author.name,
+                        "selfname": message.author.username,
                         "selfping": `<@${message.author.id}>`,
                         "selfcreatedtime": message.author.createdAt,
                         "selfpresence": message.author.presence.status,
@@ -1008,7 +1008,7 @@ Status: **${defindcode[statuscode]}**`)
                                 type = type.split(" ")
                                 if (type[0].substring(0,1) == "$") {
                                     var number = Number(type[0].substring(1))
-                                    var option = message.content.split(" ", 100)
+                                    var option = message.content.split(" ", 10)
                                     option.splice(0,1)
                                     respond = respond.replace(respond.substring(s,e+1), option[number])
                                 } else if (type[0] == "require:admin") {
@@ -1073,7 +1073,11 @@ Status: **${defindcode[statuscode]}**`)
                 if (msg.substring(start) !== '') {
                     if (msg.substring(start).includes('@') == true) {
                         var id = message.mentions.users.first().id
-                        text = `<@${id}>, ${action} <@${message.author.id}>`
+                        if (id == message.author.id) {
+                            text = aloneaction
+                        } else {
+                            text = `<@${id}>, ${action} <@${message.author.id}>`
+                        }
                     } else if (message.guild !== null) {
                         var member = message.guild.members.array()
                         for (var i = 0; i < message.guild.memberCount; i++) {
@@ -1098,7 +1102,7 @@ Status: **${defindcode[statuscode]}**`)
                 if (text == '') {
                     throw 'No user was found!'
                 }
-                var data = await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=10&media_filter=minimal`)
+                var data = await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=10&media_filter=minimal&contentfilter=high`)
                 var gif = JSON.parse(data)
                 const embed = new Discord.RichEmbed()
                 .setDescription(text)
@@ -1120,6 +1124,9 @@ Status: **${defindcode[statuscode]}**`)
         }
         if (msg.substring(0,5) == '!kiss' && msg.substring(0,5) == command) {
             tenor(6, 'anime kiss', 'you got a kiss from', 'Are you trying to kiss yourself?')
+        }
+        if (msg.substring(0,5) == '!poke' && msg.substring(0,5) == command) {
+            tenor(6, 'anime poke', 'you got a poke from', 'Poking yourself huh? Heh')
         }
 
         // Osu related
