@@ -1627,21 +1627,23 @@ ${date}
                 var p = msg.includes('-p')
                 var r = msg.includes('-r')
                 var m = msg.includes('-m')
-                var ppos = msg.indexOf('-p'), rpos = msg.indexOf('-r'), mpos = msg.indexOf('-m')
+                var a = msg.includes('-a')
+                var ppos = msg.indexOf('-p'), rpos = msg.indexOf('-r'), mpos = msg.indexOf('-m'), apos = msg.indexOf('-a')
                 if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 if (msg.substr(msg.indexOf('-r')+2,1) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
                 if (msg.substr(msg.indexOf('-m')+2,1) !== " ") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
+                if (msg.substr(msg.indexOf('-a')+2,1) !== " ") {mpos = msg.indexOf('-a', start+2); apos > -1 ? a = true : a = false}
                 var check = ''
                 var top = ''
                 var modename = ''
-                if ((ppos !== start && p !== false) || (rpos !== start &&  r !== false) || (mpos !== start && m !== false)) {
+                if ((ppos !== start && p !== false) || (rpos !== start &&  r !== false) || (mpos !== start && m !== false) || (apos !== start && a !== false)) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
                             check = msg.substring(start, i)
                             break
                         }
                     }
-                } else if (ppos == start || rpos == start || mpos == start) {
+                } else if (ppos == start || rpos == start || mpos == start || apos == start) {
                     check = ''
                 } else {
                     for (var i = start; i < msg.length; i++) {
@@ -1664,7 +1666,7 @@ ${date}
                     modename = 'Mania'
                 }
                 var name = checkplayer(check)
-                if (p == true && m == false && r == false) {
+                if (p == true && m == false && r == false && a == false) {
                     var n = 0
                     for (var i = ppos + 3; i < msg.length; i++) {
                         if (msg.substr(i+1,1) == '') {
@@ -1743,7 +1745,7 @@ ${date}
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (r == true && p == false && m == false && mode == 0) {
+                } else if (r == true && p == false && m == false && a == false && mode == 0) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
@@ -1807,7 +1809,7 @@ ${date}
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (m == true && p == false && r == false && mode == 0) {
+                } else if (m == true && p == false && r == false && a == false && mode == 0) {
                     var mod = []
                     var getmod = ''
                     var definemod = {
@@ -1914,6 +1916,8 @@ ${date}
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
+                } else if (a == true && p == false && r == false && m == false) {
+                    // Working
                 } else {
                     var best = await osuApi.getUserBest({u: name, limit: 5, m: mode})
                     var userid = best[0][0].user.id
@@ -2088,61 +2092,33 @@ ${date}
         async function beatmapdetail() {
             try {
                 var beatmapid = []
-                var start = 0
                 var mods = []
                 for (var m = 0; m < msg.length; m++) {
                     if (msg.substr(m,21) == 'https://osu.ppy.sh/b/') {
-                        start = m + 21
-                        for (var i = start; i <= msg.length; i++) {
-                            if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
-                                if (msg.substring(start, msg.length).includes('?m=') == true) {
-                                    beatmapid.push(msg.substring(start,i-4))
-                                    start = i
-                                    break;
-                                } else {
-                                    beatmapid.push(msg.substring(start,i))
-                                    start = i
-                                    break;
-                                }
-                            }
+                        var data = msg.split("/")[4]
+                        beatmapid.push(data.split(" ")[0])
+                        if (msg.substring(0, msg.length).includes('?m=') == true) {
+                            beatmapid[0] = msg.substring(msg.indexOf(beatmapid[0]), msg.indexOf('?m='))
                         }
-                        if (msg.substr(start+1,1) == "+") {
-                            for (var i = start+2; i <= msg.length; i++) {
-                                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
-                                    mods.push(msg.substring(start+2,i))
-                                    start = i + 1
-                                    break;
-                                }
-                            }
+                        if (data.split(" ")[1] !== undefined) {
+                            mods.push(data.split(" ")[1])
                         } else {
                             mods.push('No Mod')
                         }
-
+                        break
                     }
                     if (msg.substr(m,31) == 'https://osu.ppy.sh/beatmapsets/') {
-                        start = m + 31
-                        start = msg.indexOf('#', start) + 1
-                        start = msg.indexOf('/', start) + 1
-                        for (var i = start; i <= msg.length; i++) {
-                            if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
-                                beatmapid.push(msg.substring(start,i))
-                                start = i
-                                break;
-                            }
-                        }
-                        if (msg.substr(start+1,1) == "+") {
-                            for (var i = start+2; i <= msg.length; i++) {
-                                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
-                                    mods.push(msg.substring(start+2,i))
-                                    start = i + 1
-                                    break;
-                                }
-                            }
+                        var data = msg.split("/")[5]
+                        beatmapid.push(data.split(" ")[0])
+                        if (data.split(" ")[1] !== undefined) {
+                            mods.push(data.split(" ")[1])
                         } else {
                             mods.push('No Mod')
                         }
+                        break
                     }
                 }
+                console.log(beatmapid, mods)
                 for (i = 0; i < beatmapid.length; i++) {
                     var bitpresent = 0
                     var mod = {
@@ -2220,47 +2196,13 @@ ${date}
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var start = 8
-                var beatmapid = 0
-                var mods = []
-                var acc = 0
-                var combo = 0
-                var miss = 0
+                var option = msg.split(" ")
+                var beatmapid = option[1]
+                var mods = [option[2]]
+                var acc = option[3]
+                var combo = option[4]
+                var miss = option[5]
                 var bitpresent = 0
-                for (var i = start; i < msg.length; i++) {
-                    if (msg.substr(i,1) == ' ') {
-                        beatmapid = msg.substring(start,i)
-                        start = i + 1
-                        break
-                    }
-                }
-                for (var i = start; i < msg.length; i++) {
-                    if (msg.substr(i,1) == ' ') {
-                        mods.push(msg.substring(start,i))
-                        start = i + 1
-                        break
-                    }
-                }
-                for (var i = start; i < msg.length; i++) {
-                    if (msg.substr(i,1) == ' ') {
-                        acc = Number(msg.substring(start,i))
-                        start = i + 1
-                        break
-                    }
-                }
-                for (var i = start; i < msg.length; i++) {
-                    if (msg.substr(i,1) == ' ') {
-                        combo = Number(msg.substring(start,i))
-                        start = i + 1
-                        break
-                    }
-                }
-                for (var i = start; i <= msg.length; i++) {
-                    if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
-                        miss = Number(msg.substring(start,i))
-                        break
-                    }
-                }
                 var mod = {
                     nomod: 0,
                     nf: 1,
@@ -2313,36 +2255,14 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 urlcommand = true
                 var beatmapid = 0
                 var check = ''
-                var start = 0
                 if (msg.substr(8,21) == 'https://osu.ppy.sh/b/') {
-                    start = 8 + 21
-                    for (var i = start; i <= msg.length; i++) {
-                        if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
-                            if (msg.substring(start, msg.length).includes('?m=') == true) {
-                                beatmapid = msg.substring(start,i-4)
-                                start = i
-                                break;
-                            } else {
-                                beatmapid = msg.substring(start,i)
-                                start = i
-                                break;
-                            }
-                        }
+                    beatmapid = msg.split("/")[4]
+                    if (msg.substring(0, msg.length).includes('?m=') == true) {
+                        beatmapid = msg.substring(msg.indexOf(beatmapid), msg.indexOf('?m='))
                     }
-                    check = msg.substring(start + 1, msg.length)
                 }
                 if (msg.substr(8,31) == 'https://osu.ppy.sh/beatmapsets/') {
-                    start = 8 + 31
-                    start = msg.indexOf('#', start) + 1
-                    start = msg.indexOf('/', start) + 1
-                    for (var i = start; i <= msg.length; i++) {
-                        if (msg.substr(i,1) == ' ' || msg.substr(i,1) == ''){
-                            beatmapid = msg.substring(start,i)
-                            start = i
-                            break;
-                        }
-                    }
-                    check = msg.substring(start + 1, msg.length)
+                    beatmapid = msg.split("/")[5]
                 }
                 var name = checkplayer(check)
                 var scores = await osuApi.getScores({b: beatmapid, u: name})
@@ -2418,39 +2338,11 @@ ${date}
         }
 
         function acccalc() {
-            var count300 = 0
-            var count100 = 0
-            var count50 = 0
-            var countmiss = 0
-            var start = 5
-            for (var i = start; i < msg.length; i++) {
-                if (msg.substr(i,1) == ' ') {
-                    count300 = Number(msg.substring(start,i))
-                    start = i + 1
-                    break
-                }
-            }
-            for (var i = start; i < msg.length; i++) {
-                if (msg.substr(i,1) == ' ') {
-                    count100 = Number(msg.substring(start, i))
-                    start = i + 1
-                    break
-                }
-            }
-            for (var i = start; i < msg.length; i++) {
-                if (msg.substr(i,1) == ' ') {
-                    count50 = Number(msg.substring(start,i))
-                    start = i + 1
-                    break
-                }
-            }
-            for (var i = start; i < msg.length; i++) {
-                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
-                    countmiss = Number(msg.substring(start,i))
-                    start = i + 1
-                    break
-                }
-            }
+            var option = msg.split(" ")
+            var count300 = Number(option[1])
+            var count100 = Number(option[2])
+            var count50 = Number(option[3])
+            var countmiss = Number(option[4])
             var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
             message.channel.send(`**Accuracy:** ${acc}%`)
 
