@@ -2118,7 +2118,6 @@ ${date}
                         break
                     }
                 }
-                console.log(beatmapid, mods)
                 for (i = 0; i < beatmapid.length; i++) {
                     var bitpresent = 0
                     var mod = {
