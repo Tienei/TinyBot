@@ -890,7 +890,7 @@ Status: **${defindcode[statuscode]}**`)
 
         // Custom commands
 
-        if (msg.substring(0,10) == '!customcmd' && msg.substring(0,10) == command && message.guild !== undefined) {
+        if (msg.substring(0,10) == '!customcmd' && msg.substring(0,10) == command && message.guild !== null) {
             try {
                 if (message.member.hasPermission("ADMINISTRATOR") == false) {
                     throw 'You need to have administrator to set custom command'
@@ -970,7 +970,7 @@ Status: **${defindcode[statuscode]}**`)
             }
         }
 
-        if (message.guild !== undefined) {
+        if (message.guild !== null) {
             if (customcmd[message.guild.id] !== undefined && customcmd[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
                 try {
                     var respond = customcmd[message.guild.id].find(cmd => cmd.cmd == command).respond
