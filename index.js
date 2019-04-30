@@ -890,7 +890,7 @@ Status: **${defindcode[statuscode]}**`)
 
         // Custom commands
 
-        if (msg.substring(0,10) == '!customcmd' && msg.substring(0,10) == command) {
+        if (msg.substring(0,10) == '!customcmd' && msg.substring(0,10) == command && message.guild !== undefined) {
             try {
                 if (message.member.hasPermission("ADMINISTRATOR") == false) {
                     throw 'You need to have administrator to set custom command'
@@ -970,66 +970,68 @@ Status: **${defindcode[statuscode]}**`)
             }
         }
 
-        if (customcmd[message.guild.id] !== undefined && customcmd[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
-            try {
-                var respond = customcmd[message.guild.id].find(cmd => cmd.cmd == command).respond
-                var define = {
-                    "user": {
-                        "selfname": message.author.username,
-                        "selfping": `<@${message.author.id}>`,
-                        "selfcreatedtime": message.author.createdAt,
-                        "selfpresence": message.author.presence.status,
-                        "othercreatedtime": message.mentions.users.size > 0 ? message.mentions.users.first().createdAt : null,
-                        "otherpresence": message.mentions.users.size > 0 ? message.mentions.users.first().presence.status : null
-                    },
-                    "channel": {
-                        "selfname": message.channel.name,
-                        "selflink": `<@${message.channel.id}>`,
-                        "members": message.channel.members
-                    },
-                    "server": {
-                        "name": message.guild.name,
-                        "members": message.guild.members.size,
-                        "channels": message.guild.channels.size,
-                        "roles": message.guild.roles.size,
-                        "defaultchannel": message.guild.defaultChannel,
-                        "owner": message.guild.owner,
-                        "region": message.guild.region,
-                        "createdtime": message.guild.createdAt
+        if (message.guild !== undefined) {
+            if (customcmd[message.guild.id] !== undefined && customcmd[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
+                try {
+                    var respond = customcmd[message.guild.id].find(cmd => cmd.cmd == command).respond
+                    var define = {
+                        "user": {
+                            "selfname": message.author.username,
+                            "selfping": `<@${message.author.id}>`,
+                            "selfcreatedtime": message.author.createdAt,
+                            "selfpresence": message.author.presence.status,
+                            "othercreatedtime": message.mentions.users.size > 0 ? message.mentions.users.first().createdAt : null,
+                            "otherpresence": message.mentions.users.size > 0 ? message.mentions.users.first().presence.status : null
+                        },
+                        "channel": {
+                            "selfname": message.channel.name,
+                            "selflink": `<@${message.channel.id}>`,
+                            "members": message.channel.members
+                        },
+                        "server": {
+                            "name": message.guild.name,
+                            "members": message.guild.members.size,
+                            "channels": message.guild.channels.size,
+                            "roles": message.guild.roles.size,
+                            "defaultchannel": message.guild.defaultChannel,
+                            "owner": message.guild.owner,
+                            "region": message.guild.region,
+                            "createdtime": message.guild.createdAt
+                        }
                     }
-                }
-                var requireAdmin = false
-                for (var s = 0; s < respond.length; s++) {
-                    if (respond.substr(s,1) == '{') {
-                        for (var e = s; e < respond.length; e++) {
-                            if (respond.substr(e,1) == '}') {
-                                var type = respond.substring(s+1,e)
-                                type = type.replace(".", " ")
-                                type = type.split(" ")
-                                if (type[0].substring(0,1) == "$") {
-                                    var number = Number(type[0].substring(1))
-                                    var option = message.content.split(" ", 10)
-                                    option.splice(0,1)
-                                    respond = respond.replace(respond.substring(s,e+1), option[number])
-                                } else if (type[0] == "require:admin") {
-                                    requireAdmin = true
-                                } else {
-                                    respond = respond.replace(respond.substring(s,e+1), define[type[0]][type[1]])
+                    var requireAdmin = false
+                    for (var s = 0; s < respond.length; s++) {
+                        if (respond.substr(s,1) == '{') {
+                            for (var e = s; e < respond.length; e++) {
+                                if (respond.substr(e,1) == '}') {
+                                    var type = respond.substring(s+1,e)
+                                    type = type.replace(".", " ")
+                                    type = type.split(" ")
+                                    if (type[0].substring(0,1) == "$") {
+                                        var number = Number(type[0].substring(1))
+                                        var option = message.content.split(" ", 10)
+                                        option.splice(0,1)
+                                        respond = respond.replace(respond.substring(s,e+1), option[number])
+                                    } else if (type[0] == "require:admin") {
+                                        requireAdmin = true
+                                    } else {
+                                        respond = respond.replace(respond.substring(s,e+1), define[type[0]][type[1]])
+                                    }
+                                    s = e
+                                    break
                                 }
-                                s = e
-                                break
                             }
                         }
                     }
-                }
-                if (requireAdmin == true) {
-                    if (message.member.hasPermission("ADMINISTRATOR") == false) {
-                        throw "You need administrator enabled to use this!"
+                    if (requireAdmin == true) {
+                        if (message.member.hasPermission("ADMINISTRATOR") == false) {
+                            throw "You need administrator enabled to use this!"
+                        }
                     }
+                    message.channel.send(respond)
+                } catch (error) {
+                    message.channel.send(String(error))
                 }
-                message.channel.send(respond)
-            } catch (error) {
-                message.channel.send(String(error))
             }
         }
 
