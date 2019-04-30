@@ -564,6 +564,12 @@ bot.on("message", (message) => {
                         option: 'username: osu!username of the player (Space replaced with "_")',
                         example: '!osutrack Tienei'
                     },
+                    'osutracklist': {
+                        helpcommand: '!osutracklist',
+                        description: "Get a list of player being tracked in the channel",
+                        option: 'None',
+                        example: '!osutracklist'
+                    },
                     'untrack': {
                         helpcommand: '!untrack (username)',
                         description: "Untrack a player from the database (Required Administration)",
@@ -706,7 +712,7 @@ bot.on("message", (message) => {
                     text = '```' + help[getcmd].helpcommand + '```' + `\n${help[getcmd].description}\n\n**---[Options]:**\n${help[getcmd].option}\n\n**---[Example]:**\n` + help[getcmd].example
                 }
                 const embed = new Discord.RichEmbed()
-                .setAuthor(`Commands for Tiny Bot pre-v3`)
+                .setAuthor(`Commands for Tiny Bot v3`)
                 .setThumbnail(bot.user.avatarURL)
                 .setDescription(text)
                 message.channel.send({embed})
@@ -752,23 +758,11 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot pre-v3.0`)
+            .setAuthor(`Changelog for Tiny Bot v3.0`)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Bot has been re-written and updated to pre-v3! That mean the bot will be somewhat faster and a lot less buggy**
-- Added error detecting
-- Added !akatop, !rippletop
-- Updated osu tracking
-- Added !report
-- Added easter egg
-- Added !recent -b
-- Redesign !help
-- Added !hug, !cuddle, !slap, !kiss
-- Added !rec (recommendation)
-- Fixed Usernames with "-r" ("-d","-b","-p") in front don't register properly (Reported by Yeong, jp0806)
-- Fixed options again (Sorry guys im dumb ;~;)
-- Fixed !map
-- Added cooldown for commands`)
+**Bot is officially updated to v3 and also public!**
+- Added !osutracklist`)
             message.channel.send({embed})
         }
 
@@ -2508,6 +2502,19 @@ ${prizetext}`)
             }
         }
 
+        async function osutracklist() {
+            var currentlytrack = ''
+            for (var i = 0; i < track.length; i++) {
+                if (track[i].trackonchannel.includes(message.channel.id) == true) {
+                    currentlytrack += "``" + track[i].osuname + "`` "
+                }
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Player(s) currently being tracked on #${message.channel.name}`)
+            .setDescription(currentlytrack)
+            message.channel.send(embed)
+        }
+
         async function recommendation() {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
@@ -3066,6 +3073,9 @@ ${date}
         }
         if (msg.substring(0,9) == '!osutrack' && msg.substring(0,9) == command && message.channel.name !== undefined) {
             osutrack()            
+        }
+        if (msg.substring(0,13) == '!osutracklist' && msg.substring(0,13) == command && message.channel.name !== undefined) {
+            osutracklist()            
         }
         if (msg.substring(0,8) == '!untrack' && msg.substring(0,8) == command && message.channel.name !== undefined) {
             untrack()
