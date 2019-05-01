@@ -991,7 +991,7 @@ Status: **${defindcode[statuscode]}**`)
                         "server": {
                             "name": message.guild.name,
                             "members": message.guild.members.filter(x => x.user.bot == false).size,
-                            "bots":message.guild.members.filter(x => x.user.bot == true).size,
+                            "bots": message.guild.members.filter(x => x.user.bot == true).size,
                             "channels": message.guild.channels.size,
                             "roles": message.guild.roles.size,
                             "defaultchannel": message.guild.defaultChannel,
@@ -1018,7 +1018,6 @@ Status: **${defindcode[statuscode]}**`)
                                     } else {
                                         respond = respond.replace(respond.substring(s,e+1), define[type[0]][type[1]])
                                     }
-                                    s = e
                                     break
                                 }
                             }
