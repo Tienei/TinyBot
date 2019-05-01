@@ -12,6 +12,7 @@ const request = require('request-promise-native');
 const calc = require('ojsama')
 const fs = require('fs')
 const san = require('sanitize-html')
+const jimp = require('jimp')
 
 var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
