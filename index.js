@@ -411,6 +411,24 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
     setInterval(realtimeosutrack, 25000)
 });
 
+bot.on("guildMemberAdd", (member) => {
+    async function welcomeMessage() {
+        if (member.guild.id == "450576647976910869") {
+            var imageholder = await jimp.read('./bot.png')
+            var avatar = await jimp.read(member.user.avatarURL)
+            var placeholder = await new jimp(563, 125)
+            avatar.resize(105,105)
+            placeholder.composite(avatar, 214, 10)
+            placeholder.composite(imageholder,0,0)
+            var text = await jimp.loadFont(jimp.FONT_SANS_32_WHITE)
+            placeholder.print(text, 347, 12, member.user.username + ',')
+            placeholder.write('./welcome.png')
+            bot.channels.get("487479898903150612").send(`<@${member.id}>`, {files: ['./welcome.png']})
+        }
+    }
+   welcomeMessage()
+})
+
 bot.on("message", (message) => {
     var msg = message.content.toLowerCase();
     refresh = Math.round(Math.random()* 2147483648)
