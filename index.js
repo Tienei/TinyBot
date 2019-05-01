@@ -990,7 +990,8 @@ Status: **${defindcode[statuscode]}**`)
                         },
                         "server": {
                             "name": message.guild.name,
-                            "members": message.guild.members.size,
+                            "members": message.guild.members.filter(x => x.user.bot == false).size,
+                            "bots":message.guild.members.filter(x => x.user.bot == true).size,
                             "channels": message.guild.channels.size,
                             "roles": message.guild.roles.size,
                             "defaultchannel": message.guild.defaultChannel,
