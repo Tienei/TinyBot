@@ -569,7 +569,7 @@ bot.on("message", (message) => {
                     'osutop': {
                         helpcommand: '!osutop (username) (options)',
                         description: "View a player's osu!Standard top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play: `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
+                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)',
                         example: '!osutop Tienei -m HDHR'
                     },
                     'taikotop': {
@@ -803,7 +803,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setDescription(`
 **Bot is officially updated to v3 and also public!**
 - Added !osutracklist
-- Added !customcmd`)
+- Added !customcmd
+- Added !osutop -a (Idea by Fog)
+- Added !osutop -g`)
             message.channel.send({embed})
         }
 
@@ -1647,22 +1649,24 @@ ${date}
                 var r = msg.includes('-r')
                 var m = msg.includes('-m')
                 var a = msg.includes('-a')
-                var ppos = msg.indexOf('-p'), rpos = msg.indexOf('-r'), mpos = msg.indexOf('-m'), apos = msg.indexOf('-a')
+                var g = msg.includes('-g')
+                var ppos = msg.indexOf('-p'), rpos = msg.indexOf('-r'), mpos = msg.indexOf('-m'), apos = msg.indexOf('-a'), gpos = msg.indexOf('-g')
                 if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 if (msg.substr(msg.indexOf('-r')+2,1) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
                 if (msg.substr(msg.indexOf('-m')+2,1) !== " ") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
-                if (msg.substr(msg.indexOf('-a')+2,1) !== " ") {mpos = msg.indexOf('-a', start+2); apos > -1 ? a = true : a = false}
+                if (msg.substr(msg.indexOf('-a')+2,1) !== " ") {apos = msg.indexOf('-a', start+2); apos > -1 ? a = true : a = false}
+                if (msg.substr(msg.indexOf('-g')+2,1) !== " ") {gpos = msg.indexOf('-a', start+2); gpos > -1 ? g = true : g = false}
                 var check = ''
                 var top = ''
                 var modename = ''
-                if ((ppos !== start && p !== false) || (rpos !== start &&  r !== false) || (mpos !== start && m !== false) || (apos !== start && a !== false)) {
+                if ((ppos !== start && p !== false) || (rpos !== start &&  r !== false) || (mpos !== start && m !== false) || (apos !== start && a !== false) || (gpos !== start && g !== false)) {
                     for (var i = start; i < msg.length; i++) {
                         if (msg.substr(i,1) == ' ') {
                             check = msg.substring(start, i)
                             break
                         }
                     }
-                } else if (ppos == start || rpos == start || mpos == start || apos == start) {
+                } else if (ppos == start || rpos == start || mpos == start || apos == start || gpos == start) {
                     check = ''
                 } else {
                     for (var i = start; i < msg.length; i++) {
@@ -1685,7 +1689,7 @@ ${date}
                     modename = 'Mania'
                 }
                 var name = checkplayer(check)
-                if (p == true && m == false && r == false && a == false) {
+                if (p == true && m == false && r == false && a == false && g == false) {
                     var n = 0
                     for (var i = ppos + 3; i < msg.length; i++) {
                         if (msg.substr(i+1,1) == '') {
@@ -1764,7 +1768,7 @@ ${date}
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (r == true && p == false && m == false && a == false && mode == 0) {
+                } else if (r == true && p == false && m == false && a == false && g == false && mode == 0) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
@@ -1828,7 +1832,7 @@ ${date}
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (m == true && p == false && r == false && a == false && mode == 0) {
+                } else if (m == true && p == false && r == false && a == false && g == false && mode == 0) {
                     var mod = []
                     var getmod = ''
                     var definemod = {
@@ -1935,8 +1939,126 @@ ${date}
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (a == true && p == false && r == false && m == false) {
-                    // Working
+                } else if (a == true && p == false && r == false && m == false && g == false) {
+                    var best = await osuApi.getUserBest({u: name, limit: 100})
+                    var compare = ''
+                    var compareacc = 0
+                    var start = 0
+                    if (best.length == 0) {
+                        throw `I think ${name} didn't play anything yet~ **-Chino**`
+                    }
+                    for (var i = apos + 3; i < msg.length; i++) {
+                        if (msg.substr(i,1) == ' ') {
+                            compare = msg.substring(apos + 3, i)
+                            start = i + 1
+                            break
+                        }
+                    }
+                    for (var i = start; i < msg.length; i++) {
+                        if (msg.substr(i+1,1) == '') {
+                            compareacc = Number(msg.substring(start, i+1))
+                            break
+                        }
+                    }
+                    var userid = best[0][0].user.id
+                    var user = await osuApi.getUser({u: userid})
+                    var username = user.name
+                    for (var i = 0; i < best.length; i++) {
+                        best[i][0].top = i+1
+                    }
+                    for (var i = 0; i < best.length; i++) {
+                        var count300 = Number(best[i][0].counts['300'])
+                        var count100 = Number(best[i][0].counts['100'])
+                        var count50 = Number(best[i][0].counts['50'])
+                        var countmiss = Number(best[i][0].counts.miss)
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
+                        if (compare == ">" && acc < compareacc) {
+                            best.splice(i, 1)
+                            i -= 1
+                        }
+                        if (compare == "<" && acc > compareacc) {
+                            best.splice(i, 1)
+                            i -= 1
+                        }
+                    }
+                    best.sort(function (a,b) {
+                        var a_count300 = Number(a[0].counts['300'])
+                        var a_count100 = Number(a[0].counts['100'])
+                        var a_count50 = Number(a[0].counts['50'])
+                        var a_countmiss = Number(a[0].counts.miss)
+                        var b_count300 = Number(b[0].counts['300'])
+                        var b_count100 = Number(b[0].counts['100'])
+                        var b_count50 = Number(b[0].counts['50'])
+                        var b_countmiss = Number(b[0].counts.miss)
+                        var a1 = Number((300 * a_count300 + 100 * a_count100 + 50 * a_count50) / (300 * (a_count300 + a_count100 + a_count50 + a_countmiss)) * 100)
+                        var b1 = Number((300 * b_count300 + 100 * b_count100 + 50 * b_count50) / (300 * (b_count300 + b_count100 + b_count50 + b_countmiss)) * 100)
+                        return a1 - b1
+                    })
+                    for (var i = best.length-1; i > best.length - 6; i--) {
+                        var title = best[i][1].title
+                        var diff = best[i][1].version
+                        var beatmapid = best[i][1].id
+                        var score = best[i][0].score
+                        var count300 = Number(best[i][0].counts['300'])
+                        var count100 = Number(best[i][0].counts['100'])
+                        var count50 = Number(best[i][0].counts['50'])
+                        var countmiss = Number(best[i][0].counts.miss)
+                        var combo = best[i][0].maxCombo
+                        var fc = best[i][1].maxCombo
+                        var letter = best[i][0].rank
+                        var rank = rankingletters(letter)
+                        var pp = Number(best[i][0].pp).toFixed(2)
+                        var mod = best[i][0].mods
+                        var perfect = best[i][0].perfect
+                        var modandbit = mods(mod)
+                        var shortenmod = modandbit.shortenmod
+                        var bitpresent = modandbit.bitpresent
+                        var date = timeago(best[i][0].date)
+                        if (message.guild !== null) {
+                            storedmapid.push({id:beatmapid,server:message.guild.id})
+                        } else {
+                            storedmapid.push({id:beatmapid,user:message.author.id})
+                        }
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                        var parser = await precalc(beatmapid)     
+                        var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                        var fcpp = Number(fccalc.pp.total).toFixed(2)
+                        var fcacc = fccalc.acc
+                        var star = Number(fccalc.star.total).toFixed(2)
+                        var fcguess = ''
+                        if (perfect == 0) {
+                            fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                        }
+                        top += `
+${best[i][0].top}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
+`
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Top osu!Standard best accuracy plays for ${username}`)
+                    .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+                    .setColor('#7f7fff')
+                    .setDescription(top)
+                    message.channel.send({embed});
+                } else if (g == true && p == false && r == false && m == false && a == false) {
+                    var best = await osuApi.getUserBest({u: name, limit: 100})
+                    var user = await osuApi.getUser({u: name})
+                    var username = user.name
+                    var gtpp = 0
+                    for (var i = gpos; i < msg.length; i++) {
+                        if (msg.substr(i+1,1) == '') {
+                            gtpp = Number(msg.substring(gpos + 3, i+1))
+                            break
+                        }
+                    }
+                    for (var i = best.length - 1; i > 0; i--) {
+                        if (best[i][0].pp > gtpp) {
+                            message.channel.send(`${username} has **${i+1} plays** worth more than **${gtpp}pp**`)
+                            break
+                        }
+                    }
                 } else {
                     var best = await osuApi.getUserBest({u: name, limit: 5, m: mode})
                     var userid = best[0][0].user.id
