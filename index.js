@@ -569,7 +569,7 @@ bot.on("message", (message) => {
                     'osutop': {
                         helpcommand: '!osutop (username) (options)',
                         description: "View a player's osu!Standard top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)',
+                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)',
                         example: '!osutop Tienei -m HDHR'
                     },
                     'taikotop': {
@@ -1655,7 +1655,7 @@ ${date}
                 if (msg.substr(msg.indexOf('-r')+2,1) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
                 if (msg.substr(msg.indexOf('-m')+2,1) !== " ") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
                 if (msg.substr(msg.indexOf('-a')+2,1) !== " ") {apos = msg.indexOf('-a', start+2); apos > -1 ? a = true : a = false}
-                if (msg.substr(msg.indexOf('-g')+2,1) !== " ") {gpos = msg.indexOf('-a', start+2); gpos > -1 ? g = true : g = false}
+                if (msg.substr(msg.indexOf('-g')+2,1) !== " ") {gpos = msg.indexOf('-g', start+2); gpos > -1 ? g = true : g = false}
                 var check = ''
                 var top = ''
                 var modename = ''
