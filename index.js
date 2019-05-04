@@ -575,19 +575,19 @@ bot.on("message", (message) => {
                     'taikotop': {
                         helpcommand: '!taikotop (username) (options)',
                         description: "View a player's osu!Taiko top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
                         example: '!taikotop Tienei -p 8'
                     },
                     'ctbtop': {
                         helpcommand: '!ctbtop (username) (options)',
                         description: "View a player's osu!Catch the beat top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
                         example: '!ctbtop Tienei -p 9'
                     },
                     'maniatop': {
                         helpcommand: '!maniatop (username) (options)',
                         description: "View a player's osu!Mania top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
                         example: '!maniatop Tienei -p 4'
                     },
                     'osutrack': {
@@ -1939,8 +1939,8 @@ ${date}
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (a == true && p == false && r == false && m == false && g == false) {
-                    var best = await osuApi.getUserBest({u: name, limit: 100})
+                } else if (a == true && p == false && r == false && m == false && g == false && mode == 0) {
+                    var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var compare = ''
                     var compareacc = 0
                     var start = 0
@@ -2043,7 +2043,7 @@ ${date}
                     .setDescription(top)
                     message.channel.send({embed});
                 } else if (g == true && p == false && r == false && m == false && a == false) {
-                    var best = await osuApi.getUserBest({u: name, limit: 100})
+                    var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var user = await osuApi.getUser({u: name})
                     var username = user.name
                     var gtpp = 0
@@ -2053,9 +2053,13 @@ ${date}
                             break
                         }
                     }
-                    for (var i = best.length - 1; i > 0; i--) {
+                    for (var i = best.length - 1; i > -1; i--) {
                         if (best[i][0].pp > gtpp) {
                             message.channel.send(`${username} has **${i+1} plays** worth more than **${gtpp}pp**`)
+                            break
+                        }
+                        if (i < 1) {
+                            message.channel.send(`${username} has **0 plays** worth more than **${gtpp}pp**`)
                             break
                         }
                     }
