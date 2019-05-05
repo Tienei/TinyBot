@@ -545,55 +545,55 @@ bot.on("message", (message) => {
                     'osu': {
                         helpcommand: '!osu (username) (options)',
                         description: 'Get an osu!Standard profile',
-                        option: 'username: osu!username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the details of the player `(no param)`',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`',
                         example: '!osu Tienei -d'
                     },
                     'taiko': {
                         helpcommand: '!taiko (username)',
                         description: 'Get an osu!Taiko profile',
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!taiko Tienei'
                     },
                     'ctb': {
                         helpcommand: '!ctb (username)',
                         description: 'Get an osu!Catch the beat profile',
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!ctb Tienei'
                     },
                     'mania': {
                         helpcommand: '!mania (username)',
                         description: 'Get an osu!Mania profile',
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!mania Tienei'
                     },
                     'osutop': {
                         helpcommand: '!osutop (username) (options)',
                         description: "View a player's osu!Standard top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)',
                         example: '!osutop Tienei -m HDHR'
                     },
                     'taikotop': {
                         helpcommand: '!taikotop (username) (options)',
                         description: "View a player's osu!Taiko top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
                         example: '!taikotop Tienei -p 8'
                     },
                     'ctbtop': {
                         helpcommand: '!ctbtop (username) (options)',
                         description: "View a player's osu!Catch the beat top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
                         example: '!ctbtop Tienei -p 9'
                     },
                     'maniatop': {
                         helpcommand: '!maniatop (username) (options)',
                         description: "View a player's osu!Mania top play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`',
                         example: '!maniatop Tienei -p 4'
                     },
                     'osutrack': {
                         helpcommand: '!osutrack (username)',
                         description: "Track a player's osu!Standard top 50 (Required Administration)",
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!osutrack Tienei'
                     },
                     'osutracklist': {
@@ -605,37 +605,37 @@ bot.on("message", (message) => {
                     'untrack': {
                         helpcommand: '!untrack (username)',
                         description: "Untrack a player from the database (Required Administration)",
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!untrack Tienei'
                     },
                     'recent': {
                         helpcommand: '![recent|r] (username) (options)',
                         description: "Get player's most recent play",
-                        option: 'username: osu!username of the player (Space replaced with "_")\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`',
                         example: '!r Tienei -b'
                     },
                     'compare': {
                         helpcommand: '![compare|c] (username) ',
                         description: "Compare to the last play in the chat",
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!c Tienei'
                     },
                     'osuset': {
                         helpcommand: '!osuset (username)',
                         description: 'Link your profile to an osu! player',
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!osuset Tienei'
                     },
                     'osuavatar': {
                         helpcommand: '!osuavatar (username)',
                         description: "Get player's osu! avatar",
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!osuavatar Tienei'
                     },
                     'osusig': {
                         helpcommand: '!osusig (username)',
                         description: "Generate a signature of a player's profile",
-                        option: 'username: osu!username of the player (Space replaced with "_")',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!osusig Tienei'
                     },
                     'map': {
@@ -653,7 +653,7 @@ bot.on("message", (message) => {
                     'scores': {
                         helpcommand: '!scores (map link) (username)',
                         description: "Get player's play on a specific map",
-                        option: 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_")',
+                        option: 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!scores https://osu.ppy.sh/b/1157868 Cookiezi'
                     },
                     'acc': {
@@ -672,50 +672,50 @@ bot.on("message", (message) => {
                     'akatsuki': {
                         helpcommand: '!akatsuki (username) (options)',
                         description: 'Get an Akatuski Standard profile',
-                        option: 'username: Akatsuki username of the player (Space replaced with "_")\nDetails `(-d)`: Get all the details of the player `(no param)`',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`',
                         example: '!akatsuki Tienei -d'
                     },
                     'akatr': {
                         helpcommand: '!akatr (username)',
                         description: "Get player's most recent play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_")',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!akatr Tienei'
                     },
                     'akattop': {
                         helpcommand: '!akattop (username) (options)',
                         description: "View a player's Akatsuki Standard top play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
                         example: '!akattop Tienei -p 8'
                     },
                     'akatavatar': {
                         helpcommand: '!akatavatar (username)',
                         description: "Get player's Akatsuki avatar",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_")',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!akatavatar Tienei'
                     },
                     // Ripple
                     'ripple': {
                         helpcommand: '!ripple (username) (options)',
                         description: 'Get an  Ripple Standard profile',
-                        option: 'username: Ripple username of the player (Space replaced with "_")\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
+                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
                         example: '!ripple Tienei -d'
                     },
                     'rippler': {
                         helpcommand: '!rippler (username)',
                         description: "Get player's most recent play",
-                        option: 'username: Ripple username of the player (Space replaced with "_")',
+                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!rippler Tienei'
                     },
                     'rippletop': {
                         helpcommand: '!rippletop (username) (options)',
                         description: "View a player's Ripple Standard top play",
-                        option: 'username: Ripple username of the player (Space replaced with "_")\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
                         example: '!rippletop Tienei -p 8'
                     },
                     'rippleavatar': {
                         helpcommand: '!rippleavatar (username)',
                         description: "Get player's Ripple avatar",
-                        option: 'username: Ripple username of the player (Space replaced with "_")',
+                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!rippleavatar Tienei'
                     },
                     //Other
@@ -805,7 +805,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !osutracklist
 - Added !customcmd
 - Added !osutop -a (Idea by Fog)
-- Added !osutop -g`)
+- Added !osutop -g
+- Added quotation mark support (for name that has spaces)`)
             message.channel.send({embed})
         }
 
@@ -1190,20 +1191,33 @@ Status: **${defindcode[statuscode]}**`)
                 }
                 setCommandCooldown(command, 3000)
                 var check = ''
-                var cmdcheck = ['-d']
-                var option = msg.split(" ")
-                var optionpos = -1
-                if (cmdcheck.indexOf(option[2]) > -1) {
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
                     check = option[1]
-                    optionpos = 2
-                } else if (cmdcheck.indexOf(option[1]) > -1) {
-                    check = ''
+                    if (option[option.indexOf(check) - 1] == command + " ") {
+                        option = option[2]
+                    } else {
+                        option = option[0]   
+                    }
+                    option = option.split(" ")
                     optionpos = 1
                 } else {
-                    if (option.length > 1) {
+                    option = msg.split(" ")
+                    var cmdcheck = ['-d']
+                    var optionpos = -1
+                    if (cmdcheck.indexOf(option[2]) > -1) {
                         check = option[1]
-                    } else {
+                        optionpos = 2
+                    } else if (cmdcheck.indexOf(option[1]) > -1) {
                         check = ''
+                        optionpos = 1
+                    } else {
+                        if (option.length > 1) {
+                            check = option[1]
+                        } else {
+                            check = ''
+                        }
                     }
                 }
                 var d = (option[optionpos] == '-d')
@@ -1338,7 +1352,13 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
         }
 
         async function osusig() {
-            var check = message.content.substring(8)
+            var option = ''
+            if (msg.includes('"') == true) {
+                option = msg.split('"')
+            } else {
+                option = msg.split(" ")
+            }
+            var check = option[1]
             var name = checkplayer(check)
             const embed = new Discord.RichEmbed()
             .setAuthor(`Signature for ${name}`)
@@ -1347,7 +1367,13 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
         }
 
         async function osuavatar() {
-            var name = message.content.substring(11)
+            var option = ''
+            if (msg.includes('"') == true) {
+                option = msg.split('"')
+            } else {
+                option = msg.split(" ")
+            }
+            var check = option[1]
             var user = await osuApi.apiCall('/get_user', {u: name})
             var username = user[0].username
             var id = user[0].user_id
@@ -1358,7 +1384,13 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
         }
 
         async function osuset() {
-            var osuname = message.content.substring(8)
+            var option = ''
+            if (msg.includes('"') == true) {
+                option = msg.split('"')
+            } else {
+                option = msg.split(" ")
+            }
+            var check = option[1]
             var user = await osuApi.getUser({u: osuname})
             var name = user.name
             if (name == undefined) {
@@ -1391,20 +1423,33 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 }
                 setCommandCooldown(command, 3000)
                 var check = ''
-                var cmdcheck = ['-b']
-                var option = msg.split(" ")
-                var optionpos = -1
-                if (cmdcheck.indexOf(option[2]) > -1) {
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
                     check = option[1]
-                    optionpos = 2
-                } else if (cmdcheck.indexOf(option[1]) > -1) {
-                    check = ''
+                    if (option[option.indexOf(check) - 1] == command + " ") {
+                        option = option[2]
+                    } else {
+                        option = option[0]   
+                    }
+                    option = option.split(" ")
                     optionpos = 1
                 } else {
-                    if (option.length > 1) {
+                    option = msg.split(" ")
+                    var cmdcheck = ['-b']
+                    var optionpos = -1
+                    if (cmdcheck.indexOf(option[2]) > -1) {
                         check = option[1]
-                    } else {
+                        optionpos = 2
+                    } else if (cmdcheck.indexOf(option[1]) > -1) {
                         check = ''
+                        optionpos = 1
+                    } else {
+                        if (option.length > 1) {
+                            check = option[1]
+                        } else {
+                            check = ''
+                        }
                     }
                 }
                 var b = (option[optionpos] == '-b')
@@ -1542,13 +1587,19 @@ ${mapcompleted} ${date}
             }
         }
 
-        async function compare(start) {
+        async function compare() {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var check = message.content.substring(start);
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
+                } else {
+                    option = msg.split(" ")
+                }
+                var check = option[1]
                 var name = checkplayer(check)
                 var storedid = 0
                 for (var i = storedmapid.length -1 ; i > -1; i--) {
@@ -1642,20 +1693,33 @@ ${date}
                 var check = ''
                 var top = ''
                 var modename = ''
-                var cmdcheck = ['-p', '-r', '-m', '-a', '-g']
-                var option = msg.split(" ")
-                var optionpos = -1
-                if (cmdcheck.indexOf(option[2]) > -1) {
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
                     check = option[1]
-                    optionpos = 2
-                } else if (cmdcheck.indexOf(option[1]) > -1) {
-                    check = ''
+                    if (option[option.indexOf(check) - 1] == command + " ") {
+                        option = option[2]
+                    } else {
+                        option = option[0]   
+                    }
+                    option = option.split(" ")
                     optionpos = 1
                 } else {
-                    if (option.length > 1) {
+                    option = msg.split(" ")
+                    var cmdcheck = ['-p', '-r', '-m', '-a', '-g']
+                    var optionpos = -1
+                    if (cmdcheck.indexOf(option[2]) > -1) {
                         check = option[1]
-                    } else {
+                        optionpos = 2
+                    } else if (cmdcheck.indexOf(option[1]) > -1) {
                         check = ''
+                        optionpos = 1
+                    } else {
+                        if (option.length > 1) {
+                            check = option[1]
+                        } else {
+                            check = ''
+                        }
                     }
                 }
                 var p = (option[optionpos] == '-p')
@@ -2355,13 +2419,21 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var beatmapid = 0
                 var check = ''
                 if (msg.substr(8,21) == 'https://osu.ppy.sh/b/') {
-                    beatmapid = msg.split("/")[4]
+                    beatmapid = msg.split("/")[4].split(' ')[0]
                     if (msg.substring(0, msg.length).includes('?m=') == true) {
                         beatmapid = msg.substring(msg.indexOf(beatmapid), msg.indexOf('?m='))
                     }
                 }
                 if (msg.substr(8,31) == 'https://osu.ppy.sh/beatmapsets/') {
-                    beatmapid = msg.split("/")[5]
+                    beatmapid = msg.split("/")[5].split(' ')[0]
+                }
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
+                    check = option[1]
+                } else {
+                    option = msg.split(" ")
+                    check = option[2]
                 }
                 var name = checkplayer(check)
                 var scores = await osuApi.getScores({b: beatmapid, u: name})
@@ -2431,7 +2503,6 @@ ${date}
                 message.channel.send({embed});
                 urlcommand = false
             } catch (error) {
-                urlcommand = false
                 message.channel.send(String(error))
             }
         }
@@ -2841,20 +2912,33 @@ ${prizetext}`)
                 }
                 setCommandCooldown(command, 3000)
                 var check = ''
-                var cmdcheck = ['-d']
-                var option = msg.split(" ")
-                var optionpos = -1
-                if (cmdcheck.indexOf(option[2]) > -1) {
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
                     check = option[1]
-                    optionpos = 2
-                } else if (cmdcheck.indexOf(option[1]) > -1) {
-                    check = ''
+                    if (option[option.indexOf(check) - 1] == command + " ") {
+                        option = option[2]
+                    } else {
+                        option = option[0]   
+                    }
+                    option = option.split(" ")
                     optionpos = 1
                 } else {
-                    if (option.length > 1) {
+                    option = msg.split(" ")
+                    var cmdcheck = ['-d']
+                    var optionpos = -1
+                    if (cmdcheck.indexOf(option[2]) > -1) {
                         check = option[1]
-                    } else {
+                        optionpos = 2
+                    } else if (cmdcheck.indexOf(option[1]) > -1) {
                         check = ''
+                        optionpos = 1
+                    } else {
+                        if (option.length > 1) {
+                            check = option[1]
+                        } else {
+                            check = ''
+                        }
                     }
                 }
                 var d = (option[optionpos] == '-d')
@@ -2962,14 +3046,21 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
             }
         }
 
-        async function otherserverrecent(start,serverlink) {
+        async function otherserverrecent(serverlink) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${message.content.substring(start)}`)
-                var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${message.content.substring(start)}`)
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
+                } else {
+                    option = msg.split(" ")
+                }
+                var check = option[1]
+                var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}`)
+                var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${check}`)
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
                 var servername = ''
@@ -3039,20 +3130,33 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 setCommandCooldown(command, 3000)
                 var check = ''
                 var top = ''
-                var cmdcheck = ['-p']
-                var option = msg.split(" ")
-                var optionpos = -1
-                if (cmdcheck.indexOf(option[2]) > -1) {
+                var option = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
                     check = option[1]
-                    optionpos = 2
-                } else if (cmdcheck.indexOf(option[1]) > -1) {
-                    check = ''
+                    if (option[option.indexOf(check) - 1] == command + " ") {
+                        option = option[2]
+                    } else {
+                        option = option[0]   
+                    }
+                    option = option.split(" ")
                     optionpos = 1
                 } else {
-                    if (option.length > 1) {
+                    option = msg.split(" ")
+                    var cmdcheck = ['-p']
+                    var optionpos = -1
+                    if (cmdcheck.indexOf(option[2]) > -1) {
                         check = option[1]
-                    } else {
+                        optionpos = 2
+                    } else if (cmdcheck.indexOf(option[1]) > -1) {
                         check = ''
+                        optionpos = 1
+                    } else {
+                        if (option.length > 1) {
+                            check = option[1]
+                        } else {
+                            check = ''
+                        }
                     }
                 }
                 var p = (option[optionpos] == '-p')
@@ -3194,10 +3298,10 @@ ${date}
             recent(3)
         }
         if (msg.substring(0,7) == '!compare' && msg.substring(0,7) == command) {
-            compare(8)
+            compare()
         }
         if (msg.substring(0,2) == '!c' && msg.substring(0,2) == command) {
-            compare(3)
+            compare()
         }
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
             osutop(0)
@@ -3248,7 +3352,7 @@ ${date}
             otherserverosu('akatsuki.pw')
         }
         if (msg.substring(0,6) == '!akatr' && msg.substring(0,6) == command) {
-            otherserverrecent(7,'akatsuki.pw')
+            otherserverrecent('akatsuki.pw')
         }
         if (msg.substring(0,8) == '!akattop' && msg.substring(0,8) == command) {
             otherservertop('akatsuki.pw')
@@ -3263,7 +3367,7 @@ ${date}
             otherserverosu('ripple.moe')
         }
         if (msg.substring(0,8) == '!rippler' && msg.substring(0,8) == command) {
-            otherserverrecent(9,'ripple.moe')
+            otherserverrecent('ripple.moe')
         }
         if (msg.substring(0,10) == '!rippletop' && msg.substring(0,10) == command) {
             otherservertop('ripple.moe')
