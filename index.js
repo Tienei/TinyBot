@@ -1183,22 +1183,22 @@ Status: **${defindcode[statuscode]}**`)
             }
         }
 
-        async function osu(start,mode) {
+        async function osu(mode) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var d = msg.includes('-d')
-                var dpos = msg.indexOf('-d')
-                if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); dpos > -1 ? d = true : d = false}
                 var check = ''
                 var cmdcheck = ['-d']
                 var option = msg.split(" ")
+                var optionpos = -1
                 if (cmdcheck.indexOf(option[2]) > -1) {
                     check = option[1]
+                    optionpos = 2
                 } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
+                    optionpos = 1
                 } else {
                     if (option.length > 1) {
                         check = option[1]
@@ -1206,6 +1206,7 @@ Status: **${defindcode[statuscode]}**`)
                         check = ''
                     }
                 }
+                var d = (option[optionpos] == '-d')
                 var name = checkplayer(check)
                 if (d == true && mode == 0) {
                     var user = await osuApi.getUser({u: name, event_days: 31})
@@ -1383,22 +1384,22 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             }
         }
 
-        async function recent(start) {
+        async function recent() {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var b = msg.includes('-b')
-                var bpos = msg.indexOf('-b')
-                if (msg.substr(msg.indexOf('-b')+2,1) !== "") {bpos = msg.indexOf('-b', start+2); bpos > -1 ? b = true : b = false}
                 var check = ''
                 var cmdcheck = ['-b']
                 var option = msg.split(" ")
+                var optionpos = -1
                 if (cmdcheck.indexOf(option[2]) > -1) {
                     check = option[1]
+                    optionpos = 2
                 } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
+                    optionpos = 1
                 } else {
                     if (option.length > 1) {
                         check = option[1]
@@ -1406,6 +1407,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                         check = ''
                     }
                 }
+                var b = (option[optionpos] == '-b')
                 var name = checkplayer(check)
                 if (b == true) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
@@ -1631,32 +1633,24 @@ ${date}
             }
         }
 
-        async function osutop(mode, start) {
+        async function osutop(mode) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var p = msg.includes('-p')
-                var r = msg.includes('-r')
-                var m = msg.includes('-m')
-                var a = msg.includes('-a')
-                var g = msg.includes('-g')
-                var ppos = msg.indexOf('-p'), rpos = msg.indexOf('-r'), mpos = msg.indexOf('-m'), apos = msg.indexOf('-a'), gpos = msg.indexOf('-g')
-                if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
-                if (msg.substr(msg.indexOf('-r')+2,1) !== "") {rpos = msg.indexOf('-r', start+2); rpos > -1 ? r = true : r = false}
-                if (msg.substr(msg.indexOf('-m')+2,1) !== " ") {mpos = msg.indexOf('-m', start+2); mpos > -1 ? m = true : m = false}
-                if (msg.substr(msg.indexOf('-a')+2,1) !== " ") {apos = msg.indexOf('-a', start+2); apos > -1 ? a = true : a = false}
-                if (msg.substr(msg.indexOf('-g')+2,1) !== " ") {gpos = msg.indexOf('-g', start+2); gpos > -1 ? g = true : g = false}
                 var check = ''
                 var top = ''
                 var modename = ''
                 var cmdcheck = ['-p', '-r', '-m', '-a', '-g']
                 var option = msg.split(" ")
+                var optionpos = -1
                 if (cmdcheck.indexOf(option[2]) > -1) {
                     check = option[1]
+                    optionpos = 2
                 } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
+                    optionpos = 1
                 } else {
                     if (option.length > 1) {
                         check = option[1]
@@ -1664,6 +1658,11 @@ ${date}
                         check = ''
                     }
                 }
+                var p = (option[optionpos] == '-p')
+                var r = (option[optionpos] == '-r')
+                var m = (option[optionpos] == '-m')
+                var a = (option[optionpos] == '-a')
+                var g = (option[optionpos] == '-g')
                 if (mode == 0) {
                     modename = 'Standard'
                 }
@@ -1919,7 +1918,6 @@ ${date}
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var compare = option[option.indexOf('-a') + 1]
                     var compareacc = Number(option[option.indexOf('-a') + 2])
-                    var start = 0
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
                     }
@@ -2836,22 +2834,22 @@ ${prizetext}`)
             message.channel.send({embed})
         }
 
-        async function otherserverosu(start, serverlink) {
+        async function otherserverosu(serverlink) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var d = msg.includes('-d')
-                var dpos = msg.indexOf('-d')
-                if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
                 var check = ''
                 var cmdcheck = ['-d']
                 var option = msg.split(" ")
+                var optionpos = -1
                 if (cmdcheck.indexOf(option[2]) > -1) {
                     check = option[1]
+                    optionpos = 2
                 } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
+                    optionpos = 1
                 } else {
                     if (option.length > 1) {
                         check = option[1]
@@ -2859,6 +2857,7 @@ ${prizetext}`)
                         check = ''
                     }
                 }
+                var d = (option[optionpos] == '-d')
                 var servername = ''
                 if (serverlink == 'akatsuki.pw') {
                     servername = 'Akatsuki'
@@ -3032,23 +3031,23 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
             }
         }
 
-        async function otherservertop(start, serverlink) {
+        async function otherservertop(serverlink) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
-                var p = msg.includes('-p')
-                var ppos = msg.indexOf('-p')
-                if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 var check = ''
                 var top = ''
                 var cmdcheck = ['-p']
                 var option = msg.split(" ")
+                var optionpos = -1
                 if (cmdcheck.indexOf(option[2]) > -1) {
                     check = option[1]
+                    optionpos = 2
                 } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
+                    optionpos = 1
                 } else {
                     if (option.length > 1) {
                         check = option[1]
@@ -3056,6 +3055,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                         check = ''
                     }
                 }
+                var p = (option[optionpos] == '-p')
                 var servername = ''
                 if (serverlink == 'akatsuki.pw') {
                     servername = 'Akatsuki'
@@ -3064,13 +3064,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     servername = 'Ripple'
                 }
                 if (p == true) {
-                    var n = 0
-                    for (var i = ppos + 3; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            n = Number(msg.substring(ppos + 3, i+1)) -1
-                            break
-                        }
-                    }
+                    var n = Number(option[option.indexOf('-p') + 1]) - 1
                     var data = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}`)
                     var best = JSON.parse(data)
                     var userid = best.scores[0].id
@@ -3173,16 +3167,16 @@ ${date}
         // Osu
 
         if (msg.substring(0,4) == '!osu' && msg.substring(0,4) == command) {
-            osu(5,0)
+            osu(0)
         }
         if (msg.substring(0,6) == '!taiko' && msg.substring(0,6) == command) {
-            osu(7,1)
+            osu(1)
         }
         if (msg.substring(0,4) == '!ctb' && msg.substring(0,4) == command) {
-            osu(5,2)
+            osu(2)
         }
         if (msg.substring(0,6) == '!mania' && msg.substring(0,6) == command) {
-            osu(7,3)
+            osu(3)
         }
         if (msg.substring(0,7) == '!osusig' && msg.substring(0,7) == command) {
             osusig()
@@ -3206,16 +3200,16 @@ ${date}
             compare(3)
         }
         if (msg.substring(0,7) == '!osutop' && msg.substring(0,7) == command) {
-            osutop(0,8)
+            osutop(0)
         }
         if (msg.substring(0,9) == '!taikotop' && msg.substring(0,9) == command) {
-            osutop(1,10)
+            osutop(1)
         }
         if (msg.substring(0,7) == '!ctbtop' && msg.substring(0,7) == command) {
-            osutop(2,8)
+            osutop(2)
         }
         if (msg.substring(0,9) == '!maniatop' && msg.substring(0,9) == command) {
-            osutop(3,10)
+            osutop(3)
         }
         if (msg.substring(0,4) == '!map' && msg.substring(0,4) == command) {
             map(5)
@@ -3251,13 +3245,13 @@ ${date}
             otherserveravatar(12,'akatsuki.pw')
         }
         if (msg.substring(0,9) == '!akatsuki' && msg.substring(0,9) == command) {
-            otherserverosu(10,'akatsuki.pw')
+            otherserverosu('akatsuki.pw')
         }
         if (msg.substring(0,6) == '!akatr' && msg.substring(0,6) == command) {
             otherserverrecent(7,'akatsuki.pw')
         }
         if (msg.substring(0,8) == '!akattop' && msg.substring(0,8) == command) {
-            otherservertop(9,'akatsuki.pw')
+            otherservertop('akatsuki.pw')
         }
 
         // Ripple
@@ -3266,13 +3260,13 @@ ${date}
             otherserveravatar(14,'ripple.moe')
         }
         if (msg.substring(0,7) == '!ripple' && msg.substring(0,7) == command) {
-            otherserverosu(8,'ripple.moe')
+            otherserverosu('ripple.moe')
         }
         if (msg.substring(0,8) == '!rippler' && msg.substring(0,8) == command) {
             otherserverrecent(9,'ripple.moe')
         }
         if (msg.substring(0,10) == '!rippletop' && msg.substring(0,10) == command) {
-            otherservertop(11,'ripple.moe')
+            otherservertop('ripple.moe')
         }
 
         // Detection
