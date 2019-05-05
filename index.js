@@ -726,7 +726,7 @@ bot.on("message", (message) => {
                         example: 'do ``!help customcmd``'
                     }
                 }
-                var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee` `!customcmd`'
+                var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee` `!customcmd` `bot`'
                 var funhelp = '**--- [Fun]:**\n`!hug` `!cuddle` `!slap` `!kiss`'
                 var osuhelp = '**--- [osu!]:**\n`!osu` `!taiko` `!ctb` `!mania` `!osutop` `!taikotop` `!ctbtop` `!maniatop` `!osutrack` `!untrack` `!map` `!osuset` `!osuavatar` `!osusig` `!recent` `!compare` `!calcpp` `!scores` `!acc` `!rec`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`!akatsuki` `!akatr` `!akatavatar` `!akattop`'
@@ -1193,21 +1193,17 @@ Status: **${defindcode[statuscode]}**`)
                 var dpos = msg.indexOf('-d')
                 if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); dpos > -1 ? d = true : d = false}
                 var check = ''
-                if (dpos !== start && d !== false) {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,1) == ' ') {
-                            check = msg.substring(start, i)
-                            break
-                        }
-                    }
-                } else if (dpos == start) {
+                var cmdcheck = ['-d']
+                var option = msg.split(" ")
+                if (cmdcheck.indexOf(option[2]) > -1) {
+                    check = option[1]
+                } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
                 } else {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            check = msg.substring(start, i+1)
-                            break
-                        }
+                    if (option.length > 1) {
+                        check = option[1]
+                    } else {
+                        check = ''
                     }
                 }
                 var name = checkplayer(check)
@@ -1397,21 +1393,17 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 var bpos = msg.indexOf('-b')
                 if (msg.substr(msg.indexOf('-b')+2,1) !== "") {bpos = msg.indexOf('-b', start+2); bpos > -1 ? b = true : b = false}
                 var check = ''
-                if (bpos !== start && b !== false) {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,1) == ' ') {
-                            check = msg.substring(start, i)
-                            break
-                        }
-                    }
-                } else if (bpos == start) {
+                var cmdcheck = ['-b']
+                var option = msg.split(" ")
+                if (cmdcheck.indexOf(option[2]) > -1) {
+                    check = option[1]
+                } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
                 } else {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            check = msg.substring(start, i+1)
-                            break
-                        }
+                    if (option.length > 1) {
+                        check = option[1]
+                    } else {
+                        check = ''
                     }
                 }
                 var name = checkplayer(check)
@@ -1659,21 +1651,17 @@ ${date}
                 var check = ''
                 var top = ''
                 var modename = ''
-                if ((ppos !== start && p !== false) || (rpos !== start &&  r !== false) || (mpos !== start && m !== false) || (apos !== start && a !== false) || (gpos !== start && g !== false)) {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,1) == ' ') {
-                            check = msg.substring(start, i)
-                            break
-                        }
-                    }
-                } else if (ppos == start || rpos == start || mpos == start || apos == start || gpos == start) {
+                var cmdcheck = ['-p', '-r', '-m', '-a', '-g']
+                var option = msg.split(" ")
+                if (cmdcheck.indexOf(option[2]) > -1) {
+                    check = option[1]
+                } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
                 } else {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            check = msg.substring(start, i+1)
-                            break
-                        }
+                    if (option.length > 1) {
+                        check = option[1]
+                    } else {
+                        check = ''
                     }
                 }
                 if (mode == 0) {
@@ -1690,13 +1678,7 @@ ${date}
                 }
                 var name = checkplayer(check)
                 if (p == true && m == false && r == false && a == false && g == false) {
-                    var n = 0
-                    for (var i = ppos + 3; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            n = Number(msg.substring(ppos + 3, i+1)) -1
-                            break
-                        }
-                    }
+                    var n = Number(option[option.indexOf('-p') + 1]) - 1
                     var best = await osuApi.getUserBest({u: name, limit: n+1, m: mode})
                     var userid = best[0][0].user.id
                     var user = await osuApi.getUser({u: name})
@@ -1834,7 +1816,7 @@ ${date}
                     message.channel.send({embed});
                 } else if (m == true && p == false && r == false && a == false && g == false && mode == 0) {
                     var mod = []
-                    var getmod = ''
+                    var getmod = option[option.indexOf('-m') + 1]
                     var definemod = {
                         nf: 'NoFail',
                         ez: 'Easy',
@@ -1849,12 +1831,6 @@ ${date}
                         fl: 'Flashlight',
                         so: 'SpunOut',
                         nomod: 'No Mod'
-                    }
-                    for (var i = mpos + 3; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            getmod = msg.substring(mpos + 3, i+1)
-                            break
-                        }
                     }
                     for (var i = 0; i < getmod.length; i=i+2) {
                         if (definemod[getmod.substring(i, i+2)]) {
@@ -1941,24 +1917,11 @@ ${date}
                     message.channel.send({embed});
                 } else if (a == true && p == false && r == false && m == false && g == false && mode == 0) {
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
-                    var compare = ''
-                    var compareacc = 0
+                    var compare = option[option.indexOf('-a') + 1]
+                    var compareacc = Number(option[option.indexOf('-a') + 2])
                     var start = 0
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
-                    }
-                    for (var i = apos + 3; i < msg.length; i++) {
-                        if (msg.substr(i,1) == ' ') {
-                            compare = msg.substring(apos + 3, i)
-                            start = i + 1
-                            break
-                        }
-                    }
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            compareacc = Number(msg.substring(start, i+1))
-                            break
-                        }
                     }
                     var userid = best[0][0].user.id
                     var user = await osuApi.getUser({u: userid})
@@ -2046,13 +2009,7 @@ ${date}
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var user = await osuApi.getUser({u: name})
                     var username = user.name
-                    var gtpp = 0
-                    for (var i = gpos; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            gtpp = Number(msg.substring(gpos + 3, i+1))
-                            break
-                        }
-                    }
+                    var gtpp = Number(option[option.indexOf('-g') + 1])
                     for (var i = best.length - 1; i > -1; i--) {
                         if (best[i][0].pp > gtpp) {
                             message.channel.send(`${username} has **${i+1} plays** worth more than **${gtpp}pp**`)
@@ -2889,21 +2846,17 @@ ${prizetext}`)
                 var dpos = msg.indexOf('-d')
                 if (msg.substr(msg.indexOf('-d')+2,1) !== "") {dpos = msg.indexOf('-d', start+2); d = false; dpos > -1 ? d = true : d = false}
                 var check = ''
-                if (dpos !== start && d !== false) {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,1) == ' ') {
-                            check = msg.substring(start, i)
-                            break
-                        }
-                    }
-                } else if (dpos == start) {
+                var cmdcheck = ['-d']
+                var option = msg.split(" ")
+                if (cmdcheck.indexOf(option[2]) > -1) {
+                    check = option[1]
+                } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
                 } else {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            check = msg.substring(start, i+1)
-                            break
-                        }
+                    if (option.length > 1) {
+                        check = option[1]
+                    } else {
+                        check = ''
                     }
                 }
                 var servername = ''
@@ -3090,21 +3043,17 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 if (msg.substr(msg.indexOf('-p')+2,1) !== " ") {ppos = msg.indexOf('-p', start+2); ppos > -1 ? p = true : p = false}
                 var check = ''
                 var top = ''
-                if (ppos !== start && p !== false) {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i,1) == ' ') {
-                            check = msg.substring(start, i)
-                            break
-                        }
-                    }
-                } else if (ppos == start) {
+                var cmdcheck = ['-p']
+                var option = msg.split(" ")
+                if (cmdcheck.indexOf(option[2]) > -1) {
+                    check = option[1]
+                } else if (cmdcheck.indexOf(option[1]) > -1) {
                     check = ''
                 } else {
-                    for (var i = start; i < msg.length; i++) {
-                        if (msg.substr(i+1,1) == '') {
-                            check = msg.substring(start, i+1)
-                            break
-                        }
+                    if (option.length > 1) {
+                        check = option[1]
+                    } else {
+                        check = ''
                     }
                 }
                 var servername = ''
