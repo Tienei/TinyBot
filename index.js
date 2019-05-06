@@ -806,7 +806,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !customcmd
 - Added !osutop -a (Idea by Fog)
 - Added !osutop -g
-- Added quotation mark support (for name that has spaces)`)
+- Added quotation mark support (for name that has spaces)
+- Fixed !c with no name in front (lokser, jpg)`)
             message.channel.send({embed})
         }
 
@@ -1588,18 +1589,24 @@ ${mapcompleted} ${date}
         }
 
         async function compare() {
-            try {
+        
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 setCommandCooldown(command, 3000)
                 var option = ''
+                var check = ''
                 if (msg.includes('"') == true) {
                     option = msg.split('"')
+                    check = option[1]
                 } else {
-                    option = msg.split(" ")
+                    option = msg.split(' ')
+                    if (option.length > 1) {
+                        check = ''
+                    } else {
+                        check = option[1]
+                    }
                 }
-                var check = option[1]
                 var name = checkplayer(check)
                 var storedid = 0
                 for (var i = storedmapid.length -1 ; i > -1; i--) {
@@ -1679,9 +1686,7 @@ ${date}
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
                 .setDescription(highscore)
                 message.channel.send({embed});
-            } catch (error) {
-                message.channel.send(String(error))
-            }
+            
         }
 
         async function osutop(mode) {
@@ -2432,8 +2437,12 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     option = msg.split('"')
                     check = option[1]
                 } else {
-                    option = msg.split(" ")
-                    check = option[2]
+                    option = msg.split(' ')
+                    if (option.length > 1) {
+                        check = ''
+                    } else {
+                        check = option[2]
+                    }
                 }
                 var name = checkplayer(check)
                 var scores = await osuApi.getScores({b: beatmapid, u: name})
@@ -3053,12 +3062,18 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 }
                 setCommandCooldown(command, 3000)
                 var option = ''
+                var check = ''
                 if (msg.includes('"') == true) {
                     option = msg.split('"')
+                    check = option[1]
                 } else {
-                    option = msg.split(" ")
+                    option = msg.split(' ')
+                    if (option.length > 1) {
+                        check = ''
+                    } else {
+                        check = option[1]
+                    }
                 }
-                var check = option[1]
                 var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}`)
                 var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${check}`)
                 var recent = JSON.parse(data1)
