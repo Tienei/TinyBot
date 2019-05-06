@@ -1589,7 +1589,7 @@ ${mapcompleted} ${date}
         }
 
         async function compare() {
-        
+            try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
@@ -1601,7 +1601,7 @@ ${mapcompleted} ${date}
                     check = option[1]
                 } else {
                     option = msg.split(' ')
-                    if (option.length > 1) {
+                    if (option.length < 2) {
                         check = ''
                     } else {
                         check = option[1]
@@ -1686,7 +1686,9 @@ ${date}
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
                 .setDescription(highscore)
                 message.channel.send({embed});
-            
+            } catch (error) {
+                message.channel.send(String(error))
+            }
         }
 
         async function osutop(mode) {
@@ -2438,7 +2440,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     check = option[1]
                 } else {
                     option = msg.split(' ')
-                    if (option.length > 1) {
+                    if (option.length < 3) {
                         check = ''
                     } else {
                         check = option[2]
@@ -3068,7 +3070,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                     check = option[1]
                 } else {
                     option = msg.split(' ')
-                    if (option.length > 1) {
+                    if (option.length < 2) {
                         check = ''
                     } else {
                         check = option[1]
