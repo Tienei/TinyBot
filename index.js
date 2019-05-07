@@ -890,7 +890,7 @@ Problem: ${error}`)
                 .setDescription(`
 Channel ID: **${channelid}**
 Suggestion: ${suggestion}`)
-                bot.channels.get('564396177878155284').send({embed})
+                bot.channels.get('564439362218229760').send({embed})
                 message.channel.send('Suggestion has been reported')
             } catch (error) {
                 message.channel.send(String(error))
