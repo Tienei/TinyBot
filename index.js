@@ -3036,12 +3036,7 @@ ${prizetext}`)
                 }
                 if (d == true && linkoption !== '&rx=1') {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=50`)
-                    var data2 = ''
-                    if (linkoption == '&rx=1') {
-                        data2 = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${check}`)
-                    } else {
-                        data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
-                    }
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}&mode=0`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     if (best.length == 0) {
@@ -3161,7 +3156,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                     }
                 }
                 var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}${linkoption}`)
-                var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${check}${linkoption}`)
+                var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}${linkoption}`)
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
                 var servername = ''
@@ -3278,9 +3273,11 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 }
                 if (p == true) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
-                    var data = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}${linkoption}`)
-                    var best = JSON.parse(data)
-                    var userid = best.scores[0].id
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}${linkoption}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}${linkoption}`)
+                    var best = JSON.parse(data1)
+                    var user = JSON.parse(data2)
+                    var userid = user.id
                     var title = best.scores[n].beatmap.song_name
                     var beatmapid = best.scores[n].beatmap.beatmap_id
                     var score = best.scores[n].score
@@ -3325,9 +3322,11 @@ ${date}
                 .setDescription(top)
                 message.channel.send({embed});
                 } else {
-                    var data = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=5${linkoption}`)
-                    var best = JSON.parse(data)
-                    var userid = best.scores[0].id
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=5${linkoption}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}${linkoption}`)
+                    var best = JSON.parse(data1)
+                    var user = JSON.parse(data2)
+                    var userid = user.id
                     for (var i = 0; i < 5; i++) {
                         var title = best.scores[i].beatmap.song_name
                         var beatmapid = best.scores[i].beatmap.beatmap_id
