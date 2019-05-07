@@ -3034,7 +3034,7 @@ ${prizetext}`)
                 if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
                 }
-                if (d == true) {
+                if (d == true && linkoption !== '&rx=1') {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=50`)
                     var data2 = ''
                     if (linkoption == '&rx=1') {
@@ -3210,7 +3210,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 if (letter == 'F') {
                     nopp = '(No pp)'
                 }
-                if (perfect == 0) {
+                if (perfect == 0 && linkoption !== '&rx=1') {
                     fcguess = `| **${fcpp}pp for ${fcacc}%**`
                 }
                 const embed = new Discord.RichEmbed()
@@ -3308,7 +3308,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
                     var fcacc = fccalc.acc
                     var fcguess = ``
-                    if (perfect == 0) {
+                    if (perfect == 0 && linkoption !== '&rx=1') {
                         fcguess = `| **${fcpp}pp for ${fcacc}%**`
                     }
                     var star = Number(fccalc.star.total).toFixed(2)
@@ -3355,7 +3355,7 @@ ${date}
                         var fcpp = Number(fccalc.pp.total).toFixed(2)
                         var fcacc = fccalc.acc
                         var fcguess = ``
-                        if (perfect == 0) {
+                        if (perfect == 0 && linkoption !== '&rx=1') {
                             fcguess = `| **${fcpp}pp for ${fcacc}%**`
                         }
                         var star = Number(fccalc.star.total).toFixed(2)
