@@ -1775,7 +1775,7 @@ ${date}
                         range = true
                         numberrange = numberoption.split('-')
                     } else {
-                        numberrange = [numberoption, Number(numberoption)+1]
+                        numberrange = [numberoption, Number(numberoption)]
                     }
                     if (range == true && Math.abs(Number(numberrange[0]) - Number(numberrange[1])) > 4) {
                         throw 'Range limited to 5 top play'
