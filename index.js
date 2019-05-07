@@ -3104,7 +3104,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 } else {
                     var data = ''
                     if (linkoption == '&rx=1') {
-                        data = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${check}`)
+                        data = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${check}&mode=0`)
                     } else {
                         data = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
                     }
@@ -3156,7 +3156,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                     }
                 }
                 var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}${linkoption}`)
-                var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}${linkoption}`)
+                var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
                 var servername = ''
@@ -3223,7 +3223,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
         }
 
         async function otherservertop(serverlink, linkoption) {
-            try {
+            
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
@@ -3274,7 +3274,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 if (p == true) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}${linkoption}`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}${linkoption}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     var userid = user.id
@@ -3323,7 +3323,7 @@ ${date}
                 message.channel.send({embed});
                 } else {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=5${linkoption}`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}${linkoption}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     var userid = user.id
@@ -3365,15 +3365,13 @@ ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
 ${date}
 `                   }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top ${servername} Relax Plays for ${check}`)
+                    .setAuthor(`Top ${servername} Plays for ${check}`)
                     .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
                     .setColor('#7f7fff')
                     .setDescription(top)
                     message.channel.send({embed});
                 }
-            } catch (error) {
-                message.channel.send(String(error))
-            }
+            
         }
 
         // Osu
