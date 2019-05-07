@@ -1407,7 +1407,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 }
             }
             var check = option[1]
-            var user = await osuApi.apiCall('/get_user', {u: name})
+            var user = await osuApi.apiCall('/get_user', {u: check})
             var username = user[0].username
             var id = user[0].user_id
             const embed = new Discord.RichEmbed()
@@ -1430,7 +1430,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 }
             }
             var check = option[1]
-            var user = await osuApi.getUser({u: osuname})
+            var user = await osuApi.getUser({u: check})
             var name = user.name
             if (name == undefined) {
                 throw 'Please enter a valid osu username! >:c'
