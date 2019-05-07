@@ -699,6 +699,24 @@ bot.on("message", (message) => {
                         option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!akatavatar Tienei'
                     },
+                    'rxakatsuki': {
+                        helpcommand: '!rxakatsuki (username) (options)',
+                        description: 'Get a Relax Akatuski Standard profile',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`',
+                        example: '!akatsuki Tienei -d'
+                    },
+                    'rxakatr': {
+                        helpcommand: '!rxakatr (username)',
+                        description: "Get player's most recent play",
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
+                        example: '!akatr Tienei'
+                    },
+                    'rxakattop': {
+                        helpcommand: '!rxakattop (username) (options)',
+                        description: "View a player's Relax Akatsuki Standard top play",
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        example: '!akattop Tienei -p 8'
+                    },
                     // Ripple
                     'ripple': {
                         helpcommand: '!ripple (username) (options)',
@@ -735,7 +753,7 @@ bot.on("message", (message) => {
                 var generalhelp = '**--- [General]:**\n`avatar` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot`'
                 var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss`'
                 var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec`'
-                var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop`'
+                var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop` `rxakatsuki` `rxakatr` `rxakattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippler` `rippleavatar` `rippletop`'
                 var otherhelp = '**--- [Other]:**\n`definevar`'
                 var text = ''
@@ -815,7 +833,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added quotation mark support (for name that has spaces)
 - Fixed !c with no name in front (lokser, jpg)
 - Added !osutop -p (range) (Idea by Yeong Yuseong)
-- Added !suggestion (Idea also by Yeong Yuseong)`)
+- Added !suggestion (Idea also by Yeong Yuseong)
+- Readded Relax Akatsuki commands`)
             message.channel.send({embed})
         }
 
@@ -2967,7 +2986,7 @@ ${prizetext}`)
             message.channel.send({embed})
         }
 
-        async function otherserverosu(serverlink) {
+        async function otherserverosu(serverlink,linkoption) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
@@ -3006,14 +3025,23 @@ ${prizetext}`)
                 var d = (option[optionpos] == '-d')
                 var servername = ''
                 if (serverlink == 'akatsuki.pw') {
-                    servername = 'Akatsuki'
+                    if (linkoption == '&rx=1') {
+                        servername = 'Relax Akatsuki'
+                    } else {
+                        servername = 'Akatsuki'
+                    }
                 }
                 if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
                 }
                 if (d == true) {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=50`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
+                    var data2 = ''
+                    if (linkoption == '&rx=1') {
+                        data2 = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${check}`)
+                    } else {
+                        data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
+                    }
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     if (best.length == 0) {
@@ -3079,7 +3107,12 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
                     message.channel.send({embed});
                 } else {
-                    var data = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}`)
+                    var data = ''
+                    if (linkoption == '&rx=1') {
+                        data = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${check}`)
+                    } else {
+                        data = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
+                    }
                     var user = JSON.parse(data)
                     var username = user.username
                     var id = user.id
@@ -3108,7 +3141,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
             }
         }
 
-        async function otherserverrecent(serverlink) {
+        async function otherserverrecent(serverlink, linkoption) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
@@ -3127,13 +3160,17 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                         check = option[1]
                     }
                 }
-                var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}`)
-                var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${check}`)
+                var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}${linkoption}`)
+                var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${check}${linkoption}`)
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
                 var servername = ''
                 if (serverlink == 'akatsuki.pw') {
-                    servername = 'Akatsuki'
+                    if (linkoption == '&rx=1') {
+                        servername = 'Relax Akatsuki'
+                    } else {
+                        servername = 'Akatsuki'
+                    }
                 }
                 if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
@@ -3190,7 +3227,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
             }
         }
 
-        async function otherservertop(serverlink) {
+        async function otherservertop(serverlink, linkoption) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
@@ -3230,14 +3267,18 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 var p = (option[optionpos] == '-p')
                 var servername = ''
                 if (serverlink == 'akatsuki.pw') {
-                    servername = 'Akatsuki'
+                    if (linkoption == '&rx=1') {
+                        servername = 'Relax Akatsuki'
+                    } else {
+                        servername = 'Akatsuki'
+                    }
                 }
                 if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
                 }
                 if (p == true) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
-                    var data = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}`)
+                    var data = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}${linkoption}`)
                     var best = JSON.parse(data)
                     var userid = best.scores[0].id
                     var title = best.scores[n].beatmap.song_name
@@ -3284,7 +3325,7 @@ ${date}
                 .setDescription(top)
                 message.channel.send({embed});
                 } else {
-                    var data = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=5`)
+                    var data = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=5${linkoption}`)
                     var best = JSON.parse(data)
                     var userid = best.scores[0].id
                     for (var i = 0; i < 5; i++) {
@@ -3424,6 +3465,15 @@ ${date}
         }
         if (msg.substring(0,8) == '!akattop' && msg.substring(0,8) == command) {
             otherservertop('akatsuki.pw')
+        }
+        if (msg.substring(0,11) == '!rxakatsuki' && msg.substring(0,11) == command) {
+            otherserverosu('akatsuki.pw', '&rx=1')
+        }
+        if (msg.substring(0,8) == '!rxakatr' && msg.substring(0,8) == command) {
+            otherserverrecent('akatsuki.pw', '&rx=1')
+        }
+        if (msg.substring(0,10) == '!rxakattop' && msg.substring(0,10) == command) {
+            otherservertop('akatsuki.pw', '&rx=1')
         }
 
         // Ripple
