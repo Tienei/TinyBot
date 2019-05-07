@@ -1376,8 +1376,14 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             var option = ''
             if (msg.includes('"') == true) {
                 option = msg.split('"')
+                check = option[1]
             } else {
-                option = msg.split(" ")
+                option = msg.split(' ')
+                if (option.length < 2) {
+                    check = ''
+                } else {
+                    check = option[1]
+                }
             }
             var check = option[1]
             var name = checkplayer(check)
@@ -1391,8 +1397,14 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             var option = ''
             if (msg.includes('"') == true) {
                 option = msg.split('"')
+                check = option[1]
             } else {
-                option = msg.split(" ")
+                option = msg.split(' ')
+                if (option.length < 2) {
+                    check = ''
+                } else {
+                    check = option[1]
+                }
             }
             var check = option[1]
             var user = await osuApi.apiCall('/get_user', {u: name})
@@ -1408,8 +1420,14 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             var option = ''
             if (msg.includes('"') == true) {
                 option = msg.split('"')
+                check = option[1]
             } else {
-                option = msg.split(" ")
+                option = msg.split(' ')
+                if (option.length < 2) {
+                    check = ''
+                } else {
+                    check = option[1]
+                }
             }
             var check = option[1]
             var user = await osuApi.getUser({u: osuname})
