@@ -498,6 +498,12 @@ bot.on("message", (message) => {
                         option: 'error: Type any error or bug you found',
                         example: '!report osu is broken'
                     },
+                    'suggestion': {
+                        helpcommand: '!suggestion (suggestion)',
+                        description: 'Suggesting an idea for the bot to the owner',
+                        option: 'error: Type any error or bug you found',
+                        example: '!report osu is broken'
+                    },
                     'bot': {
                         helpcommand: '!bot',
                         description: 'Get invitation of the bot',
@@ -726,11 +732,11 @@ bot.on("message", (message) => {
                         example: 'do ``!help customcmd``'
                     }
                 }
-                var generalhelp = '**--- [General]:**\n`!avatar` `!changelog` `!help` `!ping` `!report` `!ee` `!customcmd` `bot`'
-                var funhelp = '**--- [Fun]:**\n`!hug` `!cuddle` `!slap` `!kiss`'
-                var osuhelp = '**--- [osu!]:**\n`!osu` `!taiko` `!ctb` `!mania` `!osutop` `!taikotop` `!ctbtop` `!maniatop` `!osutrack` `!untrack` `!map` `!osuset` `!osuavatar` `!osusig` `!recent` `!compare` `!calcpp` `!scores` `!acc` `!rec`'
-                var akatsukihelp = '**--- [Akatsuki]:**\n`!akatsuki` `!akatr` `!akatavatar` `!akattop`'
-                var ripplehelp = '**--- [Ripple]:**\n`!ripple` `!rippler` `!rippleavatar` `!rippletop`'
+                var generalhelp = '**--- [General]:**\n`avatar` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot`'
+                var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss`'
+                var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec`'
+                var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop`'
+                var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippler` `rippleavatar` `rippletop`'
                 var otherhelp = '**--- [Other]:**\n`definevar`'
                 var text = ''
                 if (msg.substring(6) == '') {
@@ -767,10 +773,10 @@ bot.on("message", (message) => {
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Special helper ❤:**
-Great Fog (!m, partial !osud, !acc, total pp in !osud, v3)
+Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -807,14 +813,23 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !osutop -a (Idea by Fog)
 - Added !osutop -g
 - Added quotation mark support (for name that has spaces)
-- Fixed !c with no name in front (lokser, jpg)`)
+- Fixed !c with no name in front (lokser, jpg)
+- Added !osutop -p (range) (Idea by Yeong Yuseong)
+- Added !suggestion (Idea also by Yeong Yuseong)`)
             message.channel.send({embed})
         }
 
-        if (msg.substring(0,7) == "!bot" && msg.substring(0,7) == command) {
+        if (msg.substring(0,4) == "!bot" && msg.substring(0,4) == command) {
             const embed = new Discord.RichEmbed()
             .setThumbnail(bot.user.avatarURL)
-            .setDescription(`Here's my bot invite link: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)`)
+            .setDescription(`**----- [Info]:**
+Hello! I am Tiny Bot, a bot made by Tienei
+こんにちは！ 私はTieneiによって作られたボット、Tiny Botです <:chinoHappy:450684046129758208>
+**-----**
+To get started, type **"!help"** to get a list of command and then type **"!help (command)"** to get more detailed information
+If you wanted to help me improve, type **"!report"** or **"!suggestion"**
+**-----**
+Link to invite me: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)`)
             message.channel.send({embed})
         }
 
@@ -850,8 +865,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
                 .setAuthor(`Username: ${user}`, pfp)
                 .setColor('#7f7fff')
                 .setDescription(`
-    Channel ID: **${channelid}**
-    Problem: ${error}`)
+Channel ID: **${channelid}**
+Problem: ${error}`)
                 bot.channels.get('564396177878155284').send({embed})
                 message.channel.send('Error has been reported')
             } catch (error) {
@@ -859,50 +874,55 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             }
         }
 
+        if (msg.substring(0,11) == '!suggestion' && msg.substring(0,11) == command && message.guild !== null) {
+            try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
+                    throw 'You need to wait 30 seconds before using this again!'
+                }
+                setCommandCooldown(command, 30000)
+                var suggestion = message.content.substring(12)
+                var channelid = message.channel.id
+                var user = message.author.username
+                var pfp = message.author.avatarURL
+                const embed = new Discord.RichEmbed()
+                .setAuthor(`Username: ${user}`, pfp)
+                .setColor('#7f7fff')
+                .setDescription(`
+Channel ID: **${channelid}**
+Suggestion: ${suggestion}`)
+                bot.channels.get('564396177878155284').send({embed})
+                message.channel.send('Suggestion has been reported')
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
         if (msg.substring(0,8) == '!respond' && msg.substring(0,8) == command && message.author.id == "292523841811513348") {
             var start = 9
-            var error = ''
-            var channelid = ''
-            var statuscode = ''
+            var msgoption = message.content.split('"')
+            var channelid = msgoption[2].split(" ")[1]
+            var type = msgoption[2].split(" ")[2]
+            var statuscode = msgoption[2].split(" ")[3]
             var defindcode = {
-                0: 'Fixed',
-                1: 'Currently being fixed',
-                2: 'Unfixable',
-                3: 'Spam'
+                'e0': 'Fixed',
+                'e1': 'Currently being fixed',
+                'e2': 'Unfixable',
+                'spam': 'Spam',
+                's0': 'Approved',
+                's1': 'Disapproved'
             }
-            for (var i = start; i < msg.length; i++) {
-                if (msg.substr(i,1) == '"') {
-                    start = i + 1
-                    break
-                }
+            if (type == "error") {
+                const embed = new Discord.RichEmbed()
+                .setAuthor(`${message.author.username} respond`, message.author.avatarURL)
+                .setColor('#7f7fff')
+                .setDescription(`
+    Error: ${msgoption[1]}
+    Status: **${defindcode[statuscode]}**`)
+                bot.channels.get(channelid).send({embed})
             }
-            for (var i = start; i < msg.length; i++) {
-                if (msg.substr(i,1) == '"') {
-                    error = message.content.substring(start,i)
-                    start = i + 2
-                    break
-                }
+            if (type == "suggest") {
+                bot.channels.get(channelid).send(`Suggestion **"${msgoption[1]}"** has been **${defindcode[statuscode]}**`)
             }
-            for (var i = start; i < msg.length; i++) {
-                if (msg.substr(i,1) == ' ') {
-                    channelid = msg.substring(start,i)
-                    start = i + 1
-                    break
-                }
-            }
-            for (var i = start; i <= msg.length; i++) {
-                if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
-                    statuscode = msg.substring(start,i)
-                    break
-                }
-            }
-            const embed = new Discord.RichEmbed()
-            .setAuthor(`${message.author.username} respond`, message.author.avatarURL)
-            .setColor('#7f7fff')
-            .setDescription(`
-Error: ${error}
-Status: **${defindcode[statuscode]}**`)
-            bot.channels.get(channelid).send({embed})
         }
 
         if (msg.includes(`<@${bot.user.id}>`) == true || msg.includes(`<@!${bot.user.id}>`) == true) {
@@ -1748,72 +1768,85 @@ ${date}
                 }
                 var name = checkplayer(check)
                 if (p == true && m == false && r == false && a == false && g == false) {
-                    var n = Number(option[option.indexOf('-p') + 1]) - 1
-                    var best = await osuApi.getUserBest({u: name, limit: n+1, m: mode})
+                    var numberoption = option[option.indexOf('-p') + 1]
+                    var range = false
+                    var numberrange = ''
+                    if (numberoption.includes('-') == true) {
+                        range = true
+                        numberrange = numberoption.split('-')
+                    } else {
+                        numberrange = [numberoption, Number(numberoption)+1]
+                    }
+                    if (range == true && Math.abs(Number(numberrange[0]) - Number(numberrange[1])) > 4) {
+                        throw 'Range limited to 5 top play'
+                    }
+                    var best = await osuApi.getUserBest({u: name, limit: Number(numberrange[1]), m: mode})
                     var userid = best[0][0].user.id
                     var user = await osuApi.getUser({u: name})
                     var username = user.name
-                    var title = best[n][1].title
-                    var diff = best[n][1].version
-                    var beatmapid = best[n][1].id
-                    var score = best[n][0].score
-                    var count300 = Number(best[n][0].counts['300'])
-                    var count100 = Number(best[n][0].counts['100'])
-                    var count50 = Number(best[n][0].counts['50'])
-                    var countmiss = Number(best[n][0].counts.miss)
-                    var countgeki = Number(best[n][0].counts.geki)
-                    var countkatu = Number(best[n][0].counts.katu)
-                    var combo = best[n][0].maxCombo
-                    var fc = best[n][1].maxCombo
-                    var letter = best[n][0].rank
-                    var rank = rankingletters(letter)
-                    var pp = Number(best[n][0].pp).toFixed(2)
-                    var mod = best[n][0].mods
-                    var perfect = best[n][0].perfect
-                    var modandbit = mods(mod)
-                    var shortenmod = modandbit.shortenmod
-                    var bitpresent = modandbit.bitpresent
-                    var date = timeago(best[n][0].date)
-                    if (message.guild !== null) {
-                        storedmapid.push({id:beatmapid,server:message.guild.id})
-                    } else {
-                        storedmapid.push({id:beatmapid,user:message.author.id})
-                    }
-                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                    var star = 0
-                    var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
-                    if (mode == 0) {
-                        var parser = await precalc(beatmapid)
-                        var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
-                        var fcpp = Number(fccalc.pp.total).toFixed(2)
-                        var fcacc = fccalc.acc
-                        star = Number(fccalc.star.total).toFixed(2)
-                    }
-                    if (mode == 1 || mode == 2 || mode == 3) {
-                        fc = ''
-                        star = Number(best[n][1].difficulty.rating).toFixed(2)
-                    }
-                    if (mode == 1) {
-                        acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
-                        accdetail = `[${count300}/${count100}/${countmiss}]`
-                    }
-                    if (mode == 2) {
-                        acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
-                    }
-                    if (mode == 3) {
-                        acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
-                        accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
-                    }
-                    var fcguess = ''
-                    if (perfect == 0 && mode == 0) {
-                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
-                    }
-                    top += `
+                    for (var n = Number(numberrange[0]) - 1; n < Number(numberrange[1]) ; n++) {
+                        var title = best[n][1].title
+                        var diff = best[n][1].version
+                        var beatmapid = best[n][1].id
+                        var score = best[n][0].score
+                        var count300 = Number(best[n][0].counts['300'])
+                        var count100 = Number(best[n][0].counts['100'])
+                        var count50 = Number(best[n][0].counts['50'])
+                        var countmiss = Number(best[n][0].counts.miss)
+                        var countgeki = Number(best[n][0].counts.geki)
+                        var countkatu = Number(best[n][0].counts.katu)
+                        var combo = best[n][0].maxCombo
+                        var fc = best[n][1].maxCombo
+                        var letter = best[n][0].rank
+                        var rank = rankingletters(letter)
+                        var pp = Number(best[n][0].pp).toFixed(2)
+                        var mod = best[n][0].mods
+                        var perfect = best[n][0].perfect
+                        var modandbit = mods(mod)
+                        var shortenmod = modandbit.shortenmod
+                        var bitpresent = modandbit.bitpresent
+                        var date = timeago(best[n][0].date)
+                        if (message.guild !== null) {
+                            storedmapid.push({id:beatmapid,server:message.guild.id})
+                        } else {
+                            storedmapid.push({id:beatmapid,user:message.author.id})
+                        }
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                        var star = 0
+                        var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                        if (mode == 0) {
+                            var parser = await precalc(beatmapid)
+                            var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                            var fcpp = Number(fccalc.pp.total).toFixed(2)
+                            var fcacc = fccalc.acc
+                            star = Number(fccalc.star.total).toFixed(2)
+                        }
+                        if (mode == 1 || mode == 2 || mode == 3) {
+                            fc = ''
+                            star = Number(best[n][1].difficulty.rating).toFixed(2)
+                        }
+                        if (mode == 1) {
+                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
+                            accdetail = `[${count300}/${count100}/${countmiss}]`
+                        }
+                        if (mode == 2) {
+                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
+                        }
+                        if (mode == 3) {
+                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
+                            accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                        }
+                        var fcguess = ''
+                        if (perfect == 0 && mode == 0) {
+                            fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                        }
+                        top += `
 ${n+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% ${accdetail} ${fcguess}
 ${date}
 `   
+                    }
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!${modename} Plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
