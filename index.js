@@ -834,7 +834,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Fixed !c with no name in front (lokser, jpg)
 - Added !osutop -p (range) (Idea by Yeong Yuseong)
 - Added !suggestion (Idea also by Yeong Yuseong)
-- Readded Relax Akatsuki commands`)
+- Readded Relax Akatsuki commands
+- Updated !osu -d`)
             message.channel.send({embed})
         }
 
@@ -1314,8 +1315,8 @@ Suggestion: ${suggestion}`)
                         var detail = mapdetail(modandbit.shortenmod,0,Number(best[i][1].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                         star_avg += thing.star.total
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
-                        speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.2) / Math.pow(180, 0.2))
-                        acc_avg += (Math.pow(scoreacc, 3)/Math.pow(100, 3)) * 1.1 * thing.star.total * (Math.pow(detail.od, 0.05) / (Math.pow(6, 0.05)))
+                        speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / (Math.pow(6, 0.1)))
+                        acc_avg += (Math.pow(scoreacc, 2.5)/Math.pow(100, 2.5)) * 1.08 * thing.star.total * (Math.pow(detail.od, 0.03) / (Math.pow(6, 0.03)) * (Math.pow(detail.hp, 0.03) / (Math.pow(6, 0.03))))
                         bpm_avg += detail.bpm
                         cs_avg += detail.cs
                         ar_avg += detail.ar
@@ -1323,7 +1324,7 @@ Suggestion: ${suggestion}`)
                         hp_avg += detail.hp
                     }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`osu! Statistics for ${username}`)
+                    .setAuthor(`new osu! Statistics for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                     .setColor('#7f7fff')
                     .setDescription(`***Performance:***
