@@ -377,12 +377,11 @@ bot.on("ready", (ready) => {
                                 pp = 'No PP'
                                 }
                                 if (perfect == 0) {
-                                    fcguess = `| ${fcpp}pp for ${fcacc}%`
+                                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
                                 }               
-                                const embed = new Discord.RichEmbed()
+                                var embed = new Discord.RichEmbed()
                                 .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
                                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                                .setColor('#7f7fff')
                                 .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
@@ -391,6 +390,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
                                 for (var i = 0; i < track[player].trackonchannel.length; i++) {
                                     var server = bot.channels.get(track[player].trackonchannel[i]).guild.id
                                     storedmapid.push({id:beatmapid,server: server})
+                                    embed.setColor(bot.channels.get(track[player].trackonchannel[i]).guild.me.displayColor)
                                     bot.channels.get(track[player].trackonchannel[i]).send({embed})
                                 }
                                 track[player].lasttotalpp = user[0].pp_raw
