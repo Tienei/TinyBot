@@ -421,7 +421,7 @@ bot.on("guildMemberAdd", (member) => {
             avatar.resize(105,105)
             placeholder.composite(avatar, 214, 10)
             placeholder.composite(imageholder,0,0)
-            var text = await jimp.loadFont('./font.anjelika_32_black.fnt')
+            var text = await jimp.loadFont('./font/anjelika_32_black.fnt')
             placeholder.print(text, 347, 12, member.user.username + ',')
             placeholder.write('./welcome.png')
             bot.channels.get("487479898903150612").send(`<@${member.id}>`, {files: ['./welcome.png']})
