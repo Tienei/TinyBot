@@ -839,7 +839,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !osutop -p (range) (Idea by Yeong Yuseong)
 - Added !suggestion (Idea also by Yeong Yuseong)
 - Readded Relax Akatsuki commands
-- Updated !osu -d`)
+- Updated !osu -d
+- Added !pat`)
             message.channel.send({embed})
         }
 
@@ -854,7 +855,8 @@ Hello! I am Tiny Bot, a bot made by Tienei
 To get started, type **"!help"** to get a list of command and then type **"!help (command)"** to get more detailed information
 If you wanted to help me improve, type **"!report"** or **"!suggestion"**
 **-----**
-Link to invite me: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)`)
+Link to invite me: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)
+My senpai server: [server](https://discord.gg/H2mQMxd)`)
             message.channel.send({embed})
         }
 
@@ -951,8 +953,20 @@ Suggestion: ${suggestion}`)
         }
 
         if (msg.includes(`<@${bot.user.id}>`) == true || msg.includes(`<@!${bot.user.id}>`) == true) {
-            var roll = Math.floor(Math.random()*6)
-            var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,`Why you keep pinging me?`,`Stop pinging me! <:chinoangry:450686707881213972>`,`What do you need senpai? <:chinohappy:450684046129758208>`,`<:chinopinged:450680698613792783>`]
+            var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,
+                            `Why you keep pinging me?`,
+                            `Stop pinging me! <:chinoangry:450686707881213972>`,
+                            `What do you need senpai? <:chinohappy:450684046129758208>`,
+                            `<:chinopinged:450680698613792783>`,
+                            `Hewwo ${message.author.username}! <:chinohappy:450684046129758208>`,
+                            `Me is sleepy Zzz.........`,
+                            `Where is my senpai? :c`,
+                            `Me is busy working for ${bot.guilds.size} servers right now`,
+                            `Poked you! :3`,
+                            `Me don't know what me is doing right now qwq`,
+                            `Me love my senpai`,
+                            `Please don't bully my senpai!`]
+            var roll = Math.floor(Math.random()*respone.length)
             message.channel.send(respone[roll])
         }
 
@@ -1195,6 +1209,9 @@ Suggestion: ${suggestion}`)
         }
         if (msg.substring(0,5) == '!kiss' && msg.substring(0,5) == command) {
             tenor(6, 'anime kiss', 'you got a kiss from', 'Are you trying to kiss yourself?')
+        }
+        if (msg.substring(0,4) == '!pat' && msg.substring(0,5) == command) {
+            tenor(5, 'anime pat', 'you got a pat from', 'Pat pat')
         }
         if (msg.substring(0,5) == '!poke' && msg.substring(0,5) == command) {
             tenor(6, 'anime poke', 'you got a poke from', 'Poking yourself huh? Heh')
