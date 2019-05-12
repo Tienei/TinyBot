@@ -434,6 +434,7 @@ bot.on("message", (message) => {
     var msg = message.content.toLowerCase();
     refresh = Math.round(Math.random()* 2147483648)
     var command = ''
+    var embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
 
     if (message.author.bot == false){
         for (var i = 0; i < msg.length; i++) {
@@ -777,7 +778,7 @@ bot.on("message", (message) => {
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Commands for Tiny Bot v3`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setThumbnail(bot.user.avatarURL)
                 .setDescription(text)
                 message.channel.send({embed})
@@ -789,7 +790,7 @@ bot.on("message", (message) => {
         if(msg.substring(0,7) == '!credit' && msg.substring(0,7) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Special thanks to:`)
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **--- Special helper ❤:**
@@ -818,7 +819,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Avatar for ${username}`)
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setImage(image)
             message.channel.send({embed})
         }
@@ -826,7 +827,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Changelog for Tiny Bot v3.0`)
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
 **Bot is officially updated to v3 and also public!**
@@ -846,7 +847,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         if (msg.substring(0,4) == "!bot" && msg.substring(0,4) == command) {
             const embed = new Discord.RichEmbed()
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`**----- [Info]:**
 Hello! I am Tiny Bot, a bot made by Tienei
@@ -890,7 +891,7 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                 var pfp = message.author.avatarURL
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Username: ${user}`, pfp)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(`
 Channel ID: **${channelid}**
 Problem: ${error}`)
@@ -913,7 +914,7 @@ Problem: ${error}`)
                 var pfp = message.author.avatarURL
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Username: ${user}`, pfp)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(`
 Channel ID: **${channelid}**
 Suggestion: ${suggestion}`)
@@ -941,7 +942,7 @@ Suggestion: ${suggestion}`)
             if (type == "error") {
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`${message.author.username} respond`, message.author.avatarURL)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(`
     Error: ${msgoption[1]}
     Status: **${defindcode[statuscode]}**`)
@@ -1019,7 +1020,7 @@ Suggestion: ${suggestion}`)
                     }
                     const embed = new Discord.RichEmbed()
                     .setThumbnail(message.guild.iconURL)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(savedcmd)
                     message.channel.send({embed})
                 }
@@ -1189,7 +1190,7 @@ Suggestion: ${suggestion}`)
                 var data = await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=10&media_filter=minimal&contentfilter=high`)
                 var gif = JSON.parse(data)
                 const embed = new Discord.RichEmbed()
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(text)
                 .setImage(gif.results[Math.floor(Math.random()*9)].media[0].gif.url)
                 message.channel.send({embed})
@@ -1349,7 +1350,7 @@ Suggestion: ${suggestion}`)
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`osu! Statistics for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(`***Performance:***
 **Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
 **Level:** ${level}
@@ -1407,7 +1408,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 
 <:rankingX:520932410746077184>: ${ss}  <:rankingS:520932426449682432>: ${s}  <:rankingA:520932311613571072>: ${a} `)
                     .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     message.channel.send({embed});
                 }
             } catch (error) {
@@ -1432,7 +1433,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             var name = checkplayer(check)
             const embed = new Discord.RichEmbed()
             .setAuthor(`Signature for ${name}`)
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setImage(`http://lemmmy.pw/osusig/sig.php?colour=pink&uname=${name}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex&date=${refresh}`)
             message.channel.send({embed})
         }
@@ -1456,7 +1457,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             var id = user[0].user_id
             const embed = new Discord.RichEmbed()
             .setAuthor(`Avatar for ${username}`)
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setImage(`https://a.ppy.sh/${id}_1?date=${refresh}.png`)
             message.channel.send({embed})
         }
@@ -1490,7 +1491,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Your account has been linked to osu! username: ${name}`,'',`https://osu.ppy.sh/users/${user.id}`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setImage(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
                 message.channel.send({embed})
                 fs.writeFileSync('data.txt', JSON.stringify(cache))
@@ -1593,7 +1594,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top ${best[0][0].top} osu!Standard play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(`
 **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores:** ${score} | **Combo:** ${combo}/${fc}
@@ -1658,7 +1659,7 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Most recent osu! Standard play for ${osuname}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
@@ -1767,7 +1768,7 @@ ${date}
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
                 .setDescription(highscore)
                 message.channel.send({embed});
@@ -1915,7 +1916,7 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!${modename} Plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
                 } else if (r == true && p == false && m == false && a == false && g == false && mode == 0) {
@@ -1979,7 +1980,7 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!Standard most recent plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
                 } else if (m == true && p == false && r == false && a == false && g == false && mode == 0) {
@@ -2080,7 +2081,7 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!Standard Plays with ${getmod.toUpperCase()} for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
                 } else if (a == true && p == false && r == false && m == false && g == false && mode == 0) {
@@ -2169,7 +2170,7 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!Standard best accuracy plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
                 } else if (g == true && p == false && r == false && m == false && a == false) {
@@ -2258,7 +2259,7 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!${modename} Plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
                 }
@@ -2343,7 +2344,7 @@ ${date}
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(`
 **Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[0].toUpperCase()}
 **Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
@@ -2442,7 +2443,7 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(`
 **Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
 **Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
@@ -2503,7 +2504,7 @@ ${date}
                 const embed = new Discord.RichEmbed()
                     .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(`
 Difficulty: *${version}*
 With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and **${miss}** miss:
@@ -2607,7 +2608,7 @@ ${date}
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
                 .setDescription(highscore)
                 message.channel.send({embed});
@@ -2751,7 +2752,7 @@ ${date}
                     }
                     const embed = new Discord.RichEmbed()
                     .setAuthor(information.tourneyname)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(`
 **--- [tl;dr]**
 
@@ -2860,7 +2861,7 @@ ${prizetext}`)
             }
             const embed = new Discord.RichEmbed()
             .setAuthor(`Player(s) currently being tracked on #${message.channel.name}`)
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setDescription(currentlytrack)
             message.channel.send(embed)
         }
@@ -2987,7 +2988,7 @@ ${prizetext}`)
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${pickedTopPlay}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(`
 **Length:** ${time} **BPM:** ${bpm} **Mods:** ${shortenmod}
 **Download:** [map](https://osu.ppy.sh/d/${beatmapidfixed}) ([no vid](https://osu.ppy.sh/d/${beatmapidfixed}n))
@@ -3013,7 +3014,7 @@ ${prizetext}`)
             var id = user.id
             const embed = new Discord.RichEmbed()
             .setAuthor(`Avatar for ${username}`)
-            .setColor(message.guild.me.displayColor)
+            .setColor(embedcolor)
             .setImage(`https://a.${serverlink}/${id}.png?date=${refresh}.png`)
             message.channel.send({embed})
         }
@@ -3118,7 +3119,7 @@ ${prizetext}`)
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`${servername} Statistics for ${username}`)
                     .setThumbnail(`https://a.${serverlink}/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(`***Performance:***
 **Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
 **Level:** ${level}
@@ -3160,7 +3161,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
 ▸**Level:** ${level}
 `)
                 .setThumbnail(`https://a.${serverlink}/${id}.png?date=${refresh}`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                     message.channel.send({embed});
                 }
             } catch (error) {
@@ -3243,7 +3244,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Most recent ${servername} play for ${username}:`, `https://a.${serverlink}/${userid}.png?date=${refresh}`)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mods} | ***${pp}pp*** ${nopp}
 ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
@@ -3255,7 +3256,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
         }
 
         async function otherservertop(serverlink, linkoption) {
-            
+            try{
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
@@ -3350,7 +3351,7 @@ ${date}
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Top ${servername} Plays for ${check}`)
                 .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
-                .setColor(message.guild.me.displayColor)
+                .setColor(embedcolor)
                 .setDescription(top)
                 message.channel.send({embed});
                 } else {
@@ -3399,11 +3400,13 @@ ${date}
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top ${servername} Plays for ${check}`)
                     .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
-                    .setColor(message.guild.me.displayColor)
+                    .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
                 }
-            
+            } catch (error) {
+                message.channel.send(String(error))
+            }
         }
 
         // Osu
