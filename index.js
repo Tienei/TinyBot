@@ -553,6 +553,12 @@ bot.on("message", (message) => {
                         option: 'user: The name of the user (Discord)',
                         example: '!kiss Tienei'
                     },
+                    'pat': {
+                        helpcommand: '!pat (user)',
+                        description: 'Pat someone',
+                        option: 'user: The name of the user (Discord)',
+                        example: '!pat Tienei'
+                    },
                     // Osu
                     'osu': {
                         helpcommand: '!osu (username) (options)',
@@ -581,7 +587,7 @@ bot.on("message", (message) => {
                     'osutop': {
                         helpcommand: '!osutop (username) (options)',
                         description: "View a player's osu!Standard top play",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nAccuracy Play `(-a)`: Get a top accuracy play from top 100 `(Comparasion symbol, Number)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`',
                         example: '!osutop Tienei -m HDHR'
                     },
                     'taikotop': {
@@ -754,14 +760,20 @@ bot.on("message", (message) => {
                         description: 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence``\nchannel: ``selfname`` ``selflink`` ``members``\nserver: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``',
                         option: '{require:admin}: Need Administrator to enable the command\n{$N}: Get text in message seperated by space (Not include command)',
                         example: 'do ``!help customcmd``'
+                    },
+                    'osu -d calculation': {
+                        helpcommand: 'Osu -d calculation',
+                        description: 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)',
+                        option: 'None',
+                        example: 'None'
                     }
                 }
                 var generalhelp = '**--- [General]:**\n`avatar` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot`'
-                var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss`'
+                var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat`'
                 var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop` `rxakatsuki` `rxakatr` `rxakattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippler` `rippleavatar` `rippletop`'
-                var otherhelp = '**--- [Other]:**\n`definevar`'
+                var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
                 var text = ''
                 if (msg.substring(6) == '') {
                     text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}`
@@ -846,7 +858,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !suggestion (Idea also by Yeong Yuseong)
 - Readded Relax Akatsuki commands
 - Updated !osu -d
-- Added !pat`)
+- Added !pat
+- Added !osutop -page`)
             message.channel.send({embed})
         }
 
@@ -1804,7 +1817,7 @@ ${date}
                     optionpos = 1
                 } else {
                     option = msg.split(" ")
-                    var cmdcheck = ['-p', '-r', '-m', '-a', '-g']
+                    var cmdcheck = ['-p', '-r', '-m', '-a', '-g', '-page']
                     var optionpos = -1
                     if (cmdcheck.indexOf(option[2]) > -1) {
                         check = option[1]
@@ -1825,6 +1838,7 @@ ${date}
                 var m = (option[optionpos] == '-m')
                 var a = (option[optionpos] == '-a')
                 var g = (option[optionpos] == '-g')
+                var page = (option[optionpos] == '-page')
                 if (mode == 0) {
                     modename = 'Standard'
                 }
@@ -1838,7 +1852,7 @@ ${date}
                     modename = 'Mania'
                 }
                 var name = checkplayer(check)
-                if (p == true && m == false && r == false && a == false && g == false) {
+                if (p == true && m == false && r == false && a == false && g == false && page == false) {
                     var numberoption = option[option.indexOf('-p') + 1]
                     var range = false
                     var numberrange = ''
@@ -1924,7 +1938,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (r == true && p == false && m == false && a == false && g == false && mode == 0) {
+                } else if (r == true && p == false && m == false && a == false && g == false && page == false && mode == 0) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
@@ -1988,7 +2002,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (m == true && p == false && r == false && a == false && g == false && mode == 0) {
+                } else if (m == true && p == false && r == false && a == false && g == false && page == false && mode == 0) {
                     var mod = []
                     var getmod = option[option.indexOf('-m') + 1]
                     var definemod = {
@@ -2089,7 +2103,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (a == true && p == false && r == false && m == false && g == false && mode == 0) {
+                } else if (a == true && p == false && r == false && m == false && g == false && page == false && mode == 0) {
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var compare = option[option.indexOf('-a') + 1]
                     var compareacc = Number(option[option.indexOf('-a') + 2])
@@ -2178,7 +2192,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (g == true && p == false && r == false && m == false && a == false) {
+                } else if (g == true && p == false && r == false && m == false && a == false && page == false) {
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var user = await osuApi.getUser({u: name})
                     var username = user.name
@@ -2193,6 +2207,114 @@ ${date}
                             break
                         }
                     }
+                } else if (page == true && g == false && p == false && r == false && m == false && a == false) {
+                    var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
+                    var userid = best[0][0].user.id
+                    var user = await osuApi.getUser({u: name})
+                    var username = user.name
+                    var page = 1
+                    var pages = []
+                    async function loadpage() {
+                        var gathering = ''
+                        for (var n = 0; n < 5; n++) {
+                            var i = (page - 1) * 5 - 1 + (n+1)
+                            if ((page - 1) * 4 + n < best.length- 1) {
+                                var title = best[i][1].title
+                                var diff = best[i][1].version
+                                var beatmapid = best[i][1].id
+                                var score = best[i][0].score
+                                var count300 = Number(best[i][0].counts['300'])
+                                var count100 = Number(best[i][0].counts['100'])
+                                var count50 = Number(best[i][0].counts['50'])
+                                var countmiss = Number(best[i][0].counts.miss)
+                                var countgeki = Number(best[i][0].counts.geki)
+                                var countkatu = Number(best[i][0].counts.katu)
+                                var combo = best[i][0].maxCombo
+                                var fc = best[i][1].maxCombo
+                                var letter = best[i][0].rank
+                                var rank = rankingletters(letter)
+                                var pp = Number(best[i][0].pp).toFixed(2)
+                                var mod = best[i][0].mods
+                                var perfect = best[i][0].perfect
+                                var modandbit = mods(mod)
+                                var shortenmod = modandbit.shortenmod
+                                var bitpresent = modandbit.bitpresent
+                                var date = timeago(best[i][0].date)
+                                if (message.guild !== null) {
+                                    storedmapid.push({id:beatmapid,server:message.guild.id})
+                                } else {
+                                    storedmapid.push({id:beatmapid,user:message.author.id})
+                                }
+                                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                                var star = 0
+                                var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                                if (mode == 0) {
+                                    var parser = await precalc(beatmapid)
+                                    var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                                    var fcpp = Number(fccalc.pp.total).toFixed(2)
+                                    var fcacc = fccalc.acc
+                                    star = Number(fccalc.star.total).toFixed(2)
+                                }
+                                if (mode == 1 || mode == 2 || mode == 3) {
+                                    fc = ''
+                                    star = Number(best[i][1].difficulty.rating).toFixed(2)
+                                }
+                                if (mode == 1) {
+                                    acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
+                                    accdetail = `[${count300}/${count100}/${countmiss}]`
+                                }
+                                if (mode == 2) {
+                                    acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
+                                }
+                                if (mode == 3) {
+                                    acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
+                                    accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                                }
+                                var fcguess = ''
+                                if (perfect == 0 && mode == 0) {
+                                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                }
+                                gathering += `
+${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% ${accdetail} ${fcguess}
+${date}
+`   
+                            }
+                        }
+                        pages[page-1] = gathering
+                    }
+                    await loadpage()
+                    var embed = new Discord.RichEmbed()
+                    .setAuthor(`Top osu!${modename} Plays for ${username} (Page ${page} of ${Math.ceil(best.length / 5)})`)
+                    .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+                    .setColor(embedcolor)
+                    .setDescription(pages[page-1])
+                    var msg1 = await message.channel.send({embed});
+                    await msg1.react('⬅')
+                    await msg1.react('➡')
+                    var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
+                    var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
+                    var previous = msg1.createReactionCollector(previousfilter, {time: 120000}) 
+                    var next = msg1.createReactionCollector(nextfilter, {time: 120000})
+                    previous.on('collect', reaction => {
+                        if (page <= 1) {return}
+                        page -= 1
+                        embed.setAuthor(`Top osu!${modename} Plays for ${username} (Page ${page} of ${Math.ceil(best.length / 5)})`)
+                        embed.setDescription(pages[page-1])
+                        msg1.edit({embed})
+                    })
+                    next.on('collect', async reaction => {
+                        if (page >= Math.ceil(best.length / 4)) {return}
+                        page += 1
+                        msg1.edit('Loading page...')
+                        if (pages[page-1] == undefined) {
+                            await loadpage()
+                        }
+                        embed.setAuthor(`Top osu!${modename} Plays for ${username} (Page ${page} of ${Math.ceil(best.length / 5)})`)
+                        embed.setDescription(pages[page-1])
+                        msg1.edit({embed})
+                    })
                 } else {
                     var best = await osuApi.getUserBest({u: name, limit: 5, m: mode})
                     var userid = best[0][0].user.id
