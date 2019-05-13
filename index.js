@@ -66,12 +66,16 @@ function mods(mod) {
         HalfTime   : "HT",
         Nightcore  : "NC",
         Flashlight : "FL",
-        SpunOut    : "SO"
+        SpunOut    : "SO",
+        Perfect    : "PF"
     }
     var shortenmod = '+';
     var bitpresent = 0
     for (var i = 0; i < mod.length; i++) {
         if (shortenmod.includes('DT') == true && mods[mod[i]] == 'NC') {
+            shortenmod = shortenmod.substring(0,shortenmod.length - 2)
+        }
+        if (shortenmod.includes('SD') == true && mods[mod[i]] == 'PF') {
             shortenmod = shortenmod.substring(0,shortenmod.length - 2)
         }
         if (mods[mod[i]]) {
@@ -90,6 +94,7 @@ function bittomods(number) {
     var shortenmod = "+"
     var fullbit = "0000000000000000000000000000000".substr(bit.length) + bit
     var modlist = {
+        17: 'PF',
         19: 'SO',
         21: 'FL',
         22: 'NC',
