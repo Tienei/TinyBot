@@ -1400,7 +1400,7 @@ Use External Emojis: ${compatibility[5]}`)
                         if (modandbit.shortenmod == "+No Mod") {
                             mod_avg_all.push('No Mod')
                         } else {
-                            for (var m = 0; m < modandbit.shortenmod.length; m+=2) {
+                            for (var m = 0; m < modandbit.shortenmod.length-1; m+=2) {
                                 mod_avg_all.push(modandbit.shortenmod.substr(m+1, 2))
                             }
                         }
