@@ -22,6 +22,8 @@ var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 var ee = JSON.parse(process.env.EASTER_EGG)
 var eenumber = ''
 
+var botver = 'v3'
+var botsubver = 'v3.1'
 var refresh = 0
 
 function rankingletters(letter) {
