@@ -144,7 +144,7 @@ function timeago(time) {
     return text
 }
 
-function mapdetail(mods,length,bpm,cs,ar,od,hp) {
+function mapdetail(mods,length,bpm,cs,ar,od,hp,timetotal,timedrain) {
     var arms = 0
     var odms = 0
     mods = mods.toLowerCase()
@@ -179,6 +179,8 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp) {
         odms = (50 + 30 * (5 - od) / 5) * 0.75
         od = (30 + 50 - odms) / 6
         hp = hp / 1.5
+        timetotal *= 1.5
+        timedrain *= 1.5
     }
 
     function HR() {
@@ -217,8 +219,9 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp) {
         }
         odms = (50 + 30 * (5 - od) / 5) * 0.67
         od = (30 + 50 - odms) / 6
-
         hp = hp * 1.5
+        timetotal /= 1.5
+        timedrain /= 1.5
     }
 
     if (mods.includes("ez") == true) {
@@ -254,9 +257,8 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp) {
     if (hp > 11) {
         hp = 11
     }
-    return {length: length, bpm: bpm, cs: cs, ar: ar, od: od, hp: hp}
+    return {length: length, bpm: bpm, cs: cs, ar: ar, od: od, hp: hp, timetotal: timetotal, timedrain: timedrain}
 }
-
 
 async function precalc(beatmapid) {
     var parser = new calc.parser()
@@ -521,6 +523,12 @@ bot.on("message", (message) => {
                         description: 'View how many easter eggs you have',
                         option: 'None',
                         example: '!ee'
+                    },
+                    'checkbot': {
+                        helpcommand: '!checkbot',
+                        description: 'Check the compatibility of the bot to the server permissions',
+                        option: 'None',
+                        example: '!checkbot'
                     },
                     'customcmd': {
                         helpcommand: '!customcmd (action) (command)',
@@ -794,7 +802,7 @@ bot.on("message", (message) => {
                     text = '```' + help[getcmd].helpcommand + '```' + `\n${help[getcmd].description}\n\n**---[Options]:**\n${help[getcmd].option}\n\n**---[Example]:**\n` + help[getcmd].example
                 }
                 const embed = new Discord.RichEmbed()
-                .setAuthor(`Commands for Tiny Bot v3`)
+                .setAuthor(`Commands for Tiny Bot ${botver}`)
                 .setColor(embedcolor)
                 .setThumbnail(bot.user.avatarURL)
                 .setDescription(text)
@@ -814,7 +822,7 @@ bot.on("message", (message) => {
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -843,23 +851,14 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
         if (msg.substring(0,10) == '!changelog' && msg.substring(0,10) == command) {
             const embed = new Discord.RichEmbed()
-            .setAuthor(`Changelog for Tiny Bot v3.0`)
+            .setAuthor(`Changelog for Tiny Bot ${botsubver}`)
             .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Bot is officially updated to v3 and also public!**
-- Added !osutracklist
-- Added !customcmd
-- Added !osutop -a (Idea by Fog)
-- Added !osutop -g
-- Added quotation mark support (for name that has spaces)
-- Fixed !c with no name in front (lokser, jpg)
-- Added !osutop -p (range) (Idea by Yeong Yuseong)
-- Added !suggestion (Idea also by Yeong Yuseong)
-- Readded Relax Akatsuki commands
-- Updated !osu -d
-- Added !pat
-- Added !osutop -page`)
+**May Update:**
+- Added !checkbot
+- Added !osu -d length (Idea by lokser)
+- Added !osu -d common mods (Idea by Yeong Yuseong)`)
             message.channel.send({embed})
         }
 
@@ -896,7 +895,7 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                 message.channel.send(String(error))
             }
         }
-
+        
         if (msg.substring(0,7) == '!report' && msg.substring(0,7) == command && message.guild !== null) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
@@ -962,8 +961,8 @@ Suggestion: ${suggestion}`)
                 .setAuthor(`${message.author.username} respond`, message.author.avatarURL)
                 .setColor(embedcolor)
                 .setDescription(`
-    Error: ${msgoption[1]}
-    Status: **${defindcode[statuscode]}**`)
+Error: ${msgoption[1]}
+Status: **${defindcode[statuscode]}**`)
                 bot.channels.get(channelid).send({embed})
             }
             if (type == "suggest") {
@@ -987,6 +986,29 @@ Suggestion: ${suggestion}`)
                             `Please don't bully my senpai!`]
             var roll = Math.floor(Math.random()*respone.length)
             message.channel.send(respone[roll])
+        }
+
+        if (msg.substring(0,9) == '!checkbot' && msg.substring(0,9) == command && message.guild !== null) {
+            var compatibility = []
+            var permissions = ['SEND_MESSAGES', 'ATTACH_FILES', 'ADD_REACTIONS', 'EMBED_LINKS', 'READ_MESSAGE_HISTORY', 'USE_EXTERNAL_EMOJIS']
+            for (var i in permissions) {
+                if (message.guild.me.hasPermission(permissions[i]) == true) {
+                    compatibility.push('✅')
+                } else {
+                    compatibility.push('❌')
+                }
+            }
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`Compatibility for Tiny Bot ${botver} in ${message.guild.name}`)
+            .setThumbnail(message.guild.iconURL)
+            .setColor(embedcolor)
+            .setDescription(`Send Message: ${compatibility[0]}
+Attach Files: ${compatibility[1]}
+Add Reactions: ${compatibility[2]}
+Embed Links: ${compatibility[3]}
+Read Message History: ${compatibility[4]}
+Use External Emojis: ${compatibility[5]}`)
+            message.channel.send({embed})
         }
 
         // Custom commands
@@ -1318,6 +1340,11 @@ Suggestion: ${suggestion}`)
                     var ar_avg = 0
                     var od_avg = 0
                     var hp_avg = 0
+                    var timetotal_avg = 0
+                    var timedrain_avg = 0
+                    var mod_avg_all = []
+                    var mod_avg = []
+                    var sortedmod = ''
                     var username = user.name
                     var acc = Number(user.accuracy).toFixed(2)
                     var userid = user.id
@@ -1351,10 +1378,12 @@ Suggestion: ${suggestion}`)
                         var count100 = Number(best[i][0].counts['100'])
                         var count50 = Number(best[i][0].counts['50'])
                         var countmiss = Number(best[i][0].counts.miss)
+                        var timetotal = Number(best[i][1].time.total)
+                        var timedrain = Number(best[i][1].time.drain)
                         var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                         var parser = await precalc(beatmapid)
                         var thing = ppcalc(parser,modandbit.bitpresent,0,0,0,0,0,0)
-                        var detail = mapdetail(modandbit.shortenmod,0,Number(best[i][1].bpm),thing.cs,thing.ar,thing.od,thing.hp)
+                        var detail = mapdetail(modandbit.shortenmod,0,Number(best[i][1].bpm),thing.cs,thing.ar,thing.od,thing.hp, timetotal, timedrain)
                         star_avg += thing.star.total
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
                         speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / (Math.pow(6, 0.1)))
@@ -1364,6 +1393,35 @@ Suggestion: ${suggestion}`)
                         ar_avg += detail.ar
                         od_avg += detail.od
                         hp_avg += detail.hp
+                        timetotal_avg += detail.timetotal
+                        timedrain_avg += detail.timedrain
+                        if (modandbit.shortenmod == "+No Mod") {
+                            mod_avg_all.push('No Mod')
+                        } else {
+                            for (var m = 0; m < modandbit.shortenmod.length; m+=2) {
+                                mod_avg_all.push(modandbit.shortenmod.substr(m+1, 2))
+                            }
+                        }
+                    }
+                    timetotal_avg = Number(timetotal_avg / 50).toFixed(0)
+                    timedrain_avg = Number(timedrain_avg / 50).toFixed(0)
+                    var modtofind = ['No Mod','NF','EZ','TD','HD','HR','SD','DT','HT','NC','FL','SO','PF']
+                    for (var i in modtofind) {
+                        var count = 0
+                        for (var m in mod_avg_all) {
+                            if (mod_avg_all[m] == modtofind[i]) {
+                                count += 1
+                            }
+                        }
+                        if (count > 0) {
+                            mod_avg.push({mod: modtofind[i], count: count})
+                        }
+                        count = 0
+                    }
+                    mod_avg.sort(function (a,b) {return b.count - a.count})
+                    mod_avg.splice(3,3)
+                    for (var i in mod_avg) {
+                        sortedmod += '``' + mod_avg[i].mod + '``: ' + `${Number(mod_avg[i].count / mod_avg_all.length * 100).toFixed(2)}% `
                     }
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`osu! Statistics for ${username}`)
@@ -1385,7 +1443,9 @@ Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
 Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
-BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
+Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
+BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
+Most common mods: ${sortedmod}`)
                     message.channel.send({embed});
                 } else {
                     var user = await osuApi.getUser({u: name, m: mode})
@@ -1452,7 +1512,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR
             const embed = new Discord.RichEmbed()
             .setAuthor(`Signature for ${name}`)
             .setColor(embedcolor)
-            .setImage(`http://lemmmy.pw/osusig/sig.php?colour=pink&uname=${name}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex&date=${refresh}`)
+            .setImage(`http://lemmmy.pw/osusig/sig.php?colour=hex7f7fff&uname=${name}&pp=2&countryrank&onlineindicator=undefined&xpbar&xpbarhex&date=${refresh}`)
             message.channel.send({embed})
         }
 
