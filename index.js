@@ -2657,9 +2657,9 @@ ${date}
                 var option = msg.split(" ")
                 var beatmapid = option[1]
                 var mods = [option[2]]
-                var acc = option[3]
-                var combo = option[4]
-                var miss = option[5]
+                var acc = Number(option[3])
+                var combo = Number(option[4])
+                var miss = Number(option[5])
                 var bitpresent = 0
                 var mod = {
                     nomod: 0,
