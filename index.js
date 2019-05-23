@@ -773,11 +773,72 @@ bot.on("message", (message) => {
                         option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!rippleavatar Tienei'
                     },
+                    //Economy
+                    'daily': {
+                        helpcommand: '!daily (mention)',
+                        description: "Get your daily award",
+                        option: '`mention:`\n**none:** Get your daily award\n**mention:** Give your daily award to someone else `(discord user mention)`',
+                        example: '!daily @Tienei#7463'
+                    },
+                    'bank': {
+                        helpcommand: '!bank (type)',
+                        description: "Global leaderboard of credit/rep or checking your credit",
+                        option: '`type:`\n**repglobal:** Global leaderboard for rep\n**xpglobal:** Global leaderboard for xp\n**credit:** Your credit amounts `(no param)` or give it to someone else `(Number)`',
+                        example: '!bank global'
+                    },
+                    'rep': {
+                        helpcommand: '!rep (mention)',
+                        description: "Check rep's availability or reputate someone",
+                        option: "`mention:`\n**none:** Check rep's availability\n**mention:** Give someone else rep`(discord user mention)`",
+                        example: '!rep @Tienei#7463'
+                    },
+                    'profile': {
+                        helpcommand: '!profile (mention)',
+                        description: "Get profile image (Not avatar)",
+                        option: "`mention:`\n**none:** Get your profile image\n**mention:** Get someone else profile image `(discord user mention)`",
+                        example: '!profile @Tienei#7463'
+                    },
+                    'rank': {
+                        helpcommand: '!rank (mention)',
+                        description: "Get rank image",
+                        option: "`mention:`\n**none:** Get your rank image\n**mention:** Get someone else rank image `(discord user mention)`",
+                        example: '!rank @Tienei#7463'
+                    },
+                    'mine': {
+                        helpcommand: '!mine',
+                        description: "Mining stuff",
+                        option: "If you mine one of this up, you'll get:\n`Coal`: 5 credits\n`Iron`: 10 credits\n`Gold`: 20 credits\n`Diamond`: 45 credits\n`Opal`: 70 credits\n`Ruby`: 100 credits",
+                        example: '!mine'
+                    },
+                    'background': {
+                        helpcommand: '![background|bg] (type)',
+                        description: "Buy a background, set a specific background or list of the backgrounds",
+                        option: "`type:`\n**buy:** `profile` `rank` `levelup`\nBuy a specific background\n**set:** `profile` `rank` `levelup` `nickname` `description`\nSet a specific things\n**list:** List all types of backgrounds available",
+                        example: '!background list'
+                    },
+                    'background buy': {
+                        helpcommand: '!background buy (bg_type) (bg_name)',
+                        description: "Buy a specific type of background",
+                        option: "bg_type: `profile` `rank` `levelup`\nbg_name: The background's name",
+                        example: '!background buy profile rem'
+                    },
+                    'background set': {
+                        helpcommand: '!background set (type) (string)',
+                        description: "Set a specific background or setting your nickname / description",
+                        option: "type: `profile` `rank` `levelup` `nickname` `description`\nstring: `Background's name or string`",
+                        example: '!background set profile rem\n!background set nickname Tiny'
+                    },
+                    'pickaxe': {
+                        helpcommand: '!pickaxe',
+                        description: "Buying pickaxe (100 credits) to add 10 durability to your pickaxe",
+                        option: "None",
+                        example: '!pickaxe'
+                    },
                     //Other
                     'definevar': {
                         helpcommand: 'Defined Variable for Custom command',
                         description: 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence``\nchannel: ``selfname`` ``selflink`` ``members``\nserver: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``',
-                        option: '{require:admin}: Need Administrator to enable the command\n{$N}: Get text in message seperated by space (Not include command)',
+                        option: '{require:admin}: Need Administrator to enable the command\n{$N}: Get text in message seperated by space (Not include command)\n{send:channelname "message"}: Send to a channel with a specific message',
                         example: 'do ``!help customcmd``'
                     },
                     'osu -d calculation': {
@@ -792,10 +853,11 @@ bot.on("message", (message) => {
                 var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop` `rxakatsuki` `rxakatr` `rxakattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippler` `rippleavatar` `rippletop`'
+                var economyhelp = '**--- [Economy]:**\n`daily` `bank` `rep` `profile` `background` `mine` `rank` `pickaxe`'
                 var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
                 var text = ''
                 if (msg.substring(6) == '') {
-                    text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}`
+                    text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${economyhelp}\n\n${otherhelp}`
                 } else {
                     var getcmd = msg.substring(6)
                     if (help[getcmd] == undefined) {
@@ -809,6 +871,9 @@ bot.on("message", (message) => {
                     }
                     if (getcmd == 'm') {
                         getcmd = 'map'
+                    }
+                    if (getcmd == 'bg') {
+                        getcmd = 'background'
                     }
                     text = '```' + help[getcmd].helpcommand + '```' + `\n${help[getcmd].description}\n\n**---[Options]:**\n${help[getcmd].option}\n\n**---[Example]:**\n` + help[getcmd].example
                 }
@@ -833,10 +898,10 @@ bot.on("message", (message) => {
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy)
 
 **--- Tester:**
-ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
+ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul, Rimu`)
             message.channel.send({embed})
         }
 
@@ -866,6 +931,18 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
+**Economy Update:**
+Includes:
+- Added !rep
+- Added !daily
+- Added !bank
+- Added !background
+- Added !mine
+- Added !profile
+- Added !rank
+- Added !pickaxe
+
+---------------------
 **May Update:**
 - Added !checkbot
 - Added !osu -d length (Idea by lokser)
@@ -3732,8 +3809,6 @@ ${date}
             if (message.embeds[0].url.substring(0,43) == "https://osu.ppy.sh/community/forums/topics/" || message.embeds[0].url.substring(0,42) == "http://osu.ppy.sh/community/forums/topics/")
             tourneydetail()
         }
-        
-        if (message.guild !== null && (message.guild.id == "450576647976910869" || message.guild.id == "520829106003116050")) {
 
         // Economy
         
@@ -4367,7 +4442,6 @@ ${purchasedlevelup}`)
                 user.pickaxe += 10
                 message.channel.send('Added 10 durability to your pickaxe')
             }
-        }
         }
     }
 })
