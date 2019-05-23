@@ -4,6 +4,7 @@ var storedmapid = []
 var storedee = {}
 var cooldown = {}
 var customcmd = {}
+var economy = []
 
 const Discord = require('discord.js');
 const nodeosu = require('node-osu');
@@ -318,6 +319,12 @@ bot.on("ready", (ready) => {
         var ccurl = ccbackup.first().url
         var ccdata = await request.get(ccurl)
         customcmd = JSON.parse(ccdata)
+        // Get economy data
+        var ecomessage = await bot.channels.get('578105172237221889').fetchMessages({limit: 1})
+        var ecobackup = ecomessage.first().attachments
+        var ecourl = ecobackup.first().url
+        var ecodata = await request.get(ecourl)
+        economy = JSON.parse(ecodata)
     }
     getFile()
     
@@ -3722,6 +3729,626 @@ ${date}
         if (embed.length > 0) {
             if (message.embeds[0].url.substring(0,43) == "https://osu.ppy.sh/community/forums/topics/" || message.embeds[0].url.substring(0,42) == "http://osu.ppy.sh/community/forums/topics/")
             tourneydetail()
+        }
+        if (message.guild !== null && message.guild.id == "450576647976910869") {
+
+        // Economy
+        
+        var bgprofile = [{"name": "megumin", "link": "https://i.imgur.com/0AD3DrI.png", "credit": 2000},
+                        {"name": "rem", "link": "https://i.imgur.com/cr5MbyB.png", "credit": 2000},
+                        {"name": "chino", "link": "https://i.imgur.com/2fkmS19.png", "credit": 2000},
+                        {"name": "default", "link": "https://i.imgur.com/m6tTSvi.png", "credit": 0},
+                        {"name": "shooting star", "link": "https://i.imgur.com/ETuIQuq.png", "credit": 2000},
+                        {"name": "cherry blossom", "link" : "https://i.imgur.com/8a9TB5u.png", "credit": 2000}]
+
+        var bgrank = [{"name": "default", "link": "https://i.imgur.com/uznJK64.png", "credit": 0},
+                    {"name": "rainbow", "link": "https://i.imgur.com/zALamkT.png", "credit": 2000},
+                    {"name": "sidewalk", "link": "https://i.imgur.com/wnlHshg.png", "credit": 2000},
+                    {"name": "sunrise", "link": "https://i.imgur.com/7cUpVWe.png", "credit": 2000},
+                    {"name": "pink city", "link": "https://i.imgur.com/GTFbc3O.png", "credit": 2000}]
+
+        var bglevelup = [{"name": "default", "link": "https://i.imgur.com/CyNeayl.png", "credit": 0}]
+
+        async function xpleveler() {
+            if (message.guild !== null) {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf('message') !== -1) {} else {
+                    var user = economy.find(u => u.id == message.author.id)
+                    if (user == undefined) {
+                        economy.push(
+                            {"id": message.author.id,
+                            "xp": 0,
+                            "totalxp": 0,
+                            "level": 1,
+                            "credit": 0,
+                            "rep": 0,
+                            "repcooldown": new Date().getTime(),
+                            "dailycooldown": new Date().getTime(),
+                            "dailycount": 0,
+                            "purchased": {
+                                "levelup": ["default"],
+                                "profile": ["default"],
+                                "rank": ["default"]
+                            },
+                            "equipped": {
+                                "levelup": 'default',
+                                "profile": 'default',
+                                "rank": 'default',
+                            },
+                            "badge": [],
+                            "pickaxe": 0,
+                            "nickname": "",
+                            "description": ""    
+                        })
+                        user = economy.find(u => u.id == message.author.id)
+                    }
+                    if (user !== undefined) {
+                        var earn = (15 + Math.floor(Math.random()*5))
+                        user.xp += earn
+                        user.totalxp += earn
+                        fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                        bot.channels.get('578105172237221889').send({files: [{
+                            attachment: './economy.txt',
+                            name: 'economy.txt'
+                        }]})
+                        setCommandCooldown('message', 60000)
+                    }
+                    if (user.xp > Math.floor(10 + 2 * Math.pow(user.level, 2) + 90 * user.level)) {
+                        var awarded = Math.floor(10 + Math.pow(level, 1.5))
+                        user.xp = user.xp - Math.floor(10 + 2 * Math.pow(user.level, 2) + 90 * user.level)
+                        user.level += 1
+                        user.credit += awarded
+                        var background = await jimp.read(bglevelup.find(bg => bg.name == user.equipped.profile).link)
+                        var overlay = await jimp.read('./image/bglevelupoverlay.png')
+                        var avatar = await jimp.read(message.author.avatarURL)
+                        var primer18 = await jimp.loadFont('./font/primer_18_white.fnt')
+                        avatar.resize(48,48)
+                        background.composite(overlay, 0, 0)
+                        background.composite(avatar,21,12)
+                        background.print(primer18,18,60,'Level up!')
+                        background.print(primer18, 0, 81, {text: `LVL ${user.level}`, alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_MIDDLE}, 90, 20)
+                        background.write('./levelup.png')
+                        message.channel.send(`${message.author.username}, you got awarded with ${awarded} credits!`,{
+                            file: "./levelup.png"
+                        })
+                        fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                        bot.channels.get('578105172237221889').send({files: [{
+                            attachment: './economy.txt',
+                            name: 'economy.txt'
+                        }]})
+                    }
+                }
+            }
+        }
+
+        async function getEconomyProfile() {
+            var discorduser = ''
+            if (msg.substring(9) == "") {
+                discorduser = message.author
+            } else {
+                discorduser = message.mentions.members.first().user
+            }
+            var user = economy.find(u => u.id == discorduser.id)
+            var requirexp = Math.floor(10 + 2 * Math.pow(user.level, 2) + 90 * user.level)
+            var globalrank = economy.sort(function (a,b) {return b.totalxp - a.totalxp})
+            globalrank = globalrank.findIndex(u => u.id == discorduser.id) + 1
+            var background = await jimp.read(bgprofile.find(bg => bg.name == user.equipped.profile).link)
+            var overlay = await jimp.read('./image/bgprofileoverlay.png')
+            var avatar = await jimp.read(discorduser.avatarURL)
+            var primer22 = await jimp.loadFont('./font/primer_22_white_bold.fnt')
+            var primer28 = await jimp.loadFont('./font/primer_28_white.fnt')
+            var primer18 = await jimp.loadFont('./font/primer_18_white.fnt')
+            var primer16 = await jimp.loadFont('./font/primer_16_white.fnt')
+            var namew = jimp.measureText(primer22, discorduser.username) + 10
+            var repw = jimp.measureText(primer18, `+${user.rep}rep`) + 12
+            var mainbg = await new jimp(347,347, 'rgba(0,0,0,0)')
+            var namebg = await new jimp(namew, 25, 'rgba(0,0,0,0.686)')
+            var repbg = await new jimp(repw, 20, 'rgba(127,127,255,1)')
+            namebg.print(primer22, 5, -2, discorduser.username)
+            repbg.print(primer18, 5, 0, `+${user.rep}rep`)
+            avatar.resize(96, 96)
+            mainbg.composite(background, 3, 3)
+            mainbg.composite(overlay, 0, 0)
+            mainbg.composite(avatar, 24, 119)
+            mainbg.composite(namebg, 122, 117)
+            mainbg.composite(repbg, 122, 170)
+            mainbg.print(primer28, 45, 216, "Level")
+            mainbg.print(primer28, 22, 247, {text: String(user.level), alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_MIDDLE}, 96, 24)
+            mainbg.print(primer18, 133, 218, `EXP: ${user.xp}/${requirexp}`)
+            mainbg.print(primer18, 133, 236, `Rank: #${globalrank}`)
+            mainbg.print(primer18, 133, 253, `Credits: ¥${user.credit}`)
+            if (user.nickname !== '') {
+                var nicknamew = jimp.measureText(primer18, user.nickname) + 10
+                var nicknamebg = await new jimp(nicknamew, 20, 'rgba(0,0,0,0.686)')
+                nicknamebg.print(primer18, 5, 0, user.nickname)
+                mainbg.composite(nicknamebg, 122, 146)
+            }
+            if (user.description !== '') {
+                mainbg.print(primer16, 18, 276, user.description) 
+            }
+            mainbg.write('./profile.png')
+            message.channel.send({
+                file: "./profile.png"
+            })
+        }
+
+        async function getEconomyRank() {
+            var discorduser = ''
+            if (msg.substring(6) == "") {
+                discorduser = message.author
+            } else {
+                discorduser = message.mentions.members.first().user
+            }
+            var user = economy.find(u => u.id == discorduser.id)
+            var requirexp = Math.floor(10 + 2 * Math.pow(user.level, 2) + 90 * user.level)
+            var globalrank = economy.sort(function (a,b) {return b.totalxp - a.totalxp})
+            globalrank = globalrank.findIndex(u => u.id == discorduser.id) + 1
+            var background = await jimp.read(bgrank.find(bg => bg.name == user.equipped.rank).link)
+            var overlay = await jimp.read('./image/bgrankoverlay.png')
+            var avatar = await jimp.read(discorduser.avatarURL)
+            var primer26 = await jimp.loadFont('./font/primer_26_white.fnt')
+            var primer22 = await jimp.loadFont('./font/primer_22_white.fnt')
+            var primer16 = await jimp.loadFont('./font/primer_16_white.fnt')
+            var primer13 = await jimp.loadFont('./font/primer_13_black_bold.fnt')
+            avatar.resize(80, 80)
+            background.composite(overlay, 0, 0)
+            background.composite(avatar, 15, 10)
+            background.print(primer22, 100, 4, discorduser.username)
+            background.print(primer13, 99, 28, {text: `XP: ${user.xp}/${requirexp}`, alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_MIDDLE}, 215, 10)
+            background.print(primer26, 101, 34, `Level: ${user.level}`)
+            background.print(primer16, 101, 59, `Rank: #${globalrank}`)
+            background.print(primer16, 101, 74, `Credits: ¥${user.credit}`)
+            background.write('./rank.png')
+            message.channel.send({
+                file: "./rank.png"
+            })
+        }
+
+        async function getBackground() {
+            try {
+                var option = msg.split(' ')
+                var page = 1
+                var pages = []
+                var user = economy.find(u => u.id == message.author.id)
+
+                function loadpage(bgtype) {
+                    var loadpage = ''
+                    loadpage += '**back:** Go to the previous page'
+                    for (var i = 0; i < 10; i++) {
+                        if ((page - 1) * 10 - 1 + (i+1) < bgtype.length) {
+                            loadpage += `\n**${i}:** [${bgtype[(page-1) * 10 - 1 + (i+1)].name}](${bgtype[(page-1) * 10 - 1 + (i+1)].link})`
+                        }
+                    }
+                    loadpage += '**\nnext:** Go to the next page'
+                    pages[page-1] = loadpage
+                }
+
+                async function loademote(msg1) {
+                    await msg1.react('⬅')
+                    await msg1.react('0⃣')
+                    await msg1.react('1⃣')
+                    await msg1.react('2⃣')
+                    await msg1.react('3⃣')
+                    await msg1.react('4⃣')
+                    await msg1.react('5⃣')
+                    await msg1.react('6⃣')
+                    await msg1.react('7⃣')
+                    await msg1.react('8⃣')
+                    await msg1.react('9⃣')
+                    await msg1.react('➡')
+                }
+
+                async function reaction(msg1, bgtype, type, embed) {
+                    var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
+                    var zerofilter = (reaction, user) => reaction.emoji.name == "0⃣" && user.id == message.author.id
+                    var onefilter = (reaction, user) => reaction.emoji.name == "1⃣" && user.id == message.author.id
+                    var twofilter = (reaction, user) => reaction.emoji.name == "2⃣" && user.id == message.author.id
+                    var threefilter = (reaction, user) => reaction.emoji.name == "3⃣" && user.id == message.author.id
+                    var fourfilter = (reaction, user) => reaction.emoji.name == "4⃣" && user.id == message.author.id
+                    var fivefilter = (reaction, user) => reaction.emoji.name == "5⃣" && user.id == message.author.id
+                    var sixfilter = (reaction, user) => reaction.emoji.name == "6⃣" && user.id == message.author.id
+                    var sevenfilter = (reaction, user) => reaction.emoji.name == "7⃣" && user.id == message.author.id
+                    var eightfilter = (reaction, user) => reaction.emoji.name == "8⃣" && user.id == message.author.id
+                    var ninefilter = (reaction, user) => reaction.emoji.name == "9⃣" && user.id == message.author.id
+                    var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
+                    var previous = msg1.createReactionCollector(previousfilter, {time: 60000}) 
+                    var zero = msg1.createReactionCollector(zerofilter, {time: 60000}) 
+                    var one = msg1.createReactionCollector(onefilter, {time: 60000}) 
+                    var two = msg1.createReactionCollector(twofilter, {time: 60000}) 
+                    var three = msg1.createReactionCollector(threefilter, {time: 60000}) 
+                    var four = msg1.createReactionCollector(fourfilter, {time: 60000}) 
+                    var five = msg1.createReactionCollector(fivefilter, {time: 60000}) 
+                    var six = msg1.createReactionCollector(sixfilter, {time: 60000}) 
+                    var seven = msg1.createReactionCollector(sevenfilter, {time: 60000})
+                    var eight = msg1.createReactionCollector(eightfilter, {time: 60000})
+                    var nine = msg1.createReactionCollector(ninefilter, {time: 60000})
+                    var next = msg1.createReactionCollector(nextfilter, {time: 60000})
+                    function endreactioncollector() {
+                        previous.stop()
+                        zero.stop()
+                        one.stop()
+                        two.stop()
+                        three.stop()
+                        four.stop()
+                        five.stop()
+                        six.stop()
+                        seven.stop()
+                        eight.stop()
+                        nine.stop()
+                        next.stop()
+                    }
+                    function buyBackground(bg) {
+                        if (bg !== undefined) {
+                            if (user.purchased[type].indexOf(bg.name) > -1) {
+                                message.channel.send('You already bought that!')
+                            } else if (user.credit < bg.credit) {
+                                message.channel.send("You don't have enough credits!")
+                            } else {
+                                user.credit -= bg.credit
+                                user.purchased[type].push(bg.name)
+                                message.channel.send(`**${bg.name}** has been purchased!`)
+                                fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                                bot.channels.get('578105172237221889').send({files: [{
+                                    attachment: './economy.txt',
+                                    name: 'economy.txt'
+                                }]})
+                                endreactioncollector()
+                            }
+                        }
+                    }
+                    previous.on('collect', reaction => {
+                        if (page <= 1) {return}
+                        page -= 1
+                        embed.setAuthor(`Page ${page} of ${Math.ceil(bgtype.length / 10)}`)
+                        embed.setDescription(pages[page-1])
+                        msg1.edit({embed})
+                    })
+                    next.on('collect', reaction => {
+                        if (page >= Math.ceil(bgtype.length / 10)) {return}
+                        page += 1
+                        if (pages[page-1] == undefined) {
+                            loadpage(bgtype)
+                        }
+                        embed.setAuthor(`Page ${page} of ${Math.ceil(bgtype.length / 10)}`)
+                        embed.setDescription(pages[page-1])
+                        msg1.edit({embed})
+                    })
+                    zero.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 1]
+                        buyBackground(bg)
+                    })
+                    one.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 2]
+                        buyBackground(bg)
+                    })
+                    two.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 3]
+                        buyBackground(bg)
+                    })
+                    three.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 4]
+                        buyBackground(bg)
+                    })
+                    four.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 5]
+                        buyBackground(bg)
+                    })
+                    five.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 6]
+                        buyBackground(bg)
+                    })
+                    six.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 7]
+                        buyBackground(bg)
+                    })
+                    seven.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 8]
+                        buyBackground(bg)
+                    })
+                    eight.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 9]
+                        buyBackground(bg)
+                    })
+                    nine.on('collect', reaction => {
+                        var bg = bgtype[(page-1) * 10 - 1 + 10]
+                        buyBackground(bg)
+                    })
+                }
+
+                if (option[1] == "buy") {
+                    if (option[2] == "profile") {
+                        loadpage(bgprofile)
+                        var embed = new Discord.RichEmbed()
+                        .setAuthor(`Page ${page} of ${Math.ceil(bgprofile.length / 10)}`)
+                        .setThumbnail(bot.user.avatarURL)
+                        .setColor(embedcolor)
+                        .setDescription(pages[page-1])
+                        var msg1 = await message.channel.send({embed})
+                        loademote(msg1)
+                        reaction(msg1, bgprofile, option[2], embed)
+                    }
+                    if (option[2] == 'rank') {
+                        loadpage(bgrank)
+                        var embed = new Discord.RichEmbed()
+                        .setAuthor(`Page ${page} of ${Math.ceil(bgrank.length / 10)}`)
+                        .setThumbnail(bot.user.avatarURL)
+                        .setColor(embedcolor)
+                        .setDescription(pages[page-1])
+                        var msg1 = await message.channel.send({embed})
+                        loademote(msg1)
+                        reaction(msg1, bgrank, option[2], embed)
+                    }
+                    if (option[2] == 'levelup') {
+                        loadpage(bglevelup)
+                        var embed = new Discord.RichEmbed()
+                        .setAuthor(`Page ${page} of ${Math.ceil(bglevelup.length / 10)}`)
+                        .setThumbnail(bot.user.avatarURL)
+                        .setColor(embedcolor)
+                        .setDescription(pages[page-1])
+                        var msg1 = await message.channel.send({embed})
+                        loademote(msg1)
+                        reaction(msg1, bglevelup, option[2], embed)
+                    }
+                }
+                if (option[1] == 'set') {
+                    if (option[2] == 'profile') {
+                        if (user.purchased.profile.indexOf(option[3]) !== -1) {
+                            user.equipped.profile = option[3]
+                            message.channel.send(`Profile background is now set to: **${option[3]}**`)
+                        } else {
+                            throw "Can't find background!"
+                        }
+                    }
+                    if (option[2] == 'rank') {
+                        if (user.purchased.rank.indexOf(option[3]) !== -1) {
+                            user.equipped.rank = option[3]
+                            message.channel.send(`Rank background is now set to: **${option[3]}**`)
+                        } else {
+                            throw "Can't find background!"
+                        }
+                    }
+                    if (option[2] == 'levelup') {
+                        if (user.purchased.levelup.indexOf(option[3]) !== -1) {
+                            user.equipped.levelup = option[3]
+                            message.channel.send(`Level up background is now set to: **${option[3]}**`)
+                        } else {
+                            throw "Can't find background!"
+                        }
+                    }
+                    if (option[2] == 'nickname') {
+                        var nickname = message.content.substring(msg.indexOf('nickname') + 9)
+                        if (nickname.length < 20) {
+                            user.nickname = nickname
+                            message.channel.send('Nickname is set!')
+                        } else {
+                            throw 'Nickname is limited to 20 characters'
+                        }
+                    }
+                    if (option[2] == 'description') {
+                        var description = message.content.substring(msg.indexOf('description') + 12)
+                        if (description.length < 100) {
+                            user.description = description
+                            message.channel.send('Description is set!')
+                        } else {
+                            throw 'Description is limited to 100 characters'
+                        }
+                    }
+                }
+                if (option[1] == 'list') {
+                    var purchasedprofile = ''
+                    var purchasedrank = ''
+                    var purchasedlevelup = ''
+                    for (var i in user.purchased.profile) {
+                        purchasedprofile += '``' + user.purchased.profile[i] + '`` '
+                    }
+                    for (var i in user.purchased.rank) {
+                        purchasedrank += '``' + user.purchased.rank[i] + '`` '
+                    }
+                    for (var i in user.purchased.levelup) {
+                        purchasedlevelup += '``' + user.purchased.levelup[i] + '`` '
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`List of profile background purchased for ${message.author.username}`)
+                    .setColor(embedcolor)
+                    .setThumbnail(message.author.avatarURL)
+                    .setDescription(`***-----[Profile]:***
+${purchasedprofile}
+***-----[Rank]:***
+${purchasedrank}
+***-----[Level Up]:***
+${purchasedlevelup}`)
+                    message.channel.send({embed})
+                }
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        function daily() {
+            try {
+                var earn = 200
+                var discorduser = economy.find(u => u.id == message.author.id)
+                if (new Date().getTime() - Number(discorduser.dailycooldown) >= 86400000)  {
+                    if (msg.substring(7) == "") {
+                        if (discorduser.dailycount >= 5) {
+                            earn = Math.floor(earn * (1 + Math.random()*0.5))
+                        }
+                        discorduser.credit += earn
+                        message.channel.send(`**${message.author.username}**, you received your **${earn}** credits`)
+                    } else {
+                        earn = Math.floor(earn * (1 + Math.random()*0.75))
+                        var user = message.mentions.members.first()
+                        economy.find(u => u.id == user.id).credit += earn
+                        message.channel.send(`**${message.author.username}** has given ${user.displayName} **${earn}** credits`)
+                    }
+                    discorduser.daily = new Date().getTime()
+                    discorduser.dailycount += 1
+                    fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                    bot.channels.get('578105172237221889').send({files: [{
+                        attachment: './economy.txt',
+                        name: 'economy.txt'
+                    }]})
+                } else {
+                    throw `You need to wait ${Math.ceil((86400000 - new Date(discorduser.dailycooldown).getMilliseconds())/3600000)} hours to do daily again`
+                }
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        function rep(start) {
+            try {
+                if (new Date().getTime() - economy.find(u => u.id == message.author.id).repcooldown < 43200000) {
+                    throw `You need to wait ${Math.ceil((43200000 - new Date(economy.find(u => u.id == message.author.id).repcooldown).getMilliseconds())/3600000)} hours to rep again`
+                } else {
+                    if (msg.substring(start) == "") {
+                        message.channel.send('You can rep! OwO')
+                    } else if (message.mentions.members.size > 0) {
+                        var user = message.mentions.members.first()
+                        if (economy.find(u => u.id == user.id) !== undefined) {
+                            economy.find(u => u.id == id).repcooldown = new Date().getTime()
+                            economy.find(u => u.id == id).rep += 1
+                            message.channel.send(`${message.author.username} has given ${user.user.username} a reputation!`)
+                            fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                            bot.channels.get('578105172237221889').send({files: [{
+                                attachment: './economy.txt',
+                                name: 'economy.txt'
+                            }]})
+                        }
+                    } else {
+                        throw "Can't find that user!"
+                    }
+                }
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }     
+
+        function getEconomyBank() {
+            try {
+                var option = msg.split(' ')
+                if (option[1] == 'global') {
+                    var leaderboard = economy.sort(function(a,b) {return b.rep - a.rep})
+                    leaderboard.slice(10, leaderboard.length - 9)
+                    var top = ''
+                    for (var i = 0; i < leaderboard.length; i++) {
+                        top += `${i+1}. ${bot.users.find(u => u.id == leaderboard[i].id).username} (Rep: ${leaderboard[i].rep})\n`
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Global leaderboard for rep`)
+                    .setColor(embedcolor)
+                    .setDescription(top)
+                    message.channel.send({embed})
+                }
+                if (option[1] == 'credit') {
+                    if (option[2] == undefined) {
+                        var credit = economy.find(u => u.id == message.author.id).credit
+                        message.channel.send(`You have a total of **${credit}** credits`)
+                    } else if (message.mentions.members.size > 0) {
+                        var credits = Number(msg.split(" ")[3])
+                        if (economy.find(u => u.id == message.author.id).credit < credits) {
+                            throw "You don't have enough credits!"
+                        } else {
+                            var user = message.mentions.members.first()
+                            economy.find(u => u.id == message.author.id).credit -= credits
+                            economy.find(u => u.id == user.id).credit += credits
+                            message.channel.send(`${message.author.username} has gifted ${user.user.username} **${credits}** credits!`)
+                            fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                            bot.channels.get('578105172237221889').send({files: [{
+                                attachment: './economy.txt',
+                                name: 'economy.txt'
+                            }]})
+                        }
+                    }
+                }
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        function mine() {
+            try {
+                var user = economy.find(u => u.id == message.author.id)
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
+                    throw "You can't mine yet! Sowwy :c"
+                }
+                if (user.pickaxe <= 0) {
+                    throw "You need to buy a new pickaxe!"
+                }
+                setCommandCooldown(command, 1800000)
+                var random = Math.random() * 100
+                if (random >= 0 && random < 25) {
+                    message.channel.send('You found nothing sadly...')
+                }
+                if (random >= 25 && random < 50) {
+                    user.credit += 5
+                    message.channel.send(`What's this? You found coal ore (+5 credits)`)
+                }
+                if (random >= 50 && random < 70) {
+                    user.credit += 10
+                    message.channel.send(`What's this? You found iron ore (+10 credits)`)
+                }
+                if (random >= 70 && random < 85) {
+                    user.credit += 20
+                    message.channel.send(`What's this? You found gold ore! (+20 credits)`)
+                }
+                if (random >= 85 && random < 95) {
+                    user.credit += 45
+                    message.channel.send(`What's this? You found diamond ore! (+45 credits)`)
+                }
+                if (random >= 95 && random < 99) {
+                    user.credit += 70
+                    message.channel.send(`What's this? You found opal ore!!! Sparkly~ (+70 credits)`)
+                }
+                if (random >= 99 && random < 100) {
+                    user.credit += 100
+                    message.channel.send(`What's this? You found ruby ore!!!!! (+100 credits)`)
+                }
+                economy.find(u => u.id == message.author.id).pickaxe -= 1
+                fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                bot.channels.get('578105172237221889').send({files: [{
+                    attachment: './economy.txt',
+                    name: 'economy.txt'
+                }]})
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        xpleveler()
+
+        if (msg.substring(0,4) == "!rep" && msg.substring(0,4) == command) {
+            rep(5)
+        }
+        if (msg.substring(0,6) == "!daily" && msg.substring(0,6) == command) {
+            daily()
+        }
+        if (msg.substring(0,5) == "!mine" && msg.substring(0,5) == command) {
+            mine()
+        }
+        if (msg.substring(0,11) == "!background" && msg.substring(0,11) == command) {
+            getBackground()
+        }
+        if (msg.substring(0,3) == "!bg" && msg.substring(0,3) == command) {
+            getBackground()
+        }
+        if (msg.substring(0,8) == "!profile" && msg.substring(0,8) == command) {
+            getEconomyProfile()
+        }
+        if (msg.substring(0,5) == "!rank" && msg.substring(0,5) == command) {
+            getEconomyRank()
+        }
+        if (msg.substring(0,5) == "!bank" && msg.substring(0,5) == command) {
+            getEconomyBank()
+        }
+        if (msg.substring(0,8) == "!pickaxe" && msg.substring(0,8) == command) {
+            var user = economy.find(u => u.id == message.author.id)
+            if (user.credit <= 100) {
+                throw 'You need 100 credits to add durability to your pickaxe'
+            } else {
+                user.pickaxe += 10
+                message.channel.send('Added 10 durability to your pickaxe')
+            }
+        }
         }
     }
 })
