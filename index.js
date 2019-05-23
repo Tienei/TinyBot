@@ -4168,6 +4168,7 @@ ${purchasedlevelup}`)
             try {
                 var earn = 200
                 var discorduser = economy.find(u => u.id == message.author.id)
+                console.log(discorduser.dailycooldown, new Date().getTime())
                 if (new Date().getTime() - Number(discorduser.dailycooldown) >= 86400000)  {
                     if (msg.substring(7) == "") {
                         if (discorduser.dailycount >= 5) {
@@ -4189,7 +4190,7 @@ ${purchasedlevelup}`)
                         name: 'economy.txt'
                     }]})
                 } else {
-                    throw `You need to wait ${Math.ceil((86400000 - new Date(discorduser.dailycooldown).getMilliseconds())/3600000)} hours to do daily again`
+                    throw `You need to wait ${Math.ceil((86400000 - (new Date().getTime() - discorduser.dailycooldown))/3600000)} hours to do daily again`
                 }
             } catch (error) {
                 message.channel.send(String(error))
@@ -4199,7 +4200,7 @@ ${purchasedlevelup}`)
         function rep(start) {
             try {
                 if (new Date().getTime() - economy.find(u => u.id == message.author.id).repcooldown < 43200000) {
-                    throw `You need to wait ${Math.ceil((43200000 - new Date(economy.find(u => u.id == message.author.id).repcooldown).getMilliseconds())/3600000)} hours to rep again`
+                    throw `You need to wait ${Math.ceil((43200000 - (new Date().getTime() - economy.find(u => u.id == message.author.id).repcooldown))/3600000)} hours to rep again`
                 } else {
                     if (msg.substring(start) == "") {
                         message.channel.send('You can rep! OwO')
