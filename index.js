@@ -23,6 +23,7 @@ var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 var ee = JSON.parse(process.env.EASTER_EGG)
 var eenumber = ''
 
+var loading = 1
 var botver = 'v3'
 var botsubver = 'v3.1'
 var refresh = 0
@@ -325,6 +326,7 @@ bot.on("ready", (ready) => {
         var ecourl = ecobackup.first().url
         var ecodata = await request.get(ecourl)
         economy = JSON.parse(ecodata)
+        loading = 0
     }
     getFile()
     
@@ -452,7 +454,7 @@ bot.on("message", (message) => {
     var command = ''
     var embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
 
-    if (message.author.bot == false){
+    if (message.author.bot == false && loading == 0){
         for (var i = 0; i < msg.length; i++) {
             if (msg[i] == ' ') {
                 command = msg.substring(0,i)
@@ -4228,9 +4230,9 @@ ${purchasedlevelup}`)
         function getEconomyBank() {
             try {
                 var option = msg.split(' ')
-                if (option[1] == 'global') {
+                if (option[1] == 'repglobal') {
                     var leaderboard = economy.sort(function(a,b) {return b.rep - a.rep})
-                    leaderboard.slice(10, leaderboard.length - 9)
+                    leaderboard.splice(10, leaderboard.length)
                     var top = ''
                     for (var i = 0; i < leaderboard.length; i++) {
                         top += `${i+1}. ${bot.users.find(u => u.id == leaderboard[i].id).username} (Rep: ${leaderboard[i].rep})\n`
@@ -4238,6 +4240,21 @@ ${purchasedlevelup}`)
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Global leaderboard for rep`)
                     .setColor(embedcolor)
+                    .setThumbnail(bot.user.avatarURL)
+                    .setDescription(top)
+                    message.channel.send({embed})
+                }
+                if (option[1] == 'xpglobal') {
+                    var leaderboard = economy.sort(function(a,b) {return b.totalxp - a.totalxp})
+                    leaderboard.splice(10, leaderboard.length)
+                    var top = ''
+                    for (var i = 0; i < leaderboard.length; i++) {
+                        top += `${i+1}. ${bot.users.find(u => u.id == leaderboard[i].id).username} (Total XP: ${leaderboard[i].totalxp})\n`
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Global leaderboard for xp`)
+                    .setColor(embedcolor)
+                    .setThumbnail(bot.user.avatarURL)
                     .setDescription(top)
                     message.channel.send({embed})
                 }
