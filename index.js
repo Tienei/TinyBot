@@ -3794,7 +3794,7 @@ ${date}
                         setCommandCooldown('message', 60000)
                     }
                     if (user.xp > Math.floor(10 + 2 * Math.pow(user.level, 2) + 90 * user.level)) {
-                        var awarded = Math.floor(10 + Math.pow(level, 1.5))
+                        var awarded = Math.floor(10 + Math.pow(user.level, 1.5))
                         user.xp = user.xp - Math.floor(10 + 2 * Math.pow(user.level, 2) + 90 * user.level)
                         user.level += 1
                         user.credit += awarded
