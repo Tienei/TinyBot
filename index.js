@@ -3730,7 +3730,8 @@ ${date}
             if (message.embeds[0].url.substring(0,43) == "https://osu.ppy.sh/community/forums/topics/" || message.embeds[0].url.substring(0,42) == "http://osu.ppy.sh/community/forums/topics/")
             tourneydetail()
         }
-        if (message.guild !== null && message.guild.id == "450576647976910869") {
+        
+        if (message.guild !== null && (message.guild.id == "450576647976910869" || message.guild.id == "520829106003116050")) {
 
         // Economy
         
