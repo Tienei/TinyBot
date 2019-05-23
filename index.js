@@ -4284,8 +4284,8 @@ ${purchasedlevelup}`)
                     } else if (message.mentions.members.size > 0) {
                         var user = message.mentions.members.first()
                         if (economy.find(u => u.id == user.id) !== undefined) {
-                            economy.find(u => u.id == id).repcooldown = new Date().getTime()
-                            economy.find(u => u.id == id).rep += 1
+                            economy.find(u => u.id == message.author.id).repcooldown = new Date().getTime()
+                            economy.find(u => u.id == user.id).rep += 1
                             message.channel.send(`${message.author.username} has given ${user.user.username} a reputation!`)
                             fs.writeFileSync('economy.txt', JSON.stringify(economy))
                             bot.channels.get('578105172237221889').send({files: [{
