@@ -4368,7 +4368,7 @@ ${purchasedlevelup}`)
                 if (user.pickaxe <= 0) {
                     throw "You need to buy a new pickaxe!"
                 }
-                setCommandCooldown(command, 1800000)
+                setCommandCooldown(command, 5000)
                 var random = Math.random() * 100
                 if (random >= 0 && random < 25) {
                     message.channel.send('You found nothing sadly...')
