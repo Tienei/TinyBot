@@ -4374,28 +4374,28 @@ ${purchasedlevelup}`)
                     message.channel.send('You found nothing sadly...')
                 }
                 if (random >= 25 && random < 50) {
-                    user.credit += 5
-                    message.channel.send(`What's this? You found coal ore (+5 credits)`)
+                    user.credit += 2
+                    message.channel.send(`What's this? You found coal ore (+2 credits)`)
                 }
                 if (random >= 50 && random < 70) {
-                    user.credit += 10
-                    message.channel.send(`What's this? You found iron ore (+10 credits)`)
+                    user.credit += 5
+                    message.channel.send(`What's this? You found iron ore (+5 credits)`)
                 }
                 if (random >= 70 && random < 85) {
-                    user.credit += 20
-                    message.channel.send(`What's this? You found gold ore! (+20 credits)`)
+                    user.credit += 10
+                    message.channel.send(`What's this? You found gold ore! (+10 credits)`)
                 }
                 if (random >= 85 && random < 95) {
-                    user.credit += 45
-                    message.channel.send(`What's this? You found diamond ore! (+45 credits)`)
+                    user.credit += 20
+                    message.channel.send(`What's this? You found diamond ore! (+20 credits)`)
                 }
                 if (random >= 95 && random < 99) {
-                    user.credit += 70
-                    message.channel.send(`What's this? You found opal ore!!! Sparkly~ (+70 credits)`)
+                    user.credit += 45
+                    message.channel.send(`What's this? You found opal ore!!! Sparkly~ (+45 credits)`)
                 }
                 if (random >= 99 && random < 100) {
-                    user.credit += 100
-                    message.channel.send(`What's this? You found ruby ore!!!!! (+100 credits)`)
+                    user.credit += 70
+                    message.channel.send(`What's this? You found ruby ore!!!!! (+70 credits)`)
                 }
                 economy.find(u => u.id == message.author.id).pickaxe -= 1
                 fs.writeFileSync('economy.txt', JSON.stringify(economy))
