@@ -4309,9 +4309,9 @@ ${purchasedlevelup}`)
                 var option = msg.split(' ')
                 if (option[1] == 'repglobal') {
                     var leaderboard = economy.sort(function(a,b) {return b.rep - a.rep})
-                    leaderboard.splice(10, leaderboard.length)
+                    var length = leaderboard.length > 10 ? 10 : leaderboard.length
                     var top = ''
-                    for (var i = 0; i < leaderboard.length; i++) {
+                    for (var i = 0; i < length; i++) {
                         top += `${i+1}. ${bot.users.find(u => u.id == leaderboard[i].id).username} (Rep: ${leaderboard[i].rep})\n`
                     }
                     const embed = new Discord.RichEmbed()
@@ -4323,9 +4323,9 @@ ${purchasedlevelup}`)
                 }
                 if (option[1] == 'xpglobal') {
                     var leaderboard = economy.sort(function(a,b) {return b.totalxp - a.totalxp})
-                    leaderboard.splice(10, leaderboard.length)
+                    var length = leaderboard.length > 10 ? 10 : leaderboard.length
                     var top = ''
-                    for (var i = 0; i < leaderboard.length; i++) {
+                    for (var i = 0; i < length; i++) {
                         top += `${i+1}. ${bot.users.find(u => u.id == leaderboard[i].id).username} (Total XP: ${leaderboard[i].totalxp})\n`
                     }
                     const embed = new Discord.RichEmbed()
