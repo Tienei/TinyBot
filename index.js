@@ -807,7 +807,7 @@ bot.on("message", (message) => {
                     'mine': {
                         helpcommand: '!mine',
                         description: "Mining stuff",
-                        option: "If you mine one of this up, you'll get:\n`Coal`: 5 credits\n`Iron`: 10 credits\n`Gold`: 20 credits\n`Diamond`: 45 credits\n`Opal`: 70 credits\n`Ruby`: 100 credits",
+                        option: "If you mine one of this up, you'll get:\n`Coal`: 4 credits\n`Iron`: 8 credits\n`Gold`: 16 credits\n`Diamond`: 36 credits\n`Opal`: 56 credits\n`Ruby`: 80 credits",
                         example: '!mine'
                     },
                     'background': {
@@ -4374,28 +4374,28 @@ ${purchasedlevelup}`)
                     message.channel.send('You found nothing sadly...')
                 }
                 if (random >= 25 && random < 50) {
-                    user.credit += 2
-                    message.channel.send(`What's this? You found coal ore (+2 credits)`)
+                    user.credit += 4
+                    message.channel.send(`What's this? You found coal ore (+4 credits)`)
                 }
                 if (random >= 50 && random < 70) {
-                    user.credit += 5
-                    message.channel.send(`What's this? You found iron ore (+5 credits)`)
+                    user.credit += 8
+                    message.channel.send(`What's this? You found iron ore (+8 credits)`)
                 }
                 if (random >= 70 && random < 85) {
-                    user.credit += 10
-                    message.channel.send(`What's this? You found gold ore! (+10 credits)`)
+                    user.credit += 16
+                    message.channel.send(`What's this? You found gold ore! (+16 credits)`)
                 }
                 if (random >= 85 && random < 95) {
-                    user.credit += 20
-                    message.channel.send(`What's this? You found diamond ore! (+20 credits)`)
+                    user.credit += 36
+                    message.channel.send(`What's this? You found diamond ore! (+36 credits)`)
                 }
                 if (random >= 95 && random < 99) {
-                    user.credit += 45
-                    message.channel.send(`What's this? You found opal ore!!! Sparkly~ (+45 credits)`)
+                    user.credit += 56
+                    message.channel.send(`What's this? You found opal ore!!! Sparkly~ (+56 credits)`)
                 }
                 if (random >= 99 && random < 100) {
-                    user.credit += 70
-                    message.channel.send(`What's this? You found ruby ore!!!!! (+70 credits)`)
+                    user.credit += 80
+                    message.channel.send(`What's this? You found ruby ore!!!!! (+80 credits)`)
                 }
                 economy.find(u => u.id == message.author.id).pickaxe -= 1
                 fs.writeFileSync('economy.txt', JSON.stringify(economy))
