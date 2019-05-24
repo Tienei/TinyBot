@@ -4439,6 +4439,7 @@ ${purchasedlevelup}`)
             if (user.credit <= 100) {
                 throw 'You need 100 credits to add durability to your pickaxe'
             } else {
+                user.credit -= 100
                 user.pickaxe += 10
                 message.channel.send('Added 10 durability to your pickaxe')
             }
