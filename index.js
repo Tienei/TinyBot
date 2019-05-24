@@ -4245,7 +4245,9 @@ ${purchasedlevelup}`)
             try {
                 var earn = 200
                 var discorduser = economy.find(u => u.id == message.author.id)
-                console.log(discorduser.dailycooldown, new Date().getTime())
+                if (new Date().getTime() - Number(discorduser.dailycooldown) >= 172800000) {
+                    discorduser.dailycount = 0
+                }
                 if (new Date().getTime() - Number(discorduser.dailycooldown) >= 86400000)  {
                     if (msg.substring(7) == "") {
                         if (discorduser.dailycount >= 5) {
