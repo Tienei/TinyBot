@@ -4269,7 +4269,7 @@ ${purchasedlevelup}`)
                         economy.find(u => u.id == user.id).credit += earn
                         message.channel.send(`**${message.author.username}** has given ${user.displayName} **${earn}** credits`)
                     }
-                    discorduser.daily = new Date().getTime()
+                    discorduser.dailycooldown = new Date().getTime()
                     discorduser.dailycount += 1
                     fs.writeFileSync('economy.txt', JSON.stringify(economy))
                     bot.channels.get('578105172237221889').send({files: [{
@@ -4283,7 +4283,6 @@ ${purchasedlevelup}`)
                 message.channel.send(String(error))
             }
         }
-
         function rep(start) {
             try {
                 if (new Date().getTime() - economy.find(u => u.id == message.author.id).repcooldown < 43200000) {
