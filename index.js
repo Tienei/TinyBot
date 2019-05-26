@@ -4249,7 +4249,7 @@ ${purchasedlevelup}`)
                 var discorduser = economy.find(u => u.id == message.author.id)
                 if (new Date().getTime() - Number(discorduser.dailycooldown) >= 172800000) {
                     discorduser.dailycount = 0
-                    discorduser.daily = new Date().getTime()
+                    discorduser.dailycooldown = new Date().getTime()
                     fs.writeFileSync('economy.txt', JSON.stringify(economy))
                     bot.channels.get('578105172237221889').send({files: [{
                         attachment: './economy.txt',
