@@ -4250,6 +4250,11 @@ ${purchasedlevelup}`)
                 if (new Date().getTime() - Number(discorduser.dailycooldown) >= 172800000) {
                     discorduser.dailycount = 0
                     discorduser.daily = new Date().getTime()
+                    fs.writeFileSync('economy.txt', JSON.stringify(economy))
+                    bot.channels.get('578105172237221889').send({files: [{
+                        attachment: './economy.txt',
+                        name: 'economy.txt'
+                    }]})
                 }
                 if (new Date().getTime() - Number(discorduser.dailycooldown) >= 86400000)  {
                     if (msg.substring(7) == "") {
