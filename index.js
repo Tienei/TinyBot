@@ -3812,6 +3812,8 @@ ${date}
 
         // Economy
         
+        if (message.author.id !== "234788988341321731") {
+        
         var bgprofile = [{"name": "megumin", "link": "https://i.imgur.com/0AD3DrI.png", "credit": 2000},
                         {"name": "rem", "link": "https://i.imgur.com/cr5MbyB.png", "credit": 2000},
                         {"name": "chino", "link": "https://i.imgur.com/2fkmS19.png", "credit": 2000},
@@ -4247,6 +4249,7 @@ ${purchasedlevelup}`)
                 var discorduser = economy.find(u => u.id == message.author.id)
                 if (new Date().getTime() - Number(discorduser.dailycooldown) >= 172800000) {
                     discorduser.dailycount = 0
+                    discorduser.daily = new Date().getTime()
                 }
                 if (new Date().getTime() - Number(discorduser.dailycooldown) >= 86400000)  {
                     if (msg.substring(7) == "") {
@@ -4446,6 +4449,7 @@ ${purchasedlevelup}`)
                 message.channel.send('Added 10 durability to your pickaxe')
             }
         }
+    }
     }
 })
 
