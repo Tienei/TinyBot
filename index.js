@@ -3839,8 +3839,8 @@ ${date}
                             "level": 1,
                             "credit": 0,
                             "rep": 0,
-                            "repcooldown": new Date().getTime(),
-                            "dailycooldown": new Date().getTime(),
+                            "repcooldown": 0,
+                            "dailycooldown": 0,
                             "dailycount": 0,
                             "purchased": {
                                 "levelup": ["default"],
