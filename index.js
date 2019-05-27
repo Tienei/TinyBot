@@ -3812,8 +3812,6 @@ ${date}
 
         // Economy
         
-        if (message.author.id !== "234788988341321731") {
-        
         var bgprofile = [{"name": "megumin", "link": "https://i.imgur.com/0AD3DrI.png", "credit": 2000},
                         {"name": "rem", "link": "https://i.imgur.com/cr5MbyB.png", "credit": 2000},
                         {"name": "chino", "link": "https://i.imgur.com/2fkmS19.png", "credit": 2000},
@@ -4348,9 +4346,9 @@ ${purchasedlevelup}`)
                         message.channel.send(`You have a total of **${credit}** credits`)
                     } else if (message.mentions.members.size > 0) {
                         var credits = Number(msg.split(" ")[3])
-                        if (economy.find(u => u.id == message.author.id).credit < credits) {
+                        if (economy.find(u => u.id == message.author.id).credit < credits || credits == Infinity || credits == NaN) {
                             throw "You don't have enough credits!"
-                        } else {
+                        }  else {
                             var user = message.mentions.members.first()
                             economy.find(u => u.id == message.author.id).credit -= credits
                             economy.find(u => u.id == user.id).credit += credits
@@ -4453,7 +4451,6 @@ ${purchasedlevelup}`)
                 message.channel.send('Added 10 durability to your pickaxe')
             }
         }
-    }
     }
 })
 
