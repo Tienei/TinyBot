@@ -12,7 +12,7 @@ const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 const fs = require('fs')
-const san = require('sanitize-html')
+const cheerio = require('cheerio')
 const jimp = require('jimp')
 
 var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
@@ -946,7 +946,8 @@ Includes:
 **May Update:**
 - Added !checkbot
 - Added !osu -d length (Idea by lokser)
-- Added !osu -d common mods (Idea by Yeong Yuseong)`)
+- Added !osu -d common mods (Idea by Yeong Yuseong)
+- New !osu design`)
             message.channel.send({embed})
         }
 
@@ -1537,15 +1538,39 @@ Most common mods: ${sortedmod}`)
                     message.channel.send({embed});
                 } else {
                     var user = await osuApi.getUser({u: name, m: mode})
+                    var web = await request.get(`https://osu.ppy.sh/users/${name}`)
+                    var user_web = await cheerio.load(web)
+                    user_web = user_web("#json-user").html()
+                    user_web = user_web.replace(/<\/?[^>]+>|&quot;/gi, "");
+                    user_web = user_web.replace(/\/\//gi, "/")
+                    user_web = JSON.parse(user_web)
+                    var playstyle = ""
+                    if (user_web["playstyle"] == null) {
+                        playstyle = "None?"
+                    } else {
+                        for (var i in user_web["playstyle"]) {
+                            playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
+                            user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
+                        }
+                    }
+                    var supporter = ''
+                    if (user_web["is_supporter"] == true) {
+                        supporter = '<:supporter:582885341413769218>'
+                    }
                     var modename = ''
+                    var modeicon = ''
                     if (mode == 0) {
                         modename = 'Standard'
+                        modeicon = '<:osu:582883671501963264>'
                     } else if (mode == 1) {
                         modename = 'Taiko'
+                        modeicon = '<:taiko:582883837554458626>'
                     } else if (mode == 2) {
                         modename = 'CTB'
+                        modeicon = '<:ctb:582883855627845703>'
                     } else if (mode == 3) {
                         modename = 'Mania'
+                        modeicon = '<:mania:582883872568639490>'
                     }
                     var username = user.name
                     if (username == undefined) {
@@ -1564,15 +1589,20 @@ Most common mods: ${sortedmod}`)
                     var a = user.counts.A
 
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Osu!${modename} status for: ${username}`,'',`https://osu.ppy.sh/users/${id}`)
                     .setDescription(`
-▸**Performance:** ${pp}pp 
-▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
-▸**Accuracy:** ${acc}%
-▸**Play count:** ${played}
-▸**Level:** ${level}
-                
-<:rankingX:520932410746077184>: ${ss}  <:rankingS:520932426449682432>: ${s}  <:rankingA:520932311613571072>: ${a} `)
+${modeicon} ${supporter}   **Osu!${modename} status for: [${username}](https://osu.ppy.sh/users/${id})**`)
+                    .addField('Performance:',`--- **${pp}pp**
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank})
+**Accuracy:** ${acc}%
+**Play count:** ${played}
+**Level:** ${level}
+**Play Style:**
+${playstyle}`, true)
+                    .addField('Rank:', `<:rankingX:520932410746077184>: ${ss}
+
+<:rankingS:520932426449682432>: ${s}
+
+<:rankingA:520932311613571072>: ${a}`, true)
                     .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
                     .setColor(embedcolor)
                     message.channel.send({embed});
