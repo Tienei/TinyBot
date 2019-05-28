@@ -1538,7 +1538,7 @@ Most common mods: ${sortedmod}`)
                     message.channel.send({embed});
                 } else {
                     var user = await osuApi.getUser({u: name, m: mode})
-                    var web = await request.get(`https://osu.ppy.sh/users/${name}`)
+                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
                     var user_web = await cheerio.load(web)
                     user_web = user_web("#json-user").html()
                     user_web = user_web.replace(/<\/?[^>]+>|&quot;/gi, "");
