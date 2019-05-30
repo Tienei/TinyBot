@@ -448,7 +448,6 @@ bot.on("guildMemberAdd", (member) => {
    welcomeMessage()
 })
 
-
 bot.on("message", (message) => {
     if (message.author.bot == false && loading == 0){
         var msg = message.content.toLowerCase();
@@ -1402,8 +1401,10 @@ Use External Emojis: ${compatibility[5]}`)
                     if (pass[1] > 1) {
                         check = option[1]
                     } else {
-                        if (a_b > -1) {
+                        if (a_d > -1) {
                             check = option[option.indexOf("-d") + 1]
+                        } else if (option.length > 1) {
+                            check = option[1]
                         }
                         if (check == undefined) {
                             check = ''
@@ -1729,6 +1730,8 @@ ${playstyle}`, true)
                     } else {
                         if (a_b > -1) {
                             check = option[option.indexOf("-b") + 1]
+                        } else if (option.length > 1) {
+                            check = option[1]
                         }
                         if (check == undefined) {
                             check = ''
@@ -2038,6 +2041,8 @@ ${date}
                             check = option[option.indexOf("-g") + 2]
                         }  else if (a_page > -1) {
                             check = option[option.indexOf("-page") + 1]
+                        } else if (option.length > 1) {
+                            check = option[1]
                         }
                         if (check == undefined) {
                             check = ''
@@ -3394,6 +3399,8 @@ ${prizetext}`)
                     } else {
                         if (a_d > -1) {
                             check = option[option.indexOf("-d") + 1]
+                        } else if (option.length > 1) {
+                            check = option[1]
                         }
                         if (check == undefined) {
                             check = ''
@@ -3639,6 +3646,8 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     } else {
                         if (a_p > -1) {
                             check = option[option.indexOf("-p") + 1]
+                        } else if (option.length > 1) {
+                            check = option[1]
                         }
                         if (check == undefined) {
                             check = ''
