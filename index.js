@@ -572,7 +572,7 @@ bot.on("message", (message) => {
                     'osu': {
                         helpcommand: '!osu (username) (options)',
                         description: 'Get an osu!Standard profile',
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`',
+                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nRank `(-rank)`: Get an osu!Standard profile by rank',
                         example: '!osu Tienei -d'
                     },
                     'taiko': {
@@ -1387,9 +1387,22 @@ Use External Emojis: ${compatibility[5]}`)
                 }
                 // Find name and arg
                 var a_d = option.indexOf("-d")
+                var a_rank = option.indexOf("-rank")
+                //Check if there is more than 1 argument
+                var findarg = [a_d, a_rank]
+                var find = false
+                for (var i = 0; i < findarg.length; i++) {
+                    if (findarg[i] > -1) {
+                        if (find == false) {
+                            find = true
+                        } else {
+                            throw 'Only one argument please!'
+                        }
+                    }
+                }
                 //Get name if there's no quote
                 if (quote == false) {
-                    var pass = [0, a_d]
+                    var pass = [0, a_d, a_rank]
                     for (var i = 0; i < pass.length;) {
                         if (pass[i] == -1) {
                             pass.splice(i,1)
@@ -1412,7 +1425,7 @@ Use External Emojis: ${compatibility[5]}`)
                     }
                 }
                 var name = checkplayer(check)
-                if (a_d > -1) {
+                if (a_d > -1 && mode == 0) {
                     var user = await osuApi.getUser({u: name, event_days: 31})
                     var best = await osuApi.getUserBest({u: name, limit: 50})
                     var event = ``
@@ -1531,6 +1544,82 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
 Most common mods: ${sortedmod}`)
+                    message.channel.send({embed});
+                } else if (a_rank > -1 && mode == 0) {
+                    var rank = Number(option[option.indexOf('-rank') + 1])
+                    var page = 1 + Math.floor((rank - 1) / 50)
+                    var web = await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)
+                    var leaderboard = await cheerio.load(web)
+                    var table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
+                    var player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
+                    var user = await osuApi.getUser({u: player})
+                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
+                    var user_web = await cheerio.load(web)
+                    user_web = user_web("#json-user").html()
+                    user_web = user_web.replace(/<\/?[^>]+>|&quot;/gi, "");
+                    user_web = user_web.replace(/\/\//gi, "/")
+                    user_web = JSON.parse(user_web)
+                    var playstyle = ""
+                    if (user_web["playstyle"] == null) {
+                        playstyle = "None?"
+                    } else {
+                        for (var i in user_web["playstyle"]) {
+                            playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
+                            user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
+                        }
+                    }
+                    var supporter = ''
+                    if (user_web["is_supporter"] == true) {
+                        supporter = '<:supporter:582885341413769218>'
+                    }
+                    var modename = ''
+                    var modeicon = ''
+                    if (mode == 0) {
+                        modename = 'Standard'
+                        modeicon = '<:osu:582883671501963264>'
+                    } else if (mode == 1) {
+                        modename = 'Taiko'
+                        modeicon = '<:taiko:582883837554458626>'
+                    } else if (mode == 2) {
+                        modename = 'CTB'
+                        modeicon = '<:ctb:582883855627845703>'
+                    } else if (mode == 3) {
+                        modename = 'Mania'
+                        modeicon = '<:mania:582883872568639490>'
+                    }
+                    var username = user.name
+                    if (username == undefined) {
+                        throw 'User not found!'
+                    }
+                    var acc = Number(user.accuracy).toFixed(2)
+                    var id = user.id
+                    var pp = Number(user.pp.raw).toFixed(2);
+                    var played = user.counts.plays
+                    var rank = user.pp.rank
+                    var countryrank = user.pp.countryRank
+                    var country = user.country.toLowerCase();
+                    var level = user.level
+                    var ss = Number(user.counts.SS) + Number(user.counts.SSH)
+                    var s = Number(user.counts.S) + Number(user.counts.SH)
+                    var a = user.counts.A
+
+                    const embed = new Discord.RichEmbed()
+                    .setDescription(`
+${modeicon} ${supporter}   **Osu!${modename} status for: [${username}](https://osu.ppy.sh/users/${id})**`)
+                    .addField('Performance:',`--- **${pp}pp**
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank})
+**Accuracy:** ${acc}%
+**Play count:** ${played}
+**Level:** ${level}
+**Play Style:**
+${playstyle}`, true)
+                    .addField('Rank:', `<:rankingX:520932410746077184>: ${ss}
+
+<:rankingS:520932426449682432>: ${s}
+
+<:rankingA:520932311613571072>: ${a}`, true)
+                    .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
+                    .setColor(embedcolor)
                     message.channel.send({embed});
                 } else {
                     var user = await osuApi.getUser({u: name, m: mode})
