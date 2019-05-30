@@ -25,7 +25,7 @@ var eenumber = ''
 
 var loading = 1
 var botver = 'v3'
-var botsubver = 'v3.1'
+var botsubver = 'v3.2'
 var refresh = 0
 
 function rankingletters(letter) {
@@ -450,21 +450,11 @@ bot.on("guildMemberAdd", (member) => {
 
 
 bot.on("message", (message) => {
-    var msg = message.content.toLowerCase();
-    refresh = Math.round(Math.random()* 2147483648)
-    var command = ''
-    var embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-
     if (message.author.bot == false && loading == 0){
-        for (var i = 0; i < msg.length; i++) {
-            if (msg[i] == ' ') {
-                command = msg.substring(0,i)
-                break;
-            } else if (msg[i+1] == undefined) {
-                command = msg.substring(0,i+1)
-                break;
-            }
-        }
+        var msg = message.content.toLowerCase();
+        refresh = Math.round(Math.random()* 2147483648)
+        var command = msg.split(' ')[0]
+        var embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
 
         function setCommandCooldown(cdcommand,time) {
             if (cooldown[message.author.id] == undefined) {
@@ -899,10 +889,10 @@ bot.on("message", (message) => {
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design)
 
 **--- Tester:**
-ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul, Rimu`)
+ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             message.channel.send({embed})
         }
 
@@ -932,23 +922,10 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul, Rimu`)
             .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**Economy Update:**
-Includes:
-- Added !rep
-- Added !daily
-- Added !bank
-- Added !background
-- Added !mine
-- Added !profile
-- Added !rank
-- Added !pickaxe
-
----------------------
-**May Update:**
-- Added !checkbot
-- Added !osu -d length (Idea by lokser)
-- Added !osu -d common mods (Idea by Yeong Yuseong)
-- New !osu design`)
+**Akatsuki, Rippler and osu update:
+- Fixed name can't be register at the end
+- New !osu design
+- New !akatsuki/!rippler design`)
             message.channel.send({embed})
         }
 
@@ -1221,14 +1198,25 @@ Use External Emojis: ${compatibility[5]}`)
                                     var type = respond.substring(s+1,e)
                                     type = type.replace(".", " ")
                                     type = type.split(" ")
+                                    var found = false
                                     if (type[0].substring(0,1) == "$") {
                                         var number = Number(type[0].substring(1))
                                         var option = message.content.split(" ", 10)
                                         option.splice(0,1)
                                         respond = respond.replace(respond.substring(s,e+1), option[number])
-                                    } else if (type[0] == "require:admin") {
+                                        found = true
+                                    }
+                                    if (type[0] == "require:admin") {
                                         requireAdmin = true
-                                    } else {
+                                        found = true
+                                    }
+                                    if (type[0].substring(0,5) == "send:") {
+                                        var channel = message.guild.channels.find(c => c.name == type[0].substring(5))
+                                        var custommsg = respond.substring(s+1,e).split('"')
+                                        channel.send(custommsg[1])
+                                        found = true
+                                    }
+                                    if (found == false) {
                                         respond = respond.replace(respond.substring(s,e+1), define[type[0]][type[1]])
                                     }
                                     break
@@ -1387,37 +1375,43 @@ Use External Emojis: ${compatibility[5]}`)
                 setCommandCooldown(command, 3000)
                 var check = ''
                 var option = ''
-                if (msg.includes('"') == true) {
+                var mode = 0
+                var quote = false
+                // Split name and arg
+                if (msg.includes('"')) {
+                    quote = true
                     option = msg.split('"')
                     check = option[1]
-                    if (option[option.indexOf(check) - 1] == command + " ") {
-                        option = option[2]
-                    } else {
-                        option = option[0]   
-                    }
-                    option = option.split(" ")
-                    optionpos = 1
+                    option = msg.split(" ")
                 } else {
                     option = msg.split(" ")
-                    var cmdcheck = ['-d']
-                    var optionpos = -1
-                    if (cmdcheck.indexOf(option[2]) > -1) {
-                        check = option[1]
-                        optionpos = 2
-                    } else if (cmdcheck.indexOf(option[1]) > -1) {
-                        check = ''
-                        optionpos = 1
-                    } else {
-                        if (option.length > 1) {
-                            check = option[1]
+                }
+                // Find name and arg
+                var a_d = option.indexOf("-d")
+                //Get name if there's no quote
+                if (quote == false) {
+                    var pass = [0, a_d]
+                    for (var i = 0; i < pass.length;) {
+                        if (pass[i] == -1) {
+                            pass.splice(i,1)
                         } else {
+                            i++
+                        }
+                    }
+                    pass.sort(function(a,b){return a-b})
+                    if (pass[1] > 1) {
+                        check = option[1]
+                    } else {
+                        if (a_b > -1) {
+                            check = option[option.indexOf("-d") + 1]
+                        }
+                        if (check == undefined) {
                             check = ''
                         }
                     }
                 }
-                var d = (option[optionpos] == '-d')
                 var name = checkplayer(check)
-                if (d == true && mode == 0) {
+                if (a_d > -1) {
                     var user = await osuApi.getUser({u: name, event_days: 31})
                     var best = await osuApi.getUserBest({u: name, limit: 50})
                     var event = ``
@@ -1707,37 +1701,42 @@ ${playstyle}`, true)
                 setCommandCooldown(command, 3000)
                 var check = ''
                 var option = ''
-                if (msg.includes('"') == true) {
+                var quote = false
+                // Split name and arg
+                if (msg.includes('"')) {
+                    quote = true
                     option = msg.split('"')
                     check = option[1]
-                    if (option[option.indexOf(check) - 1] == command + " ") {
-                        option = option[2]
-                    } else {
-                        option = option[0]   
-                    }
-                    option = option.split(" ")
-                    optionpos = 1
+                    option = msg.split(" ")
                 } else {
                     option = msg.split(" ")
-                    var cmdcheck = ['-b']
-                    var optionpos = -1
-                    if (cmdcheck.indexOf(option[2]) > -1) {
-                        check = option[1]
-                        optionpos = 2
-                    } else if (cmdcheck.indexOf(option[1]) > -1) {
-                        check = ''
-                        optionpos = 1
-                    } else {
-                        if (option.length > 1) {
-                            check = option[1]
+                }
+                // Find name and arg
+                var a_b = option.indexOf("-b")
+                //Get name if there's no quote
+                if (quote == false) {
+                    var pass = [0, a_b]
+                    for (var i = 0; i < pass.length;) {
+                        if (pass[i] == -1) {
+                            pass.splice(i,1)
                         } else {
+                            i++
+                        }
+                    }
+                    pass.sort(function(a,b){return a-b})
+                    if (pass[1] > 1) {
+                        check = option[1]
+                    } else {
+                        if (a_b > -1) {
+                            check = option[option.indexOf("-b") + 1]
+                        }
+                        if (check == undefined) {
                             check = ''
                         }
                     }
                 }
-                var b = (option[optionpos] == '-b')
                 var name = checkplayer(check)
-                if (b == true) {
+                if (a_b > -1) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
@@ -1981,43 +1980,70 @@ ${date}
                 }
                 setCommandCooldown(command, 3000)
                 var check = ''
-                var top = ''
-                var modename = ''
                 var option = ''
-                if (msg.includes('"') == true) {
+                var modename = ''
+                var top = ''
+                var quote = false
+                // Split name and arg
+                if (msg.includes('"')) {
+                    quote = true
                     option = msg.split('"')
                     check = option[1]
-                    if (option[option.indexOf(check) - 1] == command + " ") {
-                        option = option[2]
-                    } else {
-                        option = option[0]   
-                    }
-                    option = option.split(" ")
-                    optionpos = 1
+                    option = msg.split(" ")
                 } else {
                     option = msg.split(" ")
-                    var cmdcheck = ['-p', '-r', '-m', '-a', '-g', '-page']
-                    var optionpos = -1
-                    if (cmdcheck.indexOf(option[2]) > -1) {
-                        check = option[1]
-                        optionpos = 2
-                    } else if (cmdcheck.indexOf(option[1]) > -1) {
-                        check = ''
-                        optionpos = 1
-                    } else {
-                        if (option.length > 1) {
-                            check = option[1]
+                }
+                // Find name and arg
+                var a_p = option.indexOf("-p")
+                var a_r = option.indexOf("-r")
+                var a_m = option.indexOf("-m")
+                var a_a = option.indexOf("-a")
+                var a_g = option.indexOf("-g")
+                var a_page = option.indexOf("-page")
+                //Check if there is more than 1 argument
+                var findarg = [a_p, a_r, a_m, a_a, a_g, a_page]
+                var find = false
+                for (var i = 0; i < findarg.length; i++) {
+                    if (findarg[i] > -1) {
+                        if (find == false) {
+                            find = true
                         } else {
+                            throw 'Only one argument please!'
+                        }
+                    }
+                }
+                //Get name if there's no quote
+                if (quote == false) {
+                    var pass = [0, a_p, a_r, a_m, a_a, a_g, a_page]
+                    for (var i = 0; i < pass.length;) {
+                        if (pass[i] == -1) {
+                            pass.splice(i,1)
+                        } else {
+                            i++
+                        }
+                    }
+                    pass.sort(function(a,b){return a-b})
+                    if (pass[1] > 1) {
+                        check = option[1]
+                    } else {
+                        if (a_p > -1) {
+                            check = option[option.indexOf("-p") + 2]
+                        } else if (a_r > -1) {
+                            check = option[option.indexOf("-r") + 1]
+                        } else if (a_m > -1) {
+                            check = option[option.indexOf("-m") + 2]
+                        } else if (a_a > -1) {
+                            check = option[option.indexOf("-a") + 3]
+                        } else if (a_g > -1) {
+                            check = option[option.indexOf("-g") + 2]
+                        }  else if (a_page > -1) {
+                            check = option[option.indexOf("-page") + 1]
+                        }
+                        if (check == undefined) {
                             check = ''
                         }
                     }
                 }
-                var p = (option[optionpos] == '-p')
-                var r = (option[optionpos] == '-r')
-                var m = (option[optionpos] == '-m')
-                var a = (option[optionpos] == '-a')
-                var g = (option[optionpos] == '-g')
-                var page = (option[optionpos] == '-page')
                 if (mode == 0) {
                     modename = 'Standard'
                 }
@@ -2031,7 +2057,7 @@ ${date}
                     modename = 'Mania'
                 }
                 var name = checkplayer(check)
-                if (p == true && m == false && r == false && a == false && g == false && page == false) {
+                if (a_p > -1) {
                     var numberoption = option[option.indexOf('-p') + 1]
                     var range = false
                     var numberrange = ''
@@ -2117,7 +2143,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (r == true && p == false && m == false && a == false && g == false && page == false && mode == 0) {
+                } else if (a_r > -1) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
@@ -2181,7 +2207,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (m == true && p == false && r == false && a == false && g == false && page == false && mode == 0) {
+                } else if (a_m > -1) {
                     var mod = []
                     var getmod = option[option.indexOf('-m') + 1]
                     var definemod = {
@@ -2282,7 +2308,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (a == true && p == false && r == false && m == false && g == false && page == false && mode == 0) {
+                } else if (a_a > -1) {
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var compare = option[option.indexOf('-a') + 1]
                     var compareacc = Number(option[option.indexOf('-a') + 2])
@@ -2371,7 +2397,7 @@ ${date}
                     .setColor(embedcolor)
                     .setDescription(top)
                     message.channel.send({embed});
-                } else if (g == true && p == false && r == false && m == false && a == false && page == false) {
+                } else if (a_g > -1) {
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var user = await osuApi.getUser({u: name})
                     var username = user.name
@@ -2386,7 +2412,7 @@ ${date}
                             break
                         }
                     }
-                } else if (page == true && g == false && p == false && r == false && m == false && a == false) {
+                } else if (a_page > -1) {
                     var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var userid = best[0][0].user.id
                     var user = await osuApi.getUser({u: name})
@@ -2935,7 +2961,7 @@ ${date}
 
         }
 
-        async function tourneydetail() {
+        /*async function tourneydetail() {
             try {
                 var error, respone, html = await request(message.embeds[0].url)
                 const information = {
@@ -3074,6 +3100,7 @@ ${prizetext}`)
                 message.channel.send(String(error))
             }
         }
+        */
 
         async function osutrack() {
             try {
@@ -3277,6 +3304,11 @@ ${prizetext}`)
                 var version = maprecommendeded[1].version
                 var maxCombo = maprecommendeded[1].maxCombo
                 var shortenmod = bittomods(mod)
+                if (message.guild !== null) {
+                    storedmapid.push({id:maprecommendeded[1].id,server:message.guild.id})
+                } else {
+                    storedmapid.push({id:maprecommendeded[1].id,user:message.author.id})
+                }
                 var parser = await precalc(pickedTopPlay)
                 var acc95 = ppcalc(parser,mod,maxCombo,0,0,0,95,0)
                 var acc97 = ppcalc(parser,mod,maxCombo,0,0,0,97,0)
@@ -3333,47 +3365,55 @@ ${prizetext}`)
                 setCommandCooldown(command, 3000)
                 var check = ''
                 var option = ''
-                if (msg.includes('"') == true) {
+                var servericon = ''
+                // Split name and arg
+                if (msg.includes('"')) {
+                    quote = true
                     option = msg.split('"')
                     check = option[1]
-                    if (option[option.indexOf(check) - 1] == command + " ") {
-                        option = option[2]
-                    } else {
-                        option = option[0]   
-                    }
-                    option = option.split(" ")
-                    optionpos = 1
+                    option = msg.split(" ")
                 } else {
                     option = msg.split(" ")
-                    var cmdcheck = ['-d']
-                    var optionpos = -1
-                    if (cmdcheck.indexOf(option[2]) > -1) {
-                        check = option[1]
-                        optionpos = 2
-                    } else if (cmdcheck.indexOf(option[1]) > -1) {
-                        check = ''
-                        optionpos = 1
-                    } else {
-                        if (option.length > 1) {
-                            check = option[1]
+                }
+                // Find name and arg
+                var a_d = option.indexOf("-d")
+                //Get name if there's no quote
+                if (quote == false) {
+                    var pass = [0, a_d]
+                    for (var i = 0; i < pass.length;) {
+                        if (pass[i] == -1) {
+                            pass.splice(i,1)
                         } else {
+                            i++
+                        }
+                    }
+                    pass.sort(function(a,b){return a-b})
+                    if (pass[1] > 1) {
+                        check = option[1]
+                    } else {
+                        if (a_d > -1) {
+                            check = option[option.indexOf("-d") + 1]
+                        }
+                        if (check == undefined) {
                             check = ''
                         }
                     }
                 }
-                var d = (option[optionpos] == '-d')
                 var servername = ''
                 if (serverlink == 'akatsuki.pw') {
                     if (linkoption == '&rx=1') {
                         servername = 'Relax Akatsuki'
+                        servericon = '<:rxakatsuki:583314118933610497>'
                     } else {
                         servername = 'Akatsuki'
+                        servericon = '<:akatsukiosu:583310654648352796>'
                     }
                 }
                 if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
+                    servericon = ''
                 }
-                if (d == true && linkoption !== '&rx=1') {
+                if (a_d > -1 && linkoption !== '&rx=1') {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=50`)
                     var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}&mode=0`)
                     var best = JSON.parse(data1)
@@ -3458,16 +3498,16 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                     var countryrank = user.std.country_leaderboard_rank
                     var country = String(user.country).toLowerCase()
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`${servername} status for: ${username}`,'',`https://${serverlink}/u/${id}`)
                     .setDescription(`
-▸**Performance:** ${pp}pp 
-▸**Rank:** #${rank} (:flag_${country}:: #${countryrank})
-▸**Accuracy:** ${acc}%
-▸**Play count:** ${played}
-▸**Level:** ${level}
+${servericon} **${servername} status for: [${username}](https://${serverlink}/u/${id})**`)
+                    .addField('Performance:',`--- **${pp}pp**
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank})
+**Accuracy:** ${acc}%
+**Play count:** ${played}
+**Level:** ${level}
 `)
-                .setThumbnail(`https://a.${serverlink}/${id}.png?date=${refresh}`)
-                .setColor(embedcolor)
+                    .setThumbnail(`https://a.${serverlink}/${id}.png?date=${refresh}`)
+                    .setColor(embedcolor)
                     message.channel.send({embed});
                 }
             } catch (error) {
@@ -3570,35 +3610,39 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 var check = ''
                 var top = ''
                 var option = ''
-                if (msg.includes('"') == true) {
+                // Split name and arg
+                if (msg.includes('"')) {
+                    quote = true
                     option = msg.split('"')
                     check = option[1]
-                    if (option[option.indexOf(check) - 1] == command + " ") {
-                        option = option[2]
-                    } else {
-                        option = option[0]   
-                    }
-                    option = option.split(" ")
-                    optionpos = 1
+                    option = msg.split(" ")
                 } else {
                     option = msg.split(" ")
-                    var cmdcheck = ['-p']
-                    var optionpos = -1
-                    if (cmdcheck.indexOf(option[2]) > -1) {
-                        check = option[1]
-                        optionpos = 2
-                    } else if (cmdcheck.indexOf(option[1]) > -1) {
-                        check = ''
-                        optionpos = 1
-                    } else {
-                        if (option.length > 1) {
-                            check = option[1]
+                }
+                // Find name and arg
+                var a_p = option.indexOf("-p")
+                //Get name if there's no quote
+                if (quote == false) {
+                    var pass = [0, a_p]
+                    for (var i = 0; i < pass.length;) {
+                        if (pass[i] == -1) {
+                            pass.splice(i,1)
                         } else {
+                            i++
+                        }
+                    }
+                    pass.sort(function(a,b){return a-b})
+                    if (pass[1] > 1) {
+                        check = option[1]
+                    } else {
+                        if (a_p > -1) {
+                            check = option[option.indexOf("-p") + 1]
+                        }
+                        if (check == undefined) {
                             check = ''
                         }
                     }
                 }
-                var p = (option[optionpos] == '-p')
                 var servername = ''
                 if (serverlink == 'akatsuki.pw') {
                     if (linkoption == '&rx=1') {
@@ -3610,7 +3654,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 if (serverlink == 'ripple.moe') {
                     servername = 'Ripple'
                 }
-                if (p == true) {
+                if (a_p > -1) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}${linkoption}`)
                     var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
@@ -3840,7 +3884,7 @@ ${date}
             if (message.embeds[0].url.substring(0,43) == "https://osu.ppy.sh/community/forums/topics/" || message.embeds[0].url.substring(0,42) == "http://osu.ppy.sh/community/forums/topics/")
             tourneydetail()
         }
-
+        
         // Economy
         
         var bgprofile = [{"name": "megumin", "link": "https://i.imgur.com/0AD3DrI.png", "credit": 2000},
@@ -3870,8 +3914,8 @@ ${date}
                             "level": 1,
                             "credit": 0,
                             "rep": 0,
-                            "repcooldown": 0,
-                            "dailycooldown": 0,
+                            "repcooldown": new Date().getTime(),
+                            "dailycooldown": new Date().getTime(),
                             "dailycount": 0,
                             "purchased": {
                                 "levelup": ["default"],
@@ -3938,7 +3982,7 @@ ${date}
             }
             var user = economy.find(u => u.id == discorduser.id)
             var requirexp = Math.floor(10 + 2 * Math.pow(user.level, 2) + 90 * user.level)
-            var globalrank = economy.sort(function (a,b) {return b.totalxp - a.totalxp})
+            var globalrank = await economy.sort(function (a,b) {return b.totalxp - a.totalxp})
             globalrank = globalrank.findIndex(u => u.id == discorduser.id) + 1
             var background = await jimp.read(bgprofile.find(bg => bg.name == user.equipped.profile).link)
             var overlay = await jimp.read('./image/bgprofileoverlay.png')
@@ -4312,6 +4356,7 @@ ${purchasedlevelup}`)
                 message.channel.send(String(error))
             }
         }
+
         function rep(start) {
             try {
                 if (new Date().getTime() - economy.find(u => u.id == message.author.id).repcooldown < 43200000) {
@@ -4379,7 +4424,7 @@ ${purchasedlevelup}`)
                         var credits = Number(msg.split(" ")[3])
                         if (economy.find(u => u.id == message.author.id).credit < credits || credits == Infinity || credits == NaN) {
                             throw "You don't have enough credits!"
-                        }  else {
+                        } else {
                             var user = message.mentions.members.first()
                             economy.find(u => u.id == message.author.id).credit -= credits
                             economy.find(u => u.id == user.id).credit += credits
