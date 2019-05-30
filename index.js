@@ -3366,6 +3366,7 @@ ${prizetext}`)
                 var check = ''
                 var option = ''
                 var servericon = ''
+                var quote = false
                 // Split name and arg
                 if (msg.includes('"')) {
                     quote = true
@@ -3610,6 +3611,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 var check = ''
                 var top = ''
                 var option = ''
+                var quote = false
                 // Split name and arg
                 if (msg.includes('"')) {
                     quote = true
