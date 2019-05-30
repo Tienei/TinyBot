@@ -924,7 +924,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 **Akatsuki, Rippler and osu update:
 - Fixed name can't be register at the end
 - New !osu design
-- New !akatsuki/!rippler design`)
+- New !akatsuki/!rippler design
+- Added !osu -rank`)
             message.channel.send({embed})
         }
 
