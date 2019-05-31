@@ -1375,7 +1375,6 @@ Use External Emojis: ${compatibility[5]}`)
                 setCommandCooldown(command, 3000)
                 var check = ''
                 var option = ''
-                var mode = 0
                 var quote = false
                 // Split name and arg
                 if (msg.includes('"')) {
