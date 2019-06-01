@@ -1586,8 +1586,8 @@ Most common mods: ${sortedmod}`)
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
                     var user_web = await cheerio.load(web)
                     user_web = user_web("#json-user").html()
-                    user_web = user_web.replace(/<\/?[^>]+>|&quot;/gi, "");
-                    user_web = user_web.replace(/\/\//gi, "/")
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
                     user_web = JSON.parse(user_web)
                     var playstyle = ""
                     if (user_web["playstyle"] == null) {
@@ -1641,8 +1641,8 @@ ${playstyle}`, true)
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
                     var user_web = await cheerio.load(web)
                     user_web = user_web("#json-user").html()
-                    user_web = user_web.replace(/<\/?[^>]+>|&quot;/gi, "");
-                    user_web = user_web.replace(/\/\//gi, "/")
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
                     user_web = JSON.parse(user_web)
                     var playstyle = ""
                     if (user_web["playstyle"] == null) {
