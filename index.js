@@ -3456,8 +3456,8 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                         var thing = ppcalc(parser,mod,0,0,0,0,0,0)
                         var detail = mapdetail(shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
                         star_avg += thing.star.total
-                        aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
-                        acc_avg += (Math.pow(scoreacc, 5)/Math.pow(100, 5)) * 1.05 * thing.star.total * (Math.pow(detail.od, 0.05) / (Math.pow(6, 0.05)))
+                        aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)) * (Math.pow(detail.ar, 0.1) / Math.pow(9, 0.1))
+                        acc_avg += (Math.pow(scoreacc, 5)/Math.pow(100, 5)) * 1.07 * thing.star.total * (Math.pow(detail.od, 0.05) / (Math.pow(9, 0.05)))
                         cs_avg += detail.cs
                         ar_avg += detail.ar
                         od_avg += detail.od
