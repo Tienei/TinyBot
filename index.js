@@ -407,7 +407,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})** | Total PP: **${user[0].pp_raw}**`)
                                 for (var i = 0; i < track[player].trackonchannel.length; i++) {
                                     var server = bot.channels.get(track[player].trackonchannel[i]).guild.id
-                                    storedmapid.push({id:beatmapid,server: server})
+                                    storedmapid.push({id:beatmapid,server: server, mode: "osu"})
                                     embed.setColor(bot.channels.get(track[player].trackonchannel[i]).guild.me.displayColor)
                                     bot.channels.get(track[player].trackonchannel[i]).send({embed})
                                 }
