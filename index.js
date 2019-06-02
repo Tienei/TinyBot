@@ -3635,7 +3635,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 var servername = getModeDetail(serverlink+linkoption, 'other').modename
                 if (a_p > -1) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n}${linkoption}`)
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n+1}${linkoption}`)
                     var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
