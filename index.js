@@ -3347,6 +3347,9 @@ ${date}
                         }
                     }
                 }
+                if (linkoption == undefined) {
+                    linkoption = ''
+                }
                 var modedetail = getModeDetail(serverlink+linkoption, 'other')
                 var servername = modedetail.modename
                 var servericon = modedetail.modeicon
@@ -3534,6 +3537,9 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                         check = option[1]
                     }
                 }
+                if (linkoption == undefined) {
+                    linkoption = ''
+                }
                 var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}${linkoption}`)
                 var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
                 var recent = JSON.parse(data1)
@@ -3631,6 +3637,9 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                             check = ''
                         }
                     }
+                }
+                if (linkoption == undefined) {
+                    linkoption = ''
                 }
                 var servername = getModeDetail(serverlink+linkoption, 'other').modename
                 if (a_p > -1) {
