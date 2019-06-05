@@ -1726,84 +1726,92 @@ ${playstyle}`, true)
         }
 
         async function topleaderboard(type) {
-            var option = msg.split(' ')
-            var link = ''
-            if (type == 'global') {
-                link = `https://osu.ppy.sh/rankings/osu/performance?page=1#scores`
-            } else if (type == 'country') {
-                link = `https://osu.ppy.sh/rankings/osu/performance?country=${option[1].toUpperCase()}&page=1#scores`
-            }
-            var web = await request(link)
-            var leaderboard = await cheerio.load(web)
-            var table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
-            var country = ''
-            if (type == 'country') {
-                country = leaderboard('span[class="flag-country"]').attr('title')
-            }
-            // Page function
-            var page = 1
-            var pages = []
-            function loadpage() {
-                var gathering = ''
-                for (var n = 0; n < 10; n++) {
-                    var i = (page - 1) * 10 - 1 + (n+1)
-                    if ((page - 1) * 9 + n < table.length- 1) {
-                        var player = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
-                        var flag  = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().first().attr('href')
-                        var pp = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--focused"]').text().replace(/\s+/g," ").substring(1)
-                        var acc = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--dimmed"]').first().text().replace(/\s+/g," ").substring(1)
-                        var topnumber = `**${i+1}:**`
-                        var playertext = `**${player}**`
-                        var flagicon = `:flag_${flag.substring(flag.length-2, flag.length).toLowerCase()}:`
-                        var acctext = `Acc: ${acc}`
-                        var pptext = `**PP: ${pp}**`
-                        gathering += `${topnumber} ${flagicon} ${playertext} | ${acctext} | ${pptext}\n`
+            try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
+                var option = msg.split(' ')
+                var link = ''
+                if (type == 'global') {
+                    link = `https://osu.ppy.sh/rankings/osu/performance?page=1#scores`
+                } else if (type == 'country') {
+                    link = `https://osu.ppy.sh/rankings/osu/performance?country=${option[1].toUpperCase()}&page=1#scores`
+                }
+                var web = await request(link)
+                var leaderboard = await cheerio.load(web)
+                var table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
+                var country = ''
+                if (type == 'country') {
+                    country = leaderboard('span[class="flag-country"]').attr('title')
+                }
+                // Page function
+                var page = 1
+                var pages = []
+                function loadpage() {
+                    var gathering = ''
+                    for (var n = 0; n < 10; n++) {
+                        var i = (page - 1) * 10 - 1 + (n+1)
+                        if ((page - 1) * 9 + n < table.length- 1) {
+                            var player = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
+                            var flag  = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().first().attr('href')
+                            var pp = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--focused"]').text().replace(/\s+/g," ").substring(1)
+                            var acc = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--dimmed"]').first().text().replace(/\s+/g," ").substring(1)
+                            var topnumber = `**${i+1}:**`
+                            var playertext = `**${player}**`
+                            var flagicon = `:flag_${flag.substring(flag.length-2, flag.length).toLowerCase()}:`
+                            var acctext = `Acc: ${acc}`
+                            var pptext = `**PP: ${pp}**`
+                            gathering += `${topnumber} ${flagicon} ${playertext} | ${acctext} | ${pptext}\n`
+                        }
+                    }
+                    pages[page-1] = gathering
+                }
+                var title = ''
+                function loadtitle() {
+                    if (type == 'global') {
+                        title = `Global leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
+                    } else if (type == 'country') {
+                        title = `${country} country leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
                     }
                 }
-                pages[page-1] = gathering
-            }
-            var title = ''
-            function loadtitle() {
-                if (type == 'global') {
-                    title = `Global leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
-                } else if (type == 'country') {
-                    title = `${country} country leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
-                }
-            }
-            await loadpage()
-            loadtitle()
-            var embed = new Discord.RichEmbed()
-            .setAuthor(title)
-            .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Osu%21Logo_%282015%29.svg/220px-Osu%21Logo_%282015%29.svg.png')
-            .setColor(embedcolor)
-            .setDescription(pages[page-1])
-            var msg1 = await message.channel.send({embed});
-            await msg1.react('⬅')
-            await msg1.react('➡')
-            var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
-            var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
-            var previous = msg1.createReactionCollector(previousfilter, {time: 120000}) 
-            var next = msg1.createReactionCollector(nextfilter, {time: 120000})
-            previous.on('collect', reaction => {
-                if (page <= 1) {return}
-                page -= 1
+                await loadpage()
                 loadtitle()
-                embed.setAuthor(title)
-                embed.setDescription(pages[page-1])
-                msg1.edit({embed})
-            })
-            next.on('collect', reaction => {
-                if (page >= Math.ceil(table.length / 10)) {return}
-                page += 1
-                msg1.edit('Loading page...')
-                if (pages[page-1] == undefined) {
-                    loadpage()
-                }
-                loadtitle()
-                embed.setAuthor(title)
-                embed.setDescription(pages[page-1])
-                msg1.edit({embed})
-            })    
+                var embed = new Discord.RichEmbed()
+                .setAuthor(title)
+                .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Osu%21Logo_%282015%29.svg/220px-Osu%21Logo_%282015%29.svg.png')
+                .setColor(embedcolor)
+                .setDescription(pages[page-1])
+                var msg1 = await message.channel.send({embed});
+                await msg1.react('⬅')
+                await msg1.react('➡')
+                var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
+                var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
+                var previous = msg1.createReactionCollector(previousfilter, {time: 120000}) 
+                var next = msg1.createReactionCollector(nextfilter, {time: 120000})
+                previous.on('collect', reaction => {
+                    if (page <= 1) {return}
+                    page -= 1
+                    loadtitle()
+                    embed.setAuthor(title)
+                    embed.setDescription(pages[page-1])
+                    msg1.edit({embed})
+                })
+                next.on('collect', reaction => {
+                    if (page >= Math.ceil(table.length / 10)) {return}
+                    page += 1
+                    msg1.edit('Loading page...')
+                    if (pages[page-1] == undefined) {
+                        loadpage()
+                    }
+                    loadtitle()
+                    embed.setAuthor(title)
+                    embed.setDescription(pages[page-1])
+                    msg1.edit({embed})
+                })
+            } catch (error) {
+                message.channel.send(String(error))
+            }
         }
 
         async function osusig() {
