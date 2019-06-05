@@ -685,6 +685,18 @@ bot.on("message", (message) => {
                         option: 'Mods: details info of the map with mods `(Shorten mods)`',
                         example: '!m HDDT'
                     },
+                    'topglobal': {
+                        helpcommand: '!topglobal',
+                        description: "Get a list of top 50 osu!Standard player",
+                        option: '',
+                        example: '!topglobal'
+                    },
+                    'topcountry': {
+                        helpcommand: '!topcountry (country code)',
+                        description: "Get a list of top 50 osu!Standard player of a country",
+                        option: 'country code: You can see a list right here: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes (Look at ISO 3166-1, Alpha-2 code)',
+                        example: '!topcountry US'
+                    },
                     'calcpp': {
                         helpcommand: '!calcpp (map id) (mods) (acc) (combo) (miss)',
                         description: "Calculate a play's pp",
@@ -902,7 +914,7 @@ bot.on("message", (message) => {
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design), zibi (!topglobal, !topcountry)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -940,7 +952,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - New !osu design
 - New !akatsuki/!rippler design
 - Added !osu -rank
-- Added !c (compatible for all modes, sadly can't get for Akatsuki or Ripple)`)
+- Added !c (compatible for all modes, sadly can't get for Akatsuki or Ripple)
+- Added !topglobal, !topcountry (Idea by Zibi or le "Dark Yashi")`)
             message.channel.send({embed})
         }
 
@@ -1403,7 +1416,7 @@ Use External Emojis: ${compatibility[5]}`)
                 if (mode == 'akatsuki.pw&rx=1') {
                     return {modename: 'Relax Akatsuki', modeicon: '<:rxakatsuki:583314118933610497>'}
                 }
-                if (serverlink == 'ripple.moe') {
+                if (mode == 'ripple.moe') {
                     return {modename: 'Ripple', modeicon: ''}
                 }
             }
@@ -1710,6 +1723,87 @@ ${playstyle}`, true)
             } catch (error) {
                 message.channel.send(String(error))
             }
+        }
+
+        async function topleaderboard(type) {
+            var option = msg.split(' ')
+            var link = ''
+            if (type == 'global') {
+                link = `https://osu.ppy.sh/rankings/osu/performance?page=1#scores`
+            } else if (type == 'country') {
+                link = `https://osu.ppy.sh/rankings/osu/performance?country=${option[1].toUpperCase()}&page=1#scores`
+            }
+            var web = await request(link)
+            var leaderboard = await cheerio.load(web)
+            var table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
+            var country = ''
+            if (type == 'country') {
+                country = leaderboard('span[class="flag-country"]').attr('title')
+            }
+            // Page function
+            var page = 1
+            var pages = []
+            function loadpage() {
+                var gathering = ''
+                for (var n = 0; n < 10; n++) {
+                    var i = (page - 1) * 10 - 1 + (n+1)
+                    if ((page - 1) * 9 + n < table.length- 1) {
+                        var player = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
+                        var flag  = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().first().attr('href')
+                        var pp = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--focused"]').text().replace(/\s+/g," ").substring(1)
+                        var acc = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--dimmed"]').first().text().replace(/\s+/g," ").substring(1)
+                        var topnumber = `**${i+1}:**`
+                        var playertext = `**${player}**`
+                        var flagicon = `:flag_${flag.substring(flag.length-2, flag.length).toLowerCase()}:`
+                        var acctext = `Acc: ${acc}`
+                        var pptext = `**PP: ${pp}**`
+                        gathering += `${topnumber} ${flagicon} ${playertext} | ${acctext} | ${pptext}\n`
+                    }
+                }
+                pages[page-1] = gathering
+            }
+            var title = ''
+            function loadtitle() {
+                if (type == 'global') {
+                    title = `Global leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
+                } else if (type == 'country') {
+                    title = `${country} country leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
+                }
+            }
+            await loadpage()
+            loadtitle()
+            var embed = new Discord.RichEmbed()
+            .setAuthor(title)
+            .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Osu%21Logo_%282015%29.svg/220px-Osu%21Logo_%282015%29.svg.png')
+            .setColor(embedcolor)
+            .setDescription(pages[page-1])
+            var msg1 = await message.channel.send({embed});
+            await msg1.react('⬅')
+            await msg1.react('➡')
+            var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
+            var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
+            var previous = msg1.createReactionCollector(previousfilter, {time: 120000}) 
+            var next = msg1.createReactionCollector(nextfilter, {time: 120000})
+            previous.on('collect', reaction => {
+                if (page <= 1) {return}
+                page -= 1
+                loadtitle()
+                embed.setAuthor(title)
+                embed.setDescription(pages[page-1])
+                msg1.edit({embed})
+            })
+            next.on('collect', reaction => {
+                if (page >= Math.ceil(table.length / 10)) {return}
+                page += 1
+                msg1.edit('Loading page...')
+                if (pages[page-1] == undefined) {
+                    loadpage()
+                }
+                loadtitle()
+                embed.setAuthor(title)
+                embed.setDescription(pages[page-1])
+                msg1.edit({embed})
+            })    
         }
 
         async function osusig() {
@@ -3807,6 +3901,12 @@ ${date}
         if (msg.substring(0,2) == '!m' && msg.substring(0,2) == command) {
             map(3)
         }
+        if (msg.substring(0,10) == '!topglobal' && msg.substring(0,10) == command) {
+            topleaderboard('global')
+        }
+        if (msg.substring(0,11) == '!topcountry' && msg.substring(0,11) == command) {
+            topleaderboard('country')
+        }
         if (msg.substring(0,7) == '!calcpp' && msg.substring(0,7) == command) {
             calculateplay()
         }
@@ -4524,5 +4624,4 @@ ${purchasedlevelup}`)
         }
     }
 })
-
 bot.login(process.env.BOT_TOKEN);
