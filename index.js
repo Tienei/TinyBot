@@ -134,17 +134,32 @@ function timeago(time) {
     var month = datenew.getUTCMonth()
     var year = (datenew.getUTCFullYear() - 1970)
     var text = ''
-    if (year > 0) {
-        text = `${year} year and ${month} month ago`
-    } else if (month > 0) {
-        text = `${month} month and ${day} day ago`
-    } else if (day > 0) {
-        text = `${day} day and ${hour} hour ago`
-    } else if (hour > 0)  {
-        text = `${hour} hour and ${min} minute ago`
-    } else {
-        text = `${min} minute and ${sec} second ago`
+    var count = 0
+    if (year > 0 && count < 2) {
+        text += year > 1 ? `${year} Years ` : `${year} Year `
+        count += 1
+    } 
+    if (month > 0 && count < 2) {
+        text += month > 1 ? `${month} Months ` : `${month} Month `
+        count += 1
+    } 
+    if (day > 0 && count < 2) {
+        text += day > 1 ? `${day} Days ` : `${day} Day `
+        count += 1
     }
+    if (hour > 0 && count < 2)  {
+        text += hour > 1 ? `${hour} Hours ` : `${hour} Hour `
+        count += 1
+    } 
+    if (min > 0 && count < 2) {
+        text += min > 1 ? `${min} Minutes ` : `${min} Minute `
+        count += 1
+    }
+    if (sec > 0 && count < 2) {
+        text += sec > 1 ? `${sec} Seconds ` : `${sec} Second `
+        count += 1
+    }
+    text += ' ago'
     return text
 }
 
