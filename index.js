@@ -746,6 +746,12 @@ bot.on("message", (message) => {
                         option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!akatavatar Tienei'
                     },
+                    'akatsukiset': {
+                        helpcommand: '!akatsukiset (username)',
+                        description: 'Link your profile to an Akatsuki player',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
+                        example: '!akatsukiset RelaxTiny'
+                    },
                     'rxakatsuki': {
                         helpcommand: '!rxakatsuki (username) (options)',
                         description: 'Get a Relax Akatuski Standard profile',
@@ -788,6 +794,12 @@ bot.on("message", (message) => {
                         description: "Get player's Ripple avatar",
                         option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
                         example: '!rippleavatar Tienei'
+                    },
+                    'rippleset': {
+                        helpcommand: '!rippleset (username)',
+                        description: 'Link your profile to a Ripple player',
+                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
+                        example: '!rippleset RelaxTiny'
                     },
                     //Economy
                     'daily': {
@@ -953,7 +965,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - New !akatsuki/!rippler design
 - Added !osu -rank
 - Added !c (compatible for all modes, sadly can't get for Akatsuki or Ripple)
-- Added !topglobal, !topcountry (Idea by Zibi or le "Dark Yashi")`)
+- Added !topglobal, !topcountry (Idea by Zibi or le "Dark Yashi")
+- Added !akatsukiset, !rippleset`)
             message.channel.send({embed})
         }
 
@@ -1368,22 +1381,33 @@ Use External Emojis: ${compatibility[5]}`)
 
         var urlcommand = false
         
-        function checkplayer(name) {
+        function checkplayer(name, type) {
+            var osuname = ''
             if (name == '') {
-                var osuname = ''
                 if (cache[message.author.id] !== undefined) {
-                    osuname = cache[message.author.id].osuname
+                    if (type == 'osu') {
+                        osuname = cache[message.author.id].osuname
+                    } else if (type == 'akatsuki.pw') {
+                        osuname = cache[message.author.id].akatsukiname
+                    } else if (type == 'ripple.moe') {
+                        osuname = cache[message.author.id].ripplename
+                    }
                     return osuname
                 } else {
                     return name
                 }
             } else {
-                var osuname = ''
                 var id = ''
                 if (name.includes('@') == true) {
                    var id = message.mentions.users.first().id
                    if (cache[id] !== undefined) {
-                        osuname = cache[id].osuname
+                        if (type == 'osu') {
+                            osuname = cache[id].osuname
+                        } else if (type == 'akatsuki.pw') {
+                            osuname = cache[id].akatsukiname
+                        } else if (type == 'ripple.moe') {
+                            osuname = cache[id].ripplename
+                        }
                         return osuname
                    } else {
                         return name
@@ -1391,7 +1415,7 @@ Use External Emojis: ${compatibility[5]}`)
                 } else {
                     return name
                 }
-
+        
             }
         }
 
@@ -1479,7 +1503,7 @@ Use External Emojis: ${compatibility[5]}`)
                         }
                     }
                 }
-                var name = checkplayer(check)
+                var name = checkplayer(check, 'osu')
                 var modedetail = getModeDetail(mode, 'osu')
                 var modename = modedetail.modename
                 var modeicon = modedetail.modeicon
@@ -1828,7 +1852,7 @@ ${playstyle}`, true)
                 }
             }
             var check = option[1]
-            var name = checkplayer(check)
+            var name = checkplayer(check, 'osu')
             const embed = new Discord.RichEmbed()
             .setAuthor(`Signature for ${name}`)
             .setColor(embedcolor)
@@ -1860,43 +1884,71 @@ ${playstyle}`, true)
             message.channel.send({embed})
         }
 
-        async function osuset() {
-            var option = ''
-            if (msg.includes('"') == true) {
-                option = msg.split('"')
-                check = option[1]
-            } else {
-                option = msg.split(' ')
-                if (option.length < 2) {
-                    check = ''
-                } else {
+        async function osuset(type) {
+            try {
+                var option = ''
+                var check = ''
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
                     check = option[1]
-                }
-            }
-            var check = option[1]
-            var user = await osuApi.getUser({u: check})
-            var name = user.name
-            if (name == undefined) {
-                throw 'Please enter a valid osu username! >:c'
-            } else {
-                if (cache.length = 0) {
-                    cache[message.author.id] = {osuname: name}
-                }
-                if (cache[message.author.id] !== undefined) {
-                    cache[message.author.id].osuname = name
                 } else {
-                    cache[message.author.id] = {osuname: name}
+                    option = msg.split(' ')
+                    if (option.length < 2) {
+                        check = ''
+                    } else {
+                        check = option[1]
+                    }
                 }
-                const embed = new Discord.RichEmbed()
-                .setAuthor(`Your account has been linked to osu! username: ${name}`,'',`https://osu.ppy.sh/users/${user.id}`)
-                .setColor(embedcolor)
-                .setImage(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
-                message.channel.send({embed})
-                fs.writeFileSync('data.txt', JSON.stringify(cache))
-                bot.channels.get('487482583362568212').send({files: [{
-                    attachment: './data.txt',
-                    name: 'data.txt'
-                }]})
+                var user = ''
+                var name = ''
+                var settype = ''
+                var profilelink = ''
+                var imagelink = ''
+                if (type == 'Osu') {
+                    user = await osuApi.getUser({u: check})
+                    settype = 'osuname'
+                    name = user.name
+                    profilelink = `https://osu.ppy.sh/users/${user.id}`
+                    imagelink = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                } else if (type == 'Akatsuki') {
+                    user = await request(`http://akatsuki.pw/api/v1/users?name=${check}`)
+                    user = JSON.parse(user)
+                    settype = 'akatsukiname'
+                    name = user.username
+                    profilelink = `https://akatsuki.pw/u/${user.id}`
+                    imagelink = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                } else if (type == 'Ripple') {
+                    user = await request(`http://ripple.moe/api/v1/users?name=${check}`)
+                    user = JSON.parse(user)
+                    settype = 'ripplename'
+                    name = user.username
+                    profilelink = `https://ripple.moe/u/${user.id}`
+                    imagelink = `http://a.ripple.moe/${user.id}.png?date=${refresh}`
+                }
+                if (name == undefined) {
+                    throw 'User not found!'
+                } else {
+                    if (cache[message.author.id] !== undefined && cache[message.author.id][settype] !== undefined) {
+                        cache[message.author.id][settype] = name
+                    } else if (cache[message.author.id] !== undefined && cache[message.author.id][settype] == undefined) {
+                        cache[message.author.id][settype] = name
+                    } else {
+                        cache[message.author.id] = {}
+                        cache[message.author.id][settype] = name
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Your account has been linked to ${type} username: ${name}`,'', profilelink)
+                    .setColor(embedcolor)
+                    .setImage(imagelink)
+                    message.channel.send({embed})
+                    fs.writeFileSync('data.txt', JSON.stringify(cache))
+                    bot.channels.get('487482583362568212').send({files: [{
+                        attachment: './data.txt',
+                        name: 'data.txt'
+                    }]})
+                }
+            } catch (error) {
+                message.channel.send(String(error))
             }
         }
 
@@ -1944,7 +1996,7 @@ ${playstyle}`, true)
                         }
                     }
                 }
-                var name = checkplayer(check)
+                var name = checkplayer(check, 'osu')
                 if (a_b > -1) {
                     var best = await osuApi.getUserBest({u: name, limit:100})
                     if (best.length == 0) {
@@ -2089,7 +2141,7 @@ ${mapcompleted} ${date}
                         check = option[1]
                     }
                 }
-                var name = checkplayer(check)
+                var name = checkplayer(check, 'osu')
                 var storedid = 0
                 var modename = ''
                 for (var i = storedmapid.length -1 ; i > -1; i--) {
@@ -2294,7 +2346,7 @@ ${date}
                         }
                     }
                 }
-                var name = checkplayer(check)
+                var name = checkplayer(check, 'osu')
                 var modename = getModeDetail(mode, 'osu').modename
                 if (a_p > -1) {
                     var numberoption = option[option.indexOf('-p') + 1]
@@ -3089,7 +3141,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                         check = option[2]
                     }
                 }
-                var name = checkplayer(check)
+                var name = checkplayer(check, 'osu')
                 var scores = await osuApi.getScores({b: beatmapid, u: name})
                 scores.sort(function (a,b) {
                     a1 = Number(a.pp)
@@ -3467,12 +3519,13 @@ ${date}
                 if (linkoption == undefined) {
                     linkoption = ''
                 }
+                var name = checkplayer(check, serverlink)
                 var modedetail = getModeDetail(serverlink+linkoption, 'other')
                 var servername = modedetail.modename
                 var servericon = modedetail.modeicon
                 if (a_d > -1 && linkoption !== '&rx=1') {
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=50`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     if (best.length == 0) {
@@ -3538,8 +3591,8 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
                     message.channel.send({embed});
                 } else if (a_d > -1 && linkoption == "&rx=1") {
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=50&rx=1`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${check}&mode=0`)
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50&rx=1`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     if (best.length == 0) {
@@ -3603,9 +3656,9 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                 } else {
                     var data = ''
                     if (linkoption == '&rx=1') {
-                        data = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${check}&mode=0`)
+                        data = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)
                     } else {
-                        data = await request.get(`https://${serverlink}/api/v1/users/full?name=${check}&mode=0`)
+                        data = await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`)
                     }
                     var user = JSON.parse(data)
                     var username = user.username
@@ -3657,8 +3710,9 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 if (linkoption == undefined) {
                     linkoption = ''
                 }
-                var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${check}${linkoption}`)
-                var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
+                var name = checkplayer(check, serverlink)
+                var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${name}${linkoption}`)
+                var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${name}`)
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
                 var servername = getModeDetail(serverlink+linkoption, 'other').modename
@@ -3758,11 +3812,12 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 if (linkoption == undefined) {
                     linkoption = ''
                 }
+                var name = checkplayer(check, serverlink)
                 var servername = getModeDetail(serverlink+linkoption, 'other').modename
                 if (a_p > -1) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=${n+1}${linkoption}`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=${n+1}${linkoption}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${name}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     var userid = user.id
@@ -3806,8 +3861,8 @@ ${date}
                 .setDescription(top)
                 message.channel.send({embed});
                 } else {
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${check}&mode=0&l=5${linkoption}`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${check}`)
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=5${linkoption}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${name}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     var userid = user.id
@@ -3877,7 +3932,7 @@ ${date}
             osuavatar()
         }
         if (msg.substring(0,7) == '!osuset' && msg.substring(0,7) == command) {
-            osuset()
+            osuset('Osu')
         }
         if (msg.substring(0,7) == '!recent' && msg.substring(0,7) == command) {
             recent(8)
@@ -3951,6 +4006,9 @@ ${date}
         if (msg.substring(0,8) == '!akattop' && msg.substring(0,8) == command) {
             otherservertop('akatsuki.pw')
         }
+        if (msg.substring(0,12) == '!akatsukiset' && msg.substring(0,12) == command) {
+            osuset('Akatsuki')
+        }
         if (msg.substring(0,11) == '!rxakatsuki' && msg.substring(0,11) == command) {
             otherserverosu('akatsuki.pw', '&rx=1')
         }
@@ -3974,6 +4032,9 @@ ${date}
         }
         if (msg.substring(0,10) == '!rippletop' && msg.substring(0,10) == command) {
             otherservertop('ripple.moe')
+        }
+        if (msg.substring(0,11) == '!rippleset' && msg.substring(0,11) == command) {
+            osuset('Ripple')
         }
 
         // Detection
