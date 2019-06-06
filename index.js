@@ -737,7 +737,7 @@ bot.on("message", (message) => {
                     'akattop': {
                         helpcommand: '!akattop (username) (options)',
                         description: "View a player's Akatsuki Standard top play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
                         example: '!akattop Tienei -p 8'
                     },
                     'akatavatar': {
@@ -767,7 +767,7 @@ bot.on("message", (message) => {
                     'rxakattop': {
                         helpcommand: '!rxakattop (username) (options)',
                         description: "View a player's Relax Akatsuki Standard top play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
                         example: '!akattop Tienei -p 8'
                     },
                     // Ripple
@@ -786,7 +786,7 @@ bot.on("message", (message) => {
                     'rippletop': {
                         helpcommand: '!rippletop (username) (options)',
                         description: "View a player's Ripple Standard top play",
-                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`',
+                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
                         example: '!rippletop Tienei -p 8'
                     },
                     'rippleavatar': {
@@ -966,7 +966,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !osu -rank
 - Added !c (compatible for all modes, sadly can't get for Akatsuki or Ripple)
 - Added !topglobal, !topcountry (Idea by Zibi or le "Dark Yashi")
-- Added !akatsukiset, !rippleset`)
+- Added !akatsukiset, !rippleset
+- Added !(akattop, rxakattop, rippletop) -m`)
             message.channel.send({embed})
         }
 
@@ -1011,6 +1012,9 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                 }
                 setCommandCooldown(command, 30000)
                 var error = message.content.substring(8)
+                if (error == '') {
+                    throw "Type an error"
+                }
                 var channelid = message.channel.id
                 var user = message.author.username
                 var pfp = message.author.avatarURL
@@ -1034,6 +1038,9 @@ Problem: ${error}`)
                 }
                 setCommandCooldown(command, 30000)
                 var suggestion = message.content.substring(12)
+                if (suggestion == '') {
+                    throw 'Type a suggestion for the bot'
+                }
                 var channelid = message.channel.id
                 var user = message.author.username
                 var pfp = message.author.avatarURL
@@ -2512,8 +2519,9 @@ ${date}
                         if (definemod[getmod.substring(i, i+2)]) {
                             mod.push(definemod[getmod.substring(i, i+2)])
                         }
-                        if (definemod[getmod.substring(i, i+5)]) {
-                            mod.push(definemod[getmod.substring(i, i+5)])
+                        if (getmod == 'nomod') {
+                            mod.push(definemod['nomod'])
+                            break
                         }
                     }
                     var best = await osuApi.getUserBest({u: name, limit: 100})
@@ -3712,7 +3720,7 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 }
                 var name = checkplayer(check, serverlink)
                 var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${name}${linkoption}`)
-                var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${name}`)
+                var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
                 var servername = getModeDetail(serverlink+linkoption, 'other').modename
@@ -3785,9 +3793,22 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 }
                 // Find name and arg
                 var a_p = option.indexOf("-p")
+                var a_m = option.indexOf("-m")
+                //Check if there is more than 1 argument
+                var findarg = [a_p, a_m]
+                var find = false
+                for (var i = 0; i < findarg.length; i++) {
+                    if (findarg[i] > -1) {
+                        if (find == false) {
+                            find = true
+                        } else {
+                            throw 'Only one argument please!'
+                        }
+                    }
+                }
                 //Get name if there's no quote
                 if (quote == false) {
-                    var pass = [0, a_p]
+                    var pass = [0, a_p, a_m]
                     for (var i = 0; i < pass.length;) {
                         if (pass[i] == -1) {
                             pass.splice(i,1)
@@ -3800,7 +3821,9 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                         check = option[1]
                     } else {
                         if (a_p > -1) {
-                            check = option[option.indexOf("-p") + 1]
+                            check = option[option.indexOf("-p") + 2]
+                        } else if (a_m > -1) {
+                            check = option[option.indexOf("-m") + 2]
                         } else if (option.length > 1) {
                             check = option[1]
                         }
@@ -3817,10 +3840,11 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                 if (a_p > -1) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=${n+1}${linkoption}`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${name}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     var userid = user.id
+                    var username = user.username
                     var title = best.scores[n].beatmap.song_name
                     var beatmapid = best.scores[n].beatmap.beatmap_id
                     var score = best.scores[n].score
@@ -3855,17 +3879,110 @@ ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
 ${date}
 `
                 const embed = new Discord.RichEmbed()
-                .setAuthor(`Top ${servername} Plays for ${check}`)
+                .setAuthor(`Top ${servername} Plays for ${username}`)
                 .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
                 .setColor(embedcolor)
                 .setDescription(top)
                 message.channel.send({embed});
+                } else if (a_m > -1) {
+                    var mod = 0
+                    var getmod = option[option.indexOf('-m') + 1]
+                    var definemod = {
+                        nf: 1,
+                        ez: 2,
+                        td: 4,
+                        hd: 8,
+                        hr: 16,
+                        sd: 32,
+                        dt: 64,
+                        rx: 128,
+                        ht: 256,
+                        nc: 512,
+                        fl: 1024,
+                        so: 4096,
+                        nomod: 0
+                    }
+                    for (var i = 0; i < getmod.length; i=i+2) {
+                        if (definemod[getmod.substring(i, i+2)]) {
+                            mod += definemod[getmod.substring(i, i+2)]
+                        }
+                        if (getmod == 'nomod') {
+                            mod += definemod['nomod']
+                            break
+                        }
+                    }
+                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=100${linkoption}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)
+                    var best = JSON.parse(data1)
+                    var user = JSON.parse(data2)
+                    var checktop = 0
+                    var userid = user.id
+                    var username = user.username
+                    for (var i = 0; i < best.scores.length; i++) {
+                        var bestmod = best.scores[i].mods
+                        var match = false
+                        if (mod == 0) {
+                            if (bestmod == 0){
+                                match = true
+                            } else {match = false}
+                        } else {
+                            if (bestmod == mod){
+                                match = true
+                            } else {match = false}
+                        }
+                        if (match == true && checktop < 5) {
+                            checktop += 1
+                            var title = best.scores[i].beatmap.song_name
+                            var beatmapid = best.scores[i].beatmap.beatmap_id
+                            var score = best.scores[i].score
+                            var count300 = Number(best.scores[i].count_300)
+                            var count100 = Number(best.scores[i].count_100)
+                            var count50 = Number(best.scores[i].count_50)
+                            var countmiss = Number(best.scores[i].count_miss)
+                            var perfect = best.scores[i].full_combo
+                            var combo = best.scores[i].max_combo
+                            var fc = best.scores[i].beatmap.max_combo
+                            var letter = best.scores[i].rank
+                            var rank = rankingletters(letter)
+                            var pp = Number(best.scores[i].pp).toFixed(2)
+                            var mod = best.scores[i].mods
+                            var shortenmod = bittomods(mod)
+                            var date = timeago(best.scores[i].time)
+                            cacheBeatmapID(beatmapid, servername)
+                            var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                            var parser = await precalc(beatmapid)
+                            var fccalc = ppcalc(parser,mod,fc,count100,count50,0,acc,1)
+                            var fcpp = Number(fccalc.pp.total).toFixed(2)
+                            var fcacc = fccalc.acc
+                            var fcguess = ``
+                            if (perfect == 0 && linkoption !== '&rx=1') {
+                                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                            }
+                            var star = Number(fccalc.star.total).toFixed(2)
+                            top += `
+${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
+${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
+**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+${date}
+`
+                        }
+                    }
+                    if (top.length == 0) {
+                        top += `This user doesn't have any ${getmod.toUpperCase()} top play`
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Top osu!Standard Plays with ${getmod.toUpperCase()} for ${username}`)
+                    .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
+                    .setColor(embedcolor)
+                    .setDescription(top)
+                    message.channel.send({embed});
                 } else {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=5${linkoption}`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/whatid?name=${name}`)
+                    var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     var userid = user.id
+                    var username = user.username
                     for (var i = 0; i < 5; i++) {
                         var title = best.scores[i].beatmap.song_name
                         var beatmapid = best.scores[i].beatmap.beatmap_id
@@ -3900,7 +4017,7 @@ ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
 ${date}
 `                   }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top ${servername} Plays for ${check}`)
+                    .setAuthor(`Top ${servername} Plays for ${username}`)
                     .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
                     .setColor(embedcolor)
                     .setDescription(top)
