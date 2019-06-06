@@ -50,10 +50,10 @@ function rankingletters(letter) {
     if (letter == "SH") {
         return '<:rankingSH:520932441687588864>';
     }
-    if (letter == "X") {
+    if (letter == "X" || letter == "SS") {
         return '<:rankingX:520932410746077184>';
     }
-    if (letter == "XH") {
+    if (letter == "XH" || letter == "SSH") {
         return '<:rankingXH:520932395080482858>';
     }
 }
