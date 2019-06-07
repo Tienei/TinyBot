@@ -4150,7 +4150,7 @@ ${date}
         if (msg.substring(0,10) == '!rippletop' && msg.substring(0,10) == command) {
             otherservertop('ripple.moe')
         }
-        if (msg.substring(0,11) == '!rippleset' && msg.substring(0,11) == command) {
+        if (msg.substring(0,10) == '!rippleset' && msg.substring(0,10) == command) {
             osuset('Ripple')
         }
 
