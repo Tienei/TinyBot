@@ -354,71 +354,89 @@ bot.on("ready", (ready) => {
 
     // osutrack
     async function realtimeosutrack() {
-        for (var player in track) {
-            if (track[player].server == "osu") {
-                console.log(track[player].osuname)
-                var best = await osuApi.getUserBest({u: track[player].osuname, limit: 50})
-                for (var i = 0; i < best.length; i++) {
-                    var scoredate = new Date(best[i][0].date).getTime()
-                    var trackdate = new Date(track[player].recenttimeplay).getTime()
-                    if (scoredate > trackdate) {
-                        console.log('new top play')
-                        var user = await osuApi.getUser({u: track[player].osuname})
-                        var country = String(user.country).toLowerCase()
-                        var pp = Number(best[i][0].pp).toFixed(2)
-                        var ppgain = (Number(user.pp.raw).toFixed(2) - Number(track[player].lasttotalpp)).toFixed(2)
-                        var beatmap = best[i][1].title
-                        var beatmapidfixed = best[i][1].beatmapSetId
-                        var diff = best[i][1].version
-                        var scores = best[i][0].score
-                        var combo = best[i][0].maxCombo
-                        var fc = best[i][1].maxCombo
-                        var perfect = best[i][0].perfect
-                        var letter = best[i][0].rank
-                        var rank = rankingletters(letter)
-                        var modandbit = mods(mod)
-                        var shortenmod = modandbit.shortenmod
-                        var bitpresent = modandbit.bitpresent
-                        var count300 = Number(best[i][0].counts['300'])
-                        var count100 = Number(best[i][0].counts['100'])
-                        var count50 = Number(best[i][0].counts['50'])
-                        var countmiss = Number(best[i][0].counts.miss)
-                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                        var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
-                        var star = Number(fccalc.star.total).toFixed(2)
-                        var fcpp = Number(fccalc.pp.total).toFixed(2)
-                        var fcacc = fccalc.acc
-                        var fcguess = ``
-                        if (letter == 'F') {
-                            pp = 'No PP'
-                        }
-                        if (perfect == 0) {
-                            fcguess = `| **${fcpp}pp for ${fcacc}%**`
-                        }
-                        var embed = new Discord.RichEmbed()
-                        .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
-                        .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
-                        .setDescription(`
+        for (var player = 0; player < track.length ; player++) {
+            console.log(track[player].osuname)
+            var name = track[player].osuname
+            var top50 = track[player].top50pp
+            var recent = await osuApi.getUserRecent({u: name})
+            if (recent.length !== 0) {
+                var beatmapid = recent[0][1].id
+                var count300 = Number(recent[0][0].counts['300'])
+                var count100 = Number(recent[0][0].counts['100'])
+                var count50 = Number(recent[0][0].counts['50'])
+                var countmiss = Number(recent[0][0].counts.miss)
+                var combo = recent[0][0].maxCombo
+                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                var mod = recent[0][0].mods 
+                var modandbit = mods(mod)
+                var bitpresent = modandbit.bitpresent
+                var parser = await precalc(beatmapid)
+                var recentcalc = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
+                if (String(track[player].recenttimeplay) !== String(recent[0][0].date)) {
+                    console.log('new recent')
+                    track[player].recenttimeplay = recent[0][0].date
+                    var user = await osuApi.apiCall('/get_user', {u: name})
+                    if(Number(recentcalc.pp.total) > Number(top50)) {
+                        var best = await osuApi.getUserBest({u: name, limit: 50})
+                        for (var i = 0; i < best.length; i++) {
+                            if (String(best[i][0].date) === String(recent[0][0].date)) {
+                                console.log('new top play')
+                                var country = String(user[0].country).toLowerCase()
+                                var pp = Number(best[i][0].pp).toFixed(2)
+                                var ppgain = (Number(user[0].pp_raw).toFixed(2) - Number(track[player].lasttotalpp)).toFixed(2)
+                                var beatmap = best[i][1].title
+                                var beatmapidfixed = best[i][1].beatmapSetId
+                                var diff = best[i][1].version
+                                var scores = best[i][0].score
+                                var combo = best[i][0].maxCombo
+                                var fc = best[i][1].maxCombo
+                                var perfect = best[i][0].perfect
+                                var letter = best[i][0].rank
+                                var rank = rankingletters(letter)
+                                var modandbit = mods(mod)
+                                var shortenmod = modandbit.shortenmod
+                                var bitpresent = modandbit.bitpresent
+                                var count300 = Number(best[i][0].counts['300'])
+                                var count100 = Number(best[i][0].counts['100'])
+                                var count50 = Number(best[i][0].counts['50'])
+                                var countmiss = Number(best[i][0].counts.miss)
+                                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                                var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                                var star = Number(fccalc.star.total).toFixed(2)
+                                var fcpp = Number(fccalc.pp.total).toFixed(2)
+                                var fcacc = fccalc.acc
+                                var fcguess = ``
+                                if (letter == 'F') {
+                                pp = 'No PP'
+                                }
+                                if (perfect == 0) {
+                                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                }               
+                                var embed = new Discord.RichEmbed()
+                                .setAuthor(`New #${i+1} for ${name} in osu!Standard:`, `http://s.ppy.sh/a/${user[0].user_id}.png?date=${refresh}`)
+                                .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+                                .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 **#${track[player].lastrank} → #${user[0].pp_rank} (:flag_${country}: : #${track[player].lastcountryrank} → #${user[0].pp_country_rank})** | Total PP: **${user[0].pp_raw}**`)
-                        for (var i = 0; i < track[player].trackonchannel.length; i++) {
-                            var server = bot.channels.get(track[player].trackonchannel[i]).guild.id
-                            storedmapid.push({id:beatmapid,server: server})
-                            embed.setColor(bot.channels.get(track[player].trackonchannel[i]).guild.me.displayColor)
-                            bot.channels.get(track[player].trackonchannel[i]).send({embed})
+                                for (var i = 0; i < track[player].trackonchannel.length; i++) {
+                                    var server = bot.channels.get(track[player].trackonchannel[i]).guild.id
+                                    storedmapid.push({id:beatmapid,server: server, mode: "Standard"})
+                                    embed.setColor(bot.channels.get(track[player].trackonchannel[i]).guild.me.displayColor)
+                                    bot.channels.get(track[player].trackonchannel[i]).send({embed})
+                                }
+                                track[player].lasttotalpp = user[0].pp_raw
+                                track[player].lastrank = user[0].pp_rank
+                                track[player].lastcountryrank = user[0].pp_country_rank
+                                track[player].top50pp = best[49][0].pp
+                                break;
+                            }
                         }
-                        track[player].lasttotalpp = user.pp.raw
-                        track[player].lastrank = user.pp.rank    
-                        track[player].lastcountryrank = user.pp.countryRank
-                        track[player].recenttimeplay = best[i][0].date
-                        fs.writeFileSync('track.txt', JSON.stringify(track))
-                        bot.channels.get('497302830558871552').send({files: [{
-                            attachment: './track.txt',
-                            name: 'track.txt'
-                        }]})
-                        break;
+                    } else {
+                        track[player].lasttotalpp = user[0].pp_raw
+                        track[player].lastrank = user[0].pp_rank
+                        track[player].lastcountryrank = user[0].pp_country_rank
                     }
                 }
             }
