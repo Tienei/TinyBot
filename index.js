@@ -11,6 +11,7 @@ const nodeosu = require('node-osu');
 const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
+const rxcalc = require('rx-akatsuki-pp')
 const fs = require('fs')
 const cheerio = require('cheerio')
 const jimp = require('jimp')
@@ -302,10 +303,14 @@ function ppcalc(parser,mods,combo,count100,count50,countmiss,acc,mode) {
         nmiss: countmiss,
         acc_percent: accuracy
     }
-    var pp = calc.ppv2(score)
+    var pp = ''
+    if (mode == 0 || mode == 1) {
+        pp = calc.ppv2(score)
+    } else if (mode == 2) {
+        pp = rxcalc.ppv2(score)
+    }
     return {star: stars,pp: pp,acc: accuracy, ar: stars.map.ar, od: stars.map.od, hp: stars.map.hp, cs: stars.map.cs}
 }
-
 bot.on("ready", (ready) => {
     async function getFile() {
         // Get User data
@@ -770,6 +775,12 @@ bot.on("message", (message) => {
                         option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
                         example: '!akattop Tienei -p 8'
                     },
+                    'calcrxpp': {
+                        helpcommand: '!calrxcpp (map id) (mods) (acc) (combo) (miss)',
+                        description: "Calculate a play's relax pp (Akatsuki)",
+                        option: '**Needs all options to be calculated**',
+                        example: '!calcpp 1157868 nomod 100 1642 0'
+                    },
                     // Ripple
                     'ripple': {
                         helpcommand: '!ripple (username) (options)',
@@ -915,7 +926,7 @@ bot.on("message", (message) => {
                 message.channel.send(String(error))
             }
         }
-
+        
         if(msg.substring(0,7) == '!credit' && msg.substring(0,7) == command) {
             const embed = new Discord.RichEmbed()
             .setAuthor(`Special thanks to:`)
@@ -3747,9 +3758,18 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 var star = Number(recentcalc.star.total).toFixed(2)
                 var pp = Number(recentcalc.pp.total).toFixed(2)
                 cacheBeatmapID(beatmapid, servername)
-                var fccalc = ppcalc(parser,bit,fc,count100,count50,0,acc,1)
-                var fcpp = Number(fccalc.pp.total).toFixed(2)
-                var fcacc = fccalc.acc
+                var fcpp = 0
+                var fcacc = 0
+                if (linkoption == '&rx=1') {
+                    pp = Number(ppcalc(parser,bit,combo,count100,count50,countmiss,acc,2).pp.total).toFixed(2)
+                    var fccalc = ppcalc(parser,bit,fc,count100,count50,0,acc,2)
+                    fcpp = Number(fccalc.pp.total).toFixed(2)
+                    fcacc = fccalc.acc
+                } else {
+                    var fccalc = ppcalc(parser,bit,fc,count100,count50,0,acc,1)
+                    fcpp = Number(fccalc.pp.total).toFixed(2)
+                    fcacc = fccalc.acc
+                }
                 var fcguess = ``
                 var nopp = ''
                 if (letter == 'F') {
@@ -4028,6 +4048,63 @@ ${date}
             }
         }
 
+        async function calculaterxplay() {
+            try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                setCommandCooldown(command, 3000)
+                var option = msg.split(" ")
+                var beatmapid = option[1]
+                var mods = [option[2]]
+                var acc = Number(option[3])
+                var combo = Number(option[4])
+                var miss = Number(option[5])
+                var bitpresent = 0
+                var mod = {
+                    nomod: 0,
+                    nf: 1,
+                    ez: 2,
+                    td: 4,
+                    hd: 8,
+                    hr: 16,
+                    dt: 64,
+                    rx: 128,
+                    ht: 256,
+                    nc: 512,
+                    fl: 1024,
+                    so: 4096
+                }
+                for (var m = 0; m <= mods[0].length; m++) {
+                    if (mod[mods[0].substr(m*2,2)]) {
+                        bitpresent += mod[mods[0].substr(m*2,2)]
+                    }
+                }
+                var map = await osuApi.getBeatmaps({b: beatmapid})
+                if (map.length == 0) {
+                    throw 'Please check the ID of the map is correct or not'
+                }
+                var parser = await precalc(beatmapid)
+                var calc = ppcalc(parser,bitpresent,combo,0,0,miss,acc,2)
+                var beatmapidfixed = map[0].beatmapSetId
+                var title = map[0].title
+                var mapper = map[0].creator
+                var version = map[0].version
+                cacheBeatmapID(beatmapid, 'Standard')
+                const embed = new Discord.RichEmbed()
+                    .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid}`)
+                    .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
+                    .setColor(embedcolor)
+                    .setDescription(`
+Difficulty: *${version}*
+With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and **${miss}** miss:
+-- **${Number(calc.pp.total).toFixed(2)}pp**`)
+                message.channel.send({embed});
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
         // Osu
 
         if (msg.substring(0,4) == '!osu' && msg.substring(0,4) == command) {
@@ -4134,6 +4211,9 @@ ${date}
         }
         if (msg.substring(0,10) == '!rxakattop' && msg.substring(0,10) == command) {
             otherservertop('akatsuki.pw', '&rx=1')
+        }
+        if (msg.substring(0,9) == '!calcrxpp' && msg.substring(0,9) == command) {
+            calculaterxplay()
         }
 
         // Ripple
