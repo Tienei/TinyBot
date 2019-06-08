@@ -3754,21 +3754,21 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 var mods = bittomods(bit)   
                 var acc = Number(recent.scores[0].accuracy).toFixed(2)
                 var parser = await precalc(beatmapid)
-                var recentcalc = ppcalc(parser,bit,combo,count100,count50,countmiss,acc,0)
-                var star = Number(recentcalc.star.total).toFixed(2)
-                var pp = Number(recentcalc.pp.total).toFixed(2)
+                var pp = Number(recent.scores[0].pp).toFixed(2)
+                var star = 0
                 cacheBeatmapID(beatmapid, servername)
                 var fcpp = 0
                 var fcacc = 0
                 if (linkoption == '&rx=1') {
-                    pp = Number(ppcalc(parser,bit,combo,count100,count50,countmiss,acc,2).pp.total).toFixed(2)
                     var fccalc = ppcalc(parser,bit,fc,count100,count50,0,acc,2)
                     fcpp = Number(fccalc.pp.total).toFixed(2)
                     fcacc = fccalc.acc
+                    star = Number(fccalc.star.total).toFixed(2)
                 } else {
                     var fccalc = ppcalc(parser,bit,fc,count100,count50,0,acc,1)
                     fcpp = Number(fccalc.pp.total).toFixed(2)
                     fcacc = fccalc.acc
+                    star = Number(fccalc.star.total).toFixed(2)
                 }
                 var fcguess = ``
                 var nopp = ''
