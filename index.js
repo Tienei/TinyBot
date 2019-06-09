@@ -4182,7 +4182,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         if (msg.substring(0,8) == '!untrack' && msg.substring(0,8) == command && message.channel.name !== undefined) {
             untrack()
         }
-        if (msg.substring(0,84) == '!rec' && msg.substring(0,4) == command) {
+        if (msg.substring(0,4) == '!rec' && msg.substring(0,4) == command) {
             recommendation()
         }
 
