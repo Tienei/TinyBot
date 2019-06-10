@@ -3991,7 +3991,7 @@ ${date}
                         top += `This user doesn't have any ${getmod.toUpperCase()} top play`
                     }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top osu!Standard Plays with ${getmod.toUpperCase()} for ${username}`)
+                    .setAuthor(`Top ${servername} Plays with ${getmod.toUpperCase()} for ${username}`)
                     .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
                     .setColor(embedcolor)
                     .setDescription(top)
