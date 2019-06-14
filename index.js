@@ -196,8 +196,16 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp,timetotal,timedrain) {
         if (arms > 1200) {
             ar = (1200 + 600 - arms) / 120
         }
-        odms = (50 + 30 * (5 - od) / 5) * 0.75
-        od = (30 + 50 - odms) / 6
+        if (od < 5) {
+            odms = 66 - ((5 - od) * 8)
+        }
+        if (od == 5) {
+            odms = 66
+        }
+        if (od > 5) {
+            odms = 66 - ((od - 5) * 8)
+        }
+        od = (odms - 78.5) / -6
         hp = hp / 1.5
         timetotal *= 1.5
         timedrain *= 1.5
@@ -237,8 +245,19 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp,timetotal,timedrain) {
         if (arms == 1200) {
             ar = 5
         }
-        odms = (50 + 30 * (5 - od) / 5) * 0.67
-        od = (30 + 50 - odms) / 6
+        if (arms > 1200) {
+            ar = (1200 + 600 - arms) / 120
+        }
+        if (od < 5) {
+            odms = 33 + ((5 - od) * 4)
+        }
+        if (od == 5) {
+            odms = 33
+        }
+        if (od > 5) {
+            odms = 33 - ((od - 5) * 4)
+        }
+        od = (odms - 78.5) / -6
         hp = hp * 1.5
         timetotal /= 1.5
         timedrain /= 1.5
@@ -978,7 +997,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !c (compatible for all modes, sadly can't get for Akatsuki or Ripple)
 - Added !topglobal, !topcountry (Idea by Zibi or le "Dark Yashi")
 - Added !akatsukiset, !rippleset
-- Added !(akattop, rxakattop, rippletop) -m`)
+- Added !(akattop, rxakattop, rippletop) -m
+- Fixed OD with mods`)
             message.channel.send({embed})
         }
 
