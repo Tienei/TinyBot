@@ -1591,7 +1591,7 @@ Use External Emojis: ${compatibility[5]}`)
                     for (var i = 0; i < 50; i++) {
                         var beatmapid = best[i][1].id
                         var mod = best[i][0].mods
-                        var modandbit = mods(mod)
+                        var modandbit = mods(mod, 'text')
                         var count300 = Number(best[i][0].counts['300'])
                         var count100 = Number(best[i][0].counts['100'])
                         var count50 = Number(best[i][0].counts['50'])
@@ -1668,8 +1668,8 @@ Most common mods: ${sortedmod}`)
                 } else if (a_rank > -1 && mode == 0) {
                     var rank = Number(option[option.indexOf('-rank') + 1])
                     var page = 1 + Math.floor((rank - 1) / 50)
-                    var web = await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)
-                    var leaderboard = await cheerio.load(web)
+                    var web_leaderboard = await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)
+                    var leaderboard = await cheerio.load(web_leaderboard)
                     var table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
                     var player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
                     var user = await osuApi.getUser({u: player})
@@ -1688,10 +1688,9 @@ Most common mods: ${sortedmod}`)
                             user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
                         }
                     }
-                    var supporter = ''
-                    if (user_web["is_supporter"] == true) {
-                        supporter = '<:supporter:582885341413769218>'
-                    }
+                    var supporter = user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : ''
+                    var statusicon = user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1'
+                    var statustext = user_web["is_online"] == true ? 'Online' : 'Offline'
                     var username = user.name
                     if (username == undefined) {
                         throw 'User not found!'
@@ -1725,6 +1724,7 @@ ${playstyle}`, true)
 <:rankingA:520932311613571072>: ${a}`, true)
                     .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
                     .setColor(embedcolor)
+                    .setFooter(statustext, statusicon)
                     message.channel.send({embed});
                 } else {
                     var user = await osuApi.getUser({u: name, m: mode})
@@ -1743,10 +1743,9 @@ ${playstyle}`, true)
                             user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
                         }
                     }
-                    var supporter = ''
-                    if (user_web["is_supporter"] == true) {
-                        supporter = '<:supporter:582885341413769218>'
-                    }
+                    var supporter = user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : ''
+                    var statusicon = user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1'
+                    var statustext = user_web["is_online"] == true ? 'Online' : 'Offline'
                     var username = user.name
                     if (username == undefined) {
                         throw 'User not found!'
@@ -1780,6 +1779,7 @@ ${playstyle}`, true)
 <:rankingA:520932311613571072>: ${a}`, true)
                     .setThumbnail(`http://s.ppy.sh/a/${id}.png?date=${refresh}`)
                     .setColor(embedcolor)
+                    .setFooter(statustext, statusicon)
                     message.channel.send({embed});
                 }
             } catch (error) {
