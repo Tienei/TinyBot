@@ -205,7 +205,7 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp,timetotal,timedrain) {
         if (od > 5) {
             odms = 66 - ((od - 5) * 8)
         }
-        od = (odms - 78.5) / -6
+        od = (odms - 79.6) / -6
         hp = hp / 1.5
         timetotal *= 1.5
         timedrain *= 1.5
@@ -257,7 +257,7 @@ function mapdetail(mods,length,bpm,cs,ar,od,hp,timetotal,timedrain) {
         if (od > 5) {
             odms = 33 - ((od - 5) * 4)
         }
-        od = (odms - 78.5) / -6
+        od = (odms - 79.6) / -6
         hp = hp * 1.5
         timetotal /= 1.5
         timedrain /= 1.5
