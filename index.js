@@ -379,6 +379,15 @@ bot.on("ready", (ready) => {
     // osutrack
     async function realtimeosutrack() {
         for (var player = 0; player < track.length ; player++) {
+            for (var i = 0; i < track[player].trackonchannel.length; i++) {
+                if (bot.channels.get(track[player].trackonchannel[i]) == undefined) {
+                    if (track[player].trackonchannel.length > 1) {
+                        track[player].trackonchannel.splice(i,1)
+                    } else {
+                        track.splice(player,1)
+                    }
+                }
+            }
             console.log(track[player].osuname)
             var name = track[player].osuname
             var top50 = track[player].top50pp
@@ -392,7 +401,7 @@ bot.on("ready", (ready) => {
                 var combo = recent[0][0].maxCombo
                 var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                 var mod = recent[0][0].mods 
-                var modandbit = mods(mod)
+                var modandbit = mods(mod, 'text')
                 var bitpresent = modandbit.bitpresent
                 var parser = await precalc(beatmapid)
                 var recentcalc = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
@@ -417,7 +426,7 @@ bot.on("ready", (ready) => {
                                 var perfect = best[i][0].perfect
                                 var letter = best[i][0].rank
                                 var rank = rankingletters(letter)
-                                var modandbit = mods(mod)
+                                var modandbit = mods(mod, 'text')
                                 var shortenmod = modandbit.shortenmod
                                 var bitpresent = modandbit.bitpresent
                                 var count300 = Number(best[i][0].counts['300'])
