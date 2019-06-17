@@ -1007,7 +1007,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !topglobal, !topcountry (Idea by Zibi or le "Dark Yashi")
 - Added !akatsukiset, !rippleset
 - Added !(akattop, rxakattop, rippletop) -m
-- Fixed OD with mods`)
+- Fixed OD with mods
+- New !osu -d design`)
             message.channel.send({embed})
         }
 
@@ -1558,20 +1559,25 @@ Use External Emojis: ${compatibility[5]}`)
                     var user = await osuApi.getUser({u: name, event_days: 31})
                     var best = await osuApi.getUserBest({u: name, limit: 50})
                     var event = ``
-                    var star_avg = 0
-                    var aim_avg = 0
-                    var speed_avg = 0
-                    var acc_avg = 0
-                    var bpm_avg = 0
-                    var cs_avg = 0
-                    var ar_avg = 0
-                    var od_avg = 0
-                    var hp_avg = 0
-                    var timetotal_avg = 0
-                    var timedrain_avg = 0
-                    var mod_avg_all = []
-                    var mod_avg = []
-                    var sortedmod = ''
+                    // User
+                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
+                    var user_web = await cheerio.load(web)
+                    user_web = user_web("#json-user").html()
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
+                    user_web = JSON.parse(user_web)
+                    var playstyle = ""
+                    if (user_web["playstyle"] == null) {
+                        playstyle = "None?"
+                    } else {
+                        for (var i in user_web["playstyle"]) {
+                            playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
+                            user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
+                        }
+                    }
+                    var supporter = user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : ''
+                    var statusicon = user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1'
+                    var statustext = user_web["is_online"] == true ? 'Online' : 'Offline'
                     var username = user.name
                     var acc = Number(user.accuracy).toFixed(2)
                     var userid = user.id
@@ -1597,6 +1603,36 @@ Use External Emojis: ${compatibility[5]}`)
                         var text = user.events[i].html.replace(/(<([^>]+)>)/ig,"")
                         event += `\n ${text}`
                     }
+                    var embed = new Discord.RichEmbed()
+                    .setDescription(`${modeicon} ${supporter} **osu!${modename} Statistics for [${username}](https://osu.ppy.sh/users/${userid})**`)
+                    .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+                    .setColor(embedcolor)
+                    .addField(`Performance:`, `
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
+**Level:** ${level}
+**Accuracy:** ${acc}%
+**Playcount:** ${playcount}
+**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
+**Play Style:** ${playstyle}
+<:rankingX:520932410746077184> : ${ss} (${Number(ss/totalrank*100).toFixed(2)}%) <:rankingS:520932426449682432> : ${s} (${Number(s/totalrank*100).toFixed(2)}%) <:rankingA:520932311613571072> : ${a} (${Number(a/totalrank*100).toFixed(2)}%)`)
+                    .addField(`${username} recent events:`, event)
+                    .setFooter(statustext, statusicon)
+                    var msg1 = await message.channel.send('Calculating skills...', {embed});
+                    // Calculating skills
+                    var star_avg = 0
+                    var aim_avg = 0
+                    var speed_avg = 0
+                    var acc_avg = 0
+                    var bpm_avg = 0
+                    var cs_avg = 0
+                    var ar_avg = 0
+                    var od_avg = 0
+                    var hp_avg = 0
+                    var timetotal_avg = 0
+                    var timedrain_avg = 0
+                    var mod_avg_all = []
+                    var mod_avg = []
+                    var sortedmod = ''
                     for (var i = 0; i < 50; i++) {
                         var beatmapid = best[i][1].id
                         var mod = best[i][0].mods
@@ -1650,30 +1686,12 @@ Use External Emojis: ${compatibility[5]}`)
                     for (var i in mod_avg) {
                         sortedmod += '``' + mod_avg[i].mod + '``: ' + `${Number(mod_avg[i].count / mod_avg_all.length * 100).toFixed(2)}% `
                     }
-                    const embed = new Discord.RichEmbed()
-                    .setAuthor(`osu! Statistics for ${username}`)
-                    .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-                    .setColor(embedcolor)
-                    .setDescription(`***Performance:***
-**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
-**Level:** ${level}
-**Accuracy:** ${acc}%
-**Playcount:** ${playcount}
-**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
-<:rankingX:520932410746077184>: ${ss} (${Number(ss/totalrank*100).toFixed(2)}%) | <:rankingS:520932426449682432>: ${s} (${Number(s/totalrank*100).toFixed(2)}%) | <:rankingA:520932311613571072>: ${a} (${Number(a/totalrank*100).toFixed(2)}%)
-        
-***${username} recent events:***
-${event}
-        
-***${username} average skill:***
-Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
-Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
-Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
+                    embed.addField(`${username} average skill:`, `
+Star: ${Number(star_avg/50).toFixed(2)}★ (Aim: ${Number(aim_avg/50).toFixed(2) *2}★, Speed: ${Number(speed_avg/50).toFixed(2) *2}★, Accuracy: ${Number(acc_avg/50).toFixed(2)}★)
 Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
 Most common mods: ${sortedmod}`)
-                    message.channel.send({embed});
+                    msg1.edit({embed})
                 } else if (a_rank > -1 && mode == 0) {
                     var rank = Number(option[option.indexOf('-rank') + 1])
                     var page = 1 + Math.floor((rank - 1) / 50)
