@@ -1687,7 +1687,10 @@ Use External Emojis: ${compatibility[5]}`)
                         sortedmod += '``' + mod_avg[i].mod + '``: ' + `${Number(mod_avg[i].count / mod_avg_all.length * 100).toFixed(2)}% `
                     }
                     embed.addField(`${username} average skill:`, `
-Star: ${Number(star_avg/50).toFixed(2)}★ (Aim: ${Number(aim_avg/50).toFixed(2) *2}★, Speed: ${Number(speed_avg/50).toFixed(2) *2}★, Accuracy: ${Number(acc_avg/50).toFixed(2)}★)
+Star: ${Number(star_avg/50).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
+Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
+Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
 Most common mods: ${sortedmod}`)
