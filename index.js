@@ -2899,14 +2899,14 @@ ${date}
                                     star = Number(best[i][1].difficulty.rating).toFixed(2)
                                 }
                                 if (mode == 1) {
-                                    acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
+                                    acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
                                     accdetail = `[${count300}/${count100}/${countmiss}]`
                                 }
                                 if (mode == 2) {
-                                    acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
+                                    acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                                 }
                                 if (mode == 3) {
-                                    acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
+                                    acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
                                     accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
                                 }
                                 var fcguess = ''
@@ -2997,14 +2997,14 @@ ${date}
                             star = Number(best[i][1].difficulty.rating).toFixed(2)
                         }
                         if (mode == 1) {
-                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
+                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
                             accdetail = `[${count300}/${count100}/${countmiss}]`
                         }
                         if (mode == 2) {
-                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
+                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                         }
                         if (mode == 3) {
-                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
+                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
                             accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
                         }
                         var fcguess = ''
