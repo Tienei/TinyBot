@@ -3934,7 +3934,7 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 var letter = recent.scores[0].rank
                 var rank = rankingletters(letter)
                 var bit = recent.scores[0].mods
-                var mods = mods(bit, 'number').shortenmod
+                var mod = mods(bit, 'number').shortenmod
                 var acc = Number(recent.scores[0].accuracy)
                 var parser = await precalc(beatmapid)
                 var pp = Number(recent.scores[0].pp).toFixed(2)
@@ -3966,7 +3966,7 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapsetid}l.jpg`)
                 .setColor(embedcolor)
                 .setDescription(`
-**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mods} | ***${pp}pp*** ${nopp}
+**[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mod} | ***${pp}pp*** ${nopp}
 ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
                 message.channel.send({embed})
