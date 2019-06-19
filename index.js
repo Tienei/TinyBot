@@ -1008,7 +1008,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Added !akatsukiset, !rippleset
 - Added !(akattop, rxakattop, rippletop) -m
 - Fixed OD with mods
-- New !osu -d design`)
+- New !osu -d design
+- Added !(taiko,ctb,mania)top -r, -g
+- Added !topglobal/!topcountry for other modes`)
             message.channel.send({embed})
         }
 
@@ -1427,6 +1429,19 @@ Use External Emojis: ${compatibility[5]}`)
 
         // Osu related
 
+        /* Supported:
+        
+        Osu (General): calcpp, osuavatar, osuset, acc
+        Osu (Standard): osu, recent, compare, osutop, osusig, map, osutrack, scores, topglobal, topcountry
+        Osu (Taiko): taiko, compare, taikotop (-p, -r, -g), scores, topglobal, topcountry
+        Osu (CTB): ctb, compare, ctbtop (-p, -r, -g), scores, topglobal, topcountry
+        Osu (Mania): mania, compare, maniatop (-p, -r, -g), scores, topglobal, topcountry
+        Ripple: ripple, rippler, rippletop (-p), rippleset, rippleavatar
+        Akatsuki (Standard): akatsuki, akatr, akattop (-p), akatsukiset, akatavatar
+        Akatsuki (Relax): rxakatsuki, rxakatr, rxakattop (-p), akatsukiset, akatavatar, calcrxpp
+
+        */
+
         var urlcommand = false
         
         function checkplayer(name, type) {
@@ -1475,23 +1490,25 @@ Use External Emojis: ${compatibility[5]}`)
             }
         }
 
-        function getModeDetail(mode, server) {
-            if (server == 'osu') {
-                var osumode = ["Standard", "Taiko", "CTB", "Mania"]
-                var osuicon = ['<:osu:582883671501963264>', '<:taiko:582883837554458626>', '<:ctb:582883855627845703>', '<:mania:582883872568639490>']
-                return {modename: osumode[mode], modeicon: osuicon[mode]}
-            }
-            if (server == 'other') {
-                if (mode == 'akatsuki.pw') {
-                    return {modename: 'Akatsuki', modeicon: '<:akatsukiosu:583310654648352796>'}
-                }
-                if (mode == 'akatsuki.pw&rx=1') {
-                    return {modename: 'Relax Akatsuki', modeicon: '<:rxakatsuki:583314118933610497>'}
-                }
-                if (mode == 'ripple.moe') {
-                    return {modename: 'Ripple', modeicon: ''}
-                }
-            }
+        /*
+        osu!Standard: 0
+        osu!Taiko: 1
+        osu!CTB: 2
+        osu!Mania: 3
+        Ripple: 4
+        Akatsuki: 8
+        Relax Akatsuki: 12
+        */
+
+        function getModeDetail(mode) {
+            const modelist = [{name: "Standard", icon: '<:osu:582883671501963264>'},
+                            {name: "Taiko", icon: '<:taiko:582883837554458626>'},
+                            {name: "CTB", icon: '<:ctb:582883855627845703>'},
+                            {name: "Mania", icon: '<:mania:582883872568639490>'},
+                            {name: "Ripple", icon: ''},,,,
+                            {name: "Akatsuki", icon: '<:akatsukiosu:583310654648352796>'},,,,
+                            {name: "Relax Akatsuki", icon: '<:rxakatsuki:583314118933610497>'}]
+            return {modename: modelist[mode].name, modeicon: modelist[mode].icon}
         }
 
         async function osu(mode) {
@@ -1825,10 +1842,66 @@ ${playstyle}`, true)
                 setCommandCooldown(command, 3000)
                 var option = msg.split(' ')
                 var link = ''
+                var mode = 'osu'
+                var countryname = ''
+                // Find country name and arg
+                var a_osu = option.indexOf("-osu")
+                var a_taiko = option.indexOf("-taiko")
+                var a_ctb = option.indexOf("-ctb")
+                var a_mania = option.indexOf("-mania")
+                //Check if there is more than 1 argument
+                var findarg = [a_osu, a_taiko, a_ctb, a_mania]
+                var find = false
+                for (var i = 0; i < findarg.length; i++) {
+                    if (findarg[i] > -1) {
+                        if (find == false) {
+                            find = true
+                        } else {
+                            throw 'Only one argument please!'
+                        }
+                    }
+                }
+                //Get country name if the type is country
+                if (type == 'country') {
+                    var pass = [0, a_osu, a_taiko, a_ctb, a_mania]
+                    for (var i = 0; i < pass.length;) {
+                        if (pass[i] == -1) {
+                            pass.splice(i,1)
+                        } else {
+                            i++
+                        }
+                    }
+                    pass.sort(function(a,b){return a-b})
+                    if (pass[1] > 1) {
+                        countryname = option[1]
+                    } else {
+                        if (a_osu > -1) {
+                            countryname = option[option.indexOf("-osu") + 1]
+                        } else if (a_taiko > -1) {
+                            countryname = option[option.indexOf("-taiko") + 1]
+                        } else if (a_ctb > -1) {
+                            countryname = option[option.indexOf("-ctb") + 1]
+                        } else if (a_mania > -1) {
+                            countryname = option[option.indexOf("-mania") + 1]
+                        } else if (option.length > 1) {
+                            countryname = option[1]
+                        }
+                        if (check == undefined) {
+                            check = ''
+                        }
+                    }
+                }
+                if (a_taiko > -1) {
+                    mode = 'taiko'
+                } else if (a_ctb > -1) {
+                    mode = 'fruits'
+                } else if (a_mania > -1) {
+                    mode = 'mania'
+                }
                 if (type == 'global') {
-                    link = `https://osu.ppy.sh/rankings/osu/performance?page=1#scores`
+                    link = `https://osu.ppy.sh/rankings/${mode}/performance?page=1#scores`
                 } else if (type == 'country') {
-                    link = `https://osu.ppy.sh/rankings/osu/performance?country=${option[1].toUpperCase()}&page=1#scores`
+                    link = `https://osu.ppy.sh/rankings/${mode}/performance?country=${option[1].toUpperCase()}&page=1#scores`
                 }
                 var web = await request(link)
                 var leaderboard = await cheerio.load(web)
@@ -1862,9 +1935,9 @@ ${playstyle}`, true)
                 var title = ''
                 function loadtitle() {
                     if (type == 'global') {
-                        title = `Global leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
+                        title = `Global leaderboard for osu!${mode} (Page ${page} of ${Math.ceil(table.length / 10)})`
                     } else if (type == 'country') {
-                        title = `${country} country leaderboard for osu!Standard (Page ${page} of ${Math.ceil(table.length / 10)})`
+                        title = `${country} country leaderboard for osu!${mode} (Page ${page} of ${Math.ceil(table.length / 10)})`
                     }
                 }
                 await loadpage()
@@ -2097,12 +2170,12 @@ ${playstyle}`, true)
                     var pp = Number(best[0][0].pp).toFixed(2)
                     var mod = best[0][0].mods
                     var perfect = best[0][0].perfect
-                    var modandbit = mods(mod)
+                    var modandbit = mods(mod, 'text')
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
                     var date = timeago(best[0][0].date)
                     cacheBeatmapID(beatmapid, 'Standard')
-                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                     var parser = await precalc(beatmapid)     
                     var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -2119,7 +2192,7 @@ ${playstyle}`, true)
                     .setDescription(`
 **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores:** ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `)
                     message.channel.send({embed})
@@ -2145,8 +2218,8 @@ ${date}
                     var letter = recent[0][0].rank
                     var rank = rankingletters(letter)
                     var perfect = recent[0][0].perfect
-                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                    var modandbit = mods(mod)
+                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
+                    var modandbit = mods(mod, 'text')
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
                     var date = timeago(recent[0][0].date)
@@ -2180,7 +2253,7 @@ ${date}
                     .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
 ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${mapcompleted} ${date}
 `)
                     message.channel.send({embed})
@@ -2270,12 +2343,12 @@ ${mapcompleted} ${date}
                         var rank = rankingletters(letter)
                         var mod = scores[i].mods
                         var perfect = scores[i].perfect
-                        var modandbit = mods(mod)
+                        var modandbit = mods(mod, 'text')
                         var shortenmod = modandbit.shortenmod
                         var bitpresent = modandbit.bitpresent
                         var date = timeago(scores[i].date)
                         var pp = Number(scores[i].pp).toFixed(2)
-                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                         var star = 0
                         var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                         var unrankedpp = ''
@@ -2295,14 +2368,14 @@ ${mapcompleted} ${date}
                             star = Number(beatmap[i].difficulty.rating).toFixed(2)
                         }
                         if (mode == 1) {
-                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
+                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
                             accdetail = `[${count300}/${count100}/${countmiss}]`
                         }
                         if (mode == 2) {
-                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
+                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                         }
                         if (mode == 3) {
-                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
+                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
                             accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
                         }
                         var fcguess = ''
@@ -2312,7 +2385,7 @@ ${mapcompleted} ${date}
                             highscore += `
 ${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
 ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% ${accdetail} ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% ${accdetail} ${fcguess}
 ${date}
 `         
                     }
@@ -2415,7 +2488,7 @@ ${date}
                     }
                 }
                 var name = checkplayer(check, 'osu')
-                var modename = getModeDetail(mode, 'osu').modename
+                var modename = getModeDetail(mode).modename
                 if (a_p > -1) {
                     var numberoption = option[option.indexOf('-p') + 1]
                     var range = false
@@ -2451,12 +2524,12 @@ ${date}
                         var pp = Number(best[n][0].pp).toFixed(2)
                         var mod = best[n][0].mods
                         var perfect = best[n][0].perfect
-                        var modandbit = mods(mod)
+                        var modandbit = mods(mod, 'text')
                         var shortenmod = modandbit.shortenmod
                         var bitpresent = modandbit.bitpresent
                         var date = timeago(best[n][0].date)
                         cacheBeatmapID(beatmapid, modename)
-                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                         var star = 0
                         var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                         if (mode == 0) {
@@ -2471,14 +2544,14 @@ ${date}
                             star = Number(best[n][1].difficulty.rating).toFixed(2)
                         }
                         if (mode == 1) {
-                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100).toFixed(2)
+                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
                             accdetail = `[${count300}/${count100}/${countmiss}]`
                         }
                         if (mode == 2) {
-                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100).toFixed(2)
+                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                         }
                         if (mode == 3) {
-                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100).toFixed(2)
+                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
                             accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
                         }
                         var fcguess = ''
@@ -2488,7 +2561,7 @@ ${date}
                         top += `
 ${n+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% ${accdetail} ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% ${accdetail} ${fcguess}
 ${date}
 `   
                     }
@@ -2499,7 +2572,7 @@ ${date}
                     .setDescription(top)
                     message.channel.send({embed});
                 } else if (a_r > -1) {
-                    var best = await osuApi.getUserBest({u: name, limit:100})
+                    var best = await osuApi.getUserBest({u: name, limit:100, m: mode})
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
                     }
@@ -2523,6 +2596,8 @@ ${date}
                         var count100 = Number(best[i][0].counts['100'])
                         var count50 = Number(best[i][0].counts['50'])
                         var countmiss = Number(best[i][0].counts.miss)
+                        var countgeki = Number(best[i][0].counts.geki)
+                        var countkatu = Number(best[i][0].counts.katu)
                         var combo = best[i][0].maxCombo
                         var fc = best[i][1].maxCombo
                         var letter = best[i][0].rank
@@ -2530,30 +2605,49 @@ ${date}
                         var pp = Number(best[i][0].pp).toFixed(2)
                         var mod = best[i][0].mods
                         var perfect = best[i][0].perfect
-                        var modandbit = mods(mod)
+                        var modandbit = mods(mod, 'text')
                         var shortenmod = modandbit.shortenmod
                         var bitpresent = modandbit.bitpresent
                         var date = timeago(best[i][0].date)
-                        cacheBeatmapID(beatmapid, 'Standard')
-                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                        var parser = await precalc(beatmapid)     
-                        var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
-                        var fcpp = Number(fccalc.pp.total).toFixed(2)
-                        var fcacc = fccalc.acc
-                        var star = Number(fccalc.star.total).toFixed(2)
+                        cacheBeatmapID(beatmapid, modename)
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
+                        var star = 0
+                        var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                        if (mode == 0) {
+                            var parser = await precalc(beatmapid)
+                            var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                            var fcpp = Number(fccalc.pp.total).toFixed(2)
+                            var fcacc = fccalc.acc
+                            star = Number(fccalc.star.total).toFixed(2)
+                        }
+                        if (mode == 1 || mode == 2 || mode == 3) {
+                            fc = ''
+                            star = Number(best[i][1].difficulty.rating).toFixed(2)
+                        }
+                        if (mode == 1) {
+                            acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
+                            accdetail = `[${count300}/${count100}/${countmiss}]`
+                        }
+                        if (mode == 2) {
+                            acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
+                        }
+                        if (mode == 3) {
+                            acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
+                            accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                        }
                         var fcguess = ''
-                        if (perfect == 0) {
+                        if (perfect == 0 && mode == 0) {
                             fcguess = `| **${fcpp}pp for ${fcacc}%**`
                         }
                         top += `
 ${best[i][0].top}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% ${accdetail} ${fcguess}
 ${date}
-`
+`   
                     }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top osu!Standard most recent plays for ${username}`)
+                    .setAuthor(`Top osu!${modename} most recent plays for ${username}`)
                     .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                     .setColor(embedcolor)
                     .setDescription(top)
@@ -2624,12 +2718,12 @@ ${date}
                             var rank = rankingletters(letter)
                             var pp = Number(best[i][0].pp).toFixed(2)
                             var perfect = best[i][0].perfect
-                            var modandbit = mods(bestmod)
+                            var modandbit = mods(bestmod, 'text')
                             var shortenmod = modandbit.shortenmod
                             var bitpresent = modandbit.bitpresent
                             var date = timeago(best[i][0].date)
                             cacheBeatmapID(beatmapid, 'Standard')
-                            var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                            var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                             var parser = await precalc(beatmapid)
                             var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                             var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -2642,7 +2736,7 @@ ${date}
                             top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `
                         }
@@ -2713,12 +2807,12 @@ ${date}
                         var pp = Number(best[i][0].pp).toFixed(2)
                         var mod = best[i][0].mods
                         var perfect = best[i][0].perfect
-                        var modandbit = mods(mod)
+                        var modandbit = mods(mod, 'text')
                         var shortenmod = modandbit.shortenmod
                         var bitpresent = modandbit.bitpresent
                         var date = timeago(best[i][0].date)
                         cacheBeatmapID(beatmapid, 'Standard')
-                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                         var parser = await precalc(beatmapid)     
                         var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
                         var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -2731,7 +2825,7 @@ ${date}
                         top += `
 ${best[i][0].top}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `
                     }
@@ -2785,12 +2879,12 @@ ${date}
                                 var pp = Number(best[i][0].pp).toFixed(2)
                                 var mod = best[i][0].mods
                                 var perfect = best[i][0].perfect
-                                var modandbit = mods(mod)
+                                var modandbit = mods(mod, 'text')
                                 var shortenmod = modandbit.shortenmod
                                 var bitpresent = modandbit.bitpresent
                                 var date = timeago(best[i][0].date)
                                 cacheBeatmapID(beatmapid, 'Standard')
-                                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                                var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                                 var star = 0
                                 var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                                 if (mode == 0) {
@@ -2822,7 +2916,7 @@ ${date}
                                 gathering += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% ${accdetail} ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% ${accdetail} ${fcguess}
 ${date}
 `   
                             }
@@ -2883,12 +2977,12 @@ ${date}
                         var pp = Number(best[i][0].pp).toFixed(2)
                         var mod = best[i][0].mods
                         var perfect = best[i][0].perfect
-                        var modandbit = mods(mod)
+                        var modandbit = mods(mod, 'text')
                         var shortenmod = modandbit.shortenmod
                         var bitpresent = modandbit.bitpresent
                         var date = timeago(best[i][0].date)
                         cacheBeatmapID(beatmapid, modename)
-                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                         var star = 0
                         var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                         if (mode == 0) {
@@ -2920,7 +3014,7 @@ ${date}
                         top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} *${diff}* | **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% ${accdetail} ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% ${accdetail} ${fcguess}
 ${date}
 `   
                     }
@@ -3189,14 +3283,24 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 urlcommand = true
                 var beatmapid = 0
                 var check = ''
+                var mode = 0
                 if (msg.substr(8,21) == 'https://osu.ppy.sh/b/') {
                     beatmapid = msg.split("/")[4].split(' ')[0]
+                    mode = msg.substr(msg.indexOf('?m=')+3, 1)
                     if (msg.substring(0, msg.length).includes('?m=') == true) {
                         beatmapid = msg.substring(msg.indexOf(beatmapid), msg.indexOf('?m='))
                     }
                 }
                 if (msg.substr(8,31) == 'https://osu.ppy.sh/beatmapsets/') {
                     beatmapid = msg.split("/")[5].split(' ')[0]
+                    var modetext = msg.split('/')[4].split('#')[1]
+                    var modelist = {
+                        osu: '0',
+                        taiko: '1',
+                        fruits: '2',
+                        mania: '3'
+                    }
+                    mode = modelist[modetext]
                 }
                 var option = ''
                 if (msg.includes('"') == true) {
@@ -3211,7 +3315,8 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     }
                 }
                 var name = checkplayer(check, 'osu')
-                var scores = await osuApi.getScores({b: beatmapid, u: name})
+                console.log(mode, name, beatmapid)
+                var scores = await osuApi.getScores({b: beatmapid, u: name, m: mode})
                 scores.sort(function (a,b) {
                     a1 = Number(a.pp)
                     b1 = Number(b.pp)
@@ -3227,6 +3332,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var beatmapimageid = beatmap[0].beatmapSetId
                 var osuname = scores[0].user.name
                 var osuid = scores[0].user.id
+                var modename = getModeDetail(mode).modename
                 var parser = await precalc(beatmapid)
                 for (var i = 0; i < scores.length; i++) {
                     var score = scores[i].score
@@ -3234,41 +3340,62 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     var count100 = Number(scores[i].counts['100'])
                     var count50 = Number(scores[i].counts['50'])
                     var countmiss = Number(scores[i].counts.miss)
+                    var countgeki = Number(scores[i].counts.geki)
+                    var countkatu = Number(scores[i].counts.katu)
                     var combo = scores[i].maxCombo
                     var fc = beatmap[0].maxCombo
                     var letter = scores[i].rank
                     var rank = rankingletters(letter)
                     var mod = scores[i].mods
                     var perfect = scores[i].perfect
-                    var modandbit = mods(mod)
+                    var modandbit = mods(mod, 'text')
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
                     var date = timeago(scores[i].date)
                     var pp = Number(scores[i].pp).toFixed(2)
-                    cacheBeatmapID(beatmapid, 'Standard')
-                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
+                    var star = 0
+                    var accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
                     var unrankedpp = ''
-                    if (beatmap[0].approvalStatus !== "Ranked" && beatmap[0].approvalStatus !== "Approved") {
-                        var comparepp = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
-                        unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
+                    if (mode == 0) {
+                        var parser = await precalc(storedid)
+                        var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
+                        var fcpp = Number(fccalc.pp.total).toFixed(2)
+                        var fcacc = fccalc.acc
+                        star = Number(fccalc.star.total).toFixed(2)
+                        if (beatmap[0].approvalStatus !== "Ranked" && beatmap[0].approvalStatus !== "Approved") {
+                            var comparepp = ppcalc(parser,bitpresent,combo,count100,count50,countmiss,acc,0)
+                            unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
+                        }
                     }
-                    var fccalc = ppcalc(parser,bitpresent,fc,count100,count50,0,acc,1)
-                    var fcpp = Number(fccalc.pp.total).toFixed(2)
-                    var fcacc = fccalc.acc
-                    var star = Number(fccalc.star.total).toFixed(2)
+                    if (mode == 1 || mode == 2 || mode == 3) {
+                        fc = ''
+                        star = Number(beatmap[i].difficulty.rating).toFixed(2)
+                    }
+                    if (mode == 1) {
+                        acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
+                        accdetail = `[${count300}/${count100}/${countmiss}]`
+                    }
+                    if (mode == 2) {
+                        acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
+                    }
+                    if (mode == 3) {
+                        acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
+                        accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                    }
                     var fcguess = ''
-                    if (perfect == 0) {
+                    if (perfect == 0 && mode == 0) {
                         fcguess = `| **${fcpp}pp for ${fcacc}%**`
                     }
                         highscore += `
 ${i+1}. **${shortenmod}** Score (${star}★) | ***${pp}pp*** ${unrankedpp}
 ${rank} **Score:** ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% ${accdetail} ${fcguess}
 ${date}
 `         
                 }
                 const embed = new Discord.RichEmbed()
-                .setAuthor(`Top osu!Standard Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
+                .setAuthor(`Top osu!${modename} Plays for ${osuname} on ${beatmapname} [${diff}]`, `http://s.ppy.sh/a/${osuid}.png?=date${refresh}`)
                 .setColor(embedcolor)
                 .setThumbnail(`https://b.ppy.sh/thumb/${beatmapimageid}l.jpg`)
                 .setDescription(highscore)
@@ -3421,7 +3548,7 @@ ${date}
                 averageMiss = Number((averageMiss / best.length).toFixed(0))
                 var pos = Math.floor(Math.random() * 49)
                 var pickedTopPlay = best[pos][1].id
-                var mod = mods(best[pos][0].mods).bitpresent
+                var mod = mods(best[pos][0].mods, 'text').bitpresent
                 var pick = Math.floor(Math.random() * 24.99)
                 var topplayfrom = ''
                 if (pick == 0) {
@@ -3436,7 +3563,7 @@ ${date}
                         } else {
                             pos = Math.floor(Math.random() * 49)
                             pickedTopPlay = best[pos][1].id
-                            mod = mods(best[pos][0].mods).bitpresent
+                            mod = mods(best[pos][0].mods, 'text').bitpresent
                         }
                     }
                 } else if (pick > 0) {
@@ -3450,7 +3577,7 @@ ${date}
                     otherbest.sort(function(a,b) {return Math.abs(minPP - a) - Math.abs(minPP - b)})
                     otherbest.splice(49,50)
                     pickedTopPlay = otherbest[pos][1].id
-                    mod = mods(otherbest[pos][0].mods).bitpresent
+                    mod = mods(otherbest[pos][0].mods, 'text').bitpresent
                     for (var i = 0; i < 10; i++) {
                         // Mod Play
                         var parser = await precalc(pickedTopPlay)
@@ -3468,7 +3595,7 @@ ${date}
                         } else {
                             pos = Math.floor(Math.random() * 49)
                             pickedTopPlay = otherbest[pos][1].id
-                            mod = mods(otherbest[pos][0].mods).bitpresent
+                            mod = mods(otherbest[pos][0].mods, 'text').bitpresent
                             
                         }
                     }
@@ -3491,7 +3618,7 @@ ${date}
                 var mapper = maprecommendeded[1].creator
                 var version = maprecommendeded[1].version
                 var maxCombo = maprecommendeded[1].maxCombo
-                var shortenmod = bittomods(mod)
+                var shortenmod = mods(mod, 'number').shortenmod
                 cacheBeatmapID(beatmapid, 'Standard')
                 var parser = await precalc(pickedTopPlay)
                 var acc95 = ppcalc(parser,mod,maxCombo,0,0,0,95,0)
@@ -3529,7 +3656,16 @@ ${date}
 
         // Other server (Akatsuki, Ripple) Function
 
-        async function otherserveravatar(start, serverlink) {
+        function getServerLink(mode) {
+            if (mode == 4) {
+                return 'ripple.moe'
+            } else if (mode == 8 || mode == 12) {
+                return 'akatsuki.pw'
+            }
+        }
+
+        async function otherserveravatar(start, mode) {
+            var serverlink = getServerLink(mode)
             var data = await request.get(`https://${serverlink}/api/v1/users?name=${message.content.substring(start)}`)
             var user = JSON.parse(data)
             var username = user.username
@@ -3541,7 +3677,7 @@ ${date}
             message.channel.send({embed})
         }
 
-        async function otherserverosu(serverlink,linkoption) {
+        async function otherserverosu(mode) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
@@ -3585,14 +3721,12 @@ ${date}
                         }
                     }
                 }
-                if (linkoption == undefined) {
-                    linkoption = ''
-                }
+                var serverlink = getServerLink(mode)
                 var name = checkplayer(check, serverlink)
-                var modedetail = getModeDetail(serverlink+linkoption, 'other')
+                var modedetail = getModeDetail(mode)
                 var servername = modedetail.modename
                 var servericon = modedetail.modeicon
-                if (a_d > -1 && linkoption !== '&rx=1') {
+                if (a_d > -1 && mode !== 12) {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50`)
                     var data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`)
                     var best = JSON.parse(data1)
@@ -3623,7 +3757,7 @@ ${date}
                     for (var i = 0; i < 50; i++) {
                         var beatmapid = best.scores[i].beatmap.beatmap_id
                         var mod = best.scores[i].mods
-                        var shortenmod = bittomods(mod)
+                        var shortenmod = mods(mod, 'number').shortenmod
                         var count300 = Number(best.scores[i].count_300)
                         var count100 = Number(best.scores[i].count_100)
                         var count50 = Number(best.scores[i].count_50)
@@ -3659,7 +3793,7 @@ Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
                     message.channel.send({embed});
-                } else if (a_d > -1 && linkoption == "&rx=1") {
+                } else if (a_d > -1 && mode == 12) {
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50&rx=1`)
                     var data2 = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)
                     var best = JSON.parse(data1)
@@ -3688,7 +3822,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                     for (var i = 0; i < 50; i++) {
                         var beatmapid = best.scores[i].beatmap.beatmap_id
                         var mod = best.scores[i].mods
-                        var shortenmod = bittomods(mod)
+                        var shortenmod = mods(mod, 'number').shortenmod
                         var count300 = Number(best.scores[i].count_300)
                         var count100 = Number(best.scores[i].count_100)
                         var count50 = Number(best.scores[i].count_50)
@@ -3724,7 +3858,7 @@ CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: 
                     message.channel.send({embed});
                 } else {
                     var data = ''
-                    if (linkoption == '&rx=1') {
+                    if (mode == 12) {
                         data = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)
                     } else {
                         data = await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`)
@@ -3757,7 +3891,7 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
             }
         }
 
-        async function otherserverrecent(serverlink, linkoption) {
+        async function otherserverrecent(mode) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
@@ -3776,15 +3910,14 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                         check = option[1]
                     }
                 }
-                if (linkoption == undefined) {
-                    linkoption = ''
-                }
+                var serverlink = getServerLink(mode)
+                var linkoption = (mode == 12) ? '&rx=1' : ''
                 var name = checkplayer(check, serverlink)
                 var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/recent?name=${name}${linkoption}`)
                 var data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)
                 var recent = JSON.parse(data1)
                 var user = JSON.parse(data2)
-                var servername = getModeDetail(serverlink+linkoption, 'other').modename
+                var servername = getModeDetail(mode).modename
                 var userid = user.id
                 var username = user.username
                 var beatmapid = recent.scores[0].beatmap.beatmap_id
@@ -3801,15 +3934,15 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 var letter = recent.scores[0].rank
                 var rank = rankingletters(letter)
                 var bit = recent.scores[0].mods
-                var mods = bittomods(bit)   
-                var acc = Number(recent.scores[0].accuracy).toFixed(2)
+                var mods = mods(bit, 'number').shortenmod
+                var acc = Number(recent.scores[0].accuracy)
                 var parser = await precalc(beatmapid)
                 var pp = Number(recent.scores[0].pp).toFixed(2)
                 var star = 0
                 cacheBeatmapID(beatmapid, servername)
                 var fcpp = 0
                 var fcacc = 0
-                if (linkoption == '&rx=1') {
+                if (mode == 12) {
                     var fccalc = ppcalc(parser,bit,fc,count100,count50,0,acc,2)
                     fcpp = Number(fccalc.pp.total).toFixed(2)
                     fcacc = fccalc.acc
@@ -3835,14 +3968,14 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                 .setDescription(`
 **[${beatmap}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${mods} | ***${pp}pp*** ${nopp}
 ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}`)
                 message.channel.send({embed})
             } catch (error) {
                 message.channel.send(String(error))
             }
         }
 
-        async function otherservertop(serverlink, linkoption) {
+        async function otherservertop(mode) {
             try{
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
@@ -3902,11 +4035,10 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                         }
                     }
                 }
-                if (linkoption == undefined) {
-                    linkoption = ''
-                }
+                var serverlink = getServerLink(mode)
+                var linkoption = (mode == 12) ? '&rx=1' : ''
                 var name = checkplayer(check, serverlink)
-                var servername = getModeDetail(serverlink+linkoption, 'other').modename
+                var servername = getModeDetail(mode).modename
                 if (a_p > -1) {
                     var n = Number(option[option.indexOf('-p') + 1]) - 1
                     var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=${n+1}${linkoption}`)
@@ -3929,10 +4061,10 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     var rank = rankingletters(letter)
                     var pp = Number(best.scores[n].pp).toFixed(2)
                     var mod = best.scores[n].mods
-                    var shortenmod = bittomods(mod)
+                    var shortenmod = mods(mod, 'number').shortenmod
                     var date = timeago(best.scores[n].time)
                     cacheBeatmapID(beatmapid, servername)
-                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                    var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                     var parser = await precalc(beatmapid)
                     var fccalc = ppcalc(parser,mod,fc,count100,count50,0,acc,1)
                     var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -3945,7 +4077,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     top += `
 ${n+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `
                 const embed = new Discord.RichEmbed()
@@ -3996,6 +4128,7 @@ ${date}
                                 match = true
                             } else {match = false}
                         } else {
+                            console.log(bestmod, mod)
                             if (bestmod == mod){
                                 match = true
                             } else {match = false}
@@ -4016,10 +4149,10 @@ ${date}
                             var rank = rankingletters(letter)
                             var pp = Number(best.scores[i].pp).toFixed(2)
                             var mod = best.scores[i].mods
-                            var shortenmod = bittomods(mod)
+                            var shortenmod = mods(mod, 'number').shortenmod
                             var date = timeago(best.scores[i].time)
                             cacheBeatmapID(beatmapid, servername)
-                            var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                            var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                             var parser = await precalc(beatmapid)
                             var fccalc = ppcalc(parser,mod,fc,count100,count50,0,acc,1)
                             var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -4032,7 +4165,7 @@ ${date}
                             top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `
                         }
@@ -4041,7 +4174,7 @@ ${date}
                         top += `This user doesn't have any ${getmod.toUpperCase()} top play`
                     }
                     const embed = new Discord.RichEmbed()
-                    .setAuthor(`Top ${servername} Plays with ${getmod.toUpperCase()} for ${username}`)
+                    .setAuthor(`Top ${servername} Standard Plays with ${getmod.toUpperCase()} for ${username}`)
                     .setThumbnail(`http://a.${serverlink}/${userid}.png?date=${refresh}`)
                     .setColor(embedcolor)
                     .setDescription(top)
@@ -4067,10 +4200,10 @@ ${date}
                         var rank = rankingletters(letter)
                         var pp = Number(best.scores[i].pp).toFixed(2)
                         var mod = best.scores[i].mods
-                        var shortenmod = bittomods(mod)
+                        var shortenmod = mods(mod, 'number').shortenmod
                         var date = timeago(best.scores[i].time)
                         cacheBeatmapID(beatmapid, servername)
-                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
+                        var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
                         var parser = await precalc(beatmapid)
                         var fccalc = ppcalc(parser,mod,fc,count100,count50,0,acc,1)
                         var fcpp = Number(fccalc.pp.total).toFixed(2)
@@ -4083,7 +4216,7 @@ ${date}
                         top += `
 ${i+1}. **[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp***
 ${rank} **Scores**: ${score} | **Combo:** ${combo}/${fc}
-**Accuracy:** ${acc}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
+**Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 ${date}
 `                   }
                     const embed = new Discord.RichEmbed()
@@ -4239,28 +4372,28 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         // Akatuski
 
         if (msg.substring(0,11) == '!akatavatar' && msg.substring(0,11) == command) {
-            otherserveravatar(12,'akatsuki.pw')
+            otherserveravatar(12,8)
         }
         if (msg.substring(0,9) == '!akatsuki' && msg.substring(0,9) == command) {
-            otherserverosu('akatsuki.pw')
+            otherserverosu(8)
         }
         if (msg.substring(0,6) == '!akatr' && msg.substring(0,6) == command) {
-            otherserverrecent('akatsuki.pw')
+            otherserverrecent(8)
         }
         if (msg.substring(0,8) == '!akattop' && msg.substring(0,8) == command) {
-            otherservertop('akatsuki.pw')
+            otherservertop(8)
         }
         if (msg.substring(0,12) == '!akatsukiset' && msg.substring(0,12) == command) {
             osuset('Akatsuki')
         }
         if (msg.substring(0,11) == '!rxakatsuki' && msg.substring(0,11) == command) {
-            otherserverosu('akatsuki.pw', '&rx=1')
+            otherserverosu(12)
         }
         if (msg.substring(0,8) == '!rxakatr' && msg.substring(0,8) == command) {
-            otherserverrecent('akatsuki.pw', '&rx=1')
+            otherserverrecent(12)
         }
         if (msg.substring(0,10) == '!rxakattop' && msg.substring(0,10) == command) {
-            otherservertop('akatsuki.pw', '&rx=1')
+            otherservertop(12)
         }
         if (msg.substring(0,9) == '!calcrxpp' && msg.substring(0,9) == command) {
             calculaterxplay()
@@ -4269,16 +4402,16 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         // Ripple
 
         if (msg.substring(0,13) == '!rippleavatar' && msg.substring(0,13) == command) {
-            otherserveravatar(14,'ripple.moe')
+            otherserveravatar(14,4)
         }
         if (msg.substring(0,7) == '!ripple' && msg.substring(0,7) == command) {
-            otherserverosu('ripple.moe')
+            otherserverosu(4)
         }
         if (msg.substring(0,8) == '!rippler' && msg.substring(0,8) == command) {
-            otherserverrecent('ripple.moe')
+            otherserverrecent(4)
         }
         if (msg.substring(0,10) == '!rippletop' && msg.substring(0,10) == command) {
-            otherservertop('ripple.moe')
+            otherservertop(4)
         }
         if (msg.substring(0,10) == '!rippleset' && msg.substring(0,10) == command) {
             osuset('Ripple')
@@ -4940,4 +5073,5 @@ ${purchasedlevelup}`)
         }
     }
 })
+
 bot.login(process.env.BOT_TOKEN);
