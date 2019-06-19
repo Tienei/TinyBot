@@ -1886,8 +1886,8 @@ ${playstyle}`, true)
                         } else if (option.length > 1) {
                             countryname = option[1]
                         }
-                        if (check == undefined) {
-                            check = ''
+                        if (countryname == undefined) {
+                            countryname = ''
                         }
                     }
                 }
