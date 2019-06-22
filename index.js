@@ -32,6 +32,7 @@ var loading = 1
 var botver = 'v3'
 var botsubver = 'v3.2'
 var refresh = 0
+var graphnum = 0
 
 function rankingletters(letter) {
     if (letter == "F") {
@@ -1784,6 +1785,7 @@ ${playstyle}`, true)
                     .setFooter(statustext, statusicon)
                     message.channel.send({embed});
                 } else if (a_g > -1) {
+                    graph += 1
                     var user = await osuApi.getUser({u: name, m: mode})
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}/osu`)
                     var user_history = await cheerio.load(web)
@@ -1804,7 +1806,6 @@ ${playstyle}`, true)
                     var rank = user.pp.rank
                     var countryrank = user.pp.countryRank
                     var country = user.country.toLowerCase();
-                    var random = Math.round(Math.random()*10)
                     //Graph
                     await co( function * () {
                         const options = {
@@ -1869,12 +1870,12 @@ ${playstyle}`, true)
                         line = line.substring(0, line.indexOf('<div class="ct-legend">'))
                       
                         // Format SVG to PNG
-                      
-                        fs.writeFileSync(`image${random}.svg`, line)
+                        
+                        fs.writeFileSync(`./svg/image${graphnum}.svg`, line)
                         
                     })
                     async function svg() {
-                        await sharp(`image${random}.svg`).png().toFile('image.png')
+                        await sharp(`./svg/image${graphnum}.svg`).png().toFile('image.png')
                         var image = await jimp.read('./image.png')
                         var banner = await jimp.read(bannerurl)
                         var bannerwidth = banner.getWidth()
