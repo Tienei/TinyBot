@@ -8,13 +8,17 @@ var economy = []
 
 const Discord = require('discord.js');
 const nodeosu = require('node-osu');
-const bot = new Discord.Client();
 const request = require('request-promise-native');
 const calc = require('ojsama')
 const rxcalc = require('rx-akatsuki-pp')
 const fs = require('fs')
 const cheerio = require('cheerio')
 const jimp = require('jimp')
+const co = require('co');
+const generate = require('node-chartist');
+const sharp = require('sharp')
+
+const bot = new Discord.Client();
 
 var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
@@ -1010,7 +1014,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 - Fixed OD with mods
 - New !osu -d design
 - Added !(taiko,ctb,mania)top -r, -g
-- Added !topglobal/!topcountry for other modes`)
+- Added !topglobal/!topcountry for other modes
+- Added !osu -g`)
             message.channel.send({embed})
         }
 
@@ -1532,8 +1537,9 @@ Use External Emojis: ${compatibility[5]}`)
                 // Find name and arg
                 var a_d = option.indexOf("-d")
                 var a_rank = option.indexOf("-rank")
+                var a_g = option.indexOf("-g")
                 //Check if there is more than 1 argument
-                var findarg = [a_d, a_rank]
+                var findarg = [a_d, a_rank, a_g]
                 var find = false
                 for (var i = 0; i < findarg.length; i++) {
                     if (findarg[i] > -1) {
@@ -1546,7 +1552,7 @@ Use External Emojis: ${compatibility[5]}`)
                 }
                 //Get name if there's no quote
                 if (quote == false) {
-                    var pass = [0, a_d, a_rank]
+                    var pass = [0, a_d, a_rank, a_g]
                     for (var i = 0; i < pass.length;) {
                         if (pass[i] == -1) {
                             pass.splice(i,1)
@@ -1560,6 +1566,10 @@ Use External Emojis: ${compatibility[5]}`)
                     } else {
                         if (a_d > -1) {
                             check = option[option.indexOf("-d") + 1]
+                        } if (a_rank > -1) {
+                            check = option[option.indexOf("-rank") + 1]
+                        } if (a_g > -1) {
+                            check = option[option.indexOf("-g") + 1]
                         } else if (option.length > 1) {
                             check = option[1]
                         }
@@ -1773,6 +1783,115 @@ ${playstyle}`, true)
                     .setColor(embedcolor)
                     .setFooter(statustext, statusicon)
                     message.channel.send({embed});
+                } else if (a_g > -1) {
+                    var user = await osuApi.getUser({u: name, m: mode})
+                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
+                    var user_history = await cheerio.load(web)
+                    user_history = user_history("#json-rankHistory").html()
+                    user_history = JSON.parse(user_history)
+                    var user_web = await cheerio.load(web)
+                    user_web = user_web("#json-user").html()
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
+                    user_web = JSON.parse(user_web)
+                    var rankHistory = user_history["data"]
+                    var bannerurl = user_web["cover_url"]
+                    var supporter = user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : ''
+                    var statusicon = user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1'
+                    var statustext = user_web["is_online"] == true ? 'Online' : 'Offline'
+                    var username = user.name
+                    var pp = Number(user.pp.raw).toFixed(2);
+                    var rank = user.pp.rank
+                    var countryrank = user.pp.countryRank
+                    var country = user.country.toLowerCase();
+                    //Graph
+                    await co( function * () {
+                        const options = {
+                            width: 600,
+                            height: 200,
+                            axisX: {title: ''},
+                            axisY: {title: '', labelOffset: {x: 0, y: 10}, labelInterpolationFnc: function(value) {
+                                return -value;
+                            }},
+                            showLine: true,
+                            fullWidth: true,
+                            chartPadding: {left: 60},
+                        };
+                      
+                        for (var i = 0 in rankHistory) {
+                            rankHistory[i] = rankHistory[i] * -1
+                        }
+                                                    
+                        var line = yield generate('line', options, {
+                            labels: [],
+                            series: [
+                                {value: rankHistory},
+                            ]
+                        })
+                      
+                        // CSS Layout
+                      
+                        // Load graph
+                      
+                        var graph = cheerio.load(line)
+                      
+                        // Get line
+                      
+                        var graphline = graph('path')
+                        for (var i = 0; i < graphline.length; i++) {
+                            graph(graphline[i]).attr('style', 'stroke: rgb(255,0,255); stroke-width: 3; fill: none')
+                        }
+                      
+                        // Get grid (h/v)
+                      
+                        var gridline = graph('line[class="ct-grid ct-horizontal"]')
+                        for (var i = 0; i < gridline.length; i+=Math.round(gridline.length / 6)) {
+                            graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
+                        }
+                        graph(gridline[gridline.length-1]).attr('style', 'stroke: white; stroke-width: 2')
+                        gridline = graph('line[class="ct-grid ct-vertical"]')
+                        for (var i = 0; i < gridline.length; i++) {
+                            graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
+                        }
+                      
+                        // Get Text
+                      
+                        var text = graph('text')
+                        for (var i = 0; i < text.length; i++) {
+                            graph(text[i]).attr('style', 'font-family: Open Sans; font-size: 18px; font-weight: 900; fill: white;')
+                        }
+                        text = graph('text[class="ct-label ct-vertical ct-start"]')
+                        for (var i = 0; i < text.length; i++) {
+                            graph(text[i]).attr('style', 'font-family: Open Sans; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
+                        }
+                        line = graph.html()
+                      
+                        // Format SVG to PNG
+                      
+                        fs.writeFileSync('image.svg', line)
+                        
+                    })
+                    async function svg() {
+                        await sharp('image.svg').png().toFile('image.png')
+                        var image = await jimp.read('./image.png')
+                        var banner = await jimp.read(bannerurl)
+                        banner.resize(jimp.AUTO, 200)
+                        banner.crop(0, 0, 600, 200)
+                        banner.brightness(-0.5)
+                        banner.blur(10)
+                        image.brightness(0.25)
+                        banner.composite(image, 0, 0)
+                        await banner.write('./rankhistory.png')
+                    }
+                    await svg()
+                    const attachment = new Discord.Attachment('./rankhistory.png', 'rank.png')
+                    const embed = new Discord.RichEmbed()
+                    .setDescription(`${modeicon} ${supporter} **osu!Standard rank history for [${username}](https://osu.ppy.sh/users/${id})**`)
+                    .addField('Current rank', `Global: ${rank} (:flag_${country}:: ${countryrank})`, true)
+                    .addField('Current PP', pp, true)
+                    .attachFile(attachment)
+                    .setImage('attachment://rank.png')
+                    message.channel.send({embed})
                 } else {
                     var user = await osuApi.getUser({u: name, m: mode})
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
