@@ -1811,7 +1811,7 @@ ${playstyle}`, true)
                             width: 600,
                             height: 200,
                             axisX: {title: ''},
-                            axisY: {title: '', labelOffset: {x: 0, y: 10}, labelInterpolationFnc: function(value) {
+                            axisY: {title: '', labelOffset: {x: 0, y: 10}, onlyInteger: true,labelInterpolationFnc: function(value) {
                                 return -value;
                             }},
                             showLine: true,
@@ -1877,10 +1877,16 @@ ${playstyle}`, true)
                         await sharp(`image${random}.svg`).png().toFile('image.png')
                         var image = await jimp.read('./image.png')
                         var banner = await jimp.read(bannerurl)
-                        banner.resize(jimp.AUTO, 200)
+                        var bannerwidth = banner.getWidth()
+                        var bannerHeight = banner.getHeight()
+                        if (bannerwidth / 600 >= bannerHeight / 200) {
+                            banner.resize(jimp.AUTO, 200)
+                        } else {
+                            banner.resize(600, jimp.AUTO)
+                        }         
                         banner.crop(0, 0, 600, 200)
                         banner.brightness(-0.5)
-                        banner.blur(10)
+                        banner.blur(5)
                         image.brightness(0.25)
                         banner.composite(image, 0, 0)
                         await banner.write('./rankhistory.png')
