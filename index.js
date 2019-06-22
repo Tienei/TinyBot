@@ -14,7 +14,6 @@ const rxcalc = require('rx-akatsuki-pp')
 const fs = require('fs')
 const cheerio = require('cheerio')
 const jimp = require('jimp')
-const co = require('co');
 const generate = require('node-chartist');
 const sharp = require('sharp')
 
@@ -1785,8 +1784,6 @@ ${playstyle}`, true)
                     .setFooter(statustext, statusicon)
                     message.channel.send({embed});
                 } else if (a_g > -1) {
-                    graphnum += 1
-                    if (graphnum > 10) graphnum = 1
                     var user = await osuApi.getUser({u: name, m: mode})
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}/osu`)
                     var user_history = await cheerio.load(web)
@@ -1808,7 +1805,7 @@ ${playstyle}`, true)
                     var countryrank = user.pp.countryRank
                     var country = user.country.toLowerCase();
                     //Graph
-                    await co( function * () {
+                    async function rankGraph() {
                         const options = {
                             width: 600,
                             height: 200,
@@ -1825,7 +1822,7 @@ ${playstyle}`, true)
                             rankHistory[i] = rankHistory[i] * -1
                         }
                                                     
-                        var line = yield generate('line', options, {
+                        var line = await generate('line', options, {
                             labels: [],
                             series: [
                                 {value: rankHistory},
@@ -1872,11 +1869,11 @@ ${playstyle}`, true)
                       
                         // Format SVG to PNG
                         
-                        fs.writeFileSync(`./svg/image${graphnum}.svg`, line)
-                        
-                    })
+                        fs.writeFileSync(`./image.svg`, line)
+                    }
+                    await rankGraph()
                     async function svg() {
-                        await sharp(`./svg/image${graphnum}.svg`).png().toFile('image.png')
+                        await sharp(`./image.svg`).png().toFile('image.png')
                         var image = await jimp.read('./image.png')
                         var banner = await jimp.read(bannerurl)
                         var bannerwidth = banner.getWidth()
