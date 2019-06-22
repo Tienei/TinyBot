@@ -1859,11 +1859,11 @@ ${playstyle}`, true)
                       
                         var text = graph('text')
                         for (var i = 0; i < text.length; i++) {
-                            graph(text[i]).attr('style', 'font-family: Open Sans; font-size: 18px; font-weight: 900; fill: white;')
+                            graph(text[i]).attr('style', 'font-family: Arial; font-size: 18px; font-weight: 900; fill: white;')
                         }
                         text = graph('text[class="ct-label ct-vertical ct-start"]')
                         for (var i = 0; i < text.length; i++) {
-                            graph(text[i]).attr('style', 'font-family: Open Sans; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
+                            graph(text[i]).attr('style', 'font-family: Arial; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
                         }
                         line = graph('div[class="ct-chart"]').html()
                         line = line.substring(0, line.indexOf('<div class="ct-legend">'))
