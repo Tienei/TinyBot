@@ -1785,7 +1785,8 @@ ${playstyle}`, true)
                     .setFooter(statustext, statusicon)
                     message.channel.send({embed});
                 } else if (a_g > -1) {
-                    graph += 1
+                    graphnum += 1
+                    if (graphnum > 10) graphnum = 1
                     var user = await osuApi.getUser({u: name, m: mode})
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}/osu`)
                     var user_history = await cheerio.load(web)
