@@ -1785,7 +1785,7 @@ ${playstyle}`, true)
                     message.channel.send({embed});
                 } else if (a_g > -1) {
                     var user = await osuApi.getUser({u: name, m: mode})
-                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
+                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}/osu`)
                     var user_history = await cheerio.load(web)
                     user_history = user_history("#json-rankHistory").html()
                     user_history = JSON.parse(user_history)
