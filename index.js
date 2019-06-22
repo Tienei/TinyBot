@@ -1833,9 +1833,7 @@ ${playstyle}`, true)
                       
                         // Load graph
                       
-                        var htmlgraph = cheerio.load(line)
-                        var svggraph = htmlgraph('div[class="ct-chart"]').html()
-                        var graph = cheerio.load(svggraph)
+                        var graph = cheerio.load(line)
                       
                         // Get line
                       
@@ -1866,7 +1864,8 @@ ${playstyle}`, true)
                         for (var i = 0; i < text.length; i++) {
                             graph(text[i]).attr('style', 'font-family: Open Sans; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
                         }
-                        line = graph.html()
+                        line = graph('div[class="ct-chart"]').html()
+                        line = line.substring(0, line.indexOf('<div class="ct-legend">'))
                       
                         // Format SVG to PNG
                       
