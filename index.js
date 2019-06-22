@@ -1833,7 +1833,9 @@ ${playstyle}`, true)
                       
                         // Load graph
                       
-                        var graph = cheerio.load(line)
+                        var htmlgraph = cheerio.load(line)
+                        var svggraph = htmlgraph('div[class="ct-chart"]').html()
+                        var graph = cheerio.load(svggraph)
                       
                         // Get line
                       
