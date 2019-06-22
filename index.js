@@ -1804,6 +1804,7 @@ ${playstyle}`, true)
                     var rank = user.pp.rank
                     var countryrank = user.pp.countryRank
                     var country = user.country.toLowerCase();
+                    var random = Math.round(Math.random()*10)
                     //Graph
                     await co( function * () {
                         const options = {
@@ -1832,7 +1833,7 @@ ${playstyle}`, true)
                         // CSS Layout
                       
                         // Load graph
-                      
+                
                         var graph = cheerio.load(line)
                       
                         // Get line
@@ -1869,11 +1870,11 @@ ${playstyle}`, true)
                       
                         // Format SVG to PNG
                       
-                        fs.writeFileSync('image.svg', line)
+                        fs.writeFileSync(`image${random}.svg`, line)
                         
                     })
                     async function svg() {
-                        await sharp('image.svg').png().toFile('image.png')
+                        await sharp(`image${random}.svg`).png().toFile('image.png')
                         var image = await jimp.read('./image.png')
                         var banner = await jimp.read(bannerurl)
                         banner.resize(jimp.AUTO, 200)
