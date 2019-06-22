@@ -1822,7 +1822,7 @@ ${playstyle}`, true)
                             rankHistory[i] = rankHistory[i] * -1
                         }
                                                     
-                        var line = await generate('line', options, {
+                        var line = await new generate('line', options, {
                             labels: [],
                             series: [
                                 {value: rankHistory},
