@@ -1566,9 +1566,9 @@ Use External Emojis: ${compatibility[5]}`)
                     } else {
                         if (a_d > -1) {
                             check = option[option.indexOf("-d") + 1]
-                        } if (a_rank > -1) {
+                        } else if (a_rank > -1) {
                             check = option[option.indexOf("-rank") + 1]
-                        } if (a_g > -1) {
+                        } else if (a_g > -1) {
                             check = option[option.indexOf("-g") + 1]
                         } else if (option.length > 1) {
                             check = option[1]
