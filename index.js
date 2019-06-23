@@ -1800,97 +1800,93 @@ ${playstyle}`, true)
                     var statusicon = user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1'
                     var statustext = user_web["is_online"] == true ? 'Online' : 'Offline'
                     var username = user.name
+                    var id = user.id
                     var pp = Number(user.pp.raw).toFixed(2);
                     var rank = user.pp.rank
                     var countryrank = user.pp.countryRank
                     var country = user.country.toLowerCase();
                     //Graph
-                    async function rankGraph() {
-                        const options = {
-                            width: 600,
-                            height: 200,
-                            axisX: {title: ''},
-                            axisY: {title: '', labelOffset: {x: 0, y: 10}, onlyInteger: true,labelInterpolationFnc: function(value) {
-                                return -value;
-                            }},
-                            showLine: true,
-                            fullWidth: true,
-                            chartPadding: {left: 60},
-                        };
-                      
-                        for (var i = 0 in rankHistory) {
-                            rankHistory[i] = rankHistory[i] * -1
-                        }
-                                                    
-                        var line = await new generate('line', options, {
-                            labels: [],
-                            series: [
-                                {value: rankHistory},
-                            ]
-                        })
-                      
-                        // CSS Layout
-                      
-                        // Load graph
-                
-                        var graph = cheerio.load(line)
-                      
-                        // Get line
-                      
-                        var graphline = graph('path')
-                        for (var i = 0; i < graphline.length; i++) {
-                            graph(graphline[i]).attr('style', 'stroke: rgb(255,0,255); stroke-width: 3; fill: none')
-                        }
-                      
-                        // Get grid (h/v)
-                      
-                        var gridline = graph('line[class="ct-grid ct-horizontal"]')
-                        for (var i = 0; i < gridline.length; i+=Math.round(gridline.length / 6)) {
-                            graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
-                        }
-                        graph(gridline[gridline.length-1]).attr('style', 'stroke: white; stroke-width: 2')
-                        gridline = graph('line[class="ct-grid ct-vertical"]')
-                        for (var i = 0; i < gridline.length; i++) {
-                            graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
-                        }
-                      
-                        // Get Text
-                      
-                        var text = graph('text')
-                        for (var i = 0; i < text.length; i++) {
-                            graph(text[i]).attr('style', 'font-family: Arial; font-size: 18px; font-weight: 900; fill: white;')
-                        }
-                        text = graph('text[class="ct-label ct-vertical ct-start"]')
-                        for (var i = 0; i < text.length; i++) {
-                            graph(text[i]).attr('style', 'font-family: Arial; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
-                        }
-                        line = graph('div[class="ct-chart"]').html()
-                        line = line.substring(0, line.indexOf('<div class="ct-legend">'))
-                      
-                        // Format SVG to PNG
-                        
-                        fs.writeFileSync(`./image.svg`, line)
+                    const options = {
+                        width: 600,
+                        height: 200,
+                        axisX: {title: ''},
+                        axisY: {title: '', labelOffset: {x: 0, y: 10}, onlyInteger: true,labelInterpolationFnc: function(value) {
+                            return -value;
+                        }},
+                        showLine: true,
+                        fullWidth: true,
+                        chartPadding: {left: 60},
+                    };
+                  
+                    for (var i = 0 in rankHistory) {
+                        rankHistory[i] = rankHistory[i] * -1
                     }
-                    await rankGraph()
-                    async function svg() {
-                        await sharp(`./image.svg`).png().toFile('image.png')
-                        var image = await jimp.read('./image.png')
-                        var banner = await jimp.read(bannerurl)
-                        var bannerwidth = banner.getWidth()
-                        var bannerHeight = banner.getHeight()
-                        if (bannerwidth / 600 >= bannerHeight / 200) {
-                            banner.resize(jimp.AUTO, 200)
-                        } else {
-                            banner.resize(600, jimp.AUTO)
-                        }         
-                        banner.crop(0, 0, 600, 200)
-                        banner.brightness(-0.5)
-                        banner.blur(5)
-                        image.brightness(0.25)
-                        banner.composite(image, 0, 0)
-                        await banner.write('./rankhistory.png')
+
+                    var line = await generate('line', options, {
+                        labels: [],
+                        series: [
+                            {value: rankHistory},
+                        ]
+                    })
+                  
+                    // CSS Layout
+                  
+                    // Load graph
+            
+                    var graph = cheerio.load(line)
+                  
+                    // Get line
+                  
+                    var graphline = graph('path')
+                    for (var i = 0; i < graphline.length; i++) {
+                        graph(graphline[i]).attr('style', 'stroke: rgb(255,0,255); stroke-width: 3; fill: none')
                     }
-                    await svg()
+                  
+                    // Get grid (h/v)
+                  
+                    var gridline = graph('line[class="ct-grid ct-horizontal"]')
+                    for (var i = 0; i < gridline.length; i+=Math.round(gridline.length / 6)) {
+                        graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
+                    }
+                    graph(gridline[gridline.length-1]).attr('style', 'stroke: white; stroke-width: 2')
+                    gridline = graph('line[class="ct-grid ct-vertical"]')
+                    for (var i = 0; i < gridline.length; i++) {
+                        graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
+                    }
+                  
+                    // Get Text
+                  
+                    var text = graph('text')
+                    for (var i = 0; i < text.length; i++) {
+                        graph(text[i]).attr('style', 'font-family: Arial; font-size: 18px; font-weight: 900; fill: white;')
+                    }
+                    text = graph('text[class="ct-label ct-vertical ct-start"]')
+                    for (var i = 0; i < text.length; i++) {
+                        graph(text[i]).attr('style', 'font-family: Arial; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
+                    }
+                    var linegraph = graph('div[class="ct-chart"]').html()
+                    console.log(linegraph)
+                    linegraph = linegraph.substring(0, linegraph.indexOf('<div class="ct-legend">'))
+                  
+                    // Format SVG to PNG
+                    var svg = new Buffer(linegraph)
+                    await sharp(svg).png().toFile('image.png')
+                    await image.write('./imagedebug.png')
+                    var banner = await jimp.read(bannerurl)
+                    var bannerwidth = banner.getWidth()
+                    var bannerHeight = banner.getHeight()
+                    if (bannerwidth / 600 >= bannerHeight / 200) {
+                        banner.resize(jimp.AUTO, 200)
+                    } else {
+                        banner.resize(600, jimp.AUTO)
+                    }         
+                    banner.crop(0, 0, 600, 200)
+                    banner.brightness(-0.5)
+                    banner.blur(5)
+                    image.brightness(0.25)
+                    banner.composite(image, 0, 0)
+                    await banner.write('./rankhistory.png')
+
                     const attachment = new Discord.Attachment('./rankhistory.png', 'rank.png')
                     const embed = new Discord.RichEmbed()
                     .setDescription(`${modeicon} ${supporter} **osu!Standard rank history for [${username}](https://osu.ppy.sh/users/${id})**`)
