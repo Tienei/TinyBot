@@ -1871,7 +1871,7 @@ ${playstyle}`, true)
                     // Format SVG to PNG
                     var svg = new Buffer(linegraph)
                     await sharp(svg).png().toFile('image.png')
-                    await image.write('./imagedebug.png')
+                    var image = await jimp.read('./image.png')                   
                     var banner = await jimp.read(bannerurl)
                     var bannerwidth = banner.getWidth()
                     var bannerHeight = banner.getHeight()
