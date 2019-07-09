@@ -1679,7 +1679,7 @@ Use External Emojis: ${compatibility[5]}`)
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
                         speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / (Math.pow(6, 0.1)))
                         acc_avg += (Math.pow(scoreacc, 2.5)/Math.pow(100, 2.5)) * 1.08 * thing.star.total * (Math.pow(detail.od, 0.03) / (Math.pow(6, 0.03)) * (Math.pow(detail.hp, 0.03) / (Math.pow(6, 0.03))))
-                        new_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                        new_acc_avg += (Math.pow(thing.star.aim, (Math.pow(scoreacc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(scoreacc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                         bpm_avg += detail.bpm
                         cs_avg += detail.cs
                         ar_avg += detail.ar
