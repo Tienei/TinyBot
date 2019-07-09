@@ -1650,6 +1650,7 @@ Use External Emojis: ${compatibility[5]}`)
                     var aim_avg = 0
                     var speed_avg = 0
                     var acc_avg = 0
+                    var new_acc_avg = 0
                     var bpm_avg = 0
                     var cs_avg = 0
                     var ar_avg = 0
@@ -1678,6 +1679,7 @@ Use External Emojis: ${compatibility[5]}`)
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
                         speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / (Math.pow(6, 0.1)))
                         acc_avg += (Math.pow(scoreacc, 2.5)/Math.pow(100, 2.5)) * 1.08 * thing.star.total * (Math.pow(detail.od, 0.03) / (Math.pow(6, 0.03)) * (Math.pow(detail.hp, 0.03) / (Math.pow(6, 0.03))))
+                        new_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                         bpm_avg += detail.bpm
                         cs_avg += detail.cs
                         ar_avg += detail.ar
@@ -1717,7 +1719,7 @@ Use External Emojis: ${compatibility[5]}`)
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
 Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
-Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
+Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (New formula: ${Number(new_acc_avg/50).toFixed(2)}★)
 Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
 Most common mods: ${sortedmod}`)
