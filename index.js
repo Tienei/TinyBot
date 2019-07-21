@@ -633,7 +633,7 @@ bot.on("guildMemberAdd", (member) => {
 })
 
 bot.on("message", (message) => {
-    if (message.author.bot == false && loading == 0 && message.author.id == "292523841811513348"){
+    if (message.author.bot == false && loading == 0){
         var msg = message.content.toLowerCase();
         refresh = Math.round(Math.random()* 2147483648)
         var command = msg.split(' ')[0]
@@ -1133,7 +1133,7 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 30 seconds before using this again!'
                 }
-                setCommandCooldown(command, 30000)
+                set_Command_cooldown(command, 30000)
                 var error = message.content.substring(8)
                 if (error == '') {
                     throw "Type an error"
@@ -1159,7 +1159,7 @@ Problem: ${error}`)
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 30 seconds before using this again!'
                 }
-                setCommandCooldown(command, 30000)
+                set_Command_cooldown(command, 30000)
                 var suggestion = message.content.substring(12)
                 if (suggestion == '') {
                     throw 'Type a suggestion for the bot'
@@ -2125,7 +2125,7 @@ ${playstyle}`, true)
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
-                setCommandCooldown(command, 3000)
+                set_Command_cooldown(command, 3000)
                 var option = msg.split(' ')
                 var link = ''
                 var mode = 'osu'
@@ -3701,7 +3701,7 @@ ${mapdetail}
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
-                setCommandCooldown(command, 3000)
+                set_Command_cooldown(command, 3000)
                 var option = msg.split(" ")
                 var beatmapid = option[1]
                 var mods = [option[2]]
