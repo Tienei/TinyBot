@@ -20,7 +20,7 @@ const sharp = require('sharp')
 const bot = new Discord.Client();
 
 var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
-    notFoundAsError: true,
+    notFoundAsError: false,
     completeScores: true
 });
 
