@@ -611,7 +611,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
             }
         }
     }
-    //setInterval(real_time_osu_track, 25000)
+    setInterval(real_time_osu_track, 25000)
 });
 
 bot.on("guildMemberAdd", (member) => {
@@ -1115,7 +1115,7 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 5 seconds before using this again!'
                 }
-                setCommandCooldown(command, 5000)
+                set_Command_cooldown(command, 5000)
                 async function Bancho() {
                     var timenow = Date.now()
                     var test = await osuApi.getUser({u: "peppy"})
@@ -2531,7 +2531,7 @@ ${date}
                         star = Number(mapinfo.star).toFixed(2)
                         pp = mania_pp_calculator(mapinfo.star, mapinfo.od, recent[0].score, mapinfo.fc, bitpresent).toFixed(2)
                         fcacc = Number(21.7147240951625 * Math.log(recent[0].score/10000)*10000).toFixed(0)
-                        fcpp = mania_pp_calculator(mapinfo.star, mapinfo.od, fcscore, mapinfo.fc, bitpresent).toFixed(2)
+                        fcpp = mania_pp_calculator(mapinfo.star, mapinfo.od, fcacc, mapinfo.fc, bitpresent).toFixed(2)
                     }
                     var osuname = getplayer.name
                     cache_beatmap_ID(recent[0].beatmapid, modename)
