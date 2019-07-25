@@ -4546,7 +4546,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
             osuscore()
         }
         if (command == bot_prefix + 'osuset') {
-            osuset()
+            osuset('Osu')
         }
         if (command == bot_prefix + 'calcpp') {
             calculateplay()
