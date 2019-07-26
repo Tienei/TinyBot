@@ -1855,7 +1855,7 @@ Use External Emojis: ${compatibility[5]}`)
                             var mapinfo = await other_modes_precalc(best[i].beatmapid, 2, modandbit.bitpresent)
                             var detail = beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
                             star_avg += mapinfo.star
-                            aim_avg += Math.pow(mapinfo.star, Math.log(detail.bpm)/Math.log(mapinfo.star*10)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
+                            aim_avg += Math.pow(mapinfo.star, 0.6 * Math.log(detail.bpm)/Math.log(mapinfo.star*10)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
                             acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.025) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
                             bpm_avg += detail.bpm
                             cs_avg += detail.cs
