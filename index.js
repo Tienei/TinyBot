@@ -3424,7 +3424,7 @@ ${mapdetail}
                 }
                 if (msg.substr(8,31) == 'https://osu.ppy.sh/beatmapsets/') {
                     var data = msg.split("/")[5]
-                    beatmapid.push(data.split(" ")[0])
+                    beatmapid = (data.split(" ")[0]
                     var modedata = msg.split("/")[4]
                     if (modedata.includes('#osu')) {
                         mode = 0
