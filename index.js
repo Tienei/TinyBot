@@ -896,6 +896,7 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                 set_Command_cooldown(command, 30000)
                 if (new_prefix == '!') {
                     message.channel.send('Prefix has been set back to default: !')
+                    delete server_data[message.guild.id]
                 } else {
                     if (server_data[message.guild.id] == undefined) {
                         server_data[message.guild.id] = {}
@@ -903,16 +904,16 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                     } else {
                         server_data[message.guild.id].prefix = new_prefix
                     }
-                    if (Object.keys(server_data).length < 1) {
-                        server_data['a'] = 'a'
-                    }
                     message.channel.send(`Prefix has been set to: ${new_prefix}`)
-                    fs.writeFileSync('server.txt', JSON.stringify(server_data))
-                    bot.channels.get('586397586802343936').send({files: [{
-                        attachment: './server.txt',
-                        name: 'server.txt'
-                    }]})
                 }
+                if (Object.keys(server_data).length < 1) {
+                    server_data['a'] = 'a'
+                }
+                fs.writeFileSync('server.txt', JSON.stringify(server_data))
+                bot.channels.get('586397586802343936').send({files: [{
+                    attachment: './server.txt',
+                    name: 'server.txt'
+                }]})
             } catch (error) {
                 message.channel.send(String(error))
             }
