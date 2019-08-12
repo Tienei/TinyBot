@@ -1172,17 +1172,6 @@ Use External Emojis: ${compatibility[5]}`)
             }
         }
 
-        // Server moderation
-
-        if (command == bot_prefix + 'purge') {
-            async function purge() {
-                var option = msg.split(' ')
-                var msgs = await message.channel.fetchMessages({limit: Number(option[1]) + 1})
-                await msgs.deleteAll()
-            }
-            purge()
-        }
-
         // Easter Egg
 
         if (command == bot_prefix + 'ee') {
