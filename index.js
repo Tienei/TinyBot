@@ -903,6 +903,9 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                     } else {
                         server_data[message.guild.id].prefix = new_prefix
                     }
+                    if (Object.keys(server_data).length < 1) {
+                        server_data['a'] = 'a'
+                    }
                     message.channel.send(`Prefix has been set to: ${new_prefix}`)
                     fs.writeFileSync('server.txt', JSON.stringify(server_data))
                     bot.channels.get('586397586802343936').send({files: [{
@@ -1077,6 +1080,9 @@ Use External Emojis: ${compatibility[5]}`)
                         }
                     } else {
                         delete custom_command[message.guild.id]
+                    }
+                    if (Object.keys(custom_command).length < 1) {
+                        custom_command['a'] = 'a'
                     }
                     message.channel.send('Custom command was removed')
                     fs.writeFileSync('customcmd.txt', JSON.stringify(custom_command))
@@ -3906,6 +3912,9 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                             break
                         } else {
                             osu_track.splice(i,1)
+                            if (Object.keys(osu_track).length < 1) {
+                                osu_track['a'] = 'a'
+                            }
                             message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
                             fs.writeFileSync('track.txt', JSON.stringify(osu_track))
                             bot.channels.get('497302830558871552').send({files: [{
