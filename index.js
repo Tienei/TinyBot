@@ -5,6 +5,7 @@ var easter_egg = {}
 var cooldown = {}
 var custom_command = {}
 var user_economy_data = {}
+var server_data = {}
 
 const Discord = require('discord.js');
 const nodeosu = require('node-osu');
@@ -28,9 +29,9 @@ var ee = JSON.parse(process.env.EASTER_EGG)
 var ee_number = 0
 
 var loading = 1
-var bot_ver = 'v4.0-osu-beta'
-var bot_prefix = '!'
+var bot_ver = 'v4.0-osu-beta2'
 var refresh = 0
+var bot_command_help = []
 
 function osu_ranking_letters(letter) {
     const lettericon = {
@@ -469,40 +470,50 @@ function mania_pp_calculator(star, od, score, objects, mod) {
 
 bot.on("ready", (ready) => {
     async function getFile() {
-        // Get User data
-        var backupmessage = await bot.channels.get('487482583362568212').fetchMessages({limit: 1})
-        var backup = backupmessage.first().attachments
-        var fileurl = backup.first().url
-        var file = await request.get(fileurl)
-        user_data = JSON.parse(file)
-        // Get track data
-        var trackmessage = await bot.channels.get('497302830558871552').fetchMessages({limit: 1})
-        var trackbackup = trackmessage.first().attachments
-        var trackurl = trackbackup.first().url
-        var trackdata = await request.get(trackurl)
-        osu_track = JSON.parse(trackdata)
-        // Get easter egg data
-        var eemessage = await bot.channels.get('569168849992417315').fetchMessages({limit: 1})
-        var eebackup = eemessage.first().attachments
-        var eeurl = eebackup.first().url
-        var eedata = await request.get(eeurl)
-        easter_egg = JSON.parse(eedata)
-        for (var i = 0 ; i < Object.keys(ee).length; i++) {
-            ee_number += '0'
+        try {
+            // Get User data
+            var backupmessage = await bot.channels.get('487482583362568212').fetchMessages({limit: 1})  
+            var backup = backupmessage.first().attachments
+            var fileurl = backup.first().url
+            var file = await request.get(fileurl)
+            user_data = JSON.parse(file)
+            // Get track data
+            var trackmessage = await bot.channels.get('497302830558871552').fetchMessages({limit: 1})
+            var trackbackup = trackmessage.first().attachments
+            var trackurl = trackbackup.first().url
+            var trackdata = await request.get(trackurl)
+            osu_track = JSON.parse(trackdata)
+            // Get easter egg data
+            var eemessage = await bot.channels.get('569168849992417315').fetchMessages({limit: 1})
+            var eebackup = eemessage.first().attachments
+            var eeurl = eebackup.first().url
+            var eedata = await request.get(eeurl)
+            easter_egg = JSON.parse(eedata)
+            for (var i = 0 ; i < Object.keys(ee).length; i++) {
+                ee_number += '0'
+            }
+            // Get custom commands data
+            var ccmessage = await bot.channels.get('572585703989575683').fetchMessages({limit: 1})
+            var ccbackup = ccmessage.first().attachments
+            var ccurl = ccbackup.first().url
+            var ccdata = await request.get(ccurl)
+            custom_command = JSON.parse(ccdata)
+            // Get economy data
+            var ecomessage = await bot.channels.get('578105172237221889').fetchMessages({limit: 1})
+            var ecobackup = ecomessage.first().attachments
+            var ecourl = ecobackup.first().url
+            var ecodata = await request.get(ecourl)
+            user_economy_data = JSON.parse(ecodata)
+            // Get server data
+            var servermessage = await bot.channels.get('586397586802343936').fetchMessages({limit: 1})
+            var serverbackup = servermessage.first().attachments
+            var serverurl = serverbackup.first().url
+            var serverdata = await request.get(serverurl)
+            server_data = JSON.parse(serverdata)
+            loading = 0
+        } catch(error) {
+            loading = 0
         }
-        // Get custom commands data
-        var ccmessage = await bot.channels.get('572585703989575683').fetchMessages({limit: 1})
-        var ccbackup = ccmessage.first().attachments
-        var ccurl = ccbackup.first().url
-        var ccdata = await request.get(ccurl)
-        custom_command = JSON.parse(ccdata)
-        // Get economy data
-        var ecomessage = await bot.channels.get('578105172237221889').fetchMessages({limit: 1})
-        var ecobackup = ecomessage.first().attachments
-        var ecourl = ecobackup.first().url
-        var ecodata = await request.get(ecourl)
-        user_economy_data = JSON.parse(ecodata)
-        loading = 0
     }
     getFile()
     
@@ -639,6 +650,12 @@ bot.on("message", (message) => {
         var command = msg.split(' ')[0]
         var embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
 
+        var bot_prefix = '!'
+
+        if (message.guild !== null && server_data[message.guild.id] !== undefined) {
+            bot_prefix = server_data[message.guild.id].prefix
+        }
+
         function set_Command_cooldown(cdcommand,time) {
             if (cooldown[message.author.id] == undefined) {
                 cooldown[message.author.id] = [cdcommand]
@@ -687,350 +704,88 @@ bot.on("message", (message) => {
 
         if (command == bot_prefix + 'help') {
             try {
-                var help = {
-                    // General
-                    'avatar': {
-                        helpcommand: '!avatar (user)',
-                        description: "View a user's discord avatar",
-                        option: 'user: User you want to view (Has to be @user)',
-                        example: '!avatar @Tienei#0000'
-                    },
-                    'changelog': {
-                        helpcommand: '!changelog',
-                        description: 'View update and fix for the bot',
-                        option: 'None',
-                        example: '!changelog'
-                    },
-                    'help': {
-                        helpcommand: '!help (command)',
-                        description: 'Get a full command list or view a specific command help',
-                        option: 'command: Command help you wanted to see',
-                        example: '!help osu'
-                    },
-                    'ping': {
-                        helpcommand: '!ping',
-                        description: 'Ping Bancho (probably making Bancho mad sometimes lol)',
-                        option: 'None',
-                        example: '!ping'
-                    },
-                    'report': {
-                        helpcommand: '!report (error)',
-                        description: 'Report an error or bug to the owner',
-                        option: 'error: Type any error or bug you found',
-                        example: '!report osu is broken'
-                    },
-                    'suggestion': {
-                        helpcommand: '!suggestion (suggestion)',
-                        description: 'Suggesting an idea for the bot to the owner',
-                        option: 'error: Type any error or bug you found',
-                        example: '!report osu is broken'
-                    },
-                    'bot': {
-                        helpcommand: '!bot',
-                        description: 'Get invitation of the bot',
-                        option: 'None',
-                        example: '!bot'
-                    },
-                    'ee': {
-                        helpcommand: '!ee',
-                        description: 'View how many easter eggs you have',
-                        option: 'None',
-                        example: '!ee'
-                    },
-                    'checkbot': {
-                        helpcommand: '!checkbot',
-                        description: 'Check the compatibility of the bot to the server permissions',
-                        option: 'None',
-                        example: '!checkbot'
-                    },
-                    'customcmd': {
-                        helpcommand: '!customcmd (action) (command)',
-                        description: 'Set a custom commands (Required Administration)',
-                        option: 'action: ``add`` ``list`` ``remove``\ncommand: Set a command you liked (do ``!help definedvar`` for more information)',
-                        example: '!customcmd add !hi Hello $0 and welcome to {server.name}'
-                    },
-                    // Fun
-                    'hug': {
-                        helpcommand: '!hug (user)',
-                        description: 'Hug someone',
-                        option: 'user: The name of the user (Discord)',
-                        example: '!hug Tienei'
-                    },
-                    'cuddle': {
-                        helpcommand: '!cuddle (user)',
-                        description: 'Cuddle someone',
-                        option: 'user: The name of the user (Discord)',
-                        example: '!cuddle Tienei'
-                    },
-                    'slap': {
-                        helpcommand: '!slap (user)',
-                        description: 'Slap someone',
-                        option: 'user: The name of the user (Discord)',
-                        example: '!slap Tienei'
-                    },
-                    'kiss': {
-                        helpcommand: '!kiss (user)',
-                        description: 'Kiss someone (best not to kiss in public ;) )',
-                        option: 'user: The name of the user (Discord)',
-                        example: '!kiss Tienei'
-                    },
-                    'pat': {
-                        helpcommand: '!pat (user)',
-                        description: 'Pat someone',
-                        option: 'user: The name of the user (Discord)',
-                        example: '!pat Tienei'
-                    },
-                    // Osu
-                    'osu': {
-                        helpcommand: '!osu (username) (options)',
-                        description: 'Get an osu!Standard profile',
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nRank `(-rank)`: Get an osu!Standard profile by rank',
-                        example: '!osu Tienei -d'
-                    },
-                    'taiko': {
-                        helpcommand: '!taiko (username)',
-                        description: 'Get an osu!Taiko profile',
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!taiko Tienei'
-                    },
-                    'ctb': {
-                        helpcommand: '!ctb (username)',
-                        description: 'Get an osu!Catch the beat profile',
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!ctb Tienei'
-                    },
-                    'mania': {
-                        helpcommand: '!mania (username)',
-                        description: 'Get an osu!Mania profile',
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!mania Tienei'
-                    },
-                    'osutop': {
-                        helpcommand: '!osutop (username) (options)',
-                        description: "View a player's osu!Standard top play",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`',
-                        example: '!osutop Tienei -m HDHR'
-                    },
-                    'taikotop': {
-                        helpcommand: '!taikotop (username) (options)',
-                        description: "View a player's osu!Taiko top play",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`',
-                        example: '!taikotop Tienei -p 8'
-                    },
-                    'ctbtop': {
-                        helpcommand: '!ctbtop (username) (options)',
-                        description: "View a player's osu!Catch the beat top play",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`',
-                        example: '!ctbtop Tienei -p 9'
-                    },
-                    'maniatop': {
-                        helpcommand: '!maniatop (username) (options)',
-                        description: "View a player's osu!Mania top play",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`',
-                        example: '!maniatop Tienei -p 4'
-                    },
-                    'osutrack': {
-                        helpcommand: '!osutrack (username)',
-                        description: "Track a player's osu!Standard top 50 (Required Administration)",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!osutrack Tienei'
-                    },
-                    'osutracklist': {
-                        helpcommand: '!osutracklist',
-                        description: "Get a list of player being tracked in the channel",
-                        option: 'None',
-                        example: '!osutracklist'
-                    },
-                    'untrack': {
-                        helpcommand: '!untrack (username)',
-                        description: "Untrack a player from the database (Required Administration)",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!untrack Tienei'
-                    },
-                    'recent': {
-                        helpcommand: '![recent|r] (username) (options)',
-                        description: "Get player's most recent play",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nStandard `(-Standard)`\nTaiko `(-Taiko)`\nCTB `(-CTB)`\nMania `(-Mania)`',
-                        example: '!r Tienei -b'
-                    },
-                    'compare': {
-                        helpcommand: '![compare|c] (username) ',
-                        description: "Compare to the last play in the chat",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!c Tienei'
-                    },
-                    'osuset': {
-                        helpcommand: '!osuset (username)',
-                        description: 'Link your profile to an osu! player',
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!osuset Tienei'
-                    },
-                    'osuavatar': {
-                        helpcommand: '!osuavatar (username)',
-                        description: "Get player's osu! avatar",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!osuavatar Tienei'
-                    },
-                    'osusig': {
-                        helpcommand: '!osusig (username)',
-                        description: "Generate a signature of a player's profile",
-                        option: 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!osusig Tienei'
-                    },
-                    'map': {
-                        helpcommand: '![map|m] (options)',
-                        description: "Get details info of the map of the last play in the server",
-                        option: 'Mods: details info of the map with mods `(Shorten mods)`',
-                        example: '!m HDDT'
-                    },
-                    'topglobal': {
-                        helpcommand: '!topglobal',
-                        description: "Get a list of top 50 osu!Standard player",
-                        option: '',
-                        example: '!topglobal'
-                    },
-                    'topcountry': {
-                        helpcommand: '!topcountry (country code)',
-                        description: "Get a list of top 50 osu!Standard player of a country",
-                        option: 'country code: You can see a list right here: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes (Look at ISO 3166-1, Alpha-2 code)',
-                        example: '!topcountry US'
-                    },
-                    'calcpp': {
-                        helpcommand: '!calcpp (map id) (mods) (acc) (combo) (miss)',
-                        description: "Calculate a play's pp",
-                        option: '**Needs all options to be calculated**',
-                        example: '!calcpp 1157868 nomod 100 1642 0'
-                    },
-                    'scores': {
-                        helpcommand: '!scores (map link) (username)',
-                        description: "Get player's play on a specific map",
-                        option: 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!scores https://osu.ppy.sh/b/1157868 Cookiezi'
-                    },
-                    'acc': {
-                        helpcommand: '!acc (300) (100) (50) (miss)',
-                        description: "Accuracy calculator",
-                        option: '**Needs all options to be calculated**',
-                        example: '!acc 918 23 2 0'
-                    },
-                    'rec': {
-                        helpcommand: '!rec',
-                        description: "Recommend you an osu beatmap",
-                        option: 'None',
-                        example: '!rec'
-                    },
-                    //Akatsuki
-                    'akatsuki': {
-                        helpcommand: '!akatsuki (username) (options)',
-                        description: 'Get an Akatuski Standard profile',
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`',
-                        example: '!akatsuki Tienei -d'
-                    },
-                    'akatr': {
-                        helpcommand: '!akatr (username)',
-                        description: "Get player's most recent play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!akatr Tienei'
-                    },
-                    'akattop': {
-                        helpcommand: '!akattop (username) (options)',
-                        description: "View a player's Akatsuki Standard top play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
-                        example: '!akattop Tienei -p 8'
-                    },
-                    'akatavatar': {
-                        helpcommand: '!akatavatar (username)',
-                        description: "Get player's Akatsuki avatar",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!akatavatar Tienei'
-                    },
-                    'akatsukiset': {
-                        helpcommand: '!akatsukiset (username)',
-                        description: 'Link your profile to an Akatsuki player',
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!akatsukiset RelaxTiny'
-                    },
-                    'rxakatsuki': {
-                        helpcommand: '!rxakatsuki (username) (options)',
-                        description: 'Get a Relax Akatuski Standard profile',
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`',
-                        example: '!akatsuki Tienei -d'
-                    },
-                    'rxakatr': {
-                        helpcommand: '!rxakatr (username)',
-                        description: "Get player's most recent play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!akatr Tienei'
-                    },
-                    'rxakattop': {
-                        helpcommand: '!rxakattop (username) (options)',
-                        description: "View a player's Relax Akatsuki Standard top play",
-                        option: 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
-                        example: '!akattop Tienei -p 8'
-                    },
-                    'calcrxpp': {
-                        helpcommand: '!calrxcpp (map id) (mods) (acc) (combo) (miss)',
-                        description: "Calculate a play's relax pp (Akatsuki)",
-                        option: '**Needs all options to be calculated**',
-                        example: '!calcpp 1157868 nomod 100 1642 0'
-                    },
-                    // Ripple
-                    'ripple': {
-                        helpcommand: '!ripple (username) (options)',
-                        description: 'Get an  Ripple Standard profile',
-                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the detailed of the player `(no param)`',
-                        example: '!ripple Tienei -d'
-                    },
-                    'rippler': {
-                        helpcommand: '!rippler (username)',
-                        description: "Get player's most recent play",
-                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!rippler Tienei'
-                    },
-                    'rippletop': {
-                        helpcommand: '!rippletop (username) (options)',
-                        description: "View a player's Ripple Standard top play",
-                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`',
-                        example: '!rippletop Tienei -p 8'
-                    },
-                    'rippleavatar': {
-                        helpcommand: '!rippleavatar (username)',
-                        description: "Get player's Ripple avatar",
-                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!rippleavatar Tienei'
-                    },
-                    'rippleset': {
-                        helpcommand: '!rippleset (username)',
-                        description: 'Link your profile to a Ripple player',
-                        option: 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)',
-                        example: '!rippleset RelaxTiny'
-                    },
-                    //Other
-                    'definevar': {
-                        helpcommand: 'Defined Variable for Custom command',
-                        description: 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence``\nchannel: ``selfname`` ``selflink`` ``members``\nserver: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``',
-                        option: '{require:admin}: Need Administrator to enable the command\n{$N}: Get text in message seperated by space (Not include command)\n{send:channelname "message"}: Send to a channel with a specific message',
-                        example: 'do ``!help customcmd``'
-                    },
-                    'osu -d calculation': {
-                        helpcommand: 'Osu -d calculation',
-                        description: 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)',
-                        option: 'None',
-                        example: 'None'
-                    }
+                function addhelp(helpcommand, fullcommand, description, option, example) {
+                    var helptext = '```' + fullcommand + '```' + `\n${description}\n\n**---[Options]:**\n${option}\n\n**---[Example]:**\n` + example
+                    bot_command_help.push({command: helpcommand, helptext: helptext})
                 }
-                var generalhelp = '**--- [General]:**\n`avatar` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot`'
+                if (bot_command_help.length < 1) {
+                    // General
+                    addhelp('avatar', '!avatar (user)', "View a user's discord avatar", 'user: User you want to view (Has to be @user)', '!avatar @Tienei#0000')
+                    addhelp('changelog', '!changelog', 'View update and fix for the bot', 'None', '!changelog')
+                    addhelp('help', '!help (command)', 'Get a full command list or view a specific command help', 'command: Command help you wanted to see', '!help osu')
+                    addhelp('ping', '!ping', 'Ping Bancho (probably making Bancho mad sometimes lol)', 'None', '!ping')
+                    addhelp('report', '!report (error)', 'Report an error or bug to the owner', 'error: Type any error or bug you found', '!report osu is broken')
+                    addhelp('suggestion', '!suggestion (suggestion)', 'Suggesting an idea for the bot to the owner', 'error: Type any error or bug you found', '!report osu is broken')
+                    addhelp('bot', '!bot', 'Get invitation of the bot', 'None', '!bot')
+                    addhelp('checkbot', '!checkbot', 'Check the compatibility of the bot to the server permissions', 'None', '!checkbot')
+                    addhelp('prefix','!prefix (prefix)', 'Change the prefix for the entire server','prefix: The prefix you wanted','!prefix >')
+                    // Easter Egg
+                    addhelp('ee', '!ee', 'View how many easter eggs you have', 'None', '!ee')
+                    // Custom command
+                    addhelp('customcmd', '!customcmd (action) (command)', 'Set a custom commands (Required Administration)', 'action: ``add`` ``list`` ``remove``\ncommand: Set a command you liked (do ``!help definedvar`` for more information)', '!customcmd add !hi Hello $0 and welcome to {server.name}')
+                    // Fun
+                    addhelp('hug', '!hug (user)', 'Hug someone', 'user: The name of the user (Discord)', '!hug Tienei')
+                    addhelp('cuddle', '!cuddle (user)', 'Cuddle someone', 'user: The name of the user (Discord)', '!cuddle Tienei')
+                    addhelp('slap', '!slap (user)', 'Slap someone', 'user: The name of the user (Discord)', '!slap Tienei')
+                    addhelp('kiss', '!kiss (user)', 'Kiss someone (best not to kiss in public ;) )', 'user: The name of the user (Discord)', '!kiss Tienei')
+                    addhelp('pat', '!pat (user)', 'Pat someone', 'user: The name of the user (Discord)', '!pat Tienei')
+                    // Osu
+                    addhelp('osu', '!osu (username) (options)', 'Get an osu!Standard profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nRank `(-rank)`: Get an osu!Standard profile by rank\nTop Skills `(-ts)`: Calculate player skill using bot formula', '!osu Tienei -d')
+                    addhelp('taiko', '!taiko (username)', 'Get an osu!Taiko profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!taiko Tienei')
+                    addhelp('ctb', '!ctb (username)', 'Get an osu!Catch the beat profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!ctb Tienei')
+                    addhelp('mania', '!mania (username)', 'Get an osu!Mania profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!mania Tienei')
+                    addhelp('osutop', '!osutop (username) (options)', "View a player's osu!Standard top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!osutop Tienei -m HDHR')
+                    addhelp('taikotop', '!taikotop (username) (options)', "View a player's osu!Taiko top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!taikotop Tienei -p 8')
+                    addhelp('ctbtop', '!ctbtop (username) (options)', "View a player's osu!Catch the beat top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!ctbtop Tienei -p 9')
+                    addhelp('maniatop', '!maniatop (username) (options)', "View a player's osu!Mania top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!maniatop Tienei -p 4')
+                    addhelp('osutrack', '!osutrack (username)', "Track a player's osu!Standard top 50 (Required Administration)", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osutrack Tienei')
+                    addhelp('osutracklist', '!osutracklist', 'Get a list of player being tracked in the channel', 'None', '!osutracklist')
+                    addhelp('untrack', '!untrack (username)', 'Untrack a player from the database (Required Administration)', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!untrack Tienei')
+                    addhelp('recent', '![recent|r] (username) (options)', "Get player's most recent play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nStandard `(-Standard)`\nTaiko `(-Taiko)`\nCTB `(-CTB)`\nMania `(-Mania)`', '!r Tienei -b')
+                    addhelp('compare', '![compare|c] (username) ', 'Compare to the last play in the chat', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!c Tienei')
+                    addhelp('osuset', '!osuset (username)', 'Link your profile to an osu! player', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osuset Tienei')
+                    addhelp('osuavatar', '!osuavatar (username)', "Get player's osu! avatar", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osuavatar Tienei')
+                    addhelp('osusig', '!osusig (username)', "Generate a signature of a player's profile", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osusig Tienei')
+                    addhelp('map', '![map|m] (options)', 'Get details info of the map of the last play in the server', 'Mods: details info of the map with mods `(Shorten mods)`', '!m HDDT')
+                    addhelp('topglobal', '!topglobal', 'Get a list of top 50 osu!Standard player', '', '!topglobal')
+                    addhelp('topcountry', '!topcountry (country code)', 'Get a list of top 50 osu!Standard player of a country', 'country code: You can see a list right here: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes (Look at ISO 3166-1, Alpha-2 code)', '!topcountry US')
+                    addhelp('calcpp', '!calcpp (map id) (mods) (acc) (combo) (miss)', "Calculate a play's pp", '**Needs all options to be calculated**', '!calcpp 1157868 nomod 100 1642 0')
+                    addhelp('scores', '!scores (map link) (username)', "Get player's play on a specific map", 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!scores https://osu.ppy.sh/b/1157868 Cookiezi')
+                    addhelp('acc', '!acc (300) (100) (50) (miss)', 'Accuracy calculator', '**Needs all options to be calculated**', '!acc 918 23 2 0')
+                    addhelp('rec', '!rec', 'Recommend you an osu beatmap', 'None', '!rec')
+                    addhelp('leaderboard', '!leaderboard', 'Get a list of top player in the server\nNote: The player stats will only be updated if the you type **!osu** or a specific player **!osu (player name)** only if they in the server', 'None', '!leaderboard')
+                    // Akatsuki
+                    addhelp('akatsuki', '!akatsuki (username) (options)', 'Get an Akatuski Standard profile', 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`', '!akatsuki Tienei -d')
+                    addhelp('akatr', '!akatr (username)', "Get player's most recent play", 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!akatr Tienei')
+                    addhelp('akattop', '!akattop (username) (options)', "View a player's Akatsuki Standard top play", 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`', '!akattop Tienei -p 8')
+                    addhelp('akatavatar', '!akatavatar (username)', "Get player's Akatsuki avatar", 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!akatavatar Tienei')
+                    addhelp('akatsukiset', '!akatsukiset (username)', 'Link your profile to an Akatsuki player', 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!akatsukiset RelaxTiny')
+                    addhelp('rxakatsuki', '!rxakatsuki (username) (options)', 'Get a Relax Akatuski Standard profile', 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`', '!akatsuki Tienei -d')
+                    addhelp('rxakatr', '!rxakatr (username)', "Get player's most recent play", 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!akatr Tienei')
+                    addhelp('rxakattop', '!rxakattop (username) (options)', "View a player's Relax Akatsuki Standard top play", 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`', '!akattop Tienei -p 8')
+                    addhelp('calcrxpp', '!calrxcpp (map id) (mods) (acc) (combo) (miss)', "Calculate a play's relax pp (Akatsuki)", '**Needs all options to be calculated**', '!calcpp 1157868 nomod 100 1642 0')
+                    // Ripple
+                    addhelp('ripple', '!ripple (username) (options)', 'Get an  Ripple Standard profile', 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the detailed of the player `(no param)`', '!ripple Tienei -d')
+                    addhelp('rippler', '!rippler (username)', "Get player's most recent play", 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!rippler Tienei')
+                    addhelp('rippletop', '!rippletop (username) (options)', "View a player's Ripple Standard top play", 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`', '!rippletop Tienei -p 8')
+                    addhelp('rippleavatar', '!rippleavatar (username)', "Get player's Ripple avatar", 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!rippleavatar Tienei')
+                    addhelp('rippleset', '!rippleset (username)', 'Link your profile to a Ripple player', 'username: Ripple username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!rippleset RelaxTiny')
+                    // Others
+                    addhelp('definevar', 'Defined Variable for Custom command', 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence`` channel: ``selfname`` ``selflink`` ``members`` server: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``', '{require:admin}: Need Administrator to enable the command {$N}: Get text in message seperated by space (Not include command) {send:channelname "message"}: Send to a channel with a specific message', 'do ``!help customcmd``')
+                    addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')
+                }
+                var generalhelp = '**--- [General]:**\n`avatar` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix`'
                 var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat`'
-                var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec`'
+                var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec` `topglobal` `topcountry` `leaderboard`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop` `rxakatsuki` `rxakatr` `rxakattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippler` `rippleavatar` `rippletop`'
                 var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
                 var text = ''
                 if (msg.substring(6) == '') {
-                    text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}`
+                    text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **!help (command)**`
                 } else {
                     var getcmd = msg.substring(6)
-                    if (help[getcmd] == undefined) {
+                    if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
                         throw 'No command was found!'
                     }
                     if (getcmd == 'r') {
@@ -1045,7 +800,10 @@ bot.on("message", (message) => {
                     if (getcmd == 'bg') {
                         getcmd = 'background'
                     }
-                    text = '```' + help[getcmd].helpcommand + '```' + `\n${help[getcmd].description}\n\n**---[Options]:**\n${help[getcmd].option}\n\n**---[Example]:**\n` + help[getcmd].example
+                    if (getcmd == 'lb') {
+                        getcmd = 'leaderboard'
+                    }
+                    text = bot_command_help.find(helpcmd => helpcmd.command == getcmd).helptext
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Commands for Tiny Bot ${bot_ver}`)
@@ -1067,7 +825,7 @@ bot.on("message", (message) => {
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design), zibi (!topglobal, !topcountry)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design), zibi (!topglobal, !topcountry), PotatoBoy123 (!lb)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -1089,9 +847,11 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**July Update:**
-- Rewrite the entire code Zzzzzzzzzzz
-- Full support for all mode! (Taiko, CTB, Mania), stuff like fc pp calculation,...
+**August Update:**
+- Added !osu -ts
+- Added .osu file detection
+- Added !prefix
+- Added !leaderboard
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
             message.channel.send({embed})
         }
@@ -1123,6 +883,33 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                     message.channel.send(`Bancho respond! **${timelater - timenow}ms**`) 
                 }
                 Bancho()
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+        if (command == bot_prefix + 'prefix' && message.guild !== null) {
+            try {
+                if (message.member.hasPermission("ADMINISTRATOR") == false) {
+                    throw 'You need to have administrator to set prefix'
+                }
+                var new_prefix = msg.split(' ')[1]
+                set_Command_cooldown(command, 30000)
+                if (new_prefix == '!') {
+                    message.channel.send('Prefix has been set back to default: !')
+                } else {
+                    if (server_data[message.guild.id] == undefined) {
+                        server_data[message.guild.id] = {}
+                        server_data[message.guild.id].prefix = new_prefix
+                    } else {
+                        server_data[message.guild.id].prefix = new_prefix
+                    }
+                    message.channel.send(`Prefix has been set to: ${new_prefix}`)
+                    fs.writeFileSync('server.txt', JSON.stringify(server_data))
+                    bot.channels.get('586397586802343936').send({files: [{
+                        attachment: './server.txt',
+                        name: 'server.txt'
+                    }]})
+                }
             } catch (error) {
                 message.channel.send(String(error))
             }
@@ -1379,6 +1166,17 @@ Use External Emojis: ${compatibility[5]}`)
             }
         }
 
+        // Server moderation
+
+        if (command == bot_prefix + 'purge') {
+            async function purge() {
+                var option = msg.split(' ')
+                var msgs = await message.channel.fetchMessages({limit: Number(option[1]) + 1})
+                await msgs.deleteAll()
+            }
+            purge()
+        }
+
         // Easter Egg
 
         if (command == bot_prefix + 'ee') {
@@ -1418,7 +1216,6 @@ Use External Emojis: ${compatibility[5]}`)
                 var text = ''
                 var user_to_find = msg.substring(start)
                 var user = find_discord_user(user_to_find)
-                console.log(user)
                 if (user == null || user.id == message.author.id) {
                     text = aloneaction
                 } else {
@@ -1727,8 +1524,9 @@ Use External Emojis: ${compatibility[5]}`)
                 var a_d = option.indexOf("-d")
                 var a_rank = option.indexOf("-rank")
                 var a_g = option.indexOf("-g")
+                var a_ts = option.indexOf("-ts")
                 //Check if there is more than 1 argument
-                var findarg = [a_d, a_rank, a_g]
+                var findarg = [a_d, a_rank, a_g, a_ts]
                 var find = false
                 for (var i = 0; i < findarg.length; i++) {
                     if (findarg[i] > -1) {
@@ -1741,7 +1539,7 @@ Use External Emojis: ${compatibility[5]}`)
                 }
                 //Get name if there's no quote
                 if (quote == false) {
-                    var pass = [0, a_d, a_rank, a_g]
+                    var pass = [0, a_d, a_rank, a_g, a_ts]
                     for (var i = 0; i < pass.length;) {
                         if (pass[i] == -1) {
                             pass.splice(i,1)
@@ -1759,7 +1557,9 @@ Use External Emojis: ${compatibility[5]}`)
                             check = option[option.indexOf("-rank") + 1]
                         } else if (a_g > -1) {
                             check = option[option.indexOf("-g") + 1]
-                        } else if (option.length > 1) {
+                        } else if (a_ts > -1) {
+                            check = option[option.indexOf("-ts") + 1]
+                        }else if (option.length > 1) {
                             check = option[1]
                         }
                         if (check == undefined) {
@@ -1909,7 +1709,7 @@ Use External Emojis: ${compatibility[5]}`)
                         sortedmod += '``' + mod_avg[i].mod + '``: ' + `${Number(mod_avg[i].count / mod_avg_all.length * 100).toFixed(2)}% `
                     }
                     if (mode == 0) {
-                        embed.addField(`new ${user.username} average skill:`, `
+                        embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)*2}★
 Speed skill: ${Number(speed_avg/50).toFixed(2)*2}★
@@ -1947,6 +1747,18 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / OD: ${Number(od_avg/50).toFixed(2)} / HP
 Most common mods: ${sortedmod}`)
                     }
                     msg1.edit({embed})
+                    for (var [key,value] of Object.entries(user_data)) {
+                        if (value.osuname == user.username) {
+                            user_data[key].osurank = user.rank
+                            user_data[key].osucountry = user.country
+                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                            bot.channels.get('487482583362568212').send({files: [{
+                                attachment: './data.txt',
+                                name: 'data.txt'
+                            }]})
+                            break
+                        }
+                    }
                 } else if (a_rank > -1 && mode == 0) {
                     var rank = Number(option[option.indexOf('-rank') + 1])
                     var page = 1 + Math.floor((rank - 1) / 50)
@@ -1977,6 +1789,18 @@ ${user.playstyle}`, true)
                     .setColor(embedcolor)
                     .setFooter(user.statustext, user.statusicon)
                     message.channel.send({embed});
+                    for (var [key,value] of Object.entries(user_data)) {
+                        if (value.osuname == user.username) {
+                            user_data[key].osurank = user.rank
+                            user_data[key].osucountry = user.country
+                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                            bot.channels.get('487482583362568212').send({files: [{
+                                attachment: './data.txt',
+                                name: 'data.txt'
+                            }]})
+                            break
+                        }
+                    }
                 } else if (a_g > -1) {
                     var user = await get_osu_profile(name, mode)
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}/osu`)
@@ -2044,7 +1868,6 @@ ${user.playstyle}`, true)
                         graph(text[i]).attr('style', 'font-family: Arial; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
                     }
                     var linegraph = graph('div[class="ct-chart"]').html()
-                    console.log(linegraph)
                     linegraph = linegraph.substring(0, linegraph.indexOf('<div class="ct-legend">'))
                   
                     // Format SVG to PNG
@@ -2074,6 +1897,92 @@ ${user.playstyle}`, true)
                     .attachFile(attachment)
                     .setImage('attachment://rank.png')
                     message.channel.send({embed})
+                    for (var [key,value] of Object.entries(user_data)) {
+                        if (value.osuname == user.username) {
+                            user_data[key].osurank = user.rank
+                            user_data[key].osucountry = user.country
+                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                            bot.channels.get('487482583362568212').send({files: [{
+                                attachment: './data.txt',
+                                name: 'data.txt'
+                            }]})
+                            break
+                        }
+                    }
+                } else if (a_ts > -1 && mode == 0) {
+                    var user = await get_osu_profile(name, mode, 30)
+                    var best = await get_osu_top(name, mode, 50, 'best')
+                    if (best.length < 50) {
+                        throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
+                    }
+                    var msg1 = await message.channel.send('Calculating skills...') 
+                    var star_avg = 0
+                    var aim_avg = 0
+                    var speed_avg = 0
+                    var finger_control_avg = 0
+                    var acc_avg = 0
+                    var old_acc_avg = 0
+                    var top_star = []
+                    var top_aim = []
+                    var top_speed = []
+                    var top_old_acc = []
+                    var top_acc = []
+                    for (var i = 0; i < 50; i++) {
+                        var modandbit = osu_mods_enum(best[i].mod, 'text')
+                        if (mode == 0) {
+                            var parser = await precalc(best[i].beatmapid)
+                            var thing = osu_pp_calculator(parser,modandbit.bitpresent,0,0,0,0,0,0)
+                            var detail = beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
+                            var star_skill = thing.star.total
+                            var aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
+                            var speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
+                            var old_acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                            var acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                            star_avg += star_skill
+                            aim_avg += aim_skill
+                            speed_avg += speed_skill
+                            old_acc_avg += old_acc_skill
+                            acc_avg += acc_skill
+                            top_star.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: star_skill})
+                            top_aim.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: aim_skill})
+                            top_speed.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: speed_skill})
+                            top_old_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: old_acc_skill})
+                            top_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: acc_skill})
+                        }
+                    }
+                    top_star.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
+                    top_aim.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
+                    top_speed.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
+                    top_old_acc.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
+                    top_acc.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
+                    var field = []
+                    var text = ''
+                    function textloading (top) {
+                        var text = ''
+                        for (var i in top) {
+                            text += `${top[i].beatmap}: **${Number(top[i].skill).toFixed(2)}★**\n`
+                        }
+                        field.push(text)
+                    }
+                    textloading(top_star)
+                    textloading(top_aim)
+                    textloading(top_speed)
+                    textloading(top_old_acc)
+                    textloading(top_acc)
+                    const embed = new Discord.RichEmbed()
+                    .setDescription(`${modeicon} **Osu!${modename} top skill for: [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
+                    .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
+                    .addField(`${user.username} average skill:`, `
+Star: ${Number(star_avg/50).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50).toFixed(2)}★
+Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_acc_avg/50).toFixed(2)}★)`)
+                    .addField('Top star skill:', field[0])
+                    .addField('Top aim skill:', field[1])
+                    .addField('Top speed skill:', field[2])
+                    .addField('Top old acc skill:', field[3])
+                    .addField('Top acc skill:', field[4])
+                    msg1.edit({embed})
                 } else {
                     var user = await get_osu_profile(name, mode, 0)
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
@@ -2099,7 +2008,7 @@ ${user.playstyle}`, true)
                     }
                     const embed = new Discord.RichEmbed()
                     .setDescription(`
-${modeicon} ${supporter}   **Osu!${modename} status for: [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
+${modeicon} ${supporter} **Osu!${modename} status for: [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
                     .addField('Performance:',`--- **${user.pp}pp**
 **Global Rank:** #${user.rank} (:flag_${user.country}:: #${user.countryrank})
 **Accuracy:** ${user.acc}%
@@ -2116,6 +2025,18 @@ ${playstyle}`, true)
                     .setColor(embedcolor)
                     .setFooter(statustext, statusicon)
                     message.channel.send({embed});
+                    for (var [key,value] of Object.entries(user_data)) {
+                        if (value.osuname == user.username) {
+                            user_data[key].osurank = user.rank
+                            user_data[key].osucountry = user.country
+                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                            bot.channels.get('487482583362568212').send({files: [{
+                                attachment: './data.txt',
+                                name: 'data.txt'
+                            }]})
+                            break
+                        }
+                    }
                 }
             } catch (error) {
                 message.channel.send(String(error))
@@ -2205,7 +2126,7 @@ ${playstyle}`, true)
                     var gathering = ''
                     for (var n = 0; n < 10; n++) {
                         var i = (page - 1) * 10 - 1 + (n+1)
-                        if ((page - 1) * 9 + n < table.length- 1) {
+                        if (top < table.length- 1) {
                             var player = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
                             var flag  = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().first().attr('href')
                             var pp = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--focused"]').text().replace(/\s+/g," ").substring(1)
@@ -2252,6 +2173,80 @@ ${playstyle}`, true)
                 })
                 next.on('collect', reaction => {
                     if (page >= Math.ceil(table.length / 10)) {return}
+                    page += 1
+                    msg1.edit('Loading page...')
+                    if (pages[page-1] == undefined) {
+                        loadpage()
+                    }
+                    loadtitle()
+                    embed.setAuthor(title)
+                    embed.setDescription(pages[page-1])
+                    msg1.edit({embed})
+                })
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        async function serverleaderboard() {
+            try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
+                    throw 'You need to wait 3 seconds before using this again!'
+                }
+                set_Command_cooldown(command, 3000)
+                var player = []
+                var pages = []
+                var page = 1
+                var members = message.guild.members.array()
+                for (var i = 0; i < members.length; i++) {
+                    var user = members[i]
+                    if (user_data[user.id]) {
+                        if (user_data[user.id].osurank !== undefined) {
+                            player.push({username: user.user.username, osuname: user_data[user.id].osuname, rank: user_data[user.id].osurank, country: user_data[user.id].osucountry})
+                        }
+                    }
+                }
+                player.sort(function(a,b){
+                    return a.rank - b.rank
+                })
+                function loadpage() {
+                    var gathering = ''
+                    for (var n = 0; n < 10; n++) {
+                        var top = (page - 1) * 10 - 1 + (n+1)
+                        if (top < player.length) {
+                            gathering += `${top+1}. :flag_${player[top].country}: **${player[top].osuname}** (${player[top].username}) | **Rank:** ${player[top].rank}\n`
+                        }
+                    }
+                    pages[page-1] = gathering
+                }
+                var title = ''
+                function loadtitle() {
+                    title = `Server leaderboard for ${message.guild.name} (Page ${page} of ${Math.ceil(player.length / 10)})`
+                }
+                await loadpage()
+                loadtitle()
+                var embed = new Discord.RichEmbed()
+                .setAuthor(title)
+                .setThumbnail(message.guild.iconURL)
+                .setColor(embedcolor)
+                .setDescription(pages[page-1])
+                var msg1 = await message.channel.send({embed});
+                await msg1.react('⬅')
+                await msg1.react('➡')
+                var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
+                var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
+                var previous = msg1.createReactionCollector(previousfilter, {time: 120000}) 
+                var next = msg1.createReactionCollector(nextfilter, {time: 120000})
+                previous.on('collect', reaction => {
+                    if (page <= 1) {return}
+                    page -= 1
+                    loadtitle()
+                    embed.setAuthor(title)
+                    embed.setDescription(pages[page-1])
+                    msg1.edit({embed})
+                })
+                next.on('collect', reaction => {
+                    if (page >= Math.ceil(player.length / 10)) {return}
                     page += 1
                     msg1.edit('Loading page...')
                     if (pages[page-1] == undefined) {
@@ -2519,6 +2514,7 @@ ${date}
                         var count300 = mapinfo.fc - recent[0].count100
                         fcacc = Number((0.5 * recent[0].count100 + count300) / (count300 + recent[0].count100 + 0) * 100).toFixed(2)
                         fcpp = taiko_pp_calculator(mapinfo.star, mapinfo.od, mapinfo.fc, fcacc, 0, bitpresent).toFixed(2)
+                        mapcomplete = ((recent[0].count300 + recent[0].count100 + recent[0].countmiss) / mapinfo.circle + mapinfo.slider)* 100
                     }
                     if (mode == 2) {
                         var mapinfo = await other_modes_precalc(recent[0].beatmapid, 2, bitpresent)
@@ -2527,6 +2523,7 @@ ${date}
                         var count300 = mapinfo.fc - recent[0].count100 - recent[0].countkatu - recent[0].count50
                         fcacc = Number((recent[0].count50 + recent[0].count100 + count300) / (recent[0].countkatu + 0 + recent[0].count50 + recent[0].count100 + count300) * 100).toFixed(2)
                         fcpp = ctb_pp_calculator(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, fcacc, 0, bitpresent).toFixed(2)
+                        mapcomplete = ((recent[0].count300 + recent[0].countkatu + recent[0].count100 + recent[0].count50 + recent[0].countmiss) / (mapinfo.circle + mapinfo.slider))* 100
                     }
                     if (mode == 3) {
                         var mapinfo = await other_modes_precalc(recent[0].beatmapid, 3, bitpresent)
@@ -2534,16 +2531,15 @@ ${date}
                         pp = mania_pp_calculator(mapinfo.star, mapinfo.od, recent[0].score, mapinfo.fc, bitpresent).toFixed(2)
                         fcacc = Number(21.7147240951625 * Math.log(recent[0].score/10000)*10000).toFixed(0)
                         fcpp = mania_pp_calculator(mapinfo.star, mapinfo.od, fcacc, mapinfo.fc, bitpresent).toFixed(2)
+                        mapcomplete = ((recent[0].count300 + recent[0].countkatu + recent[0].count100 + recent[0].countgeki + recent[0].count50 + recent[0].countmiss) / (mapinfo.circle + mapinfo.slider))* 100
                     }
                     var osuname = getplayer.name
                     cache_beatmap_ID(recent[0].beatmapid, modename)
                     var fcguess = ``
                     if (recent[0].letter == 'F') {
                         nopp = '(No pp)'
-                        if (mode == 0) {
-                            date = '| ' + date
-                            mapcompleted = `**Map Completion:** ${mapcomplete}%`
-                        }
+                        date = '| ' + date
+                        mapcompleted = `**Map Completion:** ${Number(mapcomplete).toFixed(2)}%`
                     }
                     if (recent[0].perfect == 0) {
                         if (mode == 0 || mode == 1 || mode == 2) {
@@ -3083,7 +3079,7 @@ ${date}
                         var gathering = ''
                         for (var n = 0; n < 5; n++) {
                             var i = (page - 1) * 5 - 1 + (n+1)
-                            if ((page - 1) * 4 + n < best.length- 1) {
+                            if (i < best.length- 1) {
                                 var rank = osu_ranking_letters(best[i].letter)
                                 var modandbit = osu_mods_enum(best[i].mod, 'text')
                                 var shortenmod = modandbit.shortenmod
@@ -3693,6 +3689,83 @@ ${mapdetail}
 **PP:** ${ppdetail}`)
                 message.channel.send({embed});
                 }
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        async function osubeatmapdetail() {
+            try {
+                var file = message.attachments.first().url
+                var parser = new calc.parser()
+                var fmap = await request.get(file)
+                parser.feed(fmap)
+                var map = parser.map
+                var mode = map.mode
+                var maxCombo = map.max_combo()
+                // Mods
+                var bitpresent = 0
+                var mods = []
+                var modintext = msg.split(' ')
+                if (modintext[0] == undefined) {
+                    mods.push('No Mod')
+                } else {
+                    mods.push(modintext[0])
+                }
+                var mod = {
+                    nf: 1,
+                    ez: 2,
+                    td: 4,
+                    hd: 8,
+                    hr: 16,
+                    dt: 64,
+                    rx: 128,
+                    ht: 256,
+                    nc: 512,
+                    fl: 1024,
+                    so: 4096
+                }
+                var validmod = false
+                for (var m = 0; m <= mods[0].length; m++) {
+                    if (mod[mods[0].substr(m*2,2)]) {
+                        bitpresent += mod[mods[0].substr(m*2,2)]
+                        validmod = true
+                    }
+                }
+                if (validmod == false) {
+                    mods[0] = 'No Mod'
+                }
+                var diffdetail = ''
+                var mapdetail = ''
+                var ppdetail = ''
+                var star, bpm
+                if (mode == 0) {
+                    var acc95 = osu_pp_calculator(parser,bitpresent,maxCombo,0,0,0,95,'acc')
+                    var acc97 = osu_pp_calculator(parser,bitpresent,maxCombo,0,0,0,97,'acc')
+                    var acc99 = osu_pp_calculator(parser,bitpresent,maxCombo,0,0,0,99,'acc')
+                    var acc100 = osu_pp_calculator(parser,bitpresent,maxCombo,0,0,0,100,'acc')
+                    var detail = beatmap_detail(mods[i],0,0,acc100.bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
+                    star = Number(acc100.star.total).toFixed(2)
+                    bpm = Number(detail.bpm).toFixed(0)
+                    var ar = Number(detail.ar).toFixed(2)
+                    var od = Number(detail.od).toFixed(2)
+                    var hp = Number(detail.hp).toFixed(2)
+                    var cs = Number(detail.cs).toFixed(2)
+                    diffdetail = `(Aim: ${Number(acc100.star.aim).toFixed(2) * 2}★, Speed: ${Number(acc100.star.speed).toFixed(2) * 2}★)`
+                    mapdetail = `**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}`
+                    ppdetail = `**95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`
+                }
+                const embed = new Discord.RichEmbed()
+                .setAuthor(`${map.title} by ${map.creator}`)
+                .setColor(embedcolor)
+                .setDescription(`
+**BPM:** ${bpm} **Mods:** ${mods[i].toUpperCase()}
+<:difficultyIcon:507522545759682561> __${map.version}__  
+**Difficulty:** ${star}★ ${diffdetail}
+**Max Combo:** ${maxCombo}
+${mapdetail}
+**PP:** ${ppdetail}`)
+            message.channel.send({embed});
             } catch (error) {
                 message.channel.send(String(error))
             }
@@ -4337,7 +4410,6 @@ ${date}
                                 match = true
                             } else {match = false}
                         } else {
-                            console.log(bestmod, mod)
                             if (bestmod == mod){
                                 match = true
                             } else {match = false}
@@ -4523,6 +4595,9 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         if (command == bot_prefix + 'topcountry') {
             topleaderboard('country')
         }
+        if (command == bot_prefix + 'lb' || command == bot_prefix + 'leaderboard') {
+            serverleaderboard()
+        }
         if (command == bot_prefix + 'recent' || command == bot_prefix + 'r') {
             recent()
         }
@@ -4618,6 +4693,13 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         // Beatmap Detection
         if (url_command == false) {
             beatmapdetail()
+        }
+        // .osu Detection
+        if (message.attachments.array().length > 0) {
+            var file = message.attachments.first()
+            if (file.filename.substring(file.filename.length - 4, file.filename.length) == ".osu") {
+                osubeatmapdetail()               
+            }
         }
         // Bot Owner commands
 
