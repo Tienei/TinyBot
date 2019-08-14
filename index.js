@@ -1743,16 +1743,18 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / OD: ${Number(od_avg/50).toFixed(2)} / HP
 Most common mods: ${sortedmod}`)
                     }
                     msg1.edit({embed})
-                    for (var [key,value] of Object.entries(user_data)) {
-                        if (value.osuname == user.username) {
-                            user_data[key].osurank = user.rank
-                            user_data[key].osucountry = user.country
-                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
-                            bot.channels.get('487482583362568212').send({files: [{
-                                attachment: './data.txt',
-                                name: 'data.txt'
-                            }]})
-                            break
+                    if (mode == 0) {
+                        for (var [key,value] of Object.entries(user_data)) {
+                            if (value.osuname == user.username) {
+                                user_data[key].osurank = user.rank
+                                user_data[key].osucountry = user.country
+                                fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                                bot.channels.get('487482583362568212').send({files: [{
+                                    attachment: './data.txt',
+                                    name: 'data.txt'
+                                }]})
+                                break
+                            }
                         }
                     }
                 } else if (a_rank > -1 && mode == 0) {
@@ -1785,16 +1787,18 @@ ${user.playstyle}`, true)
                     .setColor(embedcolor)
                     .setFooter(user.statustext, user.statusicon)
                     message.channel.send({embed});
-                    for (var [key,value] of Object.entries(user_data)) {
-                        if (value.osuname == user.username) {
-                            user_data[key].osurank = user.rank
-                            user_data[key].osucountry = user.country
-                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
-                            bot.channels.get('487482583362568212').send({files: [{
-                                attachment: './data.txt',
-                                name: 'data.txt'
-                            }]})
-                            break
+                    if (mode == 0) {
+                        for (var [key,value] of Object.entries(user_data)) {
+                            if (value.osuname == user.username) {
+                                user_data[key].osurank = user.rank
+                                user_data[key].osucountry = user.country
+                                fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                                bot.channels.get('487482583362568212').send({files: [{
+                                    attachment: './data.txt',
+                                    name: 'data.txt'
+                                }]})
+                                break
+                            }
                         }
                     }
                 } else if (a_g > -1) {
@@ -1893,16 +1897,18 @@ ${user.playstyle}`, true)
                     .attachFile(attachment)
                     .setImage('attachment://rank.png')
                     message.channel.send({embed})
-                    for (var [key,value] of Object.entries(user_data)) {
-                        if (value.osuname == user.username) {
-                            user_data[key].osurank = user.rank
-                            user_data[key].osucountry = user.country
-                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
-                            bot.channels.get('487482583362568212').send({files: [{
-                                attachment: './data.txt',
-                                name: 'data.txt'
-                            }]})
-                            break
+                    if (mode == 0) {
+                        for (var [key,value] of Object.entries(user_data)) {
+                            if (value.osuname == user.username) {
+                                user_data[key].osurank = user.rank
+                                user_data[key].osucountry = user.country
+                                fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                                bot.channels.get('487482583362568212').send({files: [{
+                                    attachment: './data.txt',
+                                    name: 'data.txt'
+                                }]})
+                                break
+                            }
                         }
                     }
                 } else if (a_ts > -1 && mode == 0) {
@@ -1979,6 +1985,20 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                     .addField('Top old acc skill:', field[3])
                     .addField('Top acc skill:', field[4])
                     msg1.edit({embed})
+                    if (mode == 0) {
+                        for (var [key,value] of Object.entries(user_data)) {
+                            if (value.osuname == user.username) {
+                                user_data[key].osurank = user.rank
+                                user_data[key].osucountry = user.country
+                                fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                                bot.channels.get('487482583362568212').send({files: [{
+                                    attachment: './data.txt',
+                                    name: 'data.txt'
+                                }]})
+                                break
+                            }
+                        }
+                    }
                 } else {
                     var user = await get_osu_profile(name, mode, 0)
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
@@ -2021,16 +2041,18 @@ ${playstyle}`, true)
                     .setColor(embedcolor)
                     .setFooter(statustext, statusicon)
                     message.channel.send({embed});
-                    for (var [key,value] of Object.entries(user_data)) {
-                        if (value.osuname == user.username) {
-                            user_data[key].osurank = user.rank
-                            user_data[key].osucountry = user.country
-                            fs.writeFileSync('data.txt', JSON.stringify(user_data))
-                            bot.channels.get('487482583362568212').send({files: [{
-                                attachment: './data.txt',
-                                name: 'data.txt'
-                            }]})
-                            break
+                    if (mode == 0) {
+                        for (var [key,value] of Object.entries(user_data)) {
+                            if (value.osuname == user.username) {
+                                user_data[key].osurank = user.rank
+                                user_data[key].osucountry = user.country
+                                fs.writeFileSync('data.txt', JSON.stringify(user_data))
+                                bot.channels.get('487482583362568212').send({files: [{
+                                    attachment: './data.txt',
+                                    name: 'data.txt'
+                                }]})
+                                break
+                            }
                         }
                     }
                 }
