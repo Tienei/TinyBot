@@ -622,7 +622,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
             }
         }
     }
-    setInterval(real_time_osu_track, 40000)
+    setInterval(real_time_osu_track, 60000)
 });
 
 bot.on("guildMemberAdd", (member) => {
