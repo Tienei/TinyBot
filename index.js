@@ -576,7 +576,7 @@ bot.on("ready", (ready) => {
                             if (String(best[i].date) === String(recent[0].date)) {
                                 console.log(osu_track[player].osuname + ' new top play')
                                 var user = await osuApi.getUser({u: name})
-                                var country = String(user.countryRank).toLowerCase()
+                                var country = String(user.pp.countryRank).toLowerCase()
                                 var pp = Number(best[i].pp).toFixed(2)
                                 var ppgain = (Number(user.pp.raw).toFixed(2) - Number(osu_track[player].lasttotalpp)).toFixed(2)
                                 var scores = best[i].score
