@@ -2141,8 +2141,8 @@ ${playstyle}`, true)
                 function loadpage() {
                     var gathering = ''
                     for (var n = 0; n < 10; n++) {
-                        var top = (page - 1) * 10 - 1 + (n+1)
-                        if (top < table.length- 1) {
+                        var i = (page - 1) * 10 - 1 + (n+1)
+                        if (i < table.length- 1) {
                             var player = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
                             var flag  = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().first().attr('href')
                             var pp = leaderboard(table[i]).children('td[class="ranking-page-table__column ranking-page-table__column--focused"]').text().replace(/\s+/g," ").substring(1)
