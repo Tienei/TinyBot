@@ -554,7 +554,7 @@ bot.on("ready", (ready) => {
                     var beatmapid = recent[0].beatmapId
                     var beatmap = await osuApi.getBeatmaps({b: beatmapid})
                     var beatmaptitle = beatmap[0].title
-                    var beatmapidfixed = beatmap[0].beatmapsetID
+                    var beatmapidfixed = beatmap[0].beatmapSetId
                     var diff = beatmap[0].version
                     var count300 = Number(recent[0].counts['300'])
                     var count100 = Number(recent[0].counts['100'])
@@ -576,7 +576,7 @@ bot.on("ready", (ready) => {
                             if (String(best[i].date) === String(recent[0].date)) {
                                 console.log(osu_track[player].osuname + ' new top play')
                                 var user = await osuApi.getUser({u: name})
-                                var country = String(user.pp.countryRank).toLowerCase()
+                                var country = String(user.country).toLowerCase()
                                 var pp = Number(best[i].pp).toFixed(2)
                                 var ppgain = (Number(user.pp.raw).toFixed(2) - Number(osu_track[player].lasttotalpp)).toFixed(2)
                                 var scores = best[i].score
