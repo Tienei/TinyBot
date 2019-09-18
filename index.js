@@ -3577,6 +3577,7 @@ ${mapdetail}
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
                     var date = time_played(scores[i].date)
+		    cache_beatmap_ID(best[i].beatmapid, modename)
                     var star = 0
                     var fcpp = 0
                     var fcacc = 0
