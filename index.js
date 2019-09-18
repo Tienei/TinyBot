@@ -2597,6 +2597,7 @@ ${playstyle}`, true)
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
                     throw 'You need to wait 3 seconds before using this again!'
                 }
+                console.log(stored_map_ID)
                 set_Command_cooldown(command, 3000)
                 var check = ''
                 var option = ''
@@ -2641,6 +2642,7 @@ ${playstyle}`, true)
                 var storedid = 0
                 var counter = 0
                 var get = 1
+                var i = stored_map_ID.length - 1
                 if (a_p > -1) {
                     if (option[option.indexOf('-p') + 1] < 1) {
                         throw "Please type a number larger than 1"
@@ -2649,7 +2651,7 @@ ${playstyle}`, true)
                     }
                 }
                 do {
-                    for (var i = stored_map_ID.length -1 ; i > -1; i--) {
+                    if (i > -1) {
                         if (message.guild !== null) {
                             if (stored_map_ID[i].server !== undefined) {
                                 if (message.guild.id == stored_map_ID[i].server) {
@@ -2667,6 +2669,9 @@ ${playstyle}`, true)
                                 }
                             }
                         }
+                        i -= 1
+                    } else {
+                        throw "No beatmap found this far back!"
                     }
                 } while (counter < get)
                 if (modename == 'Standard' || modename == 'Taiko' || modename == 'CTB' || modename == 'Mania') {
