@@ -36,7 +36,7 @@ var ee = JSON.parse(process.env.EASTER_EGG)
 var ee_number = 0
 
 var loading = 1
-var bot_ver = 'v4.0-osu-beta2'
+var bot_ver = 'v4.0-osu-beta3'
 var refresh = 0
 var bot_command_help = []
 
@@ -732,15 +732,15 @@ bot.on("message", (message) => {
                     addhelp('taiko', '!taiko (username)', 'Get an osu!Taiko profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!taiko Tienei')
                     addhelp('ctb', '!ctb (username)', 'Get an osu!Catch the beat profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!ctb Tienei')
                     addhelp('mania', '!mania (username)', 'Get an osu!Mania profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!mania Tienei')
-                    addhelp('osutop', '!osutop (username) (options)', "View a player's osu!Standard top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!osutop Tienei -m HDHR')
-                    addhelp('taikotop', '!taikotop (username) (options)', "View a player's osu!Taiko top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!taikotop Tienei -p 8')
-                    addhelp('ctbtop', '!ctbtop (username) (options)', "View a player's osu!Catch the beat top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!ctbtop Tienei -p 9')
-                    addhelp('maniatop', '!maniatop (username) (options)', "View a player's osu!Mania top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`', '!maniatop Tienei -p 4')
+                    addhelp('osutop', '!osutop (username) (options)', "View a player's osu!Standard top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!osutop Tienei -m HDHR')
+                    addhelp('taikotop', '!taikotop (username) (options)', "View a player's osu!Taiko top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!taikotop Tienei -p 8')
+                    addhelp('ctbtop', '!ctbtop (username) (options)', "View a player's osu!Catch the beat top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!ctbtop Tienei -p 9')
+                    addhelp('maniatop', '!maniatop (username) (options)', "View a player's osu!Mania top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!maniatop Tienei -p 4')
                     addhelp('osutrack', '!osutrack (username)', "Track a player's osu!Standard top 50 (Required Administration)", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osutrack Tienei')
                     addhelp('osutracklist', '!osutracklist', 'Get a list of player being tracked in the channel', 'None', '!osutracklist')
                     addhelp('untrack', '!untrack (username)', 'Untrack a player from the database (Required Administration)', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!untrack Tienei')
                     addhelp('recent', '![recent|r] (username) (options)', "Get player's most recent play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nStandard `(-Standard)`\nTaiko `(-Taiko)`\nCTB `(-CTB)`\nMania `(-Mania)`', '!r Tienei -b')
-                    addhelp('compare', '![compare|c] (username) ', 'Compare to the last play in the chat', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!c Tienei')
+                    addhelp('compare', '![compare|c] (username) ', 'Compare to the last play in the chat', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nPrevious Play `(-p)`: Get a previous play mentioned in the chat `(Number)`', '!c Tienei')
                     addhelp('osuset', '!osuset (username)', 'Link your profile to an osu! player', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osuset Tienei')
                     addhelp('osuavatar', '!osuavatar (username)', "Get player's osu! avatar", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osuavatar Tienei')
                     addhelp('osusig', '!osusig (username)', "Generate a signature of a player's profile", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osusig Tienei')
@@ -845,11 +845,10 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**August Update:**
-- Added !osu -ts
-- Added .osu file detection
-- Added !prefix
-- Added !leaderboard
+**September Update:**
+--- [September 18th]:
++ Added !c -p, !osutop -s (Idea by Yeong Yuseong)
++ Redesign text display
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
             message.channel.send({embed})
         }
@@ -1421,7 +1420,10 @@ Use External Emojis: ${compatibility[5]}`)
                     //Beatmap
                     beatmapid: Number(best[i][1].id),
                     title: best[i][1].title,
+                    creator: best[i][1].creator,
                     diff: best[i][1].version,
+                    source: best[i][1].source,
+                    artist: best[i][1].artist,
                     bpm: Number(best[i][1].bpm),
                     beatmapsetID: Number(best[i][1].beatmapSetId),
                     fc: (mode == 0 || mode == 2) ? Number(best[i][1].maxCombo) : '',
@@ -1494,6 +1496,22 @@ Use External Emojis: ${compatibility[5]}`)
                 }
             }
             return top
+        }
+
+        function score_overlay(top = 0, title, beatmapid, star, shortenmod, pp, nopp = '', rank, diff, score, combo, fc, acc, accdetail, fcguess, mapcompletion = '', date) {
+            var showtop = ''
+            if (top > 0) {
+                showtop = `${top}. `
+            }
+            if (fcguess !== '') {
+                fcguess = '⬥ ' + fcguess
+            }
+            return `
+${showtop}**[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} ⬥ ${score}
+${rank} *${diff}* ⬥ ***${pp.toFixed(2)}pp*** ${nopp} ${fcguess}
+x${combo}/${fc} ⬥ **Acc:** ${acc.toFixed(2)}% ${accdetail} 
+${mapcompletion} ${date}
+`
         }
         
         async function osu(mode) {
@@ -2480,18 +2498,14 @@ ${playstyle}`, true)
                     var star = Number(fccalc.star.total).toFixed(2)
                     var fcguess = ''
                     if (best[0].perfect == 0) {
-                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                        fcguess = `**${fcpp}pp for ${fcacc}%**`
                     }
+                    var scoreoverlay = score_overlay(undefined,best[0].title,best[0].beatmapid,star,shortenmod,best[0].pp,undefined,rank,best[0].diff,best[0].score,best[0].combo,best[0].fc,best[0].acc,best[0].accdetail,fcguess,undefined,date)
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top ${best[0].top} osu!Standard play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${best[0].beatmapsetID}l.jpg`)
                     .setColor(embedcolor)
-                    .setDescription(`
-**[${best[0].title}](https://osu.ppy.sh/b/${best[0].beatmapid})** (${star}★) ${shortenmod} | ***${best[0].pp.toFixed(2)}pp***
-${rank} *${best[0].diff}* | **Scores:** ${best[0].score} | **Combo:** ${best[0].combo}/${best[0].fc}
-**Accuracy:** ${best[0].acc.toFixed(2)}% ${best[0].accdetail} ${fcguess}
-${date}
-`)
+                    .setDescription(scoreoverlay)
                     message.channel.send({embed})
                 } else {
                     var recent = await get_osu_top(name, mode, 0, 'recent')
@@ -2515,7 +2529,7 @@ ${date}
                         var parser = await precalc(recent[0].beatmapid)
                         var recentcalc = osu_pp_calculator(parser,bitpresent,recent[0].combo,recent[0].count100,recent[0].count50,recent[0].countmiss,recent[0].acc,'acc')
                         star = Number(recentcalc.star.total).toFixed(2)
-                        pp = Number(recentcalc.pp.total).toFixed(2)
+                        pp = Number(recentcalc.pp.total)
                         var end = recentcalc.star.objects[recentcalc.star.objects.length - 1].obj.time - recentcalc.star.objects[0].obj.time
                         var point = recentcalc.star.objects[recent[0].count300 + recent[0].count100 + recent[0].count50 + recent[0].countmiss - 1].obj.time - recentcalc.star.objects[0].obj.time
                         mapcomplete = Number((point / end) * 100).toFixed(2)
@@ -2526,7 +2540,7 @@ ${date}
                     if (mode == 1) {
                         var mapinfo = await other_modes_precalc(recent[0].beatmapid, 1, bitpresent)
                         star = Number(mapinfo.star).toFixed(2)
-                        pp = taiko_pp_calculator(mapinfo.star, mapinfo.od, mapinfo.fc, recent[0].acc, recent[0].countmiss, bitpresent).toFixed(2)
+                        pp = taiko_pp_calculator(mapinfo.star, mapinfo.od, mapinfo.fc, recent[0].acc, recent[0].countmiss, bitpresent)
                         var count300 = mapinfo.fc - recent[0].count100
                         fcacc = Number((0.5 * recent[0].count100 + count300) / (count300 + recent[0].count100 + 0) * 100).toFixed(2)
                         fcpp = taiko_pp_calculator(mapinfo.star, mapinfo.od, mapinfo.fc, fcacc, 0, bitpresent).toFixed(2)
@@ -2535,7 +2549,7 @@ ${date}
                     if (mode == 2) {
                         var mapinfo = await other_modes_precalc(recent[0].beatmapid, 2, bitpresent)
                         star = Number(mapinfo.star).toFixed(2)
-                        pp = ctb_pp_calculator(mapinfo.star, mapinfo.ar, mapinfo.fc, recent[0].combo, recent[0].acc, recent[0].countmiss, bitpresent).toFixed(2)
+                        pp = ctb_pp_calculator(mapinfo.star, mapinfo.ar, mapinfo.fc, recent[0].combo, recent[0].acc, recent[0].countmiss, bitpresent)
                         var count300 = mapinfo.fc - recent[0].count100 - recent[0].countkatu - recent[0].count50
                         fcacc = Number((recent[0].count50 + recent[0].count100 + count300) / (recent[0].countkatu + 0 + recent[0].count50 + recent[0].count100 + count300) * 100).toFixed(2)
                         fcpp = ctb_pp_calculator(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, fcacc, 0, bitpresent).toFixed(2)
@@ -2544,7 +2558,7 @@ ${date}
                     if (mode == 3) {
                         var mapinfo = await other_modes_precalc(recent[0].beatmapid, 3, bitpresent)
                         star = Number(mapinfo.star).toFixed(2)
-                        pp = mania_pp_calculator(mapinfo.star, mapinfo.od, recent[0].score, mapinfo.fc, bitpresent).toFixed(2)
+                        pp = mania_pp_calculator(mapinfo.star, mapinfo.od, recent[0].score, mapinfo.fc, bitpresent)
                         fcacc = Number(21.7147240951625 * Math.log(recent[0].score/10000)*10000).toFixed(0)
                         fcpp = mania_pp_calculator(mapinfo.star, mapinfo.od, fcacc, mapinfo.fc, bitpresent).toFixed(2)
                         mapcomplete = ((recent[0].count300 + recent[0].countkatu + recent[0].count100 + recent[0].countgeki + recent[0].count50 + recent[0].countmiss) / (mapinfo.circle + mapinfo.slider))* 100
@@ -2554,27 +2568,23 @@ ${date}
                     var fcguess = ``
                     if (recent[0].letter == 'F') {
                         nopp = '(No pp)'
-                        date = '| ' + date
+                        date = '⬥ ' + date
                         mapcompleted = `**Map Completion:** ${Number(mapcomplete).toFixed(2)}%`
                     }
                     if (recent[0].perfect == 0) {
                         if (mode == 0 || mode == 1 || mode == 2) {
-                            fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                            fcguess = `**${fcpp}pp for ${fcacc}%**`
                         }
                         if (mode == 3) {
-                            fcguess = `| **${fcpp}pp for ${fcacc} scores**`
+                            fcguess = `**${fcpp}pp for ${fcacc} scores**`
                         }
                     }
+                    var scoreoverlay = score_overlay(undefined,recent[0].title,recent[0].beatmapid,star,shortenmod,pp,nopp,rank,recent[0].diff,recent[0].score,recent[0].combo,recent[0].fc,recent[0].acc,recent[0].accdetail,fcguess,mapcompleted,date)
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Most recent osu! ${modename} play for ${osuname}:`, `http://s.ppy.sh/a/${recent[0].userid}.png?date=${refresh}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${recent[0].beatmapsetID}l.jpg`)
                     .setColor(embedcolor)
-                    .setDescription(`
-**[${recent[0].title}](https://osu.ppy.sh/b/${recent[0].beatmapid})** (${star}★) ${shortenmod} | ***${pp}pp*** ${nopp}
-${rank} *${recent[0].diff}* | **Scores:** ${recent[0].score} | **Combo:** ${recent[0].combo}/${recent[0].fc}
-**Accuracy:** ${recent[0].acc.toFixed(2)}% ${recent[0].accdetail} ${fcguess}
-${mapcompleted} ${date}
-`)
+                    .setDescription(scoreoverlay)
                     message.channel.send({embed})
                 }
             } catch (error) {
@@ -2588,41 +2598,77 @@ ${mapcompleted} ${date}
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 set_Command_cooldown(command, 3000)
-                var option = ''
                 var check = ''
-                if (msg.includes('"') == true) {
+                var option = ''
+                var modename = ''
+                var quote = false
+                // Split name and arg
+                if (msg.includes('"')) {
+                    quote = true
                     option = msg.split('"')
                     check = option[1]
+                    option = msg.split(" ")
                 } else {
-                    option = msg.split(' ')
-                    if (option.length < 2) {
-                        check = ''
-                    } else {
+                    option = msg.split(" ")
+                }
+                // Find name and arg
+                var a_p = option.indexOf("-p")
+                //Get name if there's no quote
+                if (quote == false) {
+                    var pass = [0, a_p]
+                    for (var i = 0; i < pass.length;) {
+                        if (pass[i] == -1) {
+                            pass.splice(i,1)
+                        } else {
+                            i++
+                        }
+                    }
+                    pass.sort(function(a,b){return a-b})
+                    if (pass[1] > 1) {
                         check = option[1]
+                    } else {
+                        if (a_p > -1) {
+                            check = option[option.indexOf("-p") + 2]
+                        }  else if (option.length > 1) {
+                            check = option[1]
+                        }
+                        if (check == undefined) {
+                            check = ''
+                        }
                     }
                 }
                 var name = check_player(check, 'osu')
                 var storedid = 0
-                var modename = ''
-                for (var i = stored_map_ID.length -1 ; i > -1; i--) {
-                    if (message.guild !== null) {
-                        if (stored_map_ID[i].server !== undefined) {
-                            if (message.guild.id == stored_map_ID[i].server) {
-                                storedid = stored_map_ID[i].id
-                                modename = stored_map_ID[i].mode
-                                break;
-                            }
-                        }
+                var counter = 0
+                var get = 1
+                if (a_p > -1) {
+                    if (option[option.indexOf('-p') + 1] < 1) {
+                        throw "Please type a number larger than 1"
                     } else {
-                        if (stored_map_ID[i].user !== undefined) {
-                            if (message.author.id == stored_map_ID[i].user) {
-                                storedid = stored_map_ID[i].id
-                                modename = stored_map_ID[i].mode
-                                break;
+                        get = Number(option[option.indexOf('-p') + 1])
+                    }
+                }
+                do {
+                    for (var i = stored_map_ID.length -1 ; i > -1; i--) {
+                        if (message.guild !== null) {
+                            if (stored_map_ID[i].server !== undefined) {
+                                if (message.guild.id == stored_map_ID[i].server) {
+                                    storedid = stored_map_ID[i].id
+                                    modename = stored_map_ID[i].mode
+                                    counter += 1
+                                }
+                            }
+                        } else {
+                            if (stored_map_ID[i].user !== undefined) {
+                                if (message.author.id == stored_map_ID[i].user) {
+                                    storedid = stored_map_ID[i].id
+                                    modename = stored_map_ID[i].mode
+                                    counter += 1
+                                }
                             }
                         }
                     }
-                }
+                } while (counter < get)
                 if (modename == 'Standard' || modename == 'Taiko' || modename == 'CTB' || modename == 'Mania') {
                     var modenumber = {
                         Standard: 0,
@@ -2687,13 +2733,13 @@ ${mapcompleted} ${date}
                         var fcguess = ''
                         if (scores[i].perfect == 0) {
                             if (mode == 0 || mode == 1 || mode == 2) {
-                                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                fcguess = `**${fcpp}pp for ${fcacc}%**`
                             }
                             if (mode == 3) {
                                 fcguess = `| **${fcpp}pp for ${fcacc} scores**`
                             }
                         }
-                            highscore += `
+                        highscore += `
 ${i+1}. **${shortenmod}** Score (${star}★) | ***${scores[i].pp.toFixed(2)}pp*** ${unrankedpp}
 ${rank} **Score:** ${scores[i].score} | **Combo:** ${scores[i].combo}/${beatmap.fc}
 **Accuracy:** ${scores[i].acc.toFixed(2)}% ${scores[i].accdetail} ${fcguess}
@@ -2750,9 +2796,10 @@ ${date}
                 var a_r = option.indexOf("-r")
                 var a_m = option.indexOf("-m")
                 var a_g = option.indexOf("-g")
+                var a_s = option.indexOf("-s")
                 var a_page = option.indexOf("-page")
                 //Check if there is more than 1 argument
-                var findarg = [a_p, a_r, a_m, a_g, a_page]
+                var findarg = [a_p, a_r, a_m, a_g, a_page, a_s]
                 var find = false
                 for (var i = 0; i < findarg.length; i++) {
                     if (findarg[i] > -1) {
@@ -2765,7 +2812,7 @@ ${date}
                 }
                 //Get name if there's no quote
                 if (quote == false) {
-                    var pass = [0, a_p, a_r, a_m, a_g, a_page]
+                    var pass = [0, a_p, a_r, a_m, a_g, a_page, a_s]
                     for (var i = 0; i < pass.length;) {
                         if (pass[i] == -1) {
                             pass.splice(i,1)
@@ -2785,8 +2832,10 @@ ${date}
                             check = option[option.indexOf("-m") + 2]
                         } else if (a_g > -1) {
                             check = option[option.indexOf("-g") + 2]
-                        }  else if (a_page > -1) {
+                        } else if (a_page > -1) {
                             check = option[option.indexOf("-page") + 1]
+                        } else if (a_s > -1) {
+                            check = option[option.indexOf("-s") + 2]
                         } else if (option.length > 1) {
                             check = option[1]
                         }
@@ -2854,18 +2903,14 @@ ${date}
                         var fcguess = ''
                         if (best[n].perfect == 0) {
                             if (mode == 0 || mode == 1 || mode == 2) {
-                                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                fcguess = `**${fcpp}pp for ${fcacc}%**`
                             }
                             if (mode == 3) {
                                 fcguess = `| **${fcpp}pp for ${fcacc} scores**`
                             }
                         }
-                        top += `
-${n+1}. **[${best[n].title}](https://osu.ppy.sh/b/${best[n].beatmapid})** (${star}★) ${shortenmod} | ***${best[n].pp.toFixed(2)}pp***
-${rank} *${best[n].diff}* | **Scores**: ${best[n].score} | **Combo:** ${best[n].combo}/${best[n].fc}
-**Accuracy:** ${best[n].acc.toFixed(2)}% ${best[n].accdetail} ${fcguess}
-${date}
-`   
+                        var scoreoverlay = score_overlay(n+1,best[n].title,best[n].beatmapid,star,shortenmod,best[n].pp,undefined,rank,best[n].diff,best[n].score,best[n].combo,best[n].fc,best[n].acc,best[n].accdetail,fcguess,undefined,date)
+                        top += scoreoverlay
                     }
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!${modename} Plays for ${username}`)
@@ -2930,18 +2975,14 @@ ${date}
                         var fcguess = ''
                         if (best[i].perfect == 0) {
                             if (mode == 0 || mode == 1 || mode == 2) {
-                                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                fcguess = `**${fcpp}pp for ${fcacc}%**`
                             }
                             if (mode == 3) {
                                 fcguess = `| **${fcpp}pp for ${fcacc} scores**`
                             }
                         }
-                        top += `
-${best[i].top}. **[${best[i].title}](https://osu.ppy.sh/b/${best[i].beatmapid})** (${star}★) ${shortenmod} | ***${best[i].pp.toFixed(2)}pp***
-${rank} *${best[i].diff}* | **Scores**: ${best[i].score} | **Combo:** ${best[i].combo}/${best[i].fc}
-**Accuracy:** ${best[i].acc.toFixed(2)}% ${best[i].accdetail} ${fcguess}
-${date}
-`   
+                        var scoreoverlay = score_overlay(best[i].top,best[i].title,best[i].beatmapid,star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fcguess,undefined,date)
+                        top += scoreoverlay
                     }
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!${modename} most recent plays for ${username}`)
@@ -3046,18 +3087,14 @@ ${date}
                             var fcguess = ''
                             if (best[i].perfect == 0) {
                                 if (mode == 0 || mode == 1 || mode == 2) {
-                                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                    fcguess = `**${fcpp}pp for ${fcacc}%**`
                                 }
                                 if (mode == 3) {
                                     fcguess = `| **${fcpp}pp for ${fcacc} scores**`
                                 }
                             }
-                            top += `
-${i+1}. **[${best[i].title}](https://osu.ppy.sh/b/${best[i].beatmapid})** (${star}★) ${shortenmod} | ***${best[i].pp.toFixed(2)}pp***
-${rank} *${best[i].diff}* | **Scores**: ${best[i].score} | **Combo:** ${best[i].combo}/${best[i].fc}
-**Accuracy:** ${best[i].acc.toFixed(2)}% ${best[i].accdetail} ${fcguess}
-${date}
-`   
+                            var scoreoverlay = score_overlay(i+1,best[i].title,best[i].beatmapid,star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fcguess,undefined,date)
+                            top += scoreoverlay
                         }
                     }
                     if (top.length == 0) {
@@ -3135,18 +3172,14 @@ ${date}
                                 var fcguess = ''
                                 if (best[i].perfect == 0) {
                                     if (mode == 0 || mode == 1 || mode == 2) {
-                                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                        fcguess = `**${fcpp}pp for ${fcacc}%**`
                                     }
                                     if (mode == 3) {
                                         fcguess = `| **${fcpp}pp for ${fcacc} scores**`
                                     }
                                 }
-                                gathering += `
-${i+1}. **[${best[i].title}](https://osu.ppy.sh/b/${best[i].beatmapid})** (${star}★) ${shortenmod} | ***${best[i].pp.toFixed(2)}pp***
-${rank} *${best[i].diff}* | **Scores**: ${best[i].score} | **Combo:** ${best[i].combo}/${best[i].fc}
-**Accuracy:** ${best[i].acc.toFixed(2)}% ${best[i].accdetail} ${fcguess}
-${date}
-`   
+                                var scoreoverlay = score_overlay(i+1,best[i].title,best[i].beatmapid,star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fcguess,undefined,date)
+                                gathering += scoreoverlay
                             }
                         }
                         pages[page-1] = gathering
@@ -3182,6 +3215,74 @@ ${date}
                         embed.setDescription(pages[page-1])
                         msg1.edit({embed})
                     })
+                } else if (a_s > -1) { 
+                    var map_name = option[option.indexOf('-s') + 1].replace("_", " ")
+                    var top = []
+                    var get = await get_osu_top(name, mode, 100, 'best')
+                    for (var i = 0; i < 100; i++) {
+                        get[i].top = i+1
+                    }
+                    var best = get.filter(function(map) {return map.title.toLowerCase().includes(map_name) || map.creator.toLowerCase().includes(map_name) || map.diff.toLowerCase().includes(map_name) || map.source.toLowerCase().includes(map_name) || map.artist.toLowerCase().includes(map_name)})
+                    console.log(best)
+                    var userid = best[0].userid
+                    var user = await osuApi.getUser({u: name})
+                    var username = user.name
+                    var maplength = best.length > 5 ? 5 : best.length
+                    for (var i = 0; i < maplength; i++) {
+                        var rank = osu_ranking_letters(best[i].letter)
+                        var modandbit = osu_mods_enum(best[i].mod, 'text')
+                        var shortenmod = modandbit.shortenmod
+                        var bitpresent = modandbit.bitpresent
+                        var date = time_played(best[i].date)
+                        cache_beatmap_ID(best[i].beatmapid, modename)
+                        var star = 0
+                        var fcpp = 0
+                        var fcacc = 0
+                        if (mode == 0) {
+                            var parser = await precalc(best[i].beatmapid)
+                            var fccalc = osu_pp_calculator(parser,bitpresent,best[i].fc,best[i].count100,best[i].count50,0,best[i].acc,'fc')
+                            fcpp = Number(fccalc.pp.total).toFixed(2)
+                            fcacc = fccalc.acc
+                            star = Number(fccalc.star.total).toFixed(2)
+                        }
+                        if (mode == 1) {
+                            var mapinfo = await other_modes_precalc(best[i].beatmapid, 1, bitpresent)
+                            star = Number(mapinfo.star).toFixed(2)
+                            var count300 = mapinfo.fc - best[i].count100
+                            fcacc = Number((0.5 * best[i].count100 + count300) / (count300 + best[i].count100 + 0) * 100).toFixed(2)
+                            fcpp = taiko_pp_calculator(mapinfo.star, mapinfo.od, mapinfo.fc, fcacc, 0, bitpresent).toFixed(2)
+                        }
+                        if (mode == 2) {
+                            var mapinfo = await other_modes_precalc(best[i].beatmapid, 2, bitpresent)
+                            star = Number(mapinfo.star).toFixed(2)
+                            var count300 = mapinfo.fc - best[i].count100 - best[i].countkatu - best[i].count50
+                            fcacc = Number((best[i].count50 + best[i].count100 + count300) / (best[i].countkatu + 0 + best[i].count50 + best[i].count100 + count300) * 100).toFixed(2)
+                            fcpp = ctb_pp_calculator(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, fcacc, 0, bitpresent).toFixed(2)
+                        }
+                        if (mode == 3) {
+                            var mapinfo = await other_modes_precalc(best[i].beatmapid, 3, bitpresent)
+                            star = Number(mapinfo.star).toFixed(2)
+                            fcacc = Number(21.7147240951625 * Math.log(best[i].score/10000)*10000).toFixed(0)
+                            fcpp = mania_pp_calculator(mapinfo.star, mapinfo.od, fcacc, mapinfo.fc, bitpresent).toFixed(2)
+                        }
+                        var fcguess = ''
+                        if (best[i].perfect == 0) {
+                            if (mode == 0 || mode == 1 || mode == 2) {
+                                fcguess = `**${fcpp}pp for ${fcacc}%**`
+                            }
+                            if (mode == 3) {
+                                fcguess = `| **${fcpp}pp for ${fcacc} scores**`
+                            }
+                        }
+                        var scoreoverlay = score_overlay(best[i].top,best[i].title,best[i].beatmapid,star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fcguess,undefined,date)
+                        top += scoreoverlay
+                    }
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`Top osu!${modename} Plays for ${username} (Searching: ${map_name})`)
+                    .setThumbnail(`http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+                    .setColor(embedcolor)
+                    .setDescription(top)
+                    message.channel.send({embed});
                 } else {
                     var best = await get_osu_top(name, mode, 5, 'best')
                     var userid = best[0].userid
@@ -3227,18 +3328,14 @@ ${date}
                         var fcguess = ''
                         if (best[i].perfect == 0) {
                             if (mode == 0 || mode == 1 || mode == 2) {
-                                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                fcguess = `**${fcpp}pp for ${fcacc}%**`
                             }
                             if (mode == 3) {
                                 fcguess = `| **${fcpp}pp for ${fcacc} scores**`
                             }
                         }
-                        top += `
-${i+1}. **[${best[i].title}](https://osu.ppy.sh/b/${best[i].beatmapid})** (${star}★) ${shortenmod} | ***${best[i].pp.toFixed(2)}pp***
-${rank} *${best[i].diff}* | **Scores**: ${best[i].score} | **Combo:** ${best[i].combo}/${best[i].fc}
-**Accuracy:** ${best[i].acc.toFixed(2)}% ${best[i].accdetail} ${fcguess}
-${date}
-`   
+                        var scoreoverlay = score_overlay(i+1,best[i].title,best[i].beatmapid,star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fcguess,undefined,date)
+                        top += scoreoverlay
                     }
                     const embed = new Discord.RichEmbed()
                     .setAuthor(`Top osu!${modename} Plays for ${username}`)
@@ -3517,7 +3614,7 @@ ${mapdetail}
                     var fcguess = ''
                     if (scores[i].perfect == 0) {
                         if (mode == 0 || mode == 1 || mode == 2) {
-                            fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                            fcguess = `**${fcpp}pp for ${fcacc}%**`
                         }
                         if (mode == 3) {
                             fcguess = `| **${fcpp}pp for ${fcacc} scores**`
@@ -4260,7 +4357,7 @@ ${servericon} **${servername} status for: [${username}](https://${serverlink}/u/
                     nopp = '(No pp)'
                 }
                 if (perfect == 0 && linkoption !== '&rx=1') {
-                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                    fcguess = `**${fcpp}pp for ${fcacc}%**`
                 }
                 const embed = new Discord.RichEmbed()
                 .setAuthor(`Most recent ${servername} play for ${username}:`, `https://a.${serverlink}/${userid}.png?date=${refresh}`)
@@ -4372,7 +4469,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     var fcacc = fccalc.acc
                     var fcguess = ``
                     if (perfect == 0 && linkoption !== '&rx=1') {
-                        fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                        fcguess = `**${fcpp}pp for ${fcacc}%**`
                     }
                     var star = Number(fccalc.star.total).toFixed(2)
                     top += `
@@ -4459,7 +4556,7 @@ ${date}
                             var fcacc = fccalc.acc
                             var fcguess = ``
                             if (perfect == 0 && linkoption !== '&rx=1') {
-                                fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                                fcguess = `**${fcpp}pp for ${fcacc}%**`
                             }
                             var star = Number(fccalc.star.total).toFixed(2)
                             top += `
@@ -4510,7 +4607,7 @@ ${date}
                         var fcacc = fccalc.acc
                         var fcguess = ``
                         if (perfect == 0 && linkoption !== '&rx=1') {
-                            fcguess = `| **${fcpp}pp for ${fcacc}%**`
+                            fcguess = `**${fcpp}pp for ${fcacc}%**`
                         }
                         var star = Number(fccalc.star.total).toFixed(2)
                         top += `
