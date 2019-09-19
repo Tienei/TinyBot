@@ -1504,12 +1504,12 @@ Use External Emojis: ${compatibility[5]}`)
                 showtop = `${top}. `
             }
             if (fcguess !== '') {
-                fcguess = '⬥ ' + fcguess
+                fcguess = '◆ ' + fcguess
             }
             return `
-${showtop}**[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} ⬥ ${score}
-${rank} *${diff}* ⬥ ***${pp.toFixed(2)}pp*** ${nopp} ${fcguess}
-x${combo}/${fc} ⬥ **Acc:** ${acc.toFixed(2)}% ${accdetail} 
+${showtop}**[${title}](https://osu.ppy.sh/b/${beatmapid})** (${star}★) ${shortenmod} ◆ ${score}
+${rank} *${diff}* ◆ ***${pp.toFixed(2)}pp*** ${nopp} ${fcguess}
+x${combo}/${fc} ◆ **Acc:** ${acc.toFixed(2)}% ${accdetail} 
 ${mapcompletion} ${date}
 `
         }
