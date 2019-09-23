@@ -823,7 +823,7 @@ bot.on("message", (message) => {
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 
 **--- Command idea from:**
-Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design), zibi (!topglobal, !topcountry), PotatoBoy123 (!lb)
+Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods, !c -p, !osutop -s), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design), zibi (!topglobal, !topcountry), PotatoBoy123 (!lb)
 
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
@@ -849,6 +849,10 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 --- [September 18th]:
 + Added !c -p, !osutop -s (Idea by Yeong Yuseong)
 + Redesign text display
+
+--- [September 23rd]:
++ Fix osu -d not showing up if there isn't any event
+
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
             message.channel.send({embed})
         }
@@ -1599,6 +1603,9 @@ ${mapcompletion} ${date}
                         var text = user.events[i].html.replace(/(<([^>]+)>)/ig,"")
                         event += `\n ${text}`
                     }
+                    if (events == 0) {
+                        event = 'No event'
+                    }
                     var embed = new Discord.RichEmbed()
                     .setDescription(`${modeicon} ${user.supporter} **osu!${modename} Statistics for [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
                     .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
@@ -2076,7 +2083,7 @@ ${playstyle}`, true)
                 message.channel.send(String(error))
             }
         }
-
+	    
         async function topleaderboard(type) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
