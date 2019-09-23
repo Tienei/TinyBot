@@ -700,7 +700,7 @@ bot.on("message", (message) => {
 
         // General related
 
-        if (command == bot_prefix + 'help') {
+         if (command == bot_prefix + 'help') {
             try {
                 function addhelp(helpcommand, fullcommand, description, option, example) {
                     var helptext = '```' + fullcommand + '```' + `\n${description}\n\n**---[Options]:**\n${option}\n\n**---[Example]:**\n` + example
@@ -711,7 +711,7 @@ bot.on("message", (message) => {
                     addhelp('avatar', '!avatar (user)', "View a user's discord avatar", 'user: User you want to view (Has to be @user)', '!avatar @Tienei#0000')
                     addhelp('changelog', '!changelog', 'View update and fix for the bot', 'None', '!changelog')
                     addhelp('help', '!help (command)', 'Get a full command list or view a specific command help', 'command: Command help you wanted to see', '!help osu')
-                    addhelp('ping', '!ping', 'Ping Bancho (probably making Bancho mad sometimes lol)', 'None', '!ping')
+                    addhelp('ping', '!ping', 'Ping Bancho (probably making Bancho mad sometimes lol)\n100ms: Good\n200ms: OK\n300ms: Bad\n600ms: Pretty bad', 'None', '!ping')
                     addhelp('report', '!report (error)', 'Report an error or bug to the owner', 'error: Type any error or bug you found', '!report osu is broken')
                     addhelp('suggestion', '!suggestion (suggestion)', 'Suggesting an idea for the bot to the owner', 'error: Type any error or bug you found', '!report osu is broken')
                     addhelp('bot', '!bot', 'Get invitation of the bot', 'None', '!bot')
@@ -852,6 +852,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 
 --- [September 23rd]:
 + Fix osu -d not showing up if there isn't any event
++ Add visual? to ping
 
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
             message.channel.send({embed})
@@ -881,7 +882,19 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                     var timenow = Date.now()
                     var test = await osuApi.getUser({u: "peppy"})
                     var timelater = Date.now()
-                    message.channel.send(`Bancho respond! **${timelater - timenow}ms**`) 
+                    var ping = timelater - timenow
+                    var visual = '['
+                    for (var i = 0; i < 20; i++) {
+                        var comp = (100 + Math.pow(100, 0.50 * Math.log(i)))
+                        if (ping < comp) {
+                            visual += '⎯'
+                        } else {
+                            visual += '▬'
+                        }
+                    }
+                    visual += ']'
+                    message.channel.send(`Bancho respond! **${ping}ms**                                                         
+Good   ${visual}   Bad`) 
                 }
                 Bancho()
             } catch (error) {
