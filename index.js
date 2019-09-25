@@ -19,6 +19,7 @@ const cheerio = require('cheerio')
 const jimp = require('jimp')
 const generate = require('node-chartist');
 const sharp = require('sharp')
+const text2png = require('text2png')
 
 const bot = new Discord.Client();
 
@@ -700,7 +701,7 @@ bot.on("message", (message) => {
 
         // General related
 
-         if (command == bot_prefix + 'help') {
+        if (command == bot_prefix + 'help') {
             try {
                 function addhelp(helpcommand, fullcommand, description, option, example) {
                     var helptext = '```' + fullcommand + '```' + `\n${description}\n\n**---[Options]:**\n${option}\n\n**---[Example]:**\n` + example
@@ -732,6 +733,7 @@ bot.on("message", (message) => {
                     addhelp('taiko', '!taiko (username)', 'Get an osu!Taiko profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!taiko Tienei')
                     addhelp('ctb', '!ctb (username)', 'Get an osu!Catch the beat profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!ctb Tienei')
                     addhelp('mania', '!mania (username)', 'Get an osu!Mania profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!mania Tienei')
+                    addhelp('osucard', '!osucard (username)', 'Generate an osu!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osucard Tienei')
                     addhelp('osutop', '!osutop (username) (options)', "View a player's osu!Standard top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!osutop Tienei -m HDHR')
                     addhelp('taikotop', '!taikotop (username) (options)', "View a player's osu!Taiko top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!taikotop Tienei -p 8')
                     addhelp('ctbtop', '!ctbtop (username) (options)', "View a player's osu!Catch the beat top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!ctbtop Tienei -p 9')
@@ -774,7 +776,7 @@ bot.on("message", (message) => {
                 }
                 var generalhelp = '**--- [General]:**\n`avatar` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix`'
                 var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat`'
-                var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec` `topglobal` `topcountry` `leaderboard`'
+                var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec` `topglobal` `topcountry` `leaderboard` `osucard`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop` `rxakatsuki` `rxakatr` `rxakattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippler` `rippleavatar` `rippletop`'
                 var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
@@ -854,6 +856,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 + Fix osu -d not showing up if there isn't any event
 + Add visual? to ping
 
+--- [September 25th]:
++ Add osucard
+
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
             message.channel.send({embed})
         }
@@ -893,6 +898,7 @@ My senpai server: [server](https://discord.gg/H2mQMxd)`)
                         }
                     }
                     visual += ']'
+
                     message.channel.send(`Bancho respond! **${ping}ms**                                                         
 Good   ${visual}   Bad`) 
                 }
@@ -2096,7 +2102,118 @@ ${playstyle}`, true)
                 message.channel.send(String(error))
             }
         }
-	    
+
+        async function osu_card() {
+            try {
+                var option = ''
+                var check = ''
+                var mode = 0
+                if (msg.includes('"') == true) {
+                    option = msg.split('"')
+                    check = option[1]
+                } else {
+                    option = msg.split(' ')
+                    if (option.length < 2) {
+                        check = ''
+                    } else {
+                        check = option[1]
+                    }
+                }
+                // Get Information
+                var name = check_player(check, 'osu')
+                var best = await get_osu_top(name, mode, 50, 'best')
+                if (best.length < 50) {
+                    throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
+                }
+                var msg1 = await message.channel.send('Calculating skills...') 
+                var user = await get_osu_profile(name, mode, 1)
+                var star_avg = 0
+                var aim_avg = 0
+                var speed_avg = 0
+                var acc_avg = 0
+                var old_acc_avg = 0
+                for (var i = 0; i < 50; i++) {
+                    var modandbit = osu_mods_enum(best[i].mod, 'text')
+                    if (mode == 0) {
+                        var parser = await precalc(best[i].beatmapid)
+                        var thing = osu_pp_calculator(parser,modandbit.bitpresent,0,0,0,0,0,0)
+                        var detail = beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
+                        star_avg += thing.star.total
+                        aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
+                        speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1))
+                        old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                        acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                    }
+                }
+                star_avg = Number(star_avg / 50)
+                aim_avg = Number(aim_avg / 50 * 2 * 100).toFixed(0)
+                speed_avg = Number(speed_avg / 50 * 2 * 100).toFixed(0)
+                acc_avg = Number(acc_avg / 50 * 100).toFixed(0)
+                // Process image
+                msg1.edit('Processing Image...')
+                var card = ''
+                if (star_avg >= 0 && star_avg < 3) {
+                    card = await jimp.read('./osu_card/common_osu.png')
+                } else if (star_avg >= 3 && star_avg < 5) {
+                    card = await jimp.read('./osu_card/rare_osu.png')
+                } else if (star_avg >= 5 && star_avg < 6.5) {
+                    card = await jimp.read('./osu_card/elite_osu.png')
+                } else if (star_avg >= 6.5 && star_avg < 7.5) {
+                    card = await jimp.read('./osu_card/super_rare_osu.png')
+                } else if (star_avg >= 7.5) {
+                    card = await jimp.read('./osu_card/ultra_rare_osu.png')
+                }
+                var pfp = await jimp.read(`http://a.ppy.sh/${user.id}?.png?date=${refresh}`)
+                pfp.resize(320,320)
+                card.composite(pfp, 40,110)
+                var nametext = await jimp.read(text2png(user.username, {
+                    color: 'white',
+                    font: '80px Exo2',
+                    localFontPath: './font/Exo2.otf',
+                    localFontName: 'Exo2',
+                    lineSpacing: 15}))
+                var nametextw = nametext.getWidth()
+                var nametexth = nametext.getHeight()
+                if (nametextw / 220 >= nametexth / 27) {
+                    nametext.resize(220, jimp.AUTO)
+                } else {
+                    nametext.resize(jimp.AUTO, 27)
+                }
+                nametext.contain(220, 27, jimp.HORIZONTAL_ALIGN_CENTER)
+                card.composite(nametext, 150, 50)
+                var stattext = await jimp.read(text2png(`${aim_avg}\n${speed_avg}\n${acc_avg}`, {
+                    color: 'white',
+                    font: '30px Exo2',
+                    localFontPath: './font/Exo2.otf',
+                    localFontName: 'Exo2',
+                    lineSpacing: 15}))
+                card.composite(stattext, 160, 444)
+                var fullstar = await jimp.read('./osu_card/full_star.png')
+                var halfstar = await jimp.read('./osu_card/half_star.png')
+                var width = (Math.floor(star_avg) + ((star_avg % 1) >= 0.5 ? 1 : 0)) * 32 + 2
+                var starholder = await new jimp(width, 33, 0x00000000)
+                for (var i = 0; i < Math.ceil(star_avg); i++) {
+                    if (i+1 > Math.floor(star_avg)) {
+                        starholder.composite(halfstar, i*32, 0)
+                    } else {
+                        starholder.composite(fullstar, i*32, 0)
+                    }
+                }
+                starholder.contain(400,33, jimp.HORIZONTAL_ALIGN_CENTER)
+                card.composite(starholder, 10, 551)
+                card.write('card.png')
+                msg1.edit('Done!')
+                message.channel.send({
+                    files: [{
+                      attachment: './card.png',
+                      name: 'card.png'
+                    }]
+                  })
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
         async function topleaderboard(type) {
             try {
                 if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
@@ -3248,7 +3365,6 @@ ${date}
                         get[i].top = i+1
                     }
                     var best = get.filter(function(map) {return map.title.toLowerCase().includes(map_name) || map.creator.toLowerCase().includes(map_name) || map.diff.toLowerCase().includes(map_name) || map.source.toLowerCase().includes(map_name) || map.artist.toLowerCase().includes(map_name)})
-                    console.log(best)
                     var userid = best[0].userid
                     var user = await osuApi.getUser({u: name})
                     var username = user.name
@@ -3602,7 +3718,7 @@ ${mapdetail}
                     var shortenmod = modandbit.shortenmod
                     var bitpresent = modandbit.bitpresent
                     var date = time_played(scores[i].date)
-		    cache_beatmap_ID(scores[i].beatmapid, modename)
+                    cache_beatmap_ID(scores[i].beatmapid, modename)
                     var star = 0
                     var fcpp = 0
                     var fcacc = 0
@@ -4724,6 +4840,9 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         }
         if (command == bot_prefix + 'mania') {
             osu(3)
+        }
+        if (command == bot_prefix + 'osucard') {
+            osu_card()
         }
         if (command == bot_prefix + 'osusig') {
             osusig()
