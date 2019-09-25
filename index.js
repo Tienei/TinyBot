@@ -2171,7 +2171,7 @@ ${playstyle}`, true)
                     font: '80px Exo2',
                     localFontPath: './font/Exo2.otf',
                     localFontName: 'Exo2',
-                    lineSpacing: 14}))
+                    lineSpacing: 13}))
                 var nametextw = nametext.getWidth()
                 var nametexth = nametext.getHeight()
                 if (nametextw / 220 >= nametexth / 27) {
@@ -2186,7 +2186,7 @@ ${playstyle}`, true)
                     font: '30px Exo2',
                     localFontPath: './font/Exo2.otf',
                     localFontName: 'Exo2',
-                    lineSpacing: 14}))
+                    lineSpacing: 13}))
                 card.composite(stattext, 160, 444)
                 var fullstar = await jimp.read('./osu_card/full_star.png')
                 var halfstar = await jimp.read('./osu_card/half_star.png')
