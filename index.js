@@ -1242,7 +1242,7 @@ Use External Emojis: ${compatibility[5]}`)
                 const embed = new Discord.RichEmbed()
                 .setColor(embedcolor)
                 .setDescription(text)
-                .setImage(gif.results[Math.floor(Math.random()*9)].media[0].gif.url)
+                .setImage(gif.results[Math.floor(Math.random()*24)].media[0].gif.url)
                 message.channel.send({embed})
             } catch (error) {
                message.channel.send(String(error))
