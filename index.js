@@ -1237,7 +1237,7 @@ Use External Emojis: ${compatibility[5]}`)
                 } else {
                     text = `<@${user.id}>, ${action} <@${message.author.id}>`
                 }
-                var data = await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=10&media_filter=minimal&contentfilter=high`)
+                var data = await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=25&media_filter=minimal&contentfilter=medium`)
                 var gif = JSON.parse(data)
                 const embed = new Discord.RichEmbed()
                 .setColor(embedcolor)
