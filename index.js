@@ -37,7 +37,7 @@ var ee = JSON.parse(process.env.EASTER_EGG)
 var ee_number = 0
 
 var loading = 1
-var bot_ver = 'v4.0-osu-beta3'
+var bot_ver = 'v4.0-osu-beta4'
 var refresh = 0
 var bot_command_help = []
 
@@ -847,17 +847,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             .setColor(embedcolor)
             .setThumbnail(bot.user.avatarURL)
             .setDescription(`
-**September Update:**
---- [September 18th]:
-+ Added !c -p, !osutop -s (Idea by Yeong Yuseong)
-+ Redesign text display
-
---- [September 23rd]:
-+ Fix osu -d not showing up if there isn't any event
-+ Add visual? to ping
-
---- [September 25th]:
-+ Add osucard
+**Akatsuki and Ripple update v2:**
+--- [October 23th]:
++ Redesign osucard
 
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
             message.channel.send({embed})
@@ -2131,7 +2123,6 @@ ${playstyle}`, true)
                 var aim_avg = 0
                 var speed_avg = 0
                 var acc_avg = 0
-                var old_acc_avg = 0
                 for (var i = 0; i < 50; i++) {
                     var modandbit = osu_mods_enum(best[i].mod, 'text')
                     if (mode == 0) {
@@ -2141,7 +2132,6 @@ ${playstyle}`, true)
                         star_avg += thing.star.total
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
                         speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1))
-                        old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                         acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                     }
                 }
@@ -2166,12 +2156,20 @@ ${playstyle}`, true)
                 var pfp = await jimp.read(`http://a.ppy.sh/${user.id}?.png?date=${refresh}`)
                 pfp.resize(320,320)
                 card.composite(pfp, 40,110)
+                // Get mode icon
+                var mode_icon = ''
+                if (mode == 0) {
+                    mode_icon = await jimp.read('./osu_card/osu.png')
+                }
+                mode_icon.resize(80,80)
+                card.composite(mode_icon, 20, 20)
+                // Get username
                 var nametext = await jimp.read(text2png(user.username, {
                     color: 'white',
-                    font: '80px Exo2',
-                    localFontPath: './font/Exo2.otf',
-                    localFontName: 'Exo2',
-                    lineSpacing: 13}))
+                    font: '80px Antipasto',
+                    localFontPath: './font/Antipasto.otf',
+                    localFontName: 'Antipasto',
+                    lineSpacing: 15}))
                 var nametextw = nametext.getWidth()
                 var nametexth = nametext.getHeight()
                 if (nametextw / 220 >= nametexth / 27) {
@@ -2181,13 +2179,24 @@ ${playstyle}`, true)
                 }
                 nametext.contain(220, 27, jimp.HORIZONTAL_ALIGN_CENTER)
                 card.composite(nametext, 150, 50)
+                // Star word
+                var stattext = await jimp.read(text2png(`Aim:\nSpeed:\nAccuracy:`, {
+                    color: 'white',
+                    font: '34px Antipasto',
+                    localFontPath: './font/Antipasto.otf',
+                    localFontName: 'Antipasto',
+                    lineSpacing: 10,
+                    textAlign: 'right'}))
+                card.composite(stattext, 20, 444)
+                // Stat
                 var stattext = await jimp.read(text2png(`${aim_avg}\n${speed_avg}\n${acc_avg}`, {
                     color: 'white',
-                    font: '30px Exo2',
-                    localFontPath: './font/Exo2.otf',
-                    localFontName: 'Exo2',
-                    lineSpacing: 13}))
-                card.composite(stattext, 160, 444)
+                    font: '34px Antipasto',
+                    localFontPath: './font/Antipasto.otf',
+                    localFontName: 'Antipasto',
+                    lineSpacing: 16}))
+                card.composite(stattext, 170, 444)
+                // Star
                 var fullstar = await jimp.read('./osu_card/full_star.png')
                 var halfstar = await jimp.read('./osu_card/half_star.png')
                 var width = (Math.floor(star_avg) + ((star_avg % 1) >= 0.5 ? 1 : 0)) * 32 + 2
