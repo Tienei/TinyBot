@@ -2195,7 +2195,7 @@ ${playstyle}`, true)
                     localFontPath: './font/Antipasto.otf',
                     localFontName: 'Antipasto',
                     lineSpacing: 16}))
-                card.composite(stattext, 170, 444)
+                card.composite(stattext, 160, 444)
                 // Star
                 var fullstar = await jimp.read('./osu_card/full_star.png')
                 var halfstar = await jimp.read('./osu_card/half_star.png')
