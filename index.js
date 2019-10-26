@@ -734,6 +734,9 @@ bot.on("message", (message) => {
                     addhelp('ctb', '!ctb (username)', 'Get an osu!Catch the beat profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!ctb Tienei')
                     addhelp('mania', '!mania (username)', 'Get an osu!Mania profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!mania Tienei')
                     addhelp('osucard', '!osucard (username)', 'Generate an osu!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!osucard Tienei')
+                    addhelp('taikocard', '!taikocard (username)', 'Generate a taiko!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!taikocard Tienei')
+                    addhelp('ctbcard', '!ctbcard (username)', 'Generate a ctb!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!ctbcard Tienei')
+                    addhelp('maniacard', '!maniacard (username)', 'Generate a mania!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!maniacard Tienei')
                     addhelp('osutop', '!osutop (username) (options)', "View a player's osu!Standard top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!osutop Tienei -m HDHR')
                     addhelp('taikotop', '!taikotop (username) (options)', "View a player's osu!Taiko top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!taikotop Tienei -p 8')
                     addhelp('ctbtop', '!ctbtop (username) (options)', "View a player's osu!Catch the beat top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!ctbtop Tienei -p 9')
@@ -850,6 +853,7 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 **Akatsuki and Ripple update v2:**
 --- [October 23th]:
 + Redesign osucard
++ Added other modes card
 
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
             message.channel.send({embed})
@@ -1062,8 +1066,8 @@ Use External Emojis: ${compatibility[5]}`)
                     message.channel.send('Custom command was added')
                     fs.writeFileSync('customcmd.txt', JSON.stringify(custom_command))
                     bot.channels.get('572585703989575683').send({files: [{
-                    attachment: './customcmd.txt',
-                    name: 'customcmd.txt'
+                        attachment: './customcmd.txt',
+                        name: 'customcmd.txt'
                     }]})
                 }
                 if (option == "list") {
@@ -1087,7 +1091,7 @@ Use External Emojis: ${compatibility[5]}`)
                     }
                     if (custom_command[message.guild.id].length > 1) {
                         for (var i = 0; i < custom_command[message.guild.id].length; i++) {
-                            if (custom_command[message.guild.id][i] == cmd) {
+                            if (custom_command[message.guild.id][i].cmd == cmd) {
                                 custom_command[message.guild.id].splice(i,1)
                             }
                         }
@@ -1100,8 +1104,8 @@ Use External Emojis: ${compatibility[5]}`)
                     message.channel.send('Custom command was removed')
                     fs.writeFileSync('customcmd.txt', JSON.stringify(custom_command))
                     bot.channels.get('572585703989575683').send({files: [{
-                    attachment: './customcmd.txt',
-                    name: 'customcmd.txt'
+                        attachment: './customcmd.txt',
+                        name: 'customcmd.txt'
                     }]})
                 }
             } catch (error) {
@@ -1111,7 +1115,7 @@ Use External Emojis: ${compatibility[5]}`)
 
         if (message.guild !== null) {
             if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
-                try {
+                
                     var respond = custom_command[message.guild.id].find(cmd => cmd.cmd == command).respond
                     var define = {
                         "user": {
@@ -1149,10 +1153,24 @@ Use External Emojis: ${compatibility[5]}`)
                                     type = type.split(" ")
                                     var found = false
                                     if (type[0].substring(0,1) == "$") {
-                                        var number = Number(type[0].substring(1))
-                                        var option = message.content.split(" ", 10)
-                                        option.splice(0,1)
-                                        respond = respond.replace(respond.substring(s,e+1), option[number])
+                                        if (type[0].substring(1,3) == "n+") {
+                                            var option = message.content.split(" ")
+                                            var cmd = option[0].length
+                                            respond = respond.replace(respond.substring(s,e+1), message.content.substring(cmd+1))
+                                            console.log(respond)
+                                        } else {
+                                            var number = Number(type[0].substring(1))
+                                            var option = message.content.split(" ")
+                                            option.splice(0,1)
+                                            respond = respond.replace(respond.substring(s,e+1), option[number])
+                                            found = true
+                                        }
+                                    }
+                                    if (type[0].substring(0,2) == "@&") {
+                                        var roles = message.guild.roles.array()
+                                        var rolename = type[0].substring(2)
+                                        var role = roles.find(role => role.name.toLowerCase() == rolename).id
+                                        respond = respond.replace(respond.substring(s,e+1), `<@&${role}>`)
                                         found = true
                                     }
                                     if (type[0] == "require:admin") {
@@ -1165,9 +1183,6 @@ Use External Emojis: ${compatibility[5]}`)
                                         channel.send(custommsg[1])
                                         found = true
                                     }
-                                    if (found == false) {
-                                        respond = respond.replace(respond.substring(s,e+1), define[type[0]][type[1]])
-                                    }
                                     break
                                 }
                             }
@@ -1179,9 +1194,7 @@ Use External Emojis: ${compatibility[5]}`)
                         }
                     }
                     message.channel.send(respond)
-                } catch (error) {
-                    message.channel.send(String(error))
-                }
+                
             }
         }
 
@@ -1251,7 +1264,7 @@ Use External Emojis: ${compatibility[5]}`)
             tenor(6, 'anime slap', 'you got a slap from', 'Are you trying to slap yourself?')
         }
         if (command == bot_prefix + 'kiss') {
-            tenor(6, 'anime kiss', 'you got a kiss from', 'Are you trying to kiss yourself?')
+            tenor(6, 'anime kiss', 'you got a kiss from', 'Are you trying to wkiss yourself?')
         }
         if (command == bot_prefix + 'pat') {
             tenor(5, 'anime pat', 'you got a pat from', 'Pat pat')
@@ -2095,11 +2108,10 @@ ${playstyle}`, true)
             }
         }
 
-        async function osu_card() {
+        async function osu_card(mode) {
             try {
                 var option = ''
                 var check = ''
-                var mode = 0
                 if (msg.includes('"') == true) {
                     option = msg.split('"')
                     check = option[1]
@@ -2122,6 +2134,7 @@ ${playstyle}`, true)
                 var star_avg = 0
                 var aim_avg = 0
                 var speed_avg = 0
+                var finger_control_avg = 0
                 var acc_avg = 0
                 for (var i = 0; i < 50; i++) {
                     var modandbit = osu_mods_enum(best[i].mod, 'text')
@@ -2130,29 +2143,55 @@ ${playstyle}`, true)
                         var thing = osu_pp_calculator(parser,modandbit.bitpresent,0,0,0,0,0,0)
                         var detail = beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                         star_avg += thing.star.total
-                        aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
-                        speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1))
+                        aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)) * 2
+                        speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)) * 2
                         acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                    }
+                    if (mode == 1) {
+                        var mapinfo = await other_modes_precalc(best[i].beatmapid, 1, modandbit.bitpresent)
+                        var detail = beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0, 0, mapinfo.od, mapinfo.hp)
+                        star_avg += mapinfo.star
+                        speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
+                        acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.035) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                    }
+                    if (mode == 2) {
+                        var mapinfo = await other_modes_precalc(best[i].beatmapid, 2, modandbit.bitpresent)
+                        var detail = beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
+                        star_avg += mapinfo.star
+                        aim_avg += Math.pow(mapinfo.star, Math.log(detail.bpm)/Math.log(mapinfo.star*20)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
+                        acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.025) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                    }
+                    if (mode == 3) {
+                        var mapinfo = await other_modes_precalc(best[i].beatmapid, 3, modandbit.bitpresent)
+                        var detail = beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0,0,0,0)
+                        star_avg += mapinfo.star
+                        speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
+                        acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.035) * (Math.pow(mapinfo.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(mapinfo.hp, 0.02) / (Math.pow(5, 0.02)))
+                        finger_control_avg += Math.pow(mapinfo.star, 1.1 * Math.pow(detail.bpm/250, 0.4) * (Math.log(mapinfo.circle + mapinfo.slider)/Math.log(mapinfo.star*900)) * (Math.pow(mapinfo.od, 0.4) / Math.pow(8, 0.4)) * (Math.pow(mapinfo.hp, 0.2) / Math.pow(7.5, 0.2)) * Math.pow(mapinfo.cs/4, 0.1))
                     }
                 }
                 star_avg = Number(star_avg / 50)
-                aim_avg = Number(aim_avg / 50 * 2 * 100).toFixed(0)
-                speed_avg = Number(speed_avg / 50 * 2 * 100).toFixed(0)
+                aim_avg = Number(aim_avg / 50 * 100).toFixed(0)
+                speed_avg = Number(speed_avg / 50 * 100).toFixed(0)
                 acc_avg = Number(acc_avg / 50 * 100).toFixed(0)
+                finger_control_avg = Number(finger_control_avg/50 * 100).toFixed(0)
                 // Process image
                 msg1.edit('Processing Image...')
                 var card = ''
-                if (star_avg >= 0 && star_avg < 3) {
-                    card = await jimp.read('./osu_card/common_osu.png')
-                } else if (star_avg >= 3 && star_avg < 5) {
-                    card = await jimp.read('./osu_card/rare_osu.png')
-                } else if (star_avg >= 5 && star_avg < 6.5) {
-                    card = await jimp.read('./osu_card/elite_osu.png')
-                } else if (star_avg >= 6.5 && star_avg < 7.5) {
-                    card = await jimp.read('./osu_card/super_rare_osu.png')
-                } else if (star_avg >= 7.5) {
-                    card = await jimp.read('./osu_card/ultra_rare_osu.png')
+                if (mode == 0 || mode == 1 || mode == 2 || mode == 3) {
+                    if (star_avg >= 0 && star_avg < 3) {
+                        card = await jimp.read('./osu_card/common_osu.png')
+                    } else if (star_avg >= 3 && star_avg < 5) {
+                        card = await jimp.read('./osu_card/rare_osu.png')
+                    } else if (star_avg >= 5 && star_avg < 6.5) {
+                        card = await jimp.read('./osu_card/elite_osu.png')
+                    } else if (star_avg >= 6.5 && star_avg < 7.5) {
+                        card = await jimp.read('./osu_card/super_rare_osu.png')
+                    } else if (star_avg >= 7.5) {
+                        card = await jimp.read('./osu_card/ultra_rare_osu.png')
+                    }
                 }
+                
                 var pfp = await jimp.read(`http://a.ppy.sh/${user.id}?.png?date=${refresh}`)
                 pfp.resize(320,320)
                 card.composite(pfp, 40,110)
@@ -2160,6 +2199,15 @@ ${playstyle}`, true)
                 var mode_icon = ''
                 if (mode == 0) {
                     mode_icon = await jimp.read('./osu_card/osu.png')
+                }
+                if (mode == 1) {
+                    mode_icon = await jimp.read('./osu_card/taiko.png')
+                }
+                if (mode == 2) {
+                    mode_icon = await jimp.read('./osu_card/ctb.png')
+                }
+                if (mode == 3) {
+                    mode_icon = await jimp.read('./osu_card/mania.png')
                 }
                 mode_icon.resize(80,80)
                 card.composite(mode_icon, 20, 20)
@@ -2179,23 +2227,46 @@ ${playstyle}`, true)
                 }
                 nametext.contain(220, 27, jimp.HORIZONTAL_ALIGN_CENTER)
                 card.composite(nametext, 150, 50)
-                // Star word
-                var stattext = await jimp.read(text2png(`Aim:\nSpeed:\nAccuracy:`, {
+                // Stat
+                var skillname = ''
+                var skillnumber = ''
+                var text_line_spacing = 10
+                var stat_number_x = 0
+                if (mode == 0) {
+                    skillname = `Aim:\nSpeed:\nAccuracy:`
+                    skillnumber = `${aim_avg}\n${speed_avg}\n${acc_avg}`
+                    stat_number_x = 155
+                }
+                if (mode == 1) {
+                    skillname = `Speed:\nAccuracy:`
+                    skillnumber = `${speed_avg}\n${acc_avg}`
+                    stat_number_x = 155
+                }
+                if (mode == 2) {
+                    skillname = `Aim:\nAccuracy:`
+                    skillnumber = `${aim_avg}\n${acc_avg}`
+                    stat_number_x = 155
+                }
+                if (mode == 3) {
+                    skillname = `Finger Control:\nSpeed:\nAccuracy:`
+                    skillnumber = `${finger_control_avg}\n${speed_avg}\n${acc_avg}`
+                    stat_number_x = 215
+                }
+                var stattext = await jimp.read(text2png(skillname, {
                     color: 'white',
                     font: '34px Antipasto',
                     localFontPath: './font/Antipasto.otf',
                     localFontName: 'Antipasto',
-                    lineSpacing: 10,
+                    lineSpacing: text_line_spacing,
                     textAlign: 'right'}))
                 card.composite(stattext, 20, 444)
-                // Stat
-                var stattext = await jimp.read(text2png(`${aim_avg}\n${speed_avg}\n${acc_avg}`, {
+                var statnumber = await jimp.read(text2png(skillnumber, {
                     color: 'white',
                     font: '34px Antipasto',
                     localFontPath: './font/Antipasto.otf',
                     localFontName: 'Antipasto',
                     lineSpacing: 16}))
-                card.composite(stattext, 155, 444)
+                card.composite(statnumber, stat_number_x, 444)
                 // Star
                 var fullstar = await jimp.read('./osu_card/full_star.png')
                 var halfstar = await jimp.read('./osu_card/half_star.png')
@@ -3535,7 +3606,7 @@ ${date}
                         }
                     }
                 }
-                if (modename == 'Standard' || modename == 'Ripple' || modename == 'Akatsuki') {
+                if (modename == 'Standard' || modename == 'Ripple' || modename == 'Akatsuki' || modename == 'Relax Akatsuki') {
                     mode = 0
                 } else if (modename == 'Taiko') {
                     mode = 1
@@ -4041,12 +4112,20 @@ ${mapdetail}
                     throw 'You need to wait 3 seconds before using this again!'
                 }
                 set_Command_cooldown(command, 3000)
+                url_command = true
                 var option = msg.split(" ")
-                var beatmapid = option[1]
+                var beatmapid = ""
                 var mods = [option[2]]
                 var acc = Number(option[3])
                 var combo = Number(option[4])
                 var miss = Number(option[5])
+                if (option[1].substr(0,21) == 'https://osu.ppy.sh/b/') {
+                    var data = option[1].split("/")[4]
+                    beatmapid = data.split(" ")[0]
+                } else if (option[1].substr(m,31) == 'https://osu.ppy.sh/beatmapsets/') {
+                    var data = option[1].split("/")[5]
+                    beatmapid = data.split(" ")[0]
+                }
                 var bitpresent = 0
                 var mod = {
                     nomod: 0,
@@ -4067,17 +4146,17 @@ ${mapdetail}
                         bitpresent += mod[mods[0].substr(m*2,2)]
                     }
                 }
-                var map = await osuApi.getBeatmaps({b: beatmapid})
+                var map = await get_osu_beatmap(beatmapid, 0)
                 if (map.length == 0) {
-                    throw 'Please check the ID of the map is correct or not'
+                    throw 'Please check the link of the map is correct or not'
                 }
                 var parser = await precalc(beatmapid)
-                var calc = ppcalc(parser,bitpresent,combo,0,0,miss,acc,0)
-                var beatmapidfixed = map[0].beatmapSetId
-                var title = map[0].title
-                var mapper = map[0].creator
-                var version = map[0].version
-                cacheBeatmapID(beatmapid, 'Standard')
+                var calc = osu_pp_calculator(parser,bitpresent,combo,0,0,miss,acc,'acc')
+                var beatmapidfixed = map.beatmapsetID
+                var title = map.title
+                var mapper = map.creator
+                var version = map.diff
+                cache_beatmap_ID(beatmapid, 'Standard')
                 const embed = new Discord.RichEmbed()
                     .setAuthor(`${title} by ${mapper}`,'',`https://osu.ppy.sh/b/${beatmapid}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${beatmapidfixed}l.jpg`)
@@ -4087,6 +4166,7 @@ Difficulty: *${version}*
 With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and **${miss}** miss:
 -- **${Number(calc.pp.total).toFixed(2)}pp**`)
                 message.channel.send({embed});
+                url_command = false
             } catch (error) {
                 message.channel.send(String(error))
             }
@@ -4102,7 +4182,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
             message.channel.send(`**Accuracy:** ${acc}%`)
 
         }
-        
+
         async function osutrack() {
             try {
                 if (message.member.hasPermission("ADMINISTRATOR") == false) {
@@ -4275,9 +4355,10 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                 var modedetail = get_mode_detail(mode)
                 var servername = modedetail.modename
                 var servericon = modedetail.modeicon
-                if (a_d > -1 && mode !== 12) {
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`)
+                // New
+                if (a_d > -1) {
+                    var data1 = mode !== 12 ? await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50`) : await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50&rx=1`)
+                    var data2 = mode !== 12 ? await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`) : await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)
                     var best = JSON.parse(data1)
                     var user = JSON.parse(data2)
                     if (best.length == 0) {
@@ -4303,6 +4384,17 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     var rankedscore = user.std.ranked_score
                     var totalscore = user.std.total_score
 
+                    var embed = new Discord.RichEmbed()
+                    .setAuthor(`${servername} Statistics for ${username}`)
+                    .setThumbnail(`https://a.${serverlink}/${userid}.png?date=${refresh}`)
+                    .setColor(embedcolor)
+                    .addField('Performance:',`
+**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
+**Level:** ${level}
+**Accuracy:** ${acc}%
+**Playcount:** ${playcount}
+**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}`)
+                    var msg1 = await message.channel.send('Calculating skills...', {embed})
                     for (var i = 0; i < 50; i++) {
                         var beatmapid = best.scores[i].beatmap.beatmap_id
                         var mod = best.scores[i].mods
@@ -4313,98 +4405,39 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                         var countmiss = Number(best.scores[i].count_miss)
                         var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
                         var parser = await precalc(beatmapid)
-                        var thing = osu_pp_calculator(parser,mod,0,0,0,0,0,0)
-                        var detail = beatmap_detail(shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
-                        star_avg += thing.star.total
-                        aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
-                        speed_avg += thing.star.speed * 1.1 * (Math.pow(detail.ar, 0.1) / (Math.pow(6, 0.1)))
-                        acc_avg += (Math.pow(scoreacc, 2.5)/Math.pow(100, 2.5)) * 1.08 * thing.star.total * (Math.pow(detail.od, 0.03) / (Math.pow(6, 0.03)) * (Math.pow(detail.hp, 0.03) / (Math.pow(6, 0.03))))
+                        var thing = osu_pp_calculator(parser,mod,0,0,0,0,0,'acc')
+                        var detail = beatmap_detail(shortenmod,0,0,0,thing.cs,thing.ar,thing.od,thing.hp)
+                        if (mode !== 12) {
+                            star_avg += thing.star.total
+                            aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
+                            speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1))
+                            acc_avg += (Math.pow(thing.star.aim, (Math.pow(scoreacc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(scoreacc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                        } else {
+                            star_avg += thing.star.total
+                            aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
+                            acc_avg += (Math.pow(thing.star.aim * 1.85, (Math.pow(scoreacc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                        }
                         cs_avg += detail.cs
                         ar_avg += detail.ar
                         od_avg += detail.od
                         hp_avg += detail.hp
                     }
-                    const embed = new Discord.RichEmbed()
-                    .setAuthor(`${servername} Statistics for ${username}`)
-                    .setThumbnail(`https://a.${serverlink}/${userid}.png?date=${refresh}`)
-                    .setColor(embedcolor)
-                    .setDescription(`***Performance:***
-**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
-**Level:** ${level}
-**Accuracy:** ${acc}%
-**Playcount:** ${playcount}
-**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
-
+                    if (mode !== 12) {
+                        embed.addField(`${username} average skill:`,`
 ***${username} average skill:***
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2) *2}★
 Speed skill: ${Number(speed_avg/50).toFixed(2) *2}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
-                    message.channel.send({embed});
-                } else if (a_d > -1 && mode == 12) {
-                    var data1 = await request.get(`https://${serverlink}/api/v1/users/scores/best?name=${name}&mode=0&l=50&rx=1`)
-                    var data2 = await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)
-                    var best = JSON.parse(data1)
-                    var user = JSON.parse(data2)
-                    if (best.length == 0) {
-                        throw 'Either invalid user or not enough top play to calcuate'
-                    }
-                    var star_avg = 0
-                    var aim_avg = 0
-                    var acc_avg = 0
-                    var cs_avg = 0
-                    var ar_avg = 0
-                    var od_avg = 0
-                    var hp_avg = 0
-                    var userid = user.id
-                    var username = user.username
-                    var rank = user.std.global_leaderboard_rank
-                    var country = user.country.toLowerCase()
-                    var countryrank = null
-                    var level = user.std.level
-                    var pp = user.std.pp
-                    var acc = Number(user.std.accuracy).toFixed(2)
-                    var playcount = user.std.playcount
-                    var rankedscore = user.std.ranked_score
-                    var totalscore = user.std.total_score
-                    for (var i = 0; i < 50; i++) {
-                        var beatmapid = best.scores[i].beatmap.beatmap_id
-                        var mod = best.scores[i].mods
-                        var shortenmod = osu_mods_enum(mod, 'number').shortenmod
-                        var count300 = Number(best.scores[i].count_300)
-                        var count100 = Number(best.scores[i].count_100)
-                        var count50 = Number(best.scores[i].count_50)
-                        var countmiss = Number(best.scores[i].count_miss)
-                        var scoreacc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100).toFixed(2)
-                        var parser = await precalc(beatmapid)
-                        var thing = osu_pp_calculator(parser,mod,0,0,0,0,0,0)
-                        var detail = beatmap_detail(shortenmod,0,0,thing.cs,thing.ar,thing.od,thing.hp)
-                        star_avg += thing.star.total
-                        aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)) * (Math.pow(detail.ar, 0.1) / Math.pow(9, 0.1))
-                        acc_avg += (Math.pow(scoreacc, 5)/Math.pow(100, 5)) * 1.07 * thing.star.total * (Math.pow(detail.od, 0.05) / (Math.pow(9, 0.05)))
-                        cs_avg += detail.cs
-                        ar_avg += detail.ar
-                        od_avg += detail.od
-                        hp_avg += detail.hp
-                    }
-                    const embed = new Discord.RichEmbed()
-                    .setAuthor(`${servername} Statistics for ${username}`)
-                    .setThumbnail(`https://a.${serverlink}/${userid}.png?date=${refresh}`)
-                    .setColor(embedcolor)
-                    .setDescription(`***Performance:***
-**Global Rank:** #${rank} (:flag_${country}:: #${countryrank}) | ***${pp}pp***
-**Level:** ${level}
-**Accuracy:** ${acc}%
-**Playcount:** ${playcount}
-**Ranked Score:** ${rankedscore} | **Total Score:** ${totalscore}
-
-***${username} average skill:***
+                    } else {
+                        embed.addField(`${username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2) * 2}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★
 CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}`)
-                    message.channel.send({embed});
+                    }
+                    msg1.edit({embed});
                 } else {
                     var data = ''
                     if (mode == 12) {
@@ -4610,7 +4643,7 @@ ${rank} **Scores:** ${score} | **Combo:** ${combo}/${fc}
                     var rank = osu_ranking_letters(letter)
                     var pp = Number(best.scores[n].pp).toFixed(2)
                     var mod = best.scores[n].mods
-                    var shortenmod = mods(mod, 'number').shortenmod
+                    var shortenmod = osu_mods_enum(mod, 'number').shortenmod
                     var date = time_played(best.scores[n].time)
                     cache_beatmap_ID(beatmapid, servername)
                     var acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
@@ -4851,7 +4884,16 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
             osu(3)
         }
         if (command == bot_prefix + 'osucard') {
-            osu_card()
+            osu_card(0)
+        }
+        if (command == bot_prefix + 'taikocard') {
+            osu_card(1)
+        }
+        if (command == bot_prefix + 'ctbcard') {
+            osu_card(2)
+        }
+        if (command == bot_prefix + 'maniacard') {
+            osu_card(3)
         }
         if (command == bot_prefix + 'osusig') {
             osusig()
@@ -4961,7 +5003,7 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
 
         // Detection
         // Beatmap Detection
-        if (url_command == false) {
+        if (url_command == false && (msg.includes("https://osu.ppy.sh/beatmapsets/") || msg.includes("https://osu.ppy.sh/b/"))) {
             beatmapdetail()
         }
         // .osu Detection
