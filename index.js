@@ -14,7 +14,7 @@ const nodeosu = require('node-osu');
 const request = require('request-promise-native');
 const calc = require('ojsama')
 const rxcalc = require('rx-akatsuki-pp')
-const fs = require('fs')
+const fs = require('fs')cach
 const cheerio = require('cheerio')
 const jimp = require('jimp')
 const generate = require('node-chartist');
@@ -604,8 +604,7 @@ ${rank} *${diff}* | **Scores:** ${scores} | **Combo:** ${combo}/${fc}
 **Accuracy:** ${acc.toFixed(2)}% [${count300}/${count100}/${count50}/${countmiss}] ${fcguess}
 **#${osu_track[player].lastrank} → #${user.pp.rank} (:flag_${country}: : #${osu_track[player].lastcountryrank} → #${user.pp.countryRank})** | Total PP: **${user.pp.raw}**`)
                                 for (var i = 0; i < osu_track[player].trackonchannel.length; i++) {
-                                    var server = bot.channels.get(osu_track[player].trackonchannel[i]).guild.id
-                                    stored_map_ID.push({id:beatmapid,server: server, mode: "Standard"})
+                                    stored_map_ID.push({id:beatmapid,server: osu_track[player].trackonchannel[i], mode: "Standard"})
                                     embed.setColor(bot.channels.get(osu_track[player].trackonchannel[i]).guild.me.displayColor)
                                     bot.channels.get(osu_track[player].trackonchannel[i]).send({embed})
                                 }
@@ -1328,7 +1327,7 @@ Use External Emojis: ${compatibility[5]}`)
 
         function cache_beatmap_ID(beatmapid, mode) {
             if (message.guild !== null) {
-                stored_map_ID.push({id:beatmapid,server:message.guild.id, mode: mode})
+                stored_map_ID.push({id:beatmapid,server:message.channel.id, mode: mode})
             } else {
                 stored_map_ID.push({id:beatmapid,user:message.author.id, mode: mode})
             }
