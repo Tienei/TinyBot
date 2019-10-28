@@ -20,7 +20,6 @@ const jimp = require('jimp')
 const generate = require('node-chartist');
 const sharp = require('sharp')
 const text2png = require('text2png')
-const si = require('systeminformation');
 
 const bot = new Discord.Client();
 
@@ -1029,17 +1028,6 @@ Use External Emojis: ${compatibility[5]}`)
             message.channel.send({embed})
         }
 	    
-	if (command == bot_prefix + 'botstatus') {
-            async function status() {
-                var cpu = await si.cpuCurrentspeed()
-                var mem = await si.mem()
-                message.channel.send(`Bot status:
-CPU Usage: ${cpu.max}GHz/${cpu.max}GHz
-Memory Usage: ${Number(mem.used / Math.pow(10,9)).toFixed(2)}GB/${Number(mem.total / Math.pow(10,9)).toFixed(2)}GB`)
-            }
-            status()
-        }
-
         // Custom commands
 
         if (command == bot_prefix + 'customcmd' && message.guild !== null) {
