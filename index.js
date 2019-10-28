@@ -2870,7 +2870,7 @@ ${playstyle}`, true)
                     if (i > -1) {
                         if (message.guild !== null) {
                             if (stored_map_ID[i].server !== undefined) {
-                                if (message.guild.id == stored_map_ID[i].server) {
+                                if (message.channel.id == stored_map_ID[i].server) {
                                     storedid = stored_map_ID[i].id
                                     modename = stored_map_ID[i].mode
                                     counter += 1
