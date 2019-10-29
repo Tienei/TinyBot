@@ -3589,7 +3589,7 @@ ${date}
                 for (var i = stored_map_ID.length -1 ; i > -1; i--) {
                     if (message.guild !== null) {
                         if (stored_map_ID[i].server !== undefined) {
-                            if (message.guild.id == stored_map_ID[i].server) {
+                            if (message.channel.id == stored_map_ID[i].server) {
                                 beatmapid = stored_map_ID[i].id
                                 modename = stored_map_ID[i].mode
                                 break;
