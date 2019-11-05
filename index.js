@@ -2158,6 +2158,7 @@ ${playstyle}`, true)
                 }
                 // Get Information
                 var name = check_player(check, 'osu')
+                var user = await get_osu_profile(name, mode, 1)
                 if (user == null) {
                     throw 'User not found!'
                 }
@@ -2166,7 +2167,6 @@ ${playstyle}`, true)
                     throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
                 }
                 var msg1 = await message.channel.send('Calculating skills...') 
-                var user = await get_osu_profile(name, mode, 1)
                 var star_avg = 0
                 var aim_avg = 0
                 var speed_avg = 0
