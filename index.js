@@ -2728,9 +2728,6 @@ ${playstyle}`, true)
                 if (a_b > -1) {
                     var user = await osuApi.getUser({u: userid})
                     var username = user.name
-                    if (user == null) {
-                        throw 'User not found!'
-                    }
                     var best = await get_osu_top(name, 0, 100, 'best')
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
@@ -2768,9 +2765,6 @@ ${playstyle}`, true)
                     message.channel.send({embed})
                 } else {
                     var getplayer = await osuApi.getUser({u: name})
-                    if (user == null) {
-                        throw 'User not found!'
-                    }
                     var recent = await get_osu_top(name, mode, 0, 'recent')
                     if (recent.length == 0) {
                         throw 'No play found within 24 hours of this user **-Tiny**'
