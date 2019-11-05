@@ -1407,7 +1407,9 @@ Use External Emojis: ${compatibility[5]}`)
                     bannerurl: user_web["cover_url"]
                 }  
             } catch (error) {
-                return null
+                if (error) {
+			return null
+		}
             }
         }
 
