@@ -854,7 +854,12 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 + Redesign osucard
 + Added other modes card
 
-Note: This is an osu beta version, which mean it's still in development and new feature is coming later`)
+--- [November 5th]:
++ Add other modes rank graph
++ Improve error handling 
+
+Note: This is an osu beta version, which mean it's still in development and new feature is coming later
+Also Akatsuki and Ripple can't get update yet because complication :(`)
             message.channel.send({embed})
         }
         if (command == bot_prefix + 'bot') {
@@ -1026,7 +1031,7 @@ Read Message History: ${compatibility[4]}
 Use External Emojis: ${compatibility[5]}`)
             message.channel.send({embed})
         }
-	    
+
         // Custom commands
 
         if (command == bot_prefix + 'customcmd' && message.guild !== null) {
@@ -1288,40 +1293,44 @@ Use External Emojis: ${compatibility[5]}`)
         var url_command = false
         
         function check_player(name, type) {
-            var osuname = ''
-            if (name == '') {
-                if (user_data[message.author.id] !== undefined) {
-                    if (type == 'osu') {
-                        osuname = user_data[message.author.id].osuname
-                    } else if (type == 'akatsuki.pw') {
-                        osuname = user_data[message.author.id].akatsukiname
-                    } else if (type == 'ripple.moe') {
-                        osuname = user_data[message.author.id].ripplename
-                    }
-                    return osuname
-                } else {
-                    return name
-                }
-            } else {
-                var id = ''
-                if (name.includes('@') == true) {
-                    var id = message.mentions.users.first().id
-                    if (user_data[id] !== undefined) {
+            try {
+                var osuname = ''
+                if (name == '') {
+                    if (user_data[message.author.id] !== undefined) {
                         if (type == 'osu') {
-                            osuname = user_data[id].osuname
+                            osuname = user_data[message.author.id].osuname
                         } else if (type == 'akatsuki.pw') {
-                            osuname = user_data[id].akatsukiname
+                            osuname = user_data[message.author.id].akatsukiname
                         } else if (type == 'ripple.moe') {
-                            osuname = user_data[id].ripplename
+                            osuname = user_data[message.author.id].ripplename
                         }
                         return osuname
                     } else {
-                        return name
+                        throw `Looks like you didn't link your profile to an osu account, do **!osuset (username)** to link your account`
                     }
                 } else {
-                    return name
+                    var id = ''
+                    if (name.includes('@') == true) {
+                        var id = message.mentions.users.first().id
+                        if (user_data[id] !== undefined) {
+                            if (type == 'osu') {
+                                osuname = user_data[id].osuname
+                            } else if (type == 'akatsuki.pw') {
+                                osuname = user_data[id].akatsukiname
+                            } else if (type == 'ripple.moe') {
+                                osuname = user_data[id].ripplename
+                            }
+                            return osuname
+                        } else {
+                            return name
+                        }
+                    } else {
+                        return name
+                    }
+            
                 }
-        
+            } catch (error) {
+                message.channel.send(String(error))
             }
         }
 
@@ -1355,47 +1364,51 @@ Use External Emojis: ${compatibility[5]}`)
         }
 
         async function get_osu_profile(name, mode, event) {
-            var user = await osuApi.getUser({u: name, m: mode, event_days: event})
-            var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
-            var user_web = await cheerio.load(web)
-            user_web = user_web("#json-user").html()
-            user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
-            user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
-            user_web = JSON.parse(user_web)
-            var playstyle = ""
-            if (user_web["playstyle"] == null) {
-                playstyle = "None?"
-            } else {
-                for (var i in user_web["playstyle"]) {
-                    playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
-                    user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
+            try {
+                var user = await osuApi.getUser({u: name, m: mode, event_days: event})
+                var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
+                var user_web = await cheerio.load(web)
+                user_web = user_web("#json-user").html()
+                user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
+                user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
+                user_web = JSON.parse(user_web)
+                var playstyle = ""
+                if (user_web["playstyle"] == null) {
+                    playstyle = "None?"
+                } else {
+                    for (var i in user_web["playstyle"]) {
+                        playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
+                        user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
+                    }
                 }
+                return {
+                    username: user.name,
+                    id: Number(user.id),
+                    count300: Number(user.counts['300']),
+                    count100: Number(user.counts['100']),
+                    count50: Number(user.counts['50']),
+                    ss: Number(user.counts.SS) + Number(user.counts.SSH),
+                    s: Number(user.counts.S) + Number(user.counts.SH),
+                    a: Number(user.counts.A),
+                    playcount: Number(user.counts.plays),
+                    rankedscore: Number(user.scores.ranked),
+                    totalscore: Number(user.scores.total),
+                    pp: Number(user.pp.raw).toFixed(2),
+                    rank: Number(user.pp.rank),
+                    countryrank: Number(user.pp.countryRank),
+                    country: user.country.toLowerCase(),
+                    level: Number(user.level),
+                    acc: Number(user.accuracy).toFixed(2),
+                    events: user.events,
+                    supporter: user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : '',
+                    statusicon: user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1',
+                    statustext: user_web["is_online"] == true ? 'Online' : 'Offline',
+                    playstyle: playstyle,
+                    bannerurl: user_web["cover_url"]
+                }  
+            } catch (error) {
+                return null
             }
-            return {
-                username: user.name,
-                id: Number(user.id),
-                count300: Number(user.counts['300']),
-                count100: Number(user.counts['100']),
-                count50: Number(user.counts['50']),
-                ss: Number(user.counts.SS) + Number(user.counts.SSH),
-                s: Number(user.counts.S) + Number(user.counts.SH),
-                a: Number(user.counts.A),
-                playcount: Number(user.counts.plays),
-                rankedscore: Number(user.scores.ranked),
-                totalscore: Number(user.scores.total),
-                pp: Number(user.pp.raw).toFixed(2),
-                rank: Number(user.pp.rank),
-                countryrank: Number(user.pp.countryRank),
-                country: user.country.toLowerCase(),
-                level: Number(user.level),
-                acc: Number(user.accuracy).toFixed(2),
-                events: user.events,
-                supporter: user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : '',
-                statusicon: user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1',
-                statustext: user_web["is_online"] == true ? 'Online' : 'Offline',
-                playstyle: playstyle,
-                bannerurl: user_web["cover_url"]
-            }  
         }
 
         async function get_osu_top(name, mode, limit, type) {
@@ -1612,6 +1625,9 @@ ${mapcompletion} ${date}
                 var modeicon = modedetail.modeicon
                 if (a_d > -1) {
                     var user = await get_osu_profile(name, mode, 30)
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
                     var best = await get_osu_top(name, mode, 50, 'best')
                     var event = ``
                     // User
@@ -1849,7 +1865,20 @@ ${user.playstyle}`, true)
                     }
                 } else if (a_g > -1) {
                     var user = await get_osu_profile(name, mode)
-                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}/osu`)
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
+                    var mode_name = ''
+                    if (mode == 0) {
+                        mode_name = 'osu'
+                    } else if (mode == 1) {
+                        mode_name = 'taiko'
+                    } else if (mode == 2) {
+                        mode_name = 'fruits'
+                    } else if (mode == 3) {
+                        mode_name = 'mania'
+                    }
+                    var web = await request.get(`https://osu.ppy.sh/users/${user.id}/${mode_name}`)
                     var user_history = await cheerio.load(web)
                     user_history = user_history("#json-rankHistory").html()
                     user_history = JSON.parse(user_history)
@@ -1959,6 +1988,9 @@ ${user.playstyle}`, true)
                     }
                 } else if (a_ts > -1 && mode == 0) {
                     var user = await get_osu_profile(name, mode, 30)
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
                     var best = await get_osu_top(name, mode, 50, 'best')
                     if (best.length < 50) {
                         throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
@@ -2047,6 +2079,9 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                     }
                 } else {
                     var user = await get_osu_profile(name, mode, 0)
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
                     var web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
                     var user_web = await cheerio.load(web)
                     user_web = user_web("#json-user").html()
@@ -2065,9 +2100,6 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                     var supporter = user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : ''
                     var statusicon = user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1'
                     var statustext = user_web["is_online"] == true ? 'Online' : 'Offline'
-                    if (user.username == undefined) {
-                        throw 'User not found!'
-                    }
                     const embed = new Discord.RichEmbed()
                     .setDescription(`
 ${modeicon} ${supporter} **Osu!${modename} status for: [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
@@ -2124,6 +2156,9 @@ ${playstyle}`, true)
                 }
                 // Get Information
                 var name = check_player(check, 'osu')
+                if (user == null) {
+                    throw 'User not found!'
+                }
                 var best = await get_osu_top(name, mode, 50, 'best')
                 if (best.length < 50) {
                     throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
@@ -2234,22 +2269,22 @@ ${playstyle}`, true)
                 if (mode == 0) {
                     skillname = `Aim:\nSpeed:\nAccuracy:`
                     skillnumber = `${aim_avg}\n${speed_avg}\n${acc_avg}`
-                    stat_number_x = 155
+                    stat_number_x = 170
                 }
                 if (mode == 1) {
                     skillname = `Speed:\nAccuracy:`
                     skillnumber = `${speed_avg}\n${acc_avg}`
-                    stat_number_x = 155
+                    stat_number_x = 170
                 }
                 if (mode == 2) {
                     skillname = `Aim:\nAccuracy:`
                     skillnumber = `${aim_avg}\n${acc_avg}`
-                    stat_number_x = 155
+                    stat_number_x = 170
                 }
                 if (mode == 3) {
                     skillname = `Finger Control:\nSpeed:\nAccuracy:`
                     skillnumber = `${finger_control_avg}\n${speed_avg}\n${acc_avg}`
-                    stat_number_x = 215
+                    stat_number_x = 230
                 }
                 var stattext = await jimp.read(text2png(skillname, {
                     color: 'white',
@@ -2348,6 +2383,9 @@ ${playstyle}`, true)
                         if (countryname == undefined) {
                             countryname = ''
                         }
+                    }
+                    if (countryname.length < 1 || countryname.length > 2) {
+                        throw `I'm pretty sure country code is only 2 letters?`
                     }
                 }
                 if (a_taiko > -1) {
@@ -2686,13 +2724,16 @@ ${playstyle}`, true)
                 var name = check_player(check, 'osu')
                 var modename = get_mode_detail(mode).modename
                 if (a_b > -1) {
+                    var user = await osuApi.getUser({u: userid})
+                    var username = user.name
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
                     var best = await get_osu_top(name, 0, 100, 'best')
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
                     }
                     var userid = best[0].userid
-                    var user = await osuApi.getUser({u: userid})
-                    var username = user.name
                     for (var i = 0; i < 100; i++) {
                         best[i].top = i+1
                     }
@@ -2724,11 +2765,14 @@ ${playstyle}`, true)
                     .setDescription(scoreoverlay)
                     message.channel.send({embed})
                 } else {
+                    var getplayer = await osuApi.getUser({u: name})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
                     var recent = await get_osu_top(name, mode, 0, 'recent')
                     if (recent.length == 0) {
                         throw 'No play found within 24 hours of this user **-Tiny**'
                     }
-                    var getplayer = await osuApi.getUser({u: name})
                     var rank = osu_ranking_letters(recent[0].letter)
                     var modandbit = osu_mods_enum(recent[0].mod, 'text')
                     var shortenmod = modandbit.shortenmod
@@ -3080,10 +3124,13 @@ ${date}
                     if (range == true && Math.abs(Number(numberrange[0]) - Number(numberrange[1])) > 4) {
                         throw 'Range limited to 5 top play'
                     }
+                    var user = await osuApi.getUser({u: name})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
+                    var username = user.name
                     var best = await get_osu_top(name, mode, Number(numberrange[1]), 'best')
                     var userid = best[0].userid
-                    var user = await osuApi.getUser({u: name})
-                    var username = user.name
                     for (var n = Number(numberrange[0]) - 1; n < Number(numberrange[1]) ; n++) {
                         var rank = osu_ranking_letters(best[n].letter)
                         var modandbit = osu_mods_enum(best[n].mod, 'text')
@@ -3141,13 +3188,16 @@ ${date}
                     message.channel.send({embed});
                     // work til here
                 } else if (a_r > -1) {
+                    var user = await osuApi.getUser({u: userid})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
+                    var username = user.name
                     var best = await get_osu_top(name, mode, 100, 'best')
                     if (best.length == 0) {
                         throw `I think ${name} didn't play anything yet~ **-Chino**`
                     }
                     var userid = best[0].userid
-                    var user = await osuApi.getUser({u: userid})
-                    var username = user.name
                     for (var i = 0; i < 100; i++) {
                         best[i].top = i+1
                     }
@@ -3244,8 +3294,11 @@ ${date}
                             break
                         }
                     }
-                    var best = await get_osu_top(name, mode, 100, 'best')
                     var user = await osuApi.getUser({u: name})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
+                    var best = await get_osu_top(name, mode, 100, 'best')
                     var checktop = 0
                     var userid = best[0].userid
                     var username = user.name
@@ -3328,8 +3381,11 @@ ${date}
                     .setDescription(top)
                     message.channel.send({embed});
                 } else if (a_g > -1) {
-                    var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var user = await osuApi.getUser({u: name})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
+                    var best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
                     var username = user.name
                     var gtpp = Number(option[option.indexOf('-g') + 1])
                     for (var i = best.length - 1; i > -1; i--) {
@@ -3343,9 +3399,12 @@ ${date}
                         }
                     }
                 } else if (a_page > -1) {
+                    var user = await osuApi.getUser({u: name})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
                     var best = await get_osu_top(name, mode, 100, 'best')
                     var userid = best[0].userid
-                    var user = await osuApi.getUser({u: name})
                     var username = user.name
                     var page = 1
                     var pages = []
@@ -3443,10 +3502,13 @@ ${date}
                     for (var i = 0; i < 100; i++) {
                         get[i].top = i+1
                     }
+                    var user = await osuApi.getUser({u: name})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
+                    var username = user.name
                     var best = get.filter(function(map) {return map.title.toLowerCase().includes(map_name) || map.creator.toLowerCase().includes(map_name) || map.diff.toLowerCase().includes(map_name) || map.source.toLowerCase().includes(map_name) || map.artist.toLowerCase().includes(map_name)})
                     var userid = best[0].userid
-                    var user = await osuApi.getUser({u: name})
-                    var username = user.name
                     var maplength = best.length > 5 ? 5 : best.length
                     for (var i = 0; i < maplength; i++) {
                         var rank = osu_ranking_letters(best[i].letter)
@@ -3504,9 +3566,12 @@ ${date}
                     .setDescription(top)
                     message.channel.send({embed});
                 } else {
+                    var user = await osuApi.getUser({u: name})
+                    if (user == null) {
+                        throw 'User not found!'
+                    }
                     var best = await get_osu_top(name, mode, 5, 'best')
                     var userid = best[0].userid
-                    var user = await osuApi.getUser({u: name})
                     var username = user.name
                     for (var i = 0; i < 5; i++) {
                         var rank = osu_ranking_letters(best[i].letter)
