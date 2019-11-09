@@ -825,10 +825,8 @@ bot.on("message", (message) => {
             .setDescription(`
 **--- Special helper ❤:**
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
-
 **--- Command idea from:**
 Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods, !c -p, !osutop -s), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design), zibi (!topglobal, !topcountry), PotatoBoy123 (!lb)
-
 **--- Tester:**
 ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
             message.channel.send({embed})
@@ -853,14 +851,9 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 --- [October 23th]:
 + Redesign osucard
 + Added other modes card
-
 --- [November 5th]:
 + Add other modes rank graph
 + Improve error handling 
-
---- [November 9th]:
-+ New acc formula
-
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later
 Also Akatsuki and Ripple can't get update yet because complication :(`)
             message.channel.send({embed})
@@ -1290,7 +1283,6 @@ Use External Emojis: ${compatibility[5]}`)
         Ripple: ripple, rippler, rippletop (-p), rippleset, rippleavatar
         Akatsuki (Standard): akatsuki, akatr, akattop (-p), akatsukiset, akatavatar
         Akatsuki (Relax): rxakatsuki, rxakatr, rxakattop (-p), akatsukiset, akatavatar, calcrxpp
-
         */
 
         var url_command = false
@@ -1411,8 +1403,8 @@ Use External Emojis: ${compatibility[5]}`)
                 }  
             } catch (error) {
                 if (error) {
-                    return null
-                }
+			return null
+		}
             }
         }
 
@@ -1694,9 +1686,8 @@ ${mapcompletion} ${date}
                             star_avg += thing.star.total
                             aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
                             speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1))
-                            old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                            var dt_multiplier = modandbit.shortenmod.includes('DT') ? 0.9 : 1
-                            acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.088 * Math.log10(thing.star.nsingles*1000000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.103 * dt_multiplier * Math.log10(thing.star.nsingles*2000000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                            old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                            acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                             bpm_avg += detail.bpm
                             cs_avg += detail.cs
                             ar_avg += detail.ar
@@ -1847,9 +1838,7 @@ ${modeicon} ${user.supporter}   **Osu!${modename} status for: [${user.username}]
 **Play Style:**
 ${user.playstyle}`, true)
                     .addField('Rank:', `<:rankingX:520932410746077184>: ${user.ss}
-
 <:rankingS:520932426449682432>: ${user.s}
-
 <:rankingA:520932311613571072>: ${user.a}`, true)
                     .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
                     .setColor(embedcolor)
@@ -2022,9 +2011,8 @@ ${user.playstyle}`, true)
                             var star_skill = thing.star.total
                             var aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
                             var speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
-                            var old_acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                            var dt_multiplier = modandbit.shortenmod.includes('DT') ? 0.9 : 1
-                            var acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.088 * Math.log10(thing.star.nsingles*1000000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.103 * dt_multiplier * Math.log10(thing.star.nsingles*2000000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                            var old_acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * 1.05) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * 1.1) + (thing.star.nsingles / 2000)) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                            var acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                             star_avg += star_skill
                             aim_avg += aim_skill
                             speed_avg += speed_skill
@@ -2118,9 +2106,7 @@ ${modeicon} ${supporter} **Osu!${modename} status for: [${user.username}](https:
 **Play Style:**
 ${playstyle}`, true)
                     .addField('Rank:', `<:rankingX:520932410746077184>: ${user.ss}
-
 <:rankingS:520932426449682432>: ${user.s}
-
 <:rankingA:520932311613571072>: ${user.a}`, true)
                     .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
                     .setColor(embedcolor)
@@ -2186,8 +2172,7 @@ ${playstyle}`, true)
                         star_avg += thing.star.total
                         aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)) * 2
                         speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)) * 2
-                        var dt_multiplier = modandbit.shortenmod.includes('DT') ? 0.9 : 1
-                        acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.088 * Math.log10(thing.star.nsingles*1000000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.103 * dt_multiplier * Math.log10(thing.star.nsingles*2000000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                        acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                     }
                     if (mode == 1) {
                         var mapinfo = await other_modes_precalc(best[i].beatmapid, 1, modandbit.bitpresent)
