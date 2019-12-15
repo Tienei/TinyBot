@@ -736,6 +736,7 @@ bot.on("message", (message) => {
                     addhelp('taikocard', '!taikocard (username)', 'Generate a taiko!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!taikocard Tienei')
                     addhelp('ctbcard', '!ctbcard (username)', 'Generate a ctb!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!ctbcard Tienei')
                     addhelp('maniacard', '!maniacard (username)', 'Generate a mania!card (Just for fun)','username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', '!maniacard Tienei')
+                    addhelp('osustatus', '!osustatus', 'Check osu current status (Information from @osustatus twitter)','None', '!osustatus')
                     addhelp('osutop', '!osutop (username) (options)', "View a player's osu!Standard top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!osutop Tienei -m HDHR')
                     addhelp('taikotop', '!taikotop (username) (options)', "View a player's osu!Taiko top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!taikotop Tienei -p 8')
                     addhelp('ctbtop', '!ctbtop (username) (options)', "View a player's osu!Catch the beat top play", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-search)`: Search for a specific play in top 100', '!ctbtop Tienei -p 9')
@@ -856,8 +857,11 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 + Improve error handling 
 --- [November 28th]:
 + Update acc formula
+--- [December 15th]:
++ Added osustatus
++ Fixed osu -rank not getting the correct player
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later
-Also Akatsuki and Ripple can't get update yet because complication :(`)
+`)
             message.channel.send({embed})
         }
         if (command == bot_prefix + 'bot') {
@@ -1824,7 +1828,9 @@ Most common mods: ${sortedmod}`)
                     var web_leaderboard = await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)
                     var leaderboard = await cheerio.load(web_leaderboard)
                     var table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
-                    var player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
+                    var player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children('a[class="ranking-page-table__user-link-text js-usercard"]').attr('href').split('/')
+                    player = player[player.length-1]
+                    console.log(player)
                     var user = await get_osu_profile(player,0 ,0)
                     if (user.username == undefined) {
                         throw 'User not found!'
@@ -2318,6 +2324,37 @@ ${playstyle}`, true)
                       name: 'card.png'
                     }]
                   })
+            } catch (error) {
+                message.channel.send(String(error))
+            }
+        }
+
+        async function osu_status() {
+            try {
+                if (cooldown[message.author.id] !== undefined && cooldown[message.author.id].indexOf(command) !== -1) {
+                    throw 'You need to wait 5 seconds before using this again!'
+                }
+                set_Command_cooldown(command, 5000)
+                var pages = []
+                var web = await request('https://twitter.com/osustatus')
+                var status = await cheerio.load(web)
+                var items = status('ol[class="stream-items js-navigable-stream"]').children()
+                // Only getting 1 item for now
+                for (var i = 0; i < 1; i++) {
+                    var content = status(items[i]).children('div').first().children('div[class="content"]')
+                    var msg = content.children('div[class="js-tweet-text-container"]').children('p').text()
+                    var time = content.children('div[class="stream-item-header"]').children('small').children('a').children('span').text()
+                    var avatar = content.children('div[class="stream-item-header"]').children('a').children('img').attr('src')
+                    var name = content.children('div[class="stream-item-header"]').children('a').children('span[class="FullNameGroup"]').children('strong').text()
+                    var at_name = content.children('div[class="stream-item-header"]').children('a').children('span[class="username u-dir u-textTruncate"]').text()
+                    pages.push({"msg": msg, "time": time, "avatar": avatar, "name": name, "at_name": at_name})
+                }
+                var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+                var embed = new Discord.RichEmbed()
+                .setThumbnail(pages[0].avatar)
+                .setColor(embedcolor)
+                .setDescription(`**${pages[0].name}** [${pages[0].at_name}](https://twitter.com/${pages[0].at_name.substring(1)}) · ${pages[0].time} (${timezone})\n\n${pages[0].msg}`)
+                var msg = message.channel.send({embed});
             } catch (error) {
                 message.channel.send(String(error))
             }
@@ -4947,6 +4984,9 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         }
         if (command == bot_prefix + 'maniacard') {
             osu_card(3)
+        }
+        if (command == bot_prefix + 'osustatus') {
+            osu_status()
         }
         if (command == bot_prefix + 'osusig') {
             osusig()
