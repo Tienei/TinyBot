@@ -1307,7 +1307,7 @@ Use External Emojis: ${compatibility[5]}`)
                         }
                         return osuname
                     } else {
-                        throw `Looks like you didn't link your profile to an osu account, do **!osuset (username)** to link your account`
+                        throw `Looks like you didn't link your profile to an osu account, do **${bot_prefix}osuset (username)** to link your account`
                     }
                 } else {
                     var id = ''
