@@ -727,6 +727,8 @@ bot.on("message", (message) => {
                     addhelp('slap', 'slap (user)', 'Slap someone', 'user: The name of the user (Discord)', 'slap Tienei')
                     addhelp('kiss', 'kiss (user)', 'Kiss someone (best not to kiss in public ;) )', 'user: The name of the user (Discord)', 'kiss Tienei')
                     addhelp('pat', 'pat (user)', 'Pat someone', 'user: The name of the user (Discord)', 'pat Tienei')
+                    addhelp('poke', 'poke (user)', 'PatPoke someone', 'user: The name of the user (Discord)', 'poke Tienei')
+                    addhelp('cry', 'cry', 'Crying.', 'None', 'cry')
                     // Osu
                     addhelp('osu', 'osu (username) (options)', 'Get an osuStandard profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nRank `(-rank)`: Get an osu!Standard profile by rank\nTop Skills `(-ts)`: Calculate player skill using bot formula', 'osu Tienei -d')
                     addhelp('taiko', 'taiko (username)', 'Get an osu!Taiko profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'taiko Tienei')
@@ -1246,7 +1248,7 @@ Use External Emojis: ${compatibility[5]}`)
                 var text = ''
                 var user_to_find = msg.substring(start)
                 var user = find_discord_user(user_to_find)
-                if (user == null || user.id == message.author.id) {
+                if ((user == null || user.id == message.author.id) || (action == undefined)) {
                     text = aloneaction
                 } else {
                     text = `<@${user.id}>, ${action} <@${message.author.id}>`
@@ -1280,6 +1282,9 @@ Use External Emojis: ${compatibility[5]}`)
         }
         if (command == bot_prefix + 'poke') {
             tenor(6, 'anime poke', 'you got a poke from', 'Poking yourself huh? Heh')
+        }
+        if (command == bot_prefix + 'cry') {
+            tenor(5, 'anime cry', undefined, 'Awww why are you crying :(')
         }
 
         /* Supported:
