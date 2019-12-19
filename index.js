@@ -866,6 +866,8 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 --- [December 15th]:
 + Added osustatus
 + Fixed osu -rank not getting the correct player
++ Fixed "undefined" prefix
+
 Note: This is an osu beta version, which mean it's still in development and new feature is coming later
 `)
             message.channel.send({embed})
@@ -922,6 +924,9 @@ Good   ${visual}   Bad`)
                 }
                 var new_prefix = msg.split(' ')[1]
                 set_Command_cooldown(command, 30000)
+                if (new_prefix == undefined) {
+                    throw "You need to specify what prefix the bot should be"
+                }
                 if (new_prefix == '!') {
                     message.channel.send('Prefix has been set back to default: !')
                     delete server_data[message.guild.id]
