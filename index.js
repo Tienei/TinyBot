@@ -729,6 +729,7 @@ bot.on("message", (message) => {
                     addhelp('pat', 'pat (user)', 'Pat someone', 'user: The name of the user (Discord)', 'pat Tienei')
                     addhelp('poke', 'poke (user)', 'PatPoke someone', 'user: The name of the user (Discord)', 'poke Tienei')
                     addhelp('cry', 'cry', 'Crying.', 'None', 'cry')
+                    addhelp('blush', 'blush', 'Blushing.', 'None', 'blush')
                     // Osu
                     addhelp('osu', 'osu (username) (options)', 'Get an osuStandard profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nRank `(-rank)`: Get an osu!Standard profile by rank\nTop Skills `(-ts)`: Calculate player skill using bot formula', 'osu Tienei -d')
                     addhelp('taiko', 'taiko (username)', 'Get an osu!Taiko profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'taiko Tienei')
@@ -752,13 +753,13 @@ bot.on("message", (message) => {
                     addhelp('osuavatar', 'osuavatar (username)', "Get player's osu! avatar", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuavatar Tienei')
                     addhelp('osusig', 'osusig (username)', "Generate a signature of a player's profile", 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osusig Tienei')
                     addhelp('map', '[map|m] (options)', 'Get details info of the map of the last play in the server', 'Mods: details info of the map with mods `(Shorten mods)`', 'm HDDT')
-                    addhelp('topglobal', 'topglobal', 'Get a list of top 50 osu!Standard player', '', '!topglobal')
+                    addhelp('topglobal', 'topglobal', 'Get a list of top 50 osu!Standard player', '', 'topglobal')
                     addhelp('topcountry', 'topcountry (country code)', 'Get a list of top 50 osu!Standard player of a country', 'country code: You can see a list right here: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes (Look at ISO 3166-1, Alpha-2 code)', 'topcountry US')
                     addhelp('calcpp', 'calcpp (map id) (mods) (acc) (combo) (miss)', "Calculate a play's pp", '**Needs all options to be calculated**', 'calcpp 1157868 nomod 100 1642 0')
                     addhelp('scores', 'scores (map link) (username)', "Get player's play on a specific map", 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'scores https://osu.ppy.sh/b/1157868 Cookiezi')
                     addhelp('acc', 'acc (300) (100) (50) (miss)', 'Accuracy calculator', '**Needs all options to be calculated**', 'acc 918 23 2 0')
                     addhelp('rec', 'rec', 'Recommend you an osu beatmap', 'None', '!rec')
-                    addhelp('leaderboard', '!leaderboard', 'Get a list of top player in the server\nNote: The player stats will only be updated if the you type **!osu** or a specific player **!osu (player name)** only if they in the server', 'None', 'leaderboard')
+                    addhelp('leaderboard', 'leaderboard', 'Get a list of top player in the server\nNote: The player stats will only be updated if the you type **!osu** or a specific player **!osu (player name)** only if they in the server', 'None', 'leaderboard')
                     // Akatsuki
                     addhelp('akatsuki', 'akatsuki (username) (options)', 'Get an Akatuski Standard profile', 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`', 'akatsuki Tienei -d')
                     addhelp('akatr', 'akatr (username)', "Get player's most recent play", 'username: Akatsuki username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'akatr Tienei')
@@ -780,7 +781,7 @@ bot.on("message", (message) => {
                     addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')
                 }
                 var generalhelp = '**--- [General]:**\n`avatar` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix`'
-                var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat`'
+                var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat` `poke` `blush`'
                 var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `map` `osuset` `osuavatar` `osusig` `recent` `compare` `calcpp` `scores` `acc` `rec` `topglobal` `topcountry` `leaderboard` `osucard`'
                 var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatr` `akatavatar` `akattop` `rxakatsuki` `rxakatr` `rxakattop`'
                 var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippler` `rippleavatar` `rippletop`'
@@ -1275,7 +1276,7 @@ Use External Emojis: ${compatibility[5]}`)
             tenor(6, 'anime slap', 'you got a slap from', 'Are you trying to slap yourself?')
         }
         if (command == bot_prefix + 'kiss') {
-            tenor(6, 'anime kiss', 'you got a kiss from', 'Are you trying to wkiss yourself?')
+            tenor(6, 'anime kiss', 'you got a kiss from', 'Are you trying to kiss yourself?')
         }
         if (command == bot_prefix + 'pat') {
             tenor(5, 'anime pat', 'you got a pat from', 'Pat pat')
@@ -1285,6 +1286,9 @@ Use External Emojis: ${compatibility[5]}`)
         }
         if (command == bot_prefix + 'cry') {
             tenor(5, 'anime cry', undefined, 'Awww why are you crying :(')
+        }
+        if (command == bot_prefix + 'blush') {
+            tenor(5, 'anime blush', undefined, `<@${message.author.id}> w-why are u blushing`)
         }
 
         /* Supported:
