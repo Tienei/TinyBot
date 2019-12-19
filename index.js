@@ -1290,6 +1290,9 @@ Use External Emojis: ${compatibility[5]}`)
         if (command == bot_prefix + 'blush') {
             tenor(7, 'anime blush', undefined, `<@${message.author.id}> w-why are u blushing`)
         }
+	if (command == bot_prefix + 'pout') {
+            tenor(6, 'anime pout', 'you got a pout from', `Poutu Poutu`)
+        }
 
         /* Supported:
         
