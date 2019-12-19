@@ -1288,7 +1288,7 @@ Use External Emojis: ${compatibility[5]}`)
             tenor(5, 'anime cry', undefined, 'Awww why are you crying :(')
         }
         if (command == bot_prefix + 'blush') {
-            tenor(5, 'anime blush', undefined, `<@${message.author.id}> w-why are u blushing`)
+            tenor(7, 'anime blush', undefined, `<@${message.author.id}> w-why are u blushing`)
         }
 
         /* Supported:
