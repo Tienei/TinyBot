@@ -2234,15 +2234,15 @@ ${playstyle}`, true)
                 msg1.edit('Processing Image...')
                 var card = ''
                 if (mode == 0 || mode == 1 || mode == 2 || mode == 3) {
-                    if (acc_avg >= 0 && acc_avg < 3) {
+                    if (acc_avg >= 0 && acc_avg < 300) {
                         card = await jimp.read('./osu_card/common_osu.png')
-                    } else if (acc_avg >= 3 && acc_avg < 5) {
+                    } else if (acc_avg >= 300 && acc_avg < 500) {
                         card = await jimp.read('./osu_card/rare_osu.png')
-                    } else if (acc_avg >= 5 && acc_avg < 6.5) {
+                    } else if (acc_avg >= 500 && acc_avg < 650) {
                         card = await jimp.read('./osu_card/elite_osu.png')
-                    } else if (acc_avg >= 6.5 && acc_avg < 7.5) {
+                    } else if (acc_avg >= 650 && acc_avg < 750) {
                         card = await jimp.read('./osu_card/super_rare_osu.png')
-                    } else if (acc_avg >= 7.5) {
+                    } else if (acc_avg >= 750) {
                         card = await jimp.read('./osu_card/ultra_rare_osu.png')
                     }
                 }
