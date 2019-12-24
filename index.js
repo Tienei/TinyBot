@@ -642,6 +642,9 @@ bot.on("guildMemberAdd", (member) => {
 })
 
 bot.on("message", (message) => {
+    if (message.author.id == 614647460245012511) {
+	return;
+    }
     if (message.author.bot == false && loading == 0){
         var msg = message.content.toLowerCase();
         refresh = Math.round(Math.random()* 2147483648)
