@@ -93,10 +93,10 @@ function osu_mods_enum(mod, type) {
     if (type == 'text') {
         for (var i = 0; i < mod.length; i++) {
             if (shortenmod.includes('DT') == true && textmods[mod[i]] == 'NC') {
-                shortenmod = shortenmod.substring(0,shortenmod.length - 2)
+                shortenmod = shortenmod.replace('DT', '')
             }
             if (shortenmod.includes('SD') == true && textmods[mod[i]] == 'PF') {
-                shortenmod = shortenmod.substring(0,shortenmod.length - 2)
+                shortenmod = shortenmod.replace('SD', '')
             }
             if (textmods[mod[i]]) {
                 shortenmod += textmods[mod[i]];
