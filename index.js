@@ -4295,8 +4295,8 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
 
         async function osutrack() {
             try {
-                if (message.member.hasPermission("ADMINISTRATOR") == false) {
-                    throw 'You need to have administrator to set osutrack'
+                if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
+                    throw 'You need to have `Manage Channels` permission to set osutrack'
                 }
                 var osuname = message.content.substring(10)
                 var detected = false
@@ -4344,8 +4344,8 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
 
         async function untrack() {
             try {
-                if (message.member.hasPermission("ADMINISTRATOR") == false) {
-                    throw 'You need to have administrator to set untrack'
+                if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
+                    throw 'You need to have `Manage Channels` permission to untrack'
                 }
                 for (var i = 0; i < osu_track.length; i++) {
                     if (osu_track[i].osuname == message.content.substring(9)) {
