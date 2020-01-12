@@ -5129,30 +5129,14 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         // Bot Owner commands
 
         if (command == bot_prefix + 'respond' && message.author.id == "292523841811513348") {
-            var msgoption = message.content.split('"')
-            var channelid = msgoption[2].split(" ")[1]
-            var type = msgoption[2].split(" ")[2]
-            var statuscode = msgoption[2].split(" ")[3]
-            var defindcode = {
-                'e0': 'Fixed',
-                'e1': 'Currently being fixed',
-                'e2': 'Unfixable',
-                'spam': 'Spam',
-                's0': 'Approved',
-                's1': 'Disapproved'
-            }
-            if (type == "error") {
-                const embed = new Discord.RichEmbed()
-                .setAuthor(`${message.author.username} respond`, message.author.avatarURL)
-                .setColor(embedcolor)
-                .setDescription(`
-Error: ${msgoption[1]}
-Status: **${defindcode[statuscode]}**`)
-                bot.channels.get(channelid).send({embed})
-            }
-            if (type == "suggest") {
-                bot.channels.get(channelid).send(`Suggestion **"${msgoption[1]}"** has been **${defindcode[statuscode]}**`)
-            }
+            var channelid = msg.split(" ")[1]
+            var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
+            const embed = new Discord.RichEmbed()
+            .setAuthor(`${message.author.username} responded`, message.author.avatarURL)
+            .setColor(embedcolor)
+            .setDescription(msg_send)
+            bot.channels.get(channelid).send({embed})
+            var msg1 = message.channel.send('Message has been sent')
         }
         if (command == bot_prefix + 'say' && message.author.id == "292523841811513348") {
             var option = msg.split(" ")
