@@ -17,7 +17,7 @@
     "jimp": "^0.9.3",
     "mongojs": "^3.1.0",
     "node-chartist": "^1.0.5",
-    "node-osu": "github:tienei/node-osu",
+    "node-osu": "^2.2.0",
     "ojsama": "^1.2.5",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
