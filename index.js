@@ -5174,7 +5174,6 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
                     message.delete(0)
                 }
             }
-        }
     }
 })
 
