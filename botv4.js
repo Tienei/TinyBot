@@ -206,11 +206,6 @@ bot.on("message", async (message) => {
             server_data = cmds.general.prefix(message, server_data)
             db.server_data.findAndModify({query: {}, update: server_data}, function(){})
         }
-        if (command == bot_prefix + 'command' && message.guild !== null) {
-            server_data = cmds.general.server_command(message, server_data)
-            db.server_data.findAndModify({query: {}, update: server_data}, function(){})
-        }
-
         if (command == bot_prefix + 'report' && message.guild !== null) {
             cmds.general.report(message)
         }
