@@ -2,3 +2,4 @@ node_modules
 local-testing
 unused-code
 .env
+package-lock.json
