@@ -1333,13 +1333,13 @@ async function recent(message = new Message()) {
 
 async function compare(message = new Message()) {
     try {
-        if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
-            throw 'You need to wait 3 seconds before using this again!'
-        }
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
         let command = msg.split(' ')[0]
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
+        if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
+            throw 'You need to wait 3 seconds before using this again!'
+        }
         fx.general.cmd_cooldown.set(message, command, 3000)
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-p", "v_count": 1}])
         let name = fx.osu.check_player(user_data, message, suffix.check, 'osu')
@@ -1595,7 +1595,6 @@ async function osuset(message = new Message(), type) {
 }
 
 async function map(message = new Message()){
-    try {
         let msg = message.content.toLowerCase();
         let command = msg.split(' ')[0]
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
@@ -1645,7 +1644,7 @@ async function map(message = new Message()){
             let scores = await fx.osu.get_osu_scores(undefined, mode, beatmapid, 50)
             let beatmap = await fx.osu.get_osu_beatmap(beatmapid)
             if (mode == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
-            cache_beatmap_ID(message, scores[i].beatmapid, modename)
+            cache_beatmap_ID(message, scores[0].beatmapid, modename)
             let loadpage = async function (page, pages) {
                 let gathering = ''
                 for (var n = 0; n < 5; n++) {
@@ -1764,9 +1763,7 @@ ${mapdetail}
             .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`)
             message.channel.send({embed});
         }
-    } catch (error) {
-        message.channel.send(String(error))
-    }
+    
 }
 
 async function beatmapfiledetail(message = new Message()) {
