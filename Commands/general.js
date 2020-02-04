@@ -336,7 +336,6 @@ module.exports = {
     changelog,
     bot_info,
     prefix,
-    server_command,
     report,
     suggestion,
     checkcomp
