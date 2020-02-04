@@ -25,7 +25,6 @@ function help(message = new Message()) {
             addhelp('bot', 'bot', 'Get invitation of the bot', 'None', 'bot')
             addhelp('checkcomp', 'checkcomp', 'Check the compatibility of the bot to the server permissions', 'None', 'checkcomp')
             addhelp('prefix', 'prefix (prefix)', 'Change the prefix for the entire server', 'prefix: The prefix you wanted', 'prefix >')
-            addhelp('command', 'command (action) (command_category)', 'Disable/Enable/List a list of commands', '`action`: enable, disable, list\n`command_category`: custom_cmd, fun, osu', 'prefix >')
             addhelp('ee', 'ee', 'View how many easter eggs you have', 'None', 'ee')
             addhelp('customcmd', 'customcmd (action) (command)', 'Set a custom commands (Required Administration)', 'action: ``add`` ``list`` ``remove``\ncommand: Set a command you liked (do ``!help definedvar`` for more information)', 'customcmd add !hi Hello $0 and welcome to {server.name}')
             addhelp('hug', 'hug (user)', 'Hug someone', 'user: The name of the user (Discord)', 'hug Tienei')
@@ -80,7 +79,7 @@ function help(message = new Message()) {
             addhelp('definevar', 'Defined Variable for Custom command', 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence`` channel: ``selfname`` ``selflink`` ``members`` server: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``', '{require:admin}: Need Administrator to enable the command {$N}: Get text in message seperated by space (Not include command) {send:channelname "message"}: Send to a channel with a specific message', 'do ``!help customcmd``')
             addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')
         }
-        var generalhelp = '**--- [General]:**\n`avatar` `credit` `command` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `checkbot`'
+        var generalhelp = '**--- [General]:**\n`avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `checkbot`'
         var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
         var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
         var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatsukiset` `akatavatar` `akattop` `rxakatsuki` `rxakattop`'
@@ -174,7 +173,6 @@ Added osutop -a, akattop -r, rippletop -r
 Added compare -p
 Added map -l
 Added approval status for beatmap
-Added commands disabling
 Added legendary osucard`, `Moved akatr, rxakatr, rippler to recent (-akat, -rxakat, -ripple)
 Removed akatsuki -d, !ripple -d (for now)
 Removed osusig
@@ -232,45 +230,16 @@ function prefix(message = new Message(), server_data) {
             message.channel.send('Prefix has been set back to default: !')
             delete server_data[message.guild.id]
         } else {
-            server_data[message.guild.id].prefix = new_prefix
+            if (server_data[message.guild.id] == undefined) {
+                server_data[message.guild.id] = {}
+                server_data[message.guild.id].prefix = new_prefix
+            } else {
+                server_data[message.guild.id].prefix = new_prefix
+            }
             message.channel.send(`Prefix has been set to: ${new_prefix}`)
         }
         if (Object.keys(server_data).length < 1) {
             server_data['a'] = 'a'
-        }
-        return server_data
-    } catch (error) {
-        message.channel.send(String(error))
-    }
-}
-
-function server_command (message = new Message(), server_data) {
-    try {
-        let msg = message.content.toLowerCase();
-        let command = msg.split(' ')[0]
-        let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-        if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
-            throw 'You need to have `MANAGE_CHANNELS` permission to set prefix'
-        }
-        if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
-            throw 'You need to wait 3 seconds before using this again!'
-        }
-        fx.general.cmd_cooldown.set(message, command, 3000)
-        let option = msg.split(' ')
-        if (option[1] == 'disable') {
-            server_data[message.guild.id].command[option[2]] = false
-            message.channel.send(`${option[2]} commands has disabled`)
-        } else if (option[1] == 'enable') {
-            server_data[message.guild.id].command[option[2]] = true
-            message.channel.send(`${option[2]} commands has enabled`)
-        } else if (option[1] == 'list') {
-            const embed = new RichEmbed()
-            .setAuthor(`List of disable/enable commands in ${message.guild.name}`, message.guild.iconURL)
-            .setColor(embedcolor)
-            .setDescription(`\`custom_cmd\`: ${server_data[message.guild.id].command.custom_cmd}
-\`fun\`: ${server_data[message.guild.id].command.fun}
-\`osu\`: ${server_data[message.guild.id].command.osu}`)
-            message.channel.send({embed})
         }
         return server_data
     } catch (error) {

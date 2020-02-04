@@ -1833,7 +1833,7 @@ async function beatmaplinkdetail(message = new Message()) {
         let mode = 0
         //Detect if this a command or link
         let option = msg.split(" ")
-        if (option[0].substr(m,21) !== 'https://osu.ppy.sh/b/' || option[0].substr(m,31) == 'https://osu.ppy.sh/beatmapsets/') return;
+        if (option[0].substr(m,21) !== 'https://osu.ppy.sh/b/' && option[0].substr(m,31) !== 'https://osu.ppy.sh/beatmapsets/') return;
         for (var m = 0; m < msg.length; m++) {
             if (msg.substr(m,21) == 'https://osu.ppy.sh/b/') {
                 let data = msg.split("/")[4]
@@ -2084,6 +2084,7 @@ async function serverleaderboard(message = new Message()) {
 }
 
 function acccalc() {
+    let msg = message.content.toLowerCase();
     let option = msg.split(" ")
     let count300 = Number(option[1])
     let count100 = Number(option[2])

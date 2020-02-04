@@ -178,21 +178,8 @@ bot.on("message", async (message) => {
 
         var bot_prefix = config.bot_default_prefix
 
-        if (message.guild !== null) {
-            if (server_data[message.guild.id] == undefined) {
-                server_data[message.guild.id] = {"command": {"custom_cmd": true, "fun": true, "osu": true}}
-                server_data[message.guild.id].prefix = "!"
-                db.server_data.findAndModify({query: {}, update: server_data}, function(){})
-            } else {
-                if (server_data[message.guild.id].command == undefined) {
-                    server_data[message.guild.id].command = {"custom_cmd": true, "fun": true, "osu": true}
-                    db.server_data.findAndModify({query: {}, update: server_data}, function(){})
-                }
-                if (server_data[message.guild.id].prefix == undefined) {
-                    server_data[message.guild.id].prefix == "!"
-                    db.server_data.findAndModify({query: {}, update: server_data}, function(){})
-                }
-            }
+        if (message.guild !== null && server_data[message.guild.id] !== undefined) {
+            bot_prefix = server_data[message.guild.id].prefix
         }
 
         // General related
@@ -256,18 +243,16 @@ bot.on("message", async (message) => {
 
         // Custom commands
 
-        if (message.guild == null || (message.guild !== null && server_data[message.guild.id].command.custom_cmd == true)) {
-            if (command == bot_prefix + 'customcmd' && message.guild !== null) {
-                custom_command = cmds.custom_cmd.custom_cmd(message, custom_command)
-                db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
-            }
-    
-            if (message.guild !== null) {
-                if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
-                    cmds.custom_cmd.cmd_detection(message, custom_command)
-                }
-            }   
+        if (command == bot_prefix + 'customcmd' && message.guild !== null) {
+            custom_command = cmds.custom_cmd.custom_cmd(message, custom_command)
+            db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
         }
+
+        if (message.guild !== null) {
+            if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
+                cmds.custom_cmd.cmd_detection(message, custom_command)
+            }
+        }   
 
         // Easter Egg
 
@@ -287,37 +272,35 @@ bot.on("message", async (message) => {
 
         // Fun related
 
-        if (message.guild == null || (message.guild !== null && server_data[message.guild.id].command.fun == true)) {
-            if (command == bot_prefix + 'hug') {
-                cmds.fun.tenor(message, 5, 'anime hug', 'you got a hug from', 'Sorry to see you alone...')
-            }
-            if (command == bot_prefix + 'cuddle') {
-                cmds.fun.tenor(message, 8, 'anime cuddle', 'you got a cuddle from', 'Sorry to see you alone...')
-            }
-            if (command == bot_prefix + 'slap') {
-                cmds.fun.tenor(message, 6, 'anime slap', 'you got a slap from', 'Are you trying to slap yourself?')
-            }
-            if (command == bot_prefix + 'kiss') {
-                cmds.fun.tenor(message, 6, 'anime kiss', 'you got a kiss from', 'Are you trying to kiss yourself?')
-            }
-            if (command == bot_prefix + 'pat') {
-                cmds.fun.tenor(message, 5, 'anime pat', 'you got a pat from', 'Pat pat')
-            }
-            if (command == bot_prefix + 'poke') {
-                cmds.fun.tenor(message, 6, 'anime poke', 'you got a poke from', 'Poking yourself huh? Heh')
-            }
-            if (command == bot_prefix + 'cry') {
-                cmds.fun.tenor(message, 5, 'anime cry', undefined, 'Awww why are you crying :(')
-            }
-            if (command == bot_prefix + 'blush') {
-                cmds.fun.tenor(message, 7, 'anime blush', undefined, `<@${message.author.id}> w-why are u blushing`)
-            }
-            if (command == bot_prefix + 'pout') {
-                cmds.fun.tenor(message, 6, 'anime pout', 'you got a pout from', `Poutu Poutu`)
-            }
-            if (command == bot_prefix + 'trivia') {
-                cmds.fun.trivia(message)
-            }
+        if (command == bot_prefix + 'hug') {
+            cmds.fun.tenor(message, 5, 'anime hug', 'you got a hug from', 'Sorry to see you alone...')
+        }
+        if (command == bot_prefix + 'cuddle') {
+            cmds.fun.tenor(message, 8, 'anime cuddle', 'you got a cuddle from', 'Sorry to see you alone...')
+        }
+        if (command == bot_prefix + 'slap') {
+            cmds.fun.tenor(message, 6, 'anime slap', 'you got a slap from', 'Are you trying to slap yourself?')
+        }
+        if (command == bot_prefix + 'kiss') {
+            cmds.fun.tenor(message, 6, 'anime kiss', 'you got a kiss from', 'Are you trying to kiss yourself?')
+        }
+        if (command == bot_prefix + 'pat') {
+            cmds.fun.tenor(message, 5, 'anime pat', 'you got a pat from', 'Pat pat')
+        }
+        if (command == bot_prefix + 'poke') {
+            cmds.fun.tenor(message, 6, 'anime poke', 'you got a poke from', 'Poking yourself huh? Heh')
+        }
+        if (command == bot_prefix + 'cry') {
+            cmds.fun.tenor(message, 5, 'anime cry', undefined, 'Awww why are you crying :(')
+        }
+        if (command == bot_prefix + 'blush') {
+            cmds.fun.tenor(message, 7, 'anime blush', undefined, `<@${message.author.id}> w-why are u blushing`)
+        }
+        if (command == bot_prefix + 'pout') {
+            cmds.fun.tenor(message, 6, 'anime pout', 'you got a pout from', `Poutu Poutu`)
+        }
+        if (command == bot_prefix + 'trivia') {
+            cmds.fun.trivia(message)
         }
 
         /* Supported:   
@@ -418,130 +401,128 @@ bot.on("message", async (message) => {
         }
 
         // Osu
-        if (message.guild == null || (message.guild !== null && server_data[message.guild.id].command.osu == true)) {
-            if (command == bot_prefix + 'osu') {
-                cmds.osu.osu(message, 0)
-            }
-            if (command == bot_prefix + 'taiko') {
-                cmds.osu.osu(message, 1)
-            }
-            if (command == bot_prefix + 'ctb') {
-                cmds.osu.osu(message, 2)
-            }
-            if (command == bot_prefix + 'mania') {
-                cmds.osu.osu(message, 3)
-            }
-            if (command == bot_prefix + 'osucard') {
-                cmds.osu.osu_card(message, 0)
-            }
-            if (command == bot_prefix + 'taikocard') {
-                cmds.osu.osu_card(message, 1)
-            }
-            if (command == bot_prefix + 'ctbcard') {
-                cmds.osu.osu_card(message, 2)
-            }
-            if (command == bot_prefix + 'maniacard') {
-                cmds.osu.osu_card(message, 3)
-            }
-            if (command == bot_prefix + 'osuavatar') {
-                cmds.osu.osuavatar(0)
-            }
-            if (command == bot_prefix + 'topglobal') {
-                cmds.osu.topleaderboard(message, 'global')
-            }
-            if (command == bot_prefix + 'topcountry') {
-                cmds.osu.topleaderboard(message, 'country')
-            }
-            if (command == bot_prefix + 'lb' || command == bot_prefix + 'leaderboard') {
-                cmds.osu.serverleaderboard(message)
-            }
-            if (command == bot_prefix + 'recent' || command == bot_prefix + 'r') {
-                cmds.osu.recent(message)
-            }
-            if (command == bot_prefix + 'compare' || command == bot_prefix + 'c') {
-                cmds.osu.compare(message)
-            }
-            if (command == bot_prefix + 'osutop') {
-                cmds.osu.osutop(message, 0)
-            }
-            if (command == bot_prefix + 'taikotop') {
-                cmds.osu.osutop(message, 1)
-            }
-            if (command == bot_prefix + 'ctbtop') {
-                cmds.osu.osutop(message, 2)
-            }
-            if (command == bot_prefix + 'maniatop') {
-                cmds.osu.osutop(message, 3)
-            }
-            if (command == bot_prefix + 'map' || command == bot_prefix + 'm') {
-                cmds.osu.map(message)
-            }
-            if (command == bot_prefix + 'scores') {
-                cmds.osu.score(message)
-            }
-            if (command == bot_prefix + 'osuset') {
-                cmds.osu.osuset('Osu')
-            }
-            if (command == bot_prefix + 'acc') {
-                cmds.osu.acccalc()
-            }
-            if (command == bot_prefix + 'osutrack') {
-                osutrack()            
-            }
-            if (command == bot_prefix + 'osutracklist') {
-                osutracklist()            
-            }
-            if (command == bot_prefix + 'untrack') {
-                untrack()
-            }
+        if (command == bot_prefix + 'osu') {
+            cmds.osu.osu(message, 0)
+        }
+        if (command == bot_prefix + 'taiko') {
+            cmds.osu.osu(message, 1)
+        }
+        if (command == bot_prefix + 'ctb') {
+            cmds.osu.osu(message, 2)
+        }
+        if (command == bot_prefix + 'mania') {
+            cmds.osu.osu(message, 3)
+        }
+        if (command == bot_prefix + 'osucard') {
+            cmds.osu.osu_card(message, 0)
+        }
+        if (command == bot_prefix + 'taikocard') {
+            cmds.osu.osu_card(message, 1)
+        }
+        if (command == bot_prefix + 'ctbcard') {
+            cmds.osu.osu_card(message, 2)
+        }
+        if (command == bot_prefix + 'maniacard') {
+            cmds.osu.osu_card(message, 3)
+        }
+        if (command == bot_prefix + 'osuavatar') {
+            cmds.osu.osuavatar(0)
+        }
+        if (command == bot_prefix + 'topglobal') {
+            cmds.osu.topleaderboard(message, 'global')
+        }
+        if (command == bot_prefix + 'topcountry') {
+            cmds.osu.topleaderboard(message, 'country')
+        }
+        if (command == bot_prefix + 'lb' || command == bot_prefix + 'leaderboard') {
+            cmds.osu.serverleaderboard(message)
+        }
+        if (command == bot_prefix + 'recent' || command == bot_prefix + 'r') {
+            cmds.osu.recent(message)
+        }
+        if (command == bot_prefix + 'compare' || command == bot_prefix + 'c') {
+            cmds.osu.compare(message)
+        }
+        if (command == bot_prefix + 'osutop') {
+            cmds.osu.osutop(message, 0)
+        }
+        if (command == bot_prefix + 'taikotop') {
+            cmds.osu.osutop(message, 1)
+        }
+        if (command == bot_prefix + 'ctbtop') {
+            cmds.osu.osutop(message, 2)
+        }
+        if (command == bot_prefix + 'maniatop') {
+            cmds.osu.osutop(message, 3)
+        }
+        if (command == bot_prefix + 'map' || command == bot_prefix + 'm') {
+            cmds.osu.map(message)
+        }
+        if (command == bot_prefix + 'scores') {
+            cmds.osu.score(message)
+        }
+        if (command == bot_prefix + 'osuset') {
+            cmds.osu.osuset('Osu')
+        }
+        if (command == bot_prefix + 'acc') {
+            cmds.osu.acccalc()
+        }
+        if (command == bot_prefix + 'osutrack') {
+            osutrack()            
+        }
+        if (command == bot_prefix + 'osutracklist') {
+            osutracklist()            
+        }
+        if (command == bot_prefix + 'untrack') {
+            untrack()
+        }
 
-            // Akatuski
+        // Akatuski
 
-            if (command == bot_prefix + 'akatsuki') {
-                cmds.osu.osu(message, 8)
-            }
-            if (command == bot_prefix + 'akatavatar') {
-                cmds.osu.osuavatar(8)
-            }
-            if (command == bot_prefix + 'akattop') {
-                cmds.osu.osutop(message, 8)
-            }
-            if (command == bot_prefix + 'akatsukiset') {
-                cmds.osu.osuset(message, 'Akatsuki')
-            }
-            if (command == bot_prefix + 'rxakatsuki') {
-                cmds.osu.osu(message, 12)
-            }
-            if (command == bot_prefix + 'rxakattop') {
-                cmds.osu.osutop(message, 12)
-            }
+        if (command == bot_prefix + 'akatsuki') {
+            cmds.osu.osu(message, 8)
+        }
+        if (command == bot_prefix + 'akatavatar') {
+            cmds.osu.osuavatar(8)
+        }
+        if (command == bot_prefix + 'akattop') {
+            cmds.osu.osutop(message, 8)
+        }
+        if (command == bot_prefix + 'akatsukiset') {
+            cmds.osu.osuset(message, 'Akatsuki')
+        }
+        if (command == bot_prefix + 'rxakatsuki') {
+            cmds.osu.osu(message, 12)
+        }
+        if (command == bot_prefix + 'rxakattop') {
+            cmds.osu.osutop(message, 12)
+        }
 
-            // Ripple
+        // Ripple
 
-            if (command == bot_prefix + 'ripple') {
-                cmds.osu.osu(message, 4)
-            }
-            if (command == bot_prefix + 'rippleavatar') {
-                cmds.osu.osuavatar(4)
-            }
-            if (command == bot_prefix + 'rippletop') {
-                cmds.osu.osutop(message, 4)
-            }
-            if (command == bot_prefix + 'rippleset') {
-                cmds.osu.osuset(message, 'Ripple')
-            }
+        if (command == bot_prefix + 'ripple') {
+            cmds.osu.osu(message, 4)
+        }
+        if (command == bot_prefix + 'rippleavatar') {
+            cmds.osu.osuavatar(4)
+        }
+        if (command == bot_prefix + 'rippletop') {
+            cmds.osu.osutop(message, 4)
+        }
+        if (command == bot_prefix + 'rippleset') {
+            cmds.osu.osuset(message, 'Ripple')
+        }
 
-            // Detection
-            // Beatmap Detection
-            if (msg.includes("https://osu.ppy.sh/beatmapsets/") || msg.includes("https://osu.ppy.sh/b/")) {
-                cmds.osu.beatmaplinkdetail(message)
-            }
-            // .osu Detection
-            if (message.attachments.array().length > 0) {
-                var file = message.attachments.first()
-                if (file.filename.substring(file.filename.length - 4, file.filename.length) == ".osu") {
-                    cmds.osu.beatmapfiledetail(message)           
-                }
+        // Detection
+        // Beatmap Detection
+        if (msg.includes("https://osu.ppy.sh/beatmapsets/") || msg.includes("https://osu.ppy.sh/b/")) {
+            cmds.osu.beatmaplinkdetail(message)
+        }
+        // .osu Detection
+        if (message.attachments.array().length > 0) {
+            var file = message.attachments.first()
+            if (file.filename.substring(file.filename.length - 4, file.filename.length) == ".osu") {
+                cmds.osu.beatmapfiledetail(message)           
             }
         }
         // Bot Owner commands
