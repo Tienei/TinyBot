@@ -644,11 +644,11 @@ async function osu_card(message = new Message(), mode) {
             throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
         }
         let msg1 = await message.channel.send('Calculating skills...') 
-        let star_avg = 0
-        let aim_avg = 0
-        let speed_avg = 0
-        let finger_control_avg = 0
-        let acc_avg = 0
+        var star_avg = 0
+        var aim_avg = 0
+        var speed_avg = 0
+        var finger_control_avg = 0
+        var acc_avg = 0
         for (var i = 0; i < 50; i++) {
             let modandbit = fx.osu.mods_enum(best[i].mod)
             if (mode == 0) {
@@ -716,34 +716,36 @@ async function osu_card(message = new Message(), mode) {
                     break
                 }
             }
-            if (user.id == 124493) { // Cokiezi
-                aim_avg *= 1.05
-                speed_avg *= 1.075
-                acc_avg *= 1.075
-            } else if (user.id == 39828) { // WWW
-                aim_avg *= 1.075
-                speed_avg *= 1.025
-                acc_avg *= 1.05
-            } else if (user.id == 50265) { // hvick
-                aim_avg *= 1.05
-                speed_avg *= 1.05
-                acc_avg *= 1.075
-            } else if (user.id == 2558286) { // Rafis
-                aim_avg *= 1.05
-                speed_avg *= 1.05
-                acc_avg *= 1.025
-            } else if (user.id == 5339515) { // Mathi
-                aim_avg *= 1.05
-                speed_avg *= 1.05
-                acc_avg *= 1.025
-            } else if (user.id == 4650315) { // idke
-                aim_avg *= 1.05
-                speed_avg *= 1.05
-                acc_avg *= 1.075
+            if (special == true) {
+                if (user.id == 124493) { // Cokiezi
+                    aim_avg *= 1.05
+                    speed_avg *= 1.075
+                    acc_avg *= 1.075
+                } else if (user.id == 39828) { // WWW
+                    aim_avg *= 1.075
+                    speed_avg *= 1.025
+                    acc_avg *= 1.05
+                } else if (user.id == 50265) { // hvick
+                    aim_avg *= 1.05
+                    speed_avg *= 1.05
+                    acc_avg *= 1.075
+                } else if (user.id == 2558286) { // Rafis
+                    aim_avg *= 1.05
+                    speed_avg *= 1.05
+                    acc_avg *= 1.025
+                } else if (user.id == 5339515) { // Mathi
+                    aim_avg *= 1.05
+                    speed_avg *= 1.05
+                    acc_avg *= 1.025
+                } else if (user.id == 4650315) { // idke
+                    aim_avg *= 1.05
+                    speed_avg *= 1.05
+                    acc_avg *= 1.075
+                }
+                aim_avg = aim_avg.toFixed(0)
+                speed_avg = speed_avg.toFixed(0)
+                acc_avg = acc_avg.toFixed(0)
             }
-            aim_avg = aim_avg.toFixed(0)
-            speed_avg = speed_avg.toFixed(0)
-            acc_avg = acc_avg.toFixed(0)
         }
         
         let pfp = await jimp.read(`http://a.ppy.sh/${user.id}?.png?date=${refresh}`)
@@ -1501,7 +1503,7 @@ async function score(message = new Message()) {
         let modename = fx.osu.get_mode_detail(mode).modename
         let parser = ''
         if (mode == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
-        cache_beatmap_ID(message, scores[0].beatmapid, modename)
+        cache_beatmap_ID(message, beatmap.beatmapid, modename)
         for (var i = 0; i < scores.length; i++) {
             let rank = fx.osu.ranking_letter(scores[i].letter)
             let modandbit = fx.osu.mods_enum(scores[i].mod)
