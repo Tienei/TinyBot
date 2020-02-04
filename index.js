@@ -5128,29 +5128,51 @@ With **${mods[0].toUpperCase()}**, **${acc}%** accuracy, **${combo}x** combo and
         }
         // Bot Owner commands
 
-        if (command == bot_prefix + 'respond' && message.author.id == "292523841811513348") {
-            var channelid = msg.split(" ")[1]
-            var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
-            const embed = new Discord.RichEmbed()
-            .setAuthor(`${message.author.username} responded`, message.author.avatarURL)
-            .setColor(embedcolor)
-            .setDescription(msg_send)
-            bot.channels.get(channelid).send({embed})
-            var msg1 = message.channel.send('Message has been sent')
-        }
-        if (command == bot_prefix + 'say' && message.author.id == "292523841811513348") {
-            var option = msg.split(" ")
-            var msg_quote = message.content.split('"')
-            if (option[1] == 'text') {
-                message.channel.send(msg_quote[1])
-                message.delete(0)
-            } else if (option[1] == 'embed') {
+        if (message.author.id == "292523841811513348") {
+            if (command == bot_prefix + 'announce') {
+                try {
+                    let guilds = bot.guilds.array()
+                    let msg_send = message.content.substring(9)
+                    for (var i in guilds) {
+                        let channels = guilds[i].channels.array().reverse()
+                        let osu_filter = (c) => c.name.toLowerCase().substring(0,3) == 'osu' && c.guild.me.permissionsIn(c).has(['VIEW_CHANNEL', 'SEND_MESSAGES']) && c.type == 'text'
+                        let bot_cmd_filter = (c) => c.name.toLowerCase().substring(0,3) == 'bot' && c.guild.me.permissionsIn(c).has(['VIEW_CHANNEL', 'SEND_MESSAGES']) && c.type == 'text'
+                        let channel_to_send = undefined
+                        channel_to_send = channels.find(osu_filter)
+                        if (channel_to_send == undefined) channel_to_send = channels.find(bot_cmd_filter)
+                        if (channel_to_send !== undefined) {
+                            channel_to_send.send(msg_send)
+                        }
+                    }
+                } catch (error) {
+                    message.channel.send(String(error))
+                }
+            }
+            if (command == bot_prefix + 'respond') {
+                var channelid = msg.split(" ")[1]
+                var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
                 const embed = new Discord.RichEmbed()
-                .setAuthor(msg_quote[1], bot.user.avatarURL)
+                .setAuthor(`${message.author.username} responded`, message.author.avatarURL)
                 .setColor(embedcolor)
-                .setDescription(msg_quote[3])
-                message.channel.send({embed})
-                message.delete(0)
+                .setDescription(msg_send)
+                bot.channels.get(channelid).send({embed})
+                var msg1 = await message.channel.send('Message has been sent')
+                setTimeout(function(){ msg1.delete(); }, 3000);
+            }
+            if (command == bot_prefix + 'say') {
+                var option = msg.split(" ")
+                var msg_quote = message.content.split('"')
+                if (option[1] == 'text') {
+                    message.channel.send(msg_quote[1])
+                    message.delete(0)
+                } else if (option[1] == 'embed') {
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(msg_quote[1], bot.user.avatarURL)
+                    .setColor(embedcolor)
+                    .setDescription(msg_quote[3])
+                    message.channel.send({embed})
+                    message.delete(0)
+                }
             }
         }
     }
