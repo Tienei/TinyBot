@@ -318,7 +318,7 @@ bot.on("message", async (message) => {
                 var osuname = message.content.substring(10)
                 var detected = false
                 var user = await fx.osu.get_osu_profile(osuname, 0, 0, false)
-                var name = user.id
+                var name = user.username
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
                 } else {

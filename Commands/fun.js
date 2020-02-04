@@ -59,13 +59,15 @@ async function trivia(message = new Message()){
         }
         shuffled_awnsers = shuffle(awnsers)
     } else if (question_type == 'boolean') {
-        if (decodeURIComponent(question.results[0].correct_answer) == 'true') {
+        console.log(decodeURIComponent(question.results[0].correct_answer))
+        if (decodeURIComponent(question.results[0].correct_answer) == 'True') {
             shuffled_awnsers[0] = decodeURIComponent(question.results[0].correct_answer)
             shuffled_awnsers[1] = decodeURIComponent(question.results[0].incorrect_answers[0])
         } else {
             shuffled_awnsers[1] = decodeURIComponent(question.results[0].correct_answer)
             shuffled_awnsers[0] = decodeURIComponent(question.results[0].incorrect_answers[0])
         }
+        console.log(shuffled_awnsers)
     }
     let diff = question.results[0].difficulty
     diff = diff.charAt(0).toUpperCase() + diff.slice(1)
