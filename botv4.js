@@ -457,7 +457,7 @@ bot.on("message", async (message) => {
             cmds.osu.score(message)
         }
         if (command == bot_prefix + 'osuset') {
-            cmds.osu.osuset('Osu')
+            cmds.osu.osuset(message, 'Osu')
         }
         if (command == bot_prefix + 'acc') {
             cmds.osu.acccalc()
