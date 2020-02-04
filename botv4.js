@@ -144,7 +144,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
         }
     }
     if (config.debug.osutrack == false) {
-        setInterval(real_time_osu_track, 60000)
+        setInterval(real_time_osu_track, 120000)
     }
 });
 

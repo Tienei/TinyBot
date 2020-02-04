@@ -1229,7 +1229,7 @@ async function recent(message = new Message()) {
         let name = fx.osu.check_player(user_data, message, suffix.check, 'osu')
         let modename = fx.osu.get_mode_detail(mode).modename
         if (mode == 0 && suffix.suffix.find(s => s.suffix == "-b").position > -1) {
-            let best = await fx.osu.get_osu_top(name, 0, 100, 'best')
+            let best = await fx.osu.get_osu_top(name, 0, 100, 'best', true)
             if (best.length == 0) {
                 throw `I think ${name} didn't play anything yet~ **-Chino**`
             }
@@ -1241,6 +1241,7 @@ async function recent(message = new Message()) {
                 b1 = Date.parse(b.date)
                 return b1 - a1
             })
+            let beatmap = await fx.osu.get_osu_beatmap(best[0].beatmapid, mode)
             let rank = fx.osu.ranking_letter(best[0].letter)
             let modandbit = fx.osu.mods_enum(best[0].mod)
             let shortenmod = modandbit.shortenmod
@@ -1256,10 +1257,10 @@ async function recent(message = new Message()) {
             if (best[0].perfect == 0) {
                 fcguess = `**${fcpp}pp for ${fcacc}%**`
             }
-            let scoreoverlay = fx.osu.score_overlay(undefined,best[0].title,best[0].beatmapid,star,shortenmod,best[0].pp,undefined,rank,best[0].diff,best[0].score,best[0].combo,best[0].fc,best[0].acc,best[0].accdetail,fcguess,undefined,date,'beatmap')
+            let scoreoverlay = fx.osu.score_overlay(undefined,beatmap.title,best[0].beatmapid,star,shortenmod,best[0].pp,undefined,rank,beatmap.diff,best[0].score,best[0].combo,beatmap.fc,best[0].acc,best[0].accdetail,fcguess,undefined,date,'beatmap')
             const embed = new RichEmbed()
             .setAuthor(`Top ${best[0].top} osu!Standard play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
-            .setThumbnail(`https://b.ppy.sh/thumb/${best[0].beatmapsetID}l.jpg`)
+            .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
             .setDescription(scoreoverlay)
             message.channel.send({embed})
