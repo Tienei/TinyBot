@@ -1,1 +1,1 @@
-worker: node index.js
+worker: node botv4.js
