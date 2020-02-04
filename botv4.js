@@ -178,10 +178,6 @@ bot.on("message", async (message) => {
 
         var bot_prefix = config.bot_default_prefix
 
-        if (message.guild !== null && server_data[message.guild.id] !== undefined) {
-            if (server_data[message.guild.id].prefix !== undefined) bot_prefix = server_data[message.guild.id].prefix;
-        }
-
         if (message.guild !== null) {
             if (server_data[message.guild.id] == undefined) {
                 server_data[message.guild.id] = {"command": {"custom_cmd": true, "fun": true, "osu": true}}
