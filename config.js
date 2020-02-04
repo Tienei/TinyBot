@@ -3,6 +3,6 @@ module.exports = {
     bot_default_prefix: '!',
     debug: {
         osutrack: false,
-        command: true,
+        command: false,
     }
 }
