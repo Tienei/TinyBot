@@ -2083,7 +2083,7 @@ async function serverleaderboard(message = new Message()) {
     }
 }
 
-function acccalc() {
+function acccalc(message = new Message()) {
     let msg = message.content.toLowerCase();
     let option = msg.split(" ")
     let count300 = Number(option[1])

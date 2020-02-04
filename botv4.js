@@ -460,7 +460,7 @@ bot.on("message", async (message) => {
             cmds.osu.osuset(message, 'Osu')
         }
         if (command == bot_prefix + 'acc') {
-            cmds.osu.acccalc()
+            cmds.osu.acccalc(message)
         }
         if (command == bot_prefix + 'osutrack') {
             osutrack()            
