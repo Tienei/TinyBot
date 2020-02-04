@@ -244,8 +244,10 @@ bot.on("message", async (message) => {
         }
 
         if (message.guild !== null) {
-            if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
-                cmds.custom_cmd.cmd_detection(message, custom_command)
+            if (custom_command !== null || custom_command !== undefined) {
+                if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
+                    cmds.custom_cmd.cmd_detection(message, custom_command)
+                }
             }
         }   
 
