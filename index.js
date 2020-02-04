@@ -641,7 +641,7 @@ bot.on("guildMemberAdd", (member) => {
    welcome_message()
 })
 
-bot.on("message", (message) => {
+bot.on("message", async (message) => {
     if (message.author.bot == false && loading == 0){
         var msg = message.content.toLowerCase();
         refresh = Math.round(Math.random()* 2147483648)
