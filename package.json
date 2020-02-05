@@ -15,6 +15,7 @@
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
     "jimp": "^0.9.3",
+    "lz-string": "^1.4.4",
     "mongojs": "^3.1.0",
     "node-chartist": "^1.0.5",
     "node-osu": "github:tienei/node-osu",

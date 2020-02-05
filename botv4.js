@@ -144,7 +144,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
         }
     }
     if (config.debug.osutrack == false) {
-        setInterval(real_time_osu_track, 120000)
+        setInterval(real_time_osu_track, 90000)
     }
 });
 
@@ -178,8 +178,10 @@ bot.on("message", async (message) => {
 
         var bot_prefix = config.bot_default_prefix
 
-        if (message.guild !== null && server_data[message.guild.id] !== undefined) {
-            bot_prefix = server_data[message.guild.id].prefix
+        if (message.guild !== null) {
+            if (typeof server_data[message.guild.id] !== 'undefined') {
+                bot_prefix = server_data[message.guild.id].prefix
+            }
         }
 
         // General related
@@ -244,10 +246,8 @@ bot.on("message", async (message) => {
         }
 
         if (message.guild !== null) {
-            if (custom_command !== null || custom_command !== undefined) {
-                if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
-                    cmds.custom_cmd.cmd_detection(message, custom_command)
-                }
+            if (typeof custom_command[message.guild.id] !== 'undefined' && typeof custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
+                cmds.custom_cmd.cmd_detection(message, custom_command)
             }
         }   
 
