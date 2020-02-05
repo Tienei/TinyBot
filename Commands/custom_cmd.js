@@ -70,10 +70,10 @@ function custom_cmd(message = new Message(), custom_command) {
                 custom_command['a'] = 'a'
             }
             message.channel.send('Custom command was removed')
-            db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
         }
     } catch (error) {
         message.channel.send(String(error))
+        return null
     }
 }
 

@@ -179,7 +179,6 @@ bot.on("message", async (message) => {
         var bot_prefix = config.bot_default_prefix
 
         if (message.guild !== null) {
-            console.log(server_data, server_data[message.guild.id])
             if (typeof server_data[message.guild.id] !== 'undefined') {
                 bot_prefix = server_data[message.guild.id].prefix
             }
@@ -206,8 +205,11 @@ bot.on("message", async (message) => {
             cmds.osu.ping(message, command)
         }
         if (command == bot_prefix + 'prefix' && message.guild !== null) {
-            server_data = cmds.general.prefix(message, server_data)
-            db.server_data.findAndModify({query: {}, update: server_data}, function(){})
+            let data = cmds.general.prefix(message, server_data)
+            if (data !== null) {
+                server_data = data 
+                db.server_data.findAndModify({query: {}, update: server_data}, function(){});
+            }
         }
         if (command == bot_prefix + 'report' && message.guild !== null) {
             cmds.general.report(message)
@@ -242,8 +244,11 @@ bot.on("message", async (message) => {
         // Custom commands
 
         if (command == bot_prefix + 'customcmd' && message.guild !== null) {
-            custom_command = cmds.custom_cmd.custom_cmd(message, custom_command)
-            db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
+            let data = cmds.custom_cmd.custom_cmd(message, custom_command)
+            if (data !== null) {
+                custom_command = data
+                db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
+            }
         }
 
         if (message.guild !== null) {

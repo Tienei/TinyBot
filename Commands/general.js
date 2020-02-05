@@ -244,6 +244,7 @@ function prefix(message = new Message(), server_data) {
         return server_data
     } catch (error) {
         message.channel.send(String(error))
+        return null
     }
 }
 
