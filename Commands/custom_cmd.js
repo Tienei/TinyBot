@@ -78,6 +78,8 @@ function custom_cmd(message = new Message(), custom_command) {
 }
 
 function cmd_detection(message = new Message(), custom_command) {
+    let msg = message.content.toLowerCase();
+    let command = msg.split(' ')[0]
     let respond = custom_command[message.guild.id].find(cmd => cmd.cmd == command).respond
     let define = {
         "user": {

@@ -166,7 +166,7 @@ bot.on("guildMemberAdd", (member) => {
    welcome_message()
 })
 
-bot.on("message", async (message) => {
+bot.on("message", (message) => {
     if (config.debug.command == true && message.author.id !== "292523841811513348") {
         return;
     }
@@ -179,7 +179,7 @@ bot.on("message", async (message) => {
         var bot_prefix = config.bot_default_prefix
 
         if (message.guild !== null) {
-            if (typeof server_data[message.guild.id] !== 'undefined') {
+            if (server_data[message.guild.id] !== undefined) {
                 bot_prefix = server_data[message.guild.id].prefix
             }
         }
@@ -252,7 +252,7 @@ bot.on("message", async (message) => {
         }
 
         if (message.guild !== null) {
-            if (typeof custom_command[message.guild.id] !== 'undefined' && typeof custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
+            if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
                 cmds.custom_cmd.cmd_detection(message, custom_command)
             }
         }   
@@ -551,15 +551,18 @@ bot.on("message", async (message) => {
                 }
             }
             if (command == bot_prefix + 'respond') {
-                var channelid = msg.split(" ")[1]
-                var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
-                const embed = new Discord.RichEmbed()
-                .setAuthor(`${message.author.username} responded`, message.author.avatarURL)
-                .setColor(embedcolor)
-                .setDescription(msg_send)
-                bot.channels.get(channelid).send({embed})
-                var msg1 = await message.channel.send('Message has been sent')
-                setTimeout(function(){ msg1.delete(); }, 3000);
+                function respond() {
+                    var channelid = msg.split(" ")[1]
+                    var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
+                    const embed = new Discord.RichEmbed()
+                    .setAuthor(`${message.author.username} responded`, message.author.avatarURL)
+                    .setColor(embedcolor)
+                    .setDescription(msg_send)
+                    bot.channels.get(channelid).send({embed})
+                    var msg1 = await message.channel.send('Message has been sent')
+                    setTimeout(function(){ msg1.delete(); }, 3000);
+                }
+                respond()
             }
             if (command == bot_prefix + 'say') {
                 var option = msg.split(" ")
