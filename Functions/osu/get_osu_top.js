@@ -140,8 +140,8 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
             let song_name = best.scores[i].beatmap.song_name
             let diff = song_name.split('[')[1].slice(0, -1)
-            let artist = song_name.split('[')[0].split('-')[1].substring(1)
-            let title = song_name.split('[')[0].split('-')[0].slice(0, -1)
+            let title = song_name.split('[')[0].split('-')[1].substring(1)
+            let artist = song_name.split('[')[0].split('-')[0].slice(0, -1)
             top[i] = new Osutop([
                                 //Score
                                 Number(i+1),

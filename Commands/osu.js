@@ -1226,7 +1226,9 @@ async function recent(message = new Message()) {
             mode = 12
         }
         // Make recent best get modes later
-        let name = fx.osu.check_player(user_data, message, suffix.check, 'osu')
+        let type = 0
+        type = fx.osu.getServerLink(mode)
+        let name = fx.osu.check_player(user_data, message, suffix.check, type)
         let modename = fx.osu.get_mode_detail(mode).modename
         if (mode == 0 && suffix.suffix.find(s => s.suffix == "-b").position > -1) {
             let best = await fx.osu.get_osu_top(name, 0, 100, 'best', true)
