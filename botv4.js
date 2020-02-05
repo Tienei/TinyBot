@@ -551,7 +551,7 @@ bot.on("message", (message) => {
                 }
             }
             if (command == bot_prefix + 'respond') {
-                function respond() {
+                async function respond() {
                     var channelid = msg.split(" ")[1]
                     var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
                     const embed = new Discord.RichEmbed()
