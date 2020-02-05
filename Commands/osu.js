@@ -1226,7 +1226,7 @@ async function recent(message = new Message()) {
             mode = 12
         }
         // Make recent best get modes later
-        let type = 0
+        let type = 'osu'
         type = fx.osu.getServerLink(mode)
         let name = fx.osu.check_player(user_data, message, suffix.check, type)
         let modename = fx.osu.get_mode_detail(mode).modename
