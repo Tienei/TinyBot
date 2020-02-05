@@ -179,6 +179,7 @@ bot.on("message", async (message) => {
         var bot_prefix = config.bot_default_prefix
 
         if (message.guild !== null) {
+            console.log(server_data, server_data[message.guild.id])
             if (typeof server_data[message.guild.id] !== 'undefined') {
                 bot_prefix = server_data[message.guild.id].prefix
             }
