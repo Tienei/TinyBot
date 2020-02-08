@@ -4,6 +4,8 @@ const request = require('request-promise-native');
 const { Profile } = require('./../../Classes/osu')
 // Function
 const getServerLink = require('./get_server_link')
+// Client
+const osu_client = require('../../client').osu_client
 
 let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
@@ -16,8 +18,8 @@ module.exports = async function (name, mode, event, html = true) {
     try {
         if (mode >= 0 && mode <= 3) {
             let user = await osuApi.getUser({u: name, m: mode, event_days: event})
+            let bancho_user = await osu_client.getUser(name).stats()
             let user_web = ''
-            let playstyle = ""
             if (html == true && html_cooldown < new Date().getTime()) {
                 try {
                     let web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
@@ -26,14 +28,6 @@ module.exports = async function (name, mode, event, html = true) {
                     user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
                     user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
                     user_web = JSON.parse(user_web)
-                    if (user_web["playstyle"] == null) {
-                        playstyle = "None?"
-                    } else {
-                        for (var i in user_web["playstyle"]) {
-                            playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
-                            user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
-                        }
-                    }
                 } catch (error) {
                     html_cooldown = new Date().getTime() * 3600000
                 }
@@ -56,10 +50,10 @@ module.exports = async function (name, mode, event, html = true) {
                                 Number(user.level),
                                 Number(user.accuracy).toFixed(2),
                                 user.events,
-                                user_web["is_supporter"] == true ? '<:supporter:582885341413769218>' : '',
-                                user_web["is_online"] == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1',
-                                user_web["is_online"] == true ? 'Online' : 'Offline',
-                                playstyle,
+                                '',
+                                bancho_user.online == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1',
+                                bancho_user.online == true ? 'Online' : 'Offline',
+                                '',
                                 user_web["cover_url"]])
         }
         if (mode >= 4 && mode <= 12) {

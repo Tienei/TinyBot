@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bancho.js": "^0.9.6",
     "canvas": "^2.6.1",
     "chalk": "^3.0.0",
     "cheerio": "^1.0.0-rc.3",

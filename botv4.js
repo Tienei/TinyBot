@@ -15,7 +15,9 @@ const config = require('./config.js');
 const fx = require('./Functions/load_fx')
 // Get Commands
 const cmds = require('./Commands/load_cmd')
-const bot = require('./client').bot
+const clients = require('./client')
+const bot = clients.bot
+const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
 const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id"])
@@ -33,13 +35,18 @@ var osuApi_no_bm = new nodeosu.Api(process.env.OSU_KEY, {
 var ee = JSON.parse(process.env.EASTER_EGG)
 var ee_number = 0
 
-var loading = 1
+var loading = 2
 var refresh = 0
 
+osu_client.connect().then(() => {
+    console.log("osu! client is ready")
+    loading -= 1
+})
+
 bot.on("ready", (ready) => {
+    console.log("Discord client is ready")
     async function getFile() {
         try {
-            console.log("enter")
             // Get User data
             user_data = await new Promise(resolve => {
                 db.user_data.find((err, docs) => resolve(docs[0]));
@@ -75,7 +82,7 @@ bot.on("ready", (ready) => {
             stored_map_ID = saved_map_id
             cmds.osu.get_db(user_data, stored_map_ID, saved_map_id, db)
 
-            loading = 0
+            loading -= 1
         } catch(error) {
             loading = 0
         }

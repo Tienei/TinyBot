@@ -184,7 +184,8 @@ Fixed recent wrong time display
 Fixed osuavatar won't get osu! avatar
 Fixed avatar won't get Discord avatar
 Fixed beatmapid cache
-Fixed osutop -m`]
+Fixed osutop -m`,`**[February 8th, 2020]:**
+Make osu commands not to use html scrapping a lot (bad thing)`]
 
     let loadpage = async function (page, pages) {
         pages = changes

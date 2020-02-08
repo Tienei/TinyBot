@@ -139,7 +139,7 @@ async function osu(message = new Message(), mode) {
         let modename = modedetail.modename
         let modeicon = modedetail.modeicon
         if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
-            let user = await fx.osu.get_osu_profile(name, mode, 30)
+            let user = await fx.osu.get_osu_profile(name, mode, 30, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -338,7 +338,7 @@ Most common mods: ${sortedmod}`)
             let table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
             let player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children('a[class="ranking-page-table__user-link-text js-usercard"]').attr('href').split('/')
             player = player[player.length-1]
-            let user = await fx.osu.get_osu_profile(player,0 ,0)
+            let user = await fx.osu.get_osu_profile(player,0 ,0,false)
             if (user.username == undefined) {
                 throw 'User not found!'
             }
@@ -499,7 +499,7 @@ Most common mods: ${sortedmod}`)
                 }
             }
         } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && mode == 0) {
-            let user = await fx.osu.get_osu_profile(name, mode, 30)
+            let user = await fx.osu.get_osu_profile(name, mode, 30, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -586,7 +586,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                 }
             }
         } else {
-            let user = await fx.osu.get_osu_profile(name, mode, 0)
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -635,7 +635,7 @@ async function osu_card(message = new Message(), mode) {
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
         // Get Information
         let name = fx.osu.check_player(user_data, message, suffix.check, 'osu')
-        let user = await fx.osu.get_osu_profile(name, mode, 1)
+        let user = await fx.osu.get_osu_profile(name, mode, 1, false)
         if (user == null) {
             throw 'User not found!'
         }
@@ -1982,9 +1982,9 @@ async function topleaderboard(message = new Message(), type) {
         let command = msg.split(' ')[0]
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
-            throw 'You need to wait 3 seconds before using this again!'
+            throw 'You need to wait 30 seconds before using this again! (HTML scrapping reason)'
         }
-        fx.general.cmd_cooldown.set(message, command, 3000)
+        fx.general.cmd_cooldown.set(message, command, 30000)
         let link = ''
         let mode = 'osu'
         let countryname = ''
