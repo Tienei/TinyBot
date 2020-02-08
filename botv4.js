@@ -187,7 +187,7 @@ bot.on("message", (message) => {
         // General related
 
         if (command == bot_prefix + 'help') {
-            cmds.general.help(message)
+            cmds.general.help(message, bot_prefix)
         }
         if (command == bot_prefix + 'credit') {
             cmds.general.credit(message)

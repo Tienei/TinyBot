@@ -30,13 +30,13 @@ function get_db(data1, data2, data3, data4) {
 
 function cache_beatmap_ID(message = new Message(), beatmapid, mode) {
     if (message.guild !== null) {
-        stored_map_ID.push({id:beatmapid,server:message.channel.id, mode: mode})
-        if (saved_map_id[0] !== undefined && saved_map_id.find(m => m.server == message.channel.id) !== undefined) {
+        if (saved_map_id.find(m => m.server == message.channel.id) !== undefined) {
             saved_map_id.find(m => m.server == message.channel.id).id = beatmapid
         } else {
             saved_map_id.push({id:beatmapid,server:message.channel.id, mode: mode})
         }
         db.saved_map_id.findAndModify({query: {}, update: {'0': saved_map_id}}, function(){})
+        stored_map_ID.push({id:beatmapid,server:message.channel.id, mode: mode})
     } else {
         stored_map_ID.push({id:beatmapid,user:message.author.id, mode: mode})
     }
@@ -1228,7 +1228,6 @@ async function recent(message = new Message()) {
         // Make recent best get modes later
         let type = fx.osu.getServerLink(mode)
         let name = fx.osu.check_player(user_data, message, suffix.check, type)
-        console.log(name, type)
         let modename = fx.osu.get_mode_detail(mode).modename
         if (mode == 0 && suffix.suffix.find(s => s.suffix == "-b").position > -1) {
             let best = await fx.osu.get_osu_top(name, 0, 100, 'best', true)

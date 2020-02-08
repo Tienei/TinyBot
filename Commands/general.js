@@ -1,12 +1,11 @@
 const bot = require('./../client').bot
 const bot_ver = require('./../config').bot_ver
-const bot_prefix = require('./../config').bot_default_prefix
 const fx = require('./../Functions/load_fx')
 const { Message, RichEmbed } = require('discord.js')
 
 var bot_command_help = []
 
-function help(message = new Message()) {
+function help(message = new Message(), bot_prefix) {
     try {
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
