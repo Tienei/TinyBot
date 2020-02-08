@@ -10,26 +10,32 @@ let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     completeScores: true
 });
 
+let html_cooldown = 0
+
 module.exports = async function (name, mode, event, html = true) {
     try {
         if (mode >= 0 && mode <= 3) {
             let user = await osuApi.getUser({u: name, m: mode, event_days: event})
             let user_web = ''
             let playstyle = ""
-            if (html == true) {
-                let web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
-                user_web = await cheerio.load(web)
-                user_web = user_web("#json-user").html()
-                user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
-                user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
-                user_web = JSON.parse(user_web)
-                if (user_web["playstyle"] == null) {
-                    playstyle = "None?"
-                } else {
-                    for (var i in user_web["playstyle"]) {
-                        playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
-                        user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
+            if (html == true && html_cooldown < new Date().getTime()) {
+                try {
+                    let web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
+                    user_web = await cheerio.load(web)
+                    user_web = user_web("#json-user").html()
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
+                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
+                    user_web = JSON.parse(user_web)
+                    if (user_web["playstyle"] == null) {
+                        playstyle = "None?"
+                    } else {
+                        for (var i in user_web["playstyle"]) {
+                            playstyle += user_web["playstyle"][i].charAt(0).toUpperCase() + user_web["playstyle"][i].substring(1)
+                            user_web["playstyle"].length - 1 > i ? playstyle += ', ' : ''
+                        }
                     }
+                } catch (error) {
+                    html_cooldown = new Date().getTime() * 3600000
                 }
             }
             return new Profile([user.name,
