@@ -126,7 +126,7 @@ bot.on("ready", (ready) => {
                 .setDescription(`
 **[${beatmap.title}](https://osu.ppy.sh/b/${beatmap.beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
 ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].combo}/${beatmap.fc}
-**Accuracy:** ${best[i].acc}% ${best[i].accdetail} ${fcguess}
+**Accuracy:** ${Number(best[i].acc).toFixed(2)}% ${best[i].accdetail} ${fcguess}
 **#${osu_track[player].lastrank} → #${user.rank} (:flag_${user.country}: : #${osu_track[player].lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`)
                 for (var c = 0; c < osu_track[player].trackonchannel.length; c++) {
                     stored_map_ID.push({id:beatmap.beatmapid,server: osu_track[player].trackonchannel[c], mode: "Standard"})
@@ -429,7 +429,7 @@ bot.on("message", (message) => {
             cmds.osu.osu_card(message, 3)
         }
         if (command == bot_prefix + 'osuavatar') {
-            cmds.osu.osuavatar(0)
+            cmds.osu.osuavatar(message, 0)
         }
         if (command == bot_prefix + 'topglobal') {
             cmds.osu.topleaderboard(message, 'global')
@@ -486,7 +486,7 @@ bot.on("message", (message) => {
             cmds.osu.osu(message, 8)
         }
         if (command == bot_prefix + 'akatavatar') {
-            cmds.osu.osuavatar(8)
+            cmds.osu.osuavatar(message, 8)
         }
         if (command == bot_prefix + 'akattop') {
             cmds.osu.osutop(message, 8)
@@ -507,7 +507,7 @@ bot.on("message", (message) => {
             cmds.osu.osu(message, 4)
         }
         if (command == bot_prefix + 'rippleavatar') {
-            cmds.osu.osuavatar(4)
+            cmds.osu.osuavatar(message, 4)
         }
         if (command == bot_prefix + 'rippletop') {
             cmds.osu.osutop(message, 4)
