@@ -18,7 +18,7 @@ module.exports = async function (name, mode, event, html = true) {
     try {
         if (mode >= 0 && mode <= 3) {
             let user = await osuApi.getUser({u: name, m: mode, event_days: event})
-            let bancho_user = await osu_client.getUser(name).stats()
+            let bancho_user = await osu_client.getUser(user.name).stats()
             let user_web = ''
             if (html == true && html_cooldown < new Date().getTime()) {
                 try {
