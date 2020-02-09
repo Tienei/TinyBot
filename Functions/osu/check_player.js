@@ -1,4 +1,5 @@
 const { Message } = require('discord.js')
+const config = require('../../config')
 
 module.exports = function (user_data, message = new Message(), name, type) {
     try {
@@ -14,7 +15,7 @@ module.exports = function (user_data, message = new Message(), name, type) {
                 }
                 return osuname
             } else {
-                throw `Looks like you didn't link your profile to an osu account, do **!osuset (username)** to link your account`
+                throw `Looks like you didn't link your profile to an osu account, do **${config.config.bot_prefix}osuset (username)** to link your account`
             }
         } else {
             let id = ''

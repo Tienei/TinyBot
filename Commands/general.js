@@ -1,11 +1,11 @@
 const bot = require('./../client').bot
-const bot_ver = require('./../config').bot_ver
+const config = require('../config')
 const fx = require('./../Functions/load_fx')
 const { Message, RichEmbed } = require('discord.js')
 
 var bot_command_help = []
 
-function help(message = new Message(), bot_prefix) {
+function help(message = new Message()) {
     try {
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
@@ -86,7 +86,7 @@ function help(message = new Message(), bot_prefix) {
         var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
         var text = ''
         if (msg.substring(6) == '') {
-            text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **${bot_prefix}help (command)**`
+            text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
         } else {
             var getcmd = msg.substring(6)
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
@@ -109,11 +109,11 @@ function help(message = new Message(), bot_prefix) {
             }
             text = bot_command_help.find(helpcmd => helpcmd.command == getcmd).helptext
             for (var i = 0; i < 2; i++) {
-                text = text.replace('{prefix}', bot_prefix)
+                text = text.replace('{prefix}', config.config.bot_prefix)
             }
         }
         const embed = new RichEmbed()
-        .setAuthor(`Commands for Tiny Bot ${bot_ver}`)
+        .setAuthor(`Commands for Tiny Bot ${config.config.bot_ver}`)
         .setColor(embedcolor)
         .setThumbnail(bot.user.avatarURL)
         .setDescription(text)
@@ -185,13 +185,15 @@ Fixed osuavatar won't get osu! avatar
 Fixed avatar won't get Discord avatar
 Fixed beatmapid cache
 Fixed osutop -m`,`**[February 8th, 2020]:**
-Make osu commands not to use html scrapping a lot (bad thing)`]
+Make osu commands not to use html scrapping a lot (bad thing)\n
+**[February 9th, 2020]:
+Fix prefix problem**`]
 
     let loadpage = async function (page, pages) {
         pages = changes
         return pages
     }
-    fx.general.page_system(message, {load: loadpage}, `Changelog for TinyBot ${bot_ver} (Page {page} of {max_page})`, message.client.user.avatarURL, embedcolor, changes.length)
+    fx.general.page_system(message, {load: loadpage}, `Changelog for TinyBot ${config.config.bot_ver} (Page {page} of {max_page})`, message.client.user.avatarURL, embedcolor, changes.length)
 }
 
 function bot_info(message = new Message()) {

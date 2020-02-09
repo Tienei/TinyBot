@@ -150,7 +150,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
             }  
         }
     }
-    if (config.debug.osutrack == false) {
+    if (config.config.debug.osutrack == false) {
         setInterval(real_time_osu_track, 90000)
     }
 });
@@ -174,7 +174,7 @@ bot.on("guildMemberAdd", (member) => {
 })
 
 bot.on("message", (message) => {
-    if (config.debug.command == true && message.author.id !== "292523841811513348") {
+    if (config.config.debug.command == true && message.author.id !== "292523841811513348") {
         return;
     }
     if (message.author.bot == false && loading == 0) {
@@ -183,11 +183,12 @@ bot.on("message", (message) => {
         var command = msg.split(' ')[0]
         var embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
 
-        var bot_prefix = config.bot_default_prefix
+        var bot_prefix = config.config.bot_default_prefix
 
         if (message.guild !== null) {
             if (server_data[message.guild.id] !== undefined) {
                 bot_prefix = server_data[message.guild.id].prefix
+                config.update_bot_prefix(bot_prefix)
             }
         }
 
