@@ -188,9 +188,9 @@ bot.on("message", (message) => {
         if (message.guild !== null) {
             if (server_data[message.guild.id] !== undefined) {
                 bot_prefix = server_data[message.guild.id].prefix
-                config.update_bot_prefix(bot_prefix)
             }
         }
+        config.update_bot_prefix(bot_prefix)
 
         // General related
 
