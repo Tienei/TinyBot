@@ -18,7 +18,6 @@ module.exports = async function (name, mode, event, html = true) {
     try {
         if (mode >= 0 && mode <= 3) {
             let user = await osuApi.getUser({u: name, m: mode, event_days: event})
-            console.log(user)
             let bancho_user = ''
             try {
                 bancho_user = await osu_client.getUser(name).stats()
