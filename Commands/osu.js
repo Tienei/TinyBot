@@ -1024,7 +1024,7 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            let best = await osuApi.getUserBest({u: name, limit: 100, m: mode})
+            let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             let username = user.name
             let gtpp = Number(suffix.suffix.find(s => s.suffix == "-g").value[0])
             for (var i = best.length - 1; i > -1; i--) {

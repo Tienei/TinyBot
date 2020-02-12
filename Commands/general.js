@@ -186,8 +186,10 @@ Fixed avatar won't get Discord avatar
 Fixed beatmapid cache
 Fixed osutop -m`,`**[February 8th, 2020]:**
 Make osu commands not to use html scrapping a lot (bad thing)\n
-**[February 9th, 2020]:
-Fix prefix problem**`]
+**[February 9th, 2020]:**
+Fix prefix problem
+**[February 12th, 2020]:**
+Improved osu command overall (mostly osutop)`]
 
     let loadpage = async function (page, pages) {
         pages = changes
