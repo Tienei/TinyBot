@@ -349,9 +349,9 @@ bot.on("message", (message) => {
                                 break
                             } else {
                                 osu_track[i].osuname = name
-                                osu_track[i].lasttotalpp = user.pp.raw
-                                osu_track[i].lastrank = user.pp.rank
-                                osu_track[i].lastcountryrank = user.pp.countryRank
+                                osu_track[i].lasttotalpp = user.pp
+                                osu_track[i].lastrank = user.rank
+                                osu_track[i].lastcountryrank = user.countryrank
                                 osu_track[i].trackonchannel.push(message.channel.id)
                                 break
                             }
