@@ -1337,7 +1337,7 @@ async function recent(message = new Message()) {
             message.channel.send({embed})
         } else {
             let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false)
-            let recent = await fx.osu.get_osu_top(name, mode, 0, 'recent')
+            let recent = await fx.osu.get_osu_top(name, mode, 1, 'recent')
             if (recent.length == 0) {
                 throw 'No play found within 24 hours of this user **-Tiny**'
             }
