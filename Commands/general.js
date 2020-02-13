@@ -89,10 +89,11 @@ function help(message = new Message()) {
         var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
         var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatsukiset` `akatavatar` `akattop` `rxakatsuki` `rxakattop`'
         var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippleset` `rippleavatar` `rippletop`'
+        var horizonhelp = '**--- [Horizon]:**\n`horizon` `horizonset` `horizonavatar` `horizontop` `rxhorizon` `rxhorizon`'
         var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
         var text = ''
         if (msg.substring(6) == '') {
-            text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
+            text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${horizonhelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
         } else {
             var getcmd = msg.substring(6)
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
@@ -125,8 +126,7 @@ function help(message = new Message()) {
         .setDescription(text)
         message.channel.send({embed})
     } catch (error) {
-        //message.channel.send(String(error))
-        console.log(error)
+        message.channel.send(String(error))
     }
 }
 
