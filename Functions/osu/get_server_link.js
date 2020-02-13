@@ -5,5 +5,7 @@ module.exports = function (mode) {
         return 'ripple.moe'
     } else if (mode >= 8 && mode <= 12) {
         return 'akatsuki.pw'
+    } else if (mode >= 13 && mode <= 17) {
+        return 'lemres.de'
     }
 }

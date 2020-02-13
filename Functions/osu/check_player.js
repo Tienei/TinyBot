@@ -12,6 +12,8 @@ module.exports = function (user_data, message = new Message(), name, type) {
                     osuname = user_data[message.author.id].akatsukiname
                 } else if (type == 'ripple.moe') {
                     osuname = user_data[message.author.id].ripplename
+                } else if (type == 'lemres.de') {
+                    osuname = user_data[message.author.id].horizonname
                 }
                 return osuname
             } else {
@@ -28,6 +30,8 @@ module.exports = function (user_data, message = new Message(), name, type) {
                         osuname = user_data[id].akatsukiname
                     } else if (type == 'ripple.moe') {
                         osuname = user_data[id].ripplename
+                    } else if (type == 'lemres.de') {
+                        osuname = user_data[message.author.id].horizonname
                     }
                     return osuname
                 } else {

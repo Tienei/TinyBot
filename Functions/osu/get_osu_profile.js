@@ -61,9 +61,9 @@ module.exports = async function (name, mode, event, html = true) {
                                 '',
                                 user_web["cover_url"]])
         }
-        if (mode >= 4 && mode <= 12) {
+        if (mode >= 4 && mode <= 17) {
             let serverlink = getServerLink(mode)
-            let data = mode !== 12 ? await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`) : await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)
+            let data = (mode == 12 || mode == 17) ? await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`) : await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`) 
             let user = JSON.parse(data)
             return new Profile([user.username,
                                 Number(user.id),

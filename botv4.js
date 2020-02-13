@@ -524,6 +524,27 @@ bot.on("message", (message) => {
             cmds.osu.osuset(message, 'Ripple')
         }
 
+        // Horizon
+
+        if (command == bot_prefix + 'horizon') {
+            cmds.osu.osu(message, 13)
+        }
+        if (command == bot_prefix + 'horizonavatar') {
+            cmds.osu.osuavatar(message, 13)
+        }
+        if (command == bot_prefix + 'horizontop') {
+            cmds.osu.osutop(message, 13)
+        }
+        if (command == bot_prefix + 'horizonset') {
+            cmds.osu.osuset(message, 'Horizon')
+        }
+        if (command == bot_prefix + 'rxhorizon') {
+            cmds.osu.osu(message, 17)
+        }
+        if (command == bot_prefix + 'rxhorizontop') {
+            cmds.osu.osutop(message, 17)
+        }
+
         // Detection
         // Beatmap Detection
         if (msg.includes("https://osu.ppy.sh/beatmapsets/") || msg.includes("https://osu.ppy.sh/b/")) {

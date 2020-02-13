@@ -12,8 +12,11 @@ module.exports = function (message = new Message(), mode, modeicon, supporter, m
         profile_link = `https://ripple.moe/u/${id}`
         pfp_link = `http://a.ripple.moe/${id}?date=${refresh}`
     } else if (mode >= 8 && mode <= 12) {
-        profile_link= `https://akatsuki.pw/u/${id}`
-        pfp_link = `http://a.akatsuki.pw/${id}.png?date=${refresh}`
+        profile_link = `https://akatsuki.pw/u/${id}`
+        pfp_link = `http://a.akatsuki.pw/${id}?date=${refresh}`
+    } else if (mode >= 13 && mode <= 17) {
+        profile_link = `https://lemres.de/u/${id}`
+        pfp_link = `http://a.lemres.de/${id}?date=${refresh}`
     }
     // Description
     let desc = ''

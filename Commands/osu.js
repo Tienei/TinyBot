@@ -21,6 +21,18 @@ let user_data = {}
 let stored_map_ID = []
 let saved_map_id = []
 
+ /*
+osu!Standard: 0
+osu!Taiko: 1
+osu!CTB: 2
+osu!Mania: 3
+Ripple: 4
+Akatsuki: 8
+Relax Akatsuki: 12
+Horizon: 13
+Relax Horizon: 17
+*/
+
 function get_db(data1, data2, data3, data4) {
     user_data = data1
     stored_map_ID = data2
@@ -133,6 +145,8 @@ async function osu(message = new Message(), mode) {
             check_type = 'ripple.moe'
         } else if (mode >= 8 && mode <= 12) {
             check_type = 'akatsuki.pw'
+        } else if (mode >= 13 && mode <= 17) {
+            check_type = 'lemres.de'
         }
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let modedetail = fx.osu.get_mode_detail(mode)
@@ -879,6 +893,8 @@ async function osutop(message = new Message(), mode) {
             check_type = 'ripple.moe'
         } else if (mode >= 8 && mode <= 12) {
             check_type = 'akatsuki.pw'
+        } else if (mode >= 13 && mode <= 17) {
+            check_type = 'lemres.de'
         }
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let modedetail = fx.osu.get_mode_detail(mode)
@@ -902,11 +918,13 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
             } else if (mode >= 4 && mode <= 7) {
                 pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
             } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (mode >= 13 && mode <= 17) {
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
             }
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, Number(numberrange[1]), 'best', true)
@@ -919,7 +937,7 @@ async function osutop(message = new Message(), mode) {
                 let date = fx.osu.time_played(best[i].date)
                 cache_beatmap_ID(message, best[i].beatmapid, modename)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(i+1,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
@@ -936,11 +954,13 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
             } else if (mode >= 4 && mode <= 7) {
                 pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
             } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (mode >= 13 && mode <= 17) {
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
             }
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
@@ -962,7 +982,7 @@ async function osutop(message = new Message(), mode) {
                 let date = fx.osu.time_played(best[i].date)
                 cache_beatmap_ID(message, best[i].beatmapid, modename)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(best[i].top,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
@@ -981,11 +1001,13 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
             } else if (mode >= 4 && mode <= 7) {
                 pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
             } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (mode >= 13 && mode <= 17) {
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
             }
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             let checktop = 0
@@ -1043,11 +1065,13 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
             } else if (mode >= 4 && mode <= 7) {
                 pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
             } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (mode >= 13 && mode <= 17) {
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
             }
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best')
             let userid = best[0].userid
@@ -1083,11 +1107,13 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
             } else if (mode >= 4 && mode <= 7) {
                 pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
             } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (mode >= 13 && mode <= 17) {
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
             }
             let username = user.name
             let best = get.filter(function(map) {return map.title.toLowerCase().includes(map_name) || map.creator.toLowerCase().includes(map_name) || map.diff.toLowerCase().includes(map_name) || map.source.toLowerCase().includes(map_name) || map.artist.toLowerCase().includes(map_name)})
@@ -1101,7 +1127,7 @@ async function osutop(message = new Message(), mode) {
                 let date = fx.osu.time_played(best[i].date)
                 cache_beatmap_ID(message, best[i].beatmapid, modename)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(best[i].top,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
@@ -1122,11 +1148,13 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
             } else if (mode >= 4 && mode <= 7) {
                 pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
             } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (mode >= 13 && mode <= 17) {
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
             }
             let username = user.name
             let userid = best[0].userid
@@ -1158,11 +1186,13 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
             } else if (mode >= 4 && mode <= 7) {
                 pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
             } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (mode >= 13 && mode <= 17) {
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
             }
             let best = await fx.osu.get_osu_top(name, mode, 5, 'best')
             let userid = best[0].userid
@@ -1175,7 +1205,7 @@ async function osutop(message = new Message(), mode) {
                 let date = fx.osu.time_played(best[i].date)
                 cache_beatmap_ID(message, best[i].beatmapid, modename)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(i+1,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
@@ -1210,7 +1240,9 @@ async function recent(message = new Message()) {
                                                     {"suffix": "-mania", "v_count": 0},
                                                     {"suffix": "-ripple", "v_count": 0},
                                                     {"suffix": "-akat", "v_count": 0},
-                                                    {"suffix": "-rxakat", "v_count": 0}])
+                                                    {"suffix": "-rxakat", "v_count": 0},
+                                                    {"suffix": "-hrz", "v_count": 0},
+                                                    {"suffix": "-rxhrz", "v_count": 0},])
         let mode = 0 
         if (suffix.suffix.find(s => s.suffix == "-taiko").position > -1) {
             mode = 1
@@ -1224,6 +1256,10 @@ async function recent(message = new Message()) {
             mode = 8
         } else if (suffix.suffix.find(s => s.suffix == "-rxakat").position > -1) {
             mode = 12
+        } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
+            mode = 13
+        } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
+            mode = 17
         }
         // Make recent best get modes later
         let type = fx.osu.getServerLink(mode)
@@ -1313,7 +1349,7 @@ async function recent(message = new Message()) {
             let nopp = ''
             let mapcompleted = ''
             let parser = ''
-            if (mode == 0 || mode == 4 || mode == 8 || mode == 12) {parser = await fx.osu.precalc(recent[0].beatmapid)}
+            if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(recent[0].beatmapid)}
             let fc_stat = await fx.osu.get_pp(mode, parser, recent[0].beatmapid, bitpresent, recent[0].score, recent[0].combo, recent[0].fc, recent[0].count300, recent[0].count100, recent[0].count50, recent[0].countmiss, recent[0].countgeki, recent[0].countkatu, recent[0].acc, recent[0].perfect, true)
             let osuname = getplayer.username
             cache_beatmap_ID(message, recent[0].beatmapid, modename)
@@ -1566,14 +1602,21 @@ async function osuset(message = new Message(), type) {
             settype = 'akatsukiname'
             name = user.username
             profilelink = `https://akatsuki.pw/u/${user.id}`
-            imagelink = `http://a.akatsuki.pw/${user.id}.png?date=${refresh}`
+            imagelink = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
         } else if (type == 'Ripple') {
             user = await request(`http://ripple.moe/api/v1/users?name=${check}`)
             user = JSON.parse(user)
             settype = 'ripplename'
             name = user.username
             profilelink = `https://ripple.moe/u/${user.id}`
-            imagelink = `http://a.ripple.moe/${user.id}.png?date=${refresh}`
+            imagelink = `http://a.ripple.moe/${user.id}?date=${refresh}`
+        } else if (type == 'Horizon') {
+            user = await request(`http://lemres.de/api/v1/users?name=${check}`)
+            user = JSON.parse(user)
+            settype = 'horizonname'
+            name = user.username
+            profilelink = `https://lemres.de/u/${user.id}`
+            imagelink = `http://a.lemres.de/${user.id}?date=${refresh}`
         }
         if (name == undefined) {
             throw 'User not found!'
@@ -2096,16 +2139,6 @@ function acccalc(message = new Message()) {
     message.channel.send(`**Accuracy:** ${acc}%`)
 
 }
-
-/*
-osu!Standard: 0
-osu!Taiko: 1
-osu!CTB: 2
-osu!Mania: 3
-Ripple: 4
-Akatsuki: 8
-Relax Akatsuki: 12
-*/
 
 module.exports = {
     get_db,

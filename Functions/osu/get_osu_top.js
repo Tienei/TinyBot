@@ -124,9 +124,9 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             }
         }
     }
-    if (mode >= 4 && mode <= 12) {
+    if (mode >= 4 && mode <= 17) {
         let serverlink = getServerLink(mode)
-        let linkoption = (mode == 12) ? '&rx=1' : ''
+        let linkoption = (mode == 12 || mode == 17) ? '&rx=1' : ''
         let data1 = await request.get(`https://${serverlink}/api/v1/users/scores/${type}?name=${name}${linkoption}&l=${limit}`)
         let data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)
         let best = JSON.parse(data1)
@@ -138,10 +138,9 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             let countmiss = Number(best.scores[i].count_miss)
             let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
             let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
-            let song_name = best.scores[i].beatmap.song_name
-            let diff = song_name.split('[')[1].slice(0, -1)
-            let title = song_name.split('[')[0].split('-')[1].substring(1)
-            let artist = song_name.split('[')[0].split('-')[0].slice(0, -1)
+            let diff = ''
+            let title = ''
+            let artist = ''
             top[i] = new Osutop([
                                 //Score
                                 Number(i+1),
@@ -175,6 +174,13 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                                 undefined,
                                 undefined])
         }
+        let beatmaps = top.map(sc => {return request.get(`https://${serverlink}/api/get_beatmaps?b=${sc.beatmapid}`)})
+        beatmaps = await Promise.all(beatmaps)
+		for (let i = 0; i < top.length; i++) {
+            top[i].title = beatmaps[i].title
+            top[i].diff = beatmaps[i].version
+            top[i].artist = beatmaps[i].artist
+		}
     }
     return top
 }

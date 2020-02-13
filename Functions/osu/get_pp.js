@@ -12,7 +12,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
     let star = 0
     let fcguess = ''
     let mapcomplete = 0
-    if (mode == 0 || mode == 4 || mode == 8) {
+    if (mode == 0 || mode == 4 || mode == 8 || mode == 13) {
         let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,'fc')
         fcpp = Number(fccalc.pp.total).toFixed(2)
         fcacc = fccalc.acc
@@ -57,7 +57,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
             pp = mania_pp_calc(mapinfo.star, mapinfo.od, score, mapinfo.fc, bitpresent)
         }
     }
-    if (mode == 12) {
+    if (mode == 12 || mode == 17) {
         let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,2)
         fcpp = Number(fccalc.pp.total).toFixed(2)
         fcacc = fccalc.acc
