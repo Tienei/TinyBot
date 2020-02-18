@@ -13,7 +13,6 @@ module.exports = {
         ctb_pp_calc         : require('./osu/ctb_pp_calc'),
         mania_pp_calc       : require('./osu/mania_pp_calc'),
         // Get player's data
-        getServerLink       : require('./osu/get_server_link'),
         get_mode_detail     : require('./osu/get_mode_detail'),
         get_osu_profile     : require('./osu/get_osu_profile'),
         get_osu_top         : require('./osu/get_osu_top'),
