@@ -6,13 +6,13 @@ module.exports = function (user_data, message = new Message(), name, type) {
         let osuname = ''
         if (name == '') {
             if (user_data[message.author.id] !== undefined) {
-                if (type == 'osu') {
+                if (type == 'Bancho') {
                     osuname = user_data[message.author.id].osuname
-                } else if (type == 'akatsuki.pw') {
+                } else if (type == 'Akatsuki') {
                     osuname = user_data[message.author.id].akatsukiname
-                } else if (type == 'ripple.moe') {
+                } else if (type == 'Ripple') {
                     osuname = user_data[message.author.id].ripplename
-                } else if (type == 'lemres.de') {
+                } else if (type == 'Horizon') {
                     osuname = user_data[message.author.id].horizonname
                 }
                 return osuname
@@ -24,13 +24,13 @@ module.exports = function (user_data, message = new Message(), name, type) {
             if (name.includes('@') == true) {
                 let id = message.mentions.users.first().id
                 if (user_data[id] !== undefined) {
-                    if (type == 'osu') {
+                    if (type == 'Bancho') {
                         osuname = user_data[id].osuname
-                    } else if (type == 'akatsuki.pw') {
+                    } else if (type == 'Akatsuki') {
                         osuname = user_data[id].akatsukiname
-                    } else if (type == 'ripple.moe') {
+                    } else if (type == 'Ripple') {
                         osuname = user_data[id].ripplename
-                    } else if (type == 'lemres.de') {
+                    } else if (type == 'Horizon') {
                         osuname = user_data[message.author.id].horizonname
                     }
                     return osuname

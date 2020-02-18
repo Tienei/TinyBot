@@ -2,7 +2,7 @@ const nodeosu = require('node-osu');
 const request = require('request-promise-native');
 const { Osutop } = require('./../../Classes/osu')
 // Function
-const getServerLink = require('./get_server_link')
+const get_mode_detail = require('./get_mode_detail')
 
 let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
@@ -125,7 +125,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
         }
     }
     if (mode >= 4 && mode <= 17) {
-        let serverlink = getServerLink(mode)
+        let serverlink = get_mode_detail(mode).link
         let linkoption = (mode == 12 || mode == 17) ? '&rx=1' : ''
         let data1 = await request.get(`https://${serverlink}/api/v1/users/scores/${type}?name=${name}${linkoption}&l=${limit}`)
         let data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)

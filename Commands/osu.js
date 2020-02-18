@@ -92,25 +92,18 @@ async function osuavatar(message = new Message(), mode) {
     let refresh = Math.round(Math.random()* 2147483648)
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
     let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
-    let check_type = ''
-    if (mode >= 0 && mode <= 3) {
-        check_type = 'osu'
-    } else if (mode >= 4 && mode <= 7) {
-        check_type = 'ripple.moe'
-    } else if (mode >= 8 && mode <= 12) {
-        check_type = 'akatsuki.pw'
-    }
+    let check_type = fx.osu.get_mode_detail(mode).check_type
     let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
     let pfp_link = ''
     let username = ''
     let id = 0
-    if (check_type == 'osu') {
+    if (check_type == 'Bancho') {
         let user = await osuApi.apiCall('/get_user', {u: name})
         username = user[0].username
         id = user[0].user_id
         pfp_link = `https://a.ppy.sh/${id}_1?date=${refresh}`
     } else {
-        let serverlink = fx.osu.getServerLink(mode)
+        let serverlink = fx.osu.get_mode_detail(mode).link
         let data = await request.get(`https://${serverlink}/api/v1/users?name=${suffix.check}`)
         let user = JSON.parse(data)
         username = user.username
@@ -138,20 +131,11 @@ async function osu(message = new Message(), mode) {
                                                         {"suffix": "-rank", "v_count": 1},
                                                         {"suffix": "-ts", "v_count": 0},
                                                         {"suffix": "-g", "v_count": 0}])
-        let check_type = ''
-        if (mode >= 0 && mode <= 3) {
-            check_type = 'osu'
-        } else if (mode >= 4 && mode <= 7) {
-            check_type = 'ripple.moe'
-        } else if (mode >= 8 && mode <= 12) {
-            check_type = 'akatsuki.pw'
-        } else if (mode >= 13 && mode <= 17) {
-            check_type = 'lemres.de'
-        }
-        let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
         let modeicon = modedetail.modeicon
+        let check_type = modedetail.check_type
+        let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
             let user = await fx.osu.get_osu_profile(name, mode, 30, false)
             if (user == null) {
@@ -648,7 +632,7 @@ async function osu_card(message = new Message(), mode) {
         let refresh = Math.round(Math.random()* 2147483648)
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
         // Get Information
-        let name = fx.osu.check_player(user_data, message, suffix.check, 'osu')
+        let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
         let user = await fx.osu.get_osu_profile(name, mode, 1, false)
         if (user == null) {
             throw 'User not found!'
@@ -886,20 +870,12 @@ async function osutop(message = new Message(), mode) {
                                                     {"suffix": "-a", "v_count": 0},
                                                     {"suffix": "-page", "v_count": 0}])
         let top = ''
-        let check_type = ''
-        if (mode >= 0 && mode <= 3) {
-            check_type = 'osu'
-        } else if (mode >= 4 && mode <= 7) {
-            check_type = 'ripple.moe'
-        } else if (mode >= 8 && mode <= 12) {
-            check_type = 'akatsuki.pw'
-        } else if (mode >= 13 && mode <= 17) {
-            check_type = 'lemres.de'
-        }
-        let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
-        let pfp_link = ''
+        let modeicon = modedetail.modeicon
+        let check_type = modedetail.check_type
+        let pfp_link = `http://a.${modedetail.link}/{user_id}?date=${refresh}`
+        let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         if (suffix.suffix.find(s => s.suffix == "-p").position > -1) {
             let numberoption = suffix.suffix.find(s => s.suffix == "-p").value[0]
             let range = false
@@ -917,15 +893,8 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
-            } else if (mode >= 4 && mode <= 7) {
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
-            } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (mode >= 13 && mode <= 17) {
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            }
+            pfp_link = pfp_link.replace('{user_id}', user.id)
+            console.log(pfp_link)
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, Number(numberrange[1]), 'best', true)
             for (var i = Number(numberrange[0]) - 1; i < Number(numberrange[1]) ; i++) {
@@ -953,15 +922,7 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
-            } else if (mode >= 4 && mode <= 7) {
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
-            } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (mode >= 13 && mode <= 17) {
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            }
+            pfp_link = pfp_link.replace('{user_id}', user.id)
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             if (best.length == 0) {
@@ -1000,15 +961,7 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
-            } else if (mode >= 4 && mode <= 7) {
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
-            } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (mode >= 13 && mode <= 17) {
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            }
+            pfp_link = pfp_link.replace('{user_id}', user.id)
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             let checktop = 0
             let username = user.name
@@ -1064,15 +1017,7 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
-            } else if (mode >= 4 && mode <= 7) {
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
-            } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (mode >= 13 && mode <= 17) {
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            }
+            pfp_link = pfp_link.replace('{user_id}', user.id)
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best')
             let userid = best[0].userid
             let username = user.name
@@ -1106,15 +1051,7 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
-            } else if (mode >= 4 && mode <= 7) {
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
-            } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (mode >= 13 && mode <= 17) {
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            }
+            pfp_link = pfp_link.replace('{user_id}', user.id)
             let username = user.name
             let best = get.filter(function(map) {return map.title.toLowerCase().includes(map_name) || map.creator.toLowerCase().includes(map_name) || map.diff.toLowerCase().includes(map_name) || map.source.toLowerCase().includes(map_name) || map.artist.toLowerCase().includes(map_name)})
             let userid = best[0].userid
@@ -1147,15 +1084,7 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
-            } else if (mode >= 4 && mode <= 7) {
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
-            } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (mode >= 13 && mode <= 17) {
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            }
+            pfp_link = pfp_link.replace('{user_id}', user.id)
             let username = user.name
             let userid = best[0].userid
             let loadpage = async function (page, pages) {
@@ -1185,15 +1114,7 @@ async function osutop(message = new Message(), mode) {
             if (user == null) {
                 throw 'User not found!'
             }
-            if (mode >= 0 && mode <= 3) {
-                pfp_link = `http://s.ppy.sh/a/${user.id}?date=${refresh}`
-            } else if (mode >= 4 && mode <= 7) {
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
-            } else if (mode >= 8 && mode <= 12) {
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (mode >= 13 && mode <= 17) {
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            }
+            pfp_link = pfp_link.replace('{user_id}', user.id)
             let best = await fx.osu.get_osu_top(name, mode, 5, 'best')
             let userid = best[0].userid
             let username = user.username
@@ -1262,8 +1183,8 @@ async function recent(message = new Message()) {
             mode = 17
         }
         // Make recent best get modes later
-        let type = fx.osu.getServerLink(mode)
-        let name = fx.osu.check_player(user_data, message, suffix.check, type)
+        let check_type = fx.osu.get_mode_detail(mode).check_type
+        let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let modename = fx.osu.get_mode_detail(mode).modename
         if (mode == 0 && suffix.suffix.find(s => s.suffix == "-b").position > -1) {
             let best = await fx.osu.get_osu_top(name, 0, 100, 'best', true)
@@ -1382,7 +1303,7 @@ async function compare(message = new Message()) {
         }
         fx.general.cmd_cooldown.set(message, command, 3000)
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-p", "v_count": 1}])
-        let name = fx.osu.check_player(user_data, message, suffix.check, 'osu')
+        let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
         let storedid = 0
         let counter = 0
         let get = 1
@@ -1526,7 +1447,7 @@ async function score(message = new Message()) {
                 check = option[2]
             }
         }
-        let name = fx.osu.check_player(user_data, message, check, 'osu')
+        let name = fx.osu.check_player(user_data, message, check, 'Bancho')
         let scores = await fx.osu.get_osu_scores(name, mode, beatmapid)
         scores.sort(function (a,b) {
             a1 = Number(a.pp)

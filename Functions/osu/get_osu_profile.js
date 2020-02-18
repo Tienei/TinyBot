@@ -3,7 +3,7 @@ const nodeosu = require('node-osu');
 const request = require('request-promise-native');
 const { Profile } = require('./../../Classes/osu')
 // Function
-const getServerLink = require('./get_server_link')
+const get_mode_deatail = require('./get_mode_detail')
 // Client
 const osu_client = require('../../client').osu_client
 
@@ -62,7 +62,7 @@ module.exports = async function (name, mode, event, html = true) {
                                 user_web["cover_url"]])
         }
         if (mode >= 4 && mode <= 17) {
-            let serverlink = getServerLink(mode)
+            let serverlink = get_mode_deatail(mode).link
             let data = (mode == 12 || mode == 17) ? await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`) : await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`) 
             let user = JSON.parse(data)
             return new Profile([user.username,
