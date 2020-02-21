@@ -70,7 +70,7 @@ module.exports = function (message = new Message(), mode, modeicon, supporter, m
         embed.setDescription(desc)
     }
     if (field1 !== '') {
-        embed.addField('Perfromance:', field1, true)
+        embed.addField('Performance:', field1, true)
     }
     if (field2 !== '') {
         embed.addField('Rank:', field2, true)

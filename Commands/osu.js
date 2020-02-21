@@ -461,8 +461,8 @@ Most common mods: ${sortedmod}`)
           
             // Format SVG to PNG
             let svg = new Buffer(linegraph)
-            await sharp(svg).sharpen(0.01,1,10000).png().toFile('image.png')
-            let image = await jimp.read('./image.png')                   
+            svg = await sharp(svg).sharpen(0.01,1,10000).toBuffer()
+            let image = await jimp.read(svg)                   
             let banner = await jimp.read(user.bannerurl)
             let bannerwidth = banner.getWidth()
             let bannerHeight = banner.getHeight()
@@ -476,9 +476,8 @@ Most common mods: ${sortedmod}`)
             banner.blur(5)
             image.brightness(0.25)
             banner.composite(image, 0, 0)
-            await banner.write('./rankhistory.png')
 
-            const attachment = new Attachment('./rankhistory.png', 'rank.png')
+            const attachment = new Attachment(await banner.getBufferAsync(jimp.MIME_PNG), 'rank.png')
             const embed = new RichEmbed()
             .setDescription(`${modeicon} ${user.supporter} **osu!Standard rank history for [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
             .addField('Current rank', `Global: ${user.rank} (:flag_${user.country}:: ${user.countryrank})`, true)
@@ -839,11 +838,10 @@ async function osu_card(message = new Message(), mode) {
         }
         starholder.contain(400,33, jimp.HORIZONTAL_ALIGN_CENTER)
         card.composite(starholder, 10, 551)
-        card.write('card.png')
         msg1.edit('Done!')
         message.channel.send({
             files: [{
-              attachment: './card.png',
+              attachment: await card.getBufferAsync(jimp.MIME_PNG),
               name: 'card.png'
             }]
           })
