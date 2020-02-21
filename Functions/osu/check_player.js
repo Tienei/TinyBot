@@ -31,7 +31,7 @@ module.exports = function (user_data, message = new Message(), name, type) {
                     } else if (type == 'Ripple') {
                         osuname = user_data[id].ripplename
                     } else if (type == 'Horizon') {
-                        osuname = user_data[message.author.id].horizonname
+                        osuname = user_data[id].horizonname
                     }
                     return osuname
                 } else {
