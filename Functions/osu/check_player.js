@@ -17,7 +17,16 @@ module.exports = function (user_data, message = new Message(), name, type) {
                 }
                 return osuname
             } else {
-                throw `Looks like you didn't link your profile to an osu account, do **${config.config.bot_prefix}osuset (username)** to link your account`
+                let error_text = `Looks like you didn't link your profile to an osu account, do **${config.config.bot_prefix}{server_cmd} (username)** to link your account`
+                if (type == 'Bancho') {
+                    error_text = error_text.replace('{server_cmd}', 'osuset')
+                } else if (type == 'Akatsuki') {
+                    error_text = error_text.replace('{server_cmd}', 'akatsukiset')
+                } else if (type == 'Ripple') {
+                    error_text = error_text.replace('{server_cmd}', 'rippleset')
+                } else if (type == 'Horizon') {
+                    error_text = error_text.replace('{server_cmd}', 'horizonset')
+                }
             }
         } else {
             let id = ''
