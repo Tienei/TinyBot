@@ -27,6 +27,7 @@ module.exports = function (user_data, message = new Message(), name, type) {
                 } else if (type == 'Horizon') {
                     error_text = error_text.replace('{server_cmd}', 'horizonset')
                 }
+                throw error_text
             }
         } else {
             let id = ''
