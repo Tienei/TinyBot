@@ -59,10 +59,9 @@ bot.on("ready", (ready) => {
             });
 
             // Get track data
-            /*osu_track = await new Promise(resolve => {
+            osu_track = await new Promise(resolve => {
                 db.osu_track.find((err, docs) => resolve(docs[0]['0']));
-            });*/
-            osu_track = []
+            });
 
             // Get easter egg data
             easter_egg = await new Promise(resolve => {
@@ -421,7 +420,7 @@ bot.on("message", (message) => {
                 }
                 message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
                 console.log(osu_track)
-                //db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
                 message.channel.send(String(error))
             }
