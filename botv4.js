@@ -59,9 +59,10 @@ bot.on("ready", (ready) => {
             });
 
             // Get track data
-            osu_track = await new Promise(resolve => {
+            /*osu_track = await new Promise(resolve => {
                 db.osu_track.find((err, docs) => resolve(docs[0]['0']));
-            });
+            });*/
+            osu_track = []
 
             // Get easter egg data
             easter_egg = await new Promise(resolve => {
@@ -342,9 +343,9 @@ bot.on("message", (message) => {
 
         async function osutrack() {
             try {
-                if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
+                /*if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
                     throw 'You need to have `Manage Channels` permission to set osutrack'
-                }
+                }*/
                 let suffix = fx.osu.check_suffix(msg, true, [{"suffix": "-std", "v_count": 0},
                                                             {"suffix": "-taiko", "v_count": 0},
                                                             {"suffix": "-ctb", "v_count": 0},
@@ -393,7 +394,7 @@ bot.on("message", (message) => {
                         player.trackonchannel.push({id: message.channel.id, modes: [{mode: mode, limit: limit}]})
                     }
                     player.name = name
-                    let modedetail = player.modedetail.find(mode => mode.mode == mode)
+                    let modedetail = player.modedetail.find(m => m.mode == mode)
                     if (modedetail) {
                         modedetail.lasttotalpp = user.pp
                         modedetail.lastrank = user.rank
@@ -419,7 +420,8 @@ bot.on("message", (message) => {
                                     "recenttimeplay": new Date().getTime()})
                 }
                 message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
-                db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                console.log(osu_track)
+                //db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
                 message.channel.send(String(error))
             }
