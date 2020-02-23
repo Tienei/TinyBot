@@ -386,10 +386,10 @@ bot.on("message", (message) => {
                 let player = osu_track.find(pl => pl.name.toLowerCase() == suffix.check && pl.type == type)
                 if (player) {
                     if (player.trackonchannel.find(channel => channel.id == message.channel.id)) {
-                        if (!player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode)) {
-                            player.trackonchannel.find(channel => channel.id == message.channel.id).modes.push({mode: mode, limit: limit})
-                        } else {
+                        if (player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode)) {
                             player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode).limit = limit
+                        } else {
+                            player.trackonchannel.find(channel => channel.id == message.channel.id).modes.push({mode: mode, limit: limit})
                         }
                     } else {
                         player.trackonchannel.push({id: message.channel.id, modes: [{mode: mode, limit: limit}]})
@@ -420,8 +420,9 @@ bot.on("message", (message) => {
                                     "trackonchannel": [{id: message.channel.id, modes: [{mode: mode, limit: limit}]}],
                                     "recenttimeplay": new Date().getTime()})
                 }
+                console.log(osu_track[0].trackonchannel[0].modes[0].limit)
                 message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
-                db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                //db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
                 message.channel.send(String(error))
             }
@@ -469,7 +470,6 @@ bot.on("message", (message) => {
                     }
                     message.channel.send(`**${suffix.check}** (${type}) has been removed from #${message.channel.name}`)
                 }
-                console.log(osu_track)
             } catch (error) {
                 message.channel.send(String(error))
             }
