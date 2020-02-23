@@ -420,7 +420,6 @@ bot.on("message", (message) => {
                                     "trackonchannel": [{id: message.channel.id, modes: [{mode: mode, limit: limit}]}],
                                     "recenttimeplay": new Date().getTime()})
                 }
-                console.log(osu_track[0].trackonchannel[0].modes[0].limit)
                 message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
                 db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
@@ -450,10 +449,10 @@ bot.on("message", (message) => {
                 let player = []
                 if (type == 'All') {
                     for (let pl of osu_track) {
-                        if (pl.name.toLowerCase() == suffix.check) player.push(pl)
+                        if (pl.name.toLowerCase() == suffix.check.replace("_", " ")) player.push(pl)
                     }
                 } else {
-                    player.push(osu_track.find(pl => pl.name.toLowerCase() == suffix.check && pl.type == type))
+                    player.push(osu_track.find(pl => pl.name.toLowerCase() == suffix.check.replace("_", " ") && pl.type == type))
                 }
                 if (player.length > 0) {
                     for (let track of player) {
@@ -461,14 +460,14 @@ bot.on("message", (message) => {
                             osu_track.find(pl => pl.name.toLowerCase() == track.name.toLowerCase()).trackonchannel.splice(track.trackonchannel.findIndex(channel => channel.id == message.channel.id), 1)
                             db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                         } else {
-                            osu_track.splice(track.trackonchannel.findIndex(channel => channel.id == message.channel.id),1)
+                            osu_track.splice(osu_track.findIndex(pl => pl.name.toLowerCase() == track.name.toLowerCase()),1)
                             if (Object.keys(osu_track).length < 1) {
                                 osu_track['a'] = 'a'
                             }
                             db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                         }
                     }
-                    message.channel.send(`**${suffix.check}** (${type}) has been removed from #${message.channel.name}`)
+                    message.channel.send(`**${suffix.check.replace("_", " ")}** (${type}) has been removed from #${message.channel.name}`)
                 }
             } catch (error) {
                 message.channel.send(String(error))
@@ -481,9 +480,7 @@ bot.on("message", (message) => {
                 let channel = osu_track[i].trackonchannel.find(channel => channel.id == message.channel.id)
                 if (channel) {
                     let modes = ''
-                    console.log(channel.modes)
                     for (mode of channel.modes) {
-                        console.log(mode)
                         modes += `${fx.osu.get_mode_detail(mode.mode).modename} (p: ${mode.limit}), `
                     }
                     if (modes !== '') modes = modes.substring(0,modes.length-2)
