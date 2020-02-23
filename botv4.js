@@ -388,6 +388,8 @@ bot.on("message", (message) => {
                     if (player.trackonchannel.find(channel => channel.id == message.channel.id)) {
                         if (!player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode)) {
                             player.trackonchannel.find(channel => channel.id == message.channel.id).modes.push({mode: mode, limit: limit})
+                        } else {
+                            player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode).limit = limit
                         }
                     } else {
                         player.trackonchannel.push({id: message.channel.id, modes: [{mode: mode, limit: limit}]})
@@ -419,7 +421,6 @@ bot.on("message", (message) => {
                                     "recenttimeplay": new Date().getTime()})
                 }
                 message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
-                console.log(osu_track)
                 db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
                 message.channel.send(String(error))
