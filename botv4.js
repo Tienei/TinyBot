@@ -59,7 +59,7 @@ bot.on("ready", (ready) => {
             });
 
             // Get track data
-            await new Promise(resolve => {
+            osu_track = await new Promise(resolve => {
                 db.osu_track.find((err, docs) => resolve(docs[0]['0']));
             });
 
