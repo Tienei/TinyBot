@@ -345,9 +345,9 @@ bot.on("message", (message) => {
 
         async function osutrack() {
             try {
-                /*if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
+                if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
                     throw 'You need to have `Manage Channels` permission to set osutrack'
-                }*/
+                }
                 let suffix = fx.osu.check_suffix(msg, true, [{"suffix": "-std", "v_count": 0},
                                                             {"suffix": "-taiko", "v_count": 0},
                                                             {"suffix": "-ctb", "v_count": 0},
