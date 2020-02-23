@@ -43,6 +43,12 @@ osu_client.connect().then(() => {
     loading -= 1
 })
 
+/*
+
+Added other modes r -b
+
+*/
+
 bot.on("ready", (ready) => {
     console.log("Discord client is ready")
     async function getFile() {
@@ -53,7 +59,7 @@ bot.on("ready", (ready) => {
             });
 
             // Get track data
-            osu_track = await new Promise(resolve => {
+            await new Promise(resolve => {
                 db.osu_track.find((err, docs) => resolve(docs[0]['0']));
             });
 
@@ -98,60 +104,68 @@ bot.on("ready", (ready) => {
     // osutrack
     async function real_time_osu_track() {
         console.log('osutrack: Checking')
-        for (var player in osu_track) {
-            let best = await fx.osu.get_osu_top(osu_track[player].osuname, 0, osu_track[player].limit, 'best', true)
-            best = best.filter(b => new Date(b.date).getTime() > new Date(osu_track[player].recenttimeplay).getTime())
-            for (var i = 0; i < best.length; i++) {
-                console.log('Found')
-                var refresh = 0
-                var user = await fx.osu.get_osu_profile(osu_track[player].osuname, 0, 0, false)
-                var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid)
-                var rank = fx.osu.ranking_letter(best[i].letter)
-                var modandbit = fx.osu.mods_enum(best[i].mod, 'text')
-                var shortenmod = modandbit.shortenmod
-                var bitpresent = modandbit.bitpresent
-                var pp = best[i].pp
-                var ppgain = (Number(user.pp).toFixed(2) - Number(osu_track[player].lasttotalpp)).toFixed(2)
-                var star = 0
-                var fcpp = 0
-                var fcacc = 0
-                var fcguess = ''
-                var parser = await fx.osu.precalc(best[i].beatmapid)
-                var fccalc = fx.osu.osu_pp_calc(parser,bitpresent,best[i].fc,best[i].count100,best[i].count50,0,best[i].acc,'fc')
-                fcpp = Number(fccalc.pp.total).toFixed(2)
-                fcacc = fccalc.acc
-                star = Number(fccalc.star.total).toFixed(2)
-                if (best[i].letter == 'F') {
-                    pp = 'No PP'
+        for (let player of osu_track) {
+            let modes = []
+            for (let channel of player.trackonchannel) {
+                for (let mode of channel.modes) {
+                    if (!modes.includes(mode)) modes.push(mode)
                 }
-                if (best[i].perfect == 0) {
-                    fcguess = `| **${fcpp}pp for ${fcacc}%**`
-                }               
-                let embed = new Discord.RichEmbed()
-                .setAuthor(`New #${best[i].top} for ${user.username} in osu!Standard:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
-                .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
-                .setDescription(`
+            }
+            for (let m of modes) {
+                let mode = m.mode
+                let limit = m.limit
+                let player_mode_detail = player.modedetail.find(m => m.mode == mode) 
+                let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
+                best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
+                for (var i = 0; i < best.length; i++) {
+                    console.log('Found')
+                    let mode_detail = fx.osu.get_mode_detail(mode)
+                    var user = await fx.osu.get_osu_profile(player.name, mode, 0, false)
+                    var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid)
+                    var rank = fx.osu.ranking_letter(best[i].letter)
+                    var modandbit = fx.osu.mods_enum(best[i].mod, 'text')
+                    var shortenmod = modandbit.shortenmod
+                    var bitpresent = modandbit.bitpresent
+                    var pp = best[i].pp
+                    var ppgain = (Number(user.pp).toFixed(2) - Number(player_mode_detail.lasttotalpp)).toFixed(2)
+                    let parser = ''
+                    if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[0].beatmapid)}
+                    let fc_stat = await fx.osu.get_pp(mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+                    var star = fc_stat.star
+                    let fcguess = ''
+                    if (best[i].letter == 'F') {
+                        pp = 'No PP'
+                    }
+                    if (best[i].perfect == 0) {
+                        fcguess = fc_stat.fcguess
+                    }             
+                    let embed = new Discord.RichEmbed()
+                    .setAuthor(`New #${best[i].top} for ${user.username} in osu!${mode_detail.modename}:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
+                    .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
+                    .setDescription(`
 **[${beatmap.title}](https://osu.ppy.sh/b/${beatmap.beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
 ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].combo}/${beatmap.fc}
 **Accuracy:** ${Number(best[i].acc).toFixed(2)}% ${best[i].accdetail} ${fcguess}
-**#${osu_track[player].lastrank} → #${user.rank} (:flag_${user.country}: : #${osu_track[player].lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`)
-                for (var c = 0; c < osu_track[player].trackonchannel.length; c++) {
-                    stored_map_ID.push({id:beatmap.beatmapid,server: osu_track[player].trackonchannel[c], mode: "Standard"})
-                    embed.setColor(bot.channels.get(osu_track[player].trackonchannel[c]).guild.me.displayColor)
-                    bot.channels.get(osu_track[player].trackonchannel[c]).send({embed})
-                }
-                osu_track[player].lasttotalpp = user.pp
-                osu_track[player].lastrank = user.rank
-                osu_track[player].lastcountryrank = user.countryrank
-                osu_track[player].recenttimeplay = best[i].date
-                if (i == best.length - 1) {
-                    db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                }
-            }  
+**#${player_mode_detail.lastrank} → #${user.rank} (:flag_${user.country}: : #${player_mode_detail.lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`)
+                    for (let channel of player.trackonchannel) {
+                        console.log(channel)
+                        stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: "Standard"})
+                        embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
+                        bot.channels.get(channel.id).send({embed})
+                    }
+                    player_mode_detail.lasttotalpp = user.pp
+                    player_mode_detail.lastrank = user.rank
+                    player_mode_detail.lastcountryrank = user.countryrank
+                    player.recenttimeplay = best[i].date
+                    if (i == best.length - 1) {
+                        db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                    }
+                }  
+            }
         }
     }
     if (config.config.debug.osutrack == false) {
-        setInterval(real_time_osu_track, 90000)
+        setInterval(real_time_osu_track, 10000) // 90000
     }
 });
 
@@ -331,38 +345,81 @@ bot.on("message", (message) => {
                 if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
                     throw 'You need to have `Manage Channels` permission to set osutrack'
                 }
-                var osuname = message.content.substring(10)
-                var detected = false
-                var user = await fx.osu.get_osu_profile(osuname, 0, 0, false)
+                let suffix = fx.osu.check_suffix(msg, true, [{"suffix": "-std", "v_count": 0},
+                                                            {"suffix": "-taiko", "v_count": 0},
+                                                            {"suffix": "-ctb", "v_count": 0},
+                                                            {"suffix": "-mania", "v_count": 0},
+                                                            {"suffix": "-ripple", "v_count": 0},
+                                                            {"suffix": "-akat", "v_count": 0},
+                                                            {"suffix": "-rxakat", "v_count": 0},
+                                                            {"suffix": "-hrz", "v_count": 0},
+                                                            {"suffix": "-rxhrz", "v_count": 0},
+                                                            {"suffix": "-p", "v_count": 1}])
+                let mode = 0 
+                let limit = 50
+                if (suffix.suffix.find(s => s.suffix == "-p").position > -1) {
+                    limit = suffix.suffix.find(s => s.suffix == "-p").value[0]
+                }
+                if (suffix.suffix.find(s => s.suffix == "-taiko").position > -1) {
+                    mode = 1
+                } else if (suffix.suffix.find(s => s.suffix == "-ctb").position > -1) {
+                    mode = 2
+                } else if (suffix.suffix.find(s => s.suffix == "-mania").position > -1) {
+                    mode = 3
+                } else if (suffix.suffix.find(s => s.suffix == "-ripple").position > -1) {
+                    mode = 4
+                } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
+                    mode = 8
+                } else if (suffix.suffix.find(s => s.suffix == "-rxakat").position > -1) {
+                    mode = 12
+                } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
+                    mode = 13
+                } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
+                    mode = 17
+                }
+                let type = fx.osu.get_mode_detail(mode).check_type
+                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false)
                 var name = user.username
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
-                } else {
-                    for (var i = 0; i < osu_track.length; i++) {
-                        if (osu_track[i].osuname == name) {
-                            detected = true
-                            if (osu_track[i].trackonchannel.includes(message.channel.id) == true) {
-                                osu_track[i].osuname = name
-                                osu_track[i].lasttotalpp = user.pp
-                                osu_track[i].lastrank = user.rank
-                                osu_track[i].lastcountryrank = user.countryrank
-                                break
-                            } else {
-                                osu_track[i].osuname = name
-                                osu_track[i].lasttotalpp = user.pp
-                                osu_track[i].lastrank = user.rank
-                                osu_track[i].lastcountryrank = user.countryrank
-                                osu_track[i].trackonchannel.push(message.channel.id)
-                                break
-                            }
-                        }
-                    }
-                    if (detected == false) {
-                        osu_track.push({"osuname":name,"lasttotalpp":user.pp,"lastrank":user.rank,"lastcountryrank":user.countryrank,"trackonchannel": [message.channel.id],"recenttimeplay": new Date().getTime(),"limit":50})
-                    }
-                    message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
-                    db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                 }
+                let player = osu_track.find(pl => pl.name.toLowerCase() == suffix.check && pl.type == type)
+                if (player) {
+                    if (player.trackonchannel.find(channel => channel.id == message.channel.id)) {
+                        if (!player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode)) {
+                            player.trackonchannel.find(channel => channel.id == message.channel.id).modes.push({mode: mode, limit: limit})
+                        }
+                    } else {
+                        player.trackonchannel.push({id: message.channel.id, modes: [{mode: mode, limit: limit}]})
+                    }
+                    player.name = name
+                    let modedetail = player.modedetail.find(mode => mode.mode == mode)
+                    if (modedetail) {
+                        modedetail.lasttotalpp = user.pp
+                        modedetail.lastrank = user.rank
+                        modedetail.lastcountryrank = user.countryrank
+                    } else {
+                        player.modedetail.push({
+                            "mode": mode,
+                            "lasttotalpp":user.pp,
+                            "lastrank":user.rank,
+                            "lastcountryrank":user.countryrank,
+                        })
+                    }
+                } else {
+                    osu_track.push({"name": name,
+                                    "type": type,
+                                    "modedetail": [{    
+                                        "mode": mode,
+                                        "lasttotalpp":user.pp,
+                                        "lastrank":user.rank,
+                                        "lastcountryrank":user.countryrank,
+                                    }],
+                                    "trackonchannel": [{id: message.channel.id, modes: [{mode: mode, limit: limit}]}],
+                                    "recenttimeplay": new Date().getTime()})
+                }
+                message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
+                db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
                 message.channel.send(String(error))
             }
@@ -373,25 +430,44 @@ bot.on("message", (message) => {
                 if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
                     throw 'You need to have `Manage Channels` permission to untrack'
                 }
-                for (var i = 0; i < osu_track.length; i++) {
-                    if (osu_track[i].osuname == message.content.substring(9)) {
-                        if (osu_track[i].trackonchannel.includes(message.channel.id) == true && osu_track[i].trackonchannel.length > 1) {
-                            osu_track[i].trackonchannel.splice(osu_track[i].trackonchannel.indexOf(message.channel.id), 1)
-                            message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
+                let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-bc", "v_count": 0},
+                                                            {"suffix": "-akat", "v_count": 0},
+                                                            {"suffix": "-rp", "v_count": 0},
+                                                            {"suffix": "-hrz", "v_count": 0},])
+                let type = 'All'
+                if (suffix.suffix.find(s => s.suffix == "-bc").position > -1) {
+                   type = 'Bancho'
+                } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
+                    type = 'Akatsuki'
+                } else if (suffix.suffix.find(s => s.suffix == "-rp").position > -1) {
+                    type = 'Ripple'
+                } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
+                    type = 'Horizon'
+                }
+                let player = []
+                if (type == 'All') {
+                    for (let pl of osu_track) {
+                        if (pl.name.toLowerCase() == suffix.check) player.push(pl)
+                    }
+                } else {
+                    player.push(osu_track.find(pl => pl.name.toLowerCase() == suffix.check && pl.type == type))
+                }
+                if (player.length > 0) {
+                    for (let track of player) {
+                        if (track.trackonchannel.find(channel => channel.id == message.channel.id) && track.trackonchannel.length > 1) {
+                            osu_track.find(pl => pl.name.toLowerCase() == track.name.toLowerCase()).trackonchannel.splice(track.trackonchannel.findIndex(channel => channel.id == message.channel.id), 1)
                             db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                            break
                         } else {
-                            osu_track.splice(i,1)
+                            osu_track.splice(track.trackonchannel.findIndex(channel => channel.id == message.channel.id),1)
                             if (Object.keys(osu_track).length < 1) {
                                 osu_track['a'] = 'a'
                             }
-                            message.channel.send(`**${message.content.substring(9)}** has been removed from #${message.channel.name}`)
                             db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                            break
                         }
-                        
                     }
+                    message.channel.send(`**${suffix.check}** (${type}) has been removed from #${message.channel.name}`)
                 }
+                console.log(osu_track)
             } catch (error) {
                 message.channel.send(String(error))
             }
@@ -400,10 +476,19 @@ bot.on("message", (message) => {
         async function osutracklist() {
             var currentlytrack = ''
             for (var i = 0; i < osu_track.length; i++) {
-                if (osu_track[i].trackonchannel.includes(message.channel.id) == true) {
-                    currentlytrack += "``" + osu_track[i].osuname + "`` "
+                let channel = osu_track[i].trackonchannel.find(channel => channel.id == message.channel.id)
+                if (channel) {
+                    let modes = ''
+                    console.log(channel.modes)
+                    for (mode of channel.modes) {
+                        console.log(mode)
+                        modes += `${fx.osu.get_mode_detail(mode.mode).modename} (p: ${mode.limit}), `
+                    }
+                    if (modes !== '') modes = modes.substring(0,modes.length-2)
+                    currentlytrack += osu_track[i].name + `: \`\`mode:${modes}\`\`, ` 
                 }
             }
+            if (currentlytrack !== '') currentlytrack = currentlytrack.substring(0,currentlytrack.length-2)
             const embed = new Discord.RichEmbed()
             .setAuthor(`Player(s) currently being tracked on #${message.channel.name}`)
             .setColor(embedcolor)

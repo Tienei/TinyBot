@@ -174,14 +174,16 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                                 undefined,
                                 undefined])
         }
-        let beatmaps = top.map(sc => {return request.get(`https://${serverlink}/api/get_beatmaps?b=${sc.beatmapid}`)})
-        beatmaps = await Promise.all(beatmaps)
-		for (let i = 0; i < top.length; i++) {
-            let beatmap = JSON.parse(beatmaps[i])
-            top[i].title = beatmap[0].title
-            top[i].diff = beatmap[0].version
-            top[i].artist = beatmap[0].artist
-		}
+        if (no_bm == false) {
+            let beatmaps = top.map(sc => {return request.get(`https://${serverlink}/api/get_beatmaps?b=${sc.beatmapid}`)})
+            beatmaps = await Promise.all(beatmaps)
+            for (let i = 0; i < top.length; i++) {
+                let beatmap = JSON.parse(beatmaps[i])
+                top[i].title = beatmap[0].title
+                top[i].diff = beatmap[0].version
+                top[i].artist = beatmap[0].artist
+            }
+        }
     }
     return top
 }

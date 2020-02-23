@@ -1,5 +1,5 @@
 let config = {
-    bot_ver: 'v4.0',
+    bot_ver: 'v4.1',
     bot_default_prefix: '!',
     debug: {
         osutrack: false,

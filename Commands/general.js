@@ -50,9 +50,9 @@ function help(message = new Message()) {
             addhelp('taikotop', 'taikotop (username) (options)', 'View a player\'s osu!Taiko top play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-s)`: Search for a specific play in top 100\nAccuracy `(-a)`: Sort player\'stop 100 plays by accuracy', 'taikotop Tienei -p 8')
             addhelp('ctbtop', 'ctbtop (username) (options)', 'View a player\'s osu!Catch the beat top play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-s)`: Search for a specific play in top 100\nAccuracy `(-a)`: Sort player\'stop 100 plays by accuracy', 'ctbtop Tienei -p 9')
             addhelp('maniatop', 'maniatop (username) (options)', 'View a player\'s osu!Mania top play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`\nGreater than `(-g)`: Get number of plays greater than certain amount of pp (Number)\nPage `(-page)`: Get top 100 in a form of pages `(No param)`\nSearch `(-s)`: Search for a specific play in top 100\nAccuracy `(-a)`: Sort player\'stop 100 plays by accuracy', 'maniatop Tienei -p 4')
-            addhelp('osutrack', 'osutrack (username)', 'Track a player\'s osu!Standard top 50 (Required Administration)', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osutrack Tienei')
+            addhelp('osutrack', 'osutrack (username) (options)', 'Track a player\'s osu!Standard top 50 (Required MANAGE CHANNELS permission). Default: osu!Std, top 50', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nTop Play `(-p)`: Number of top plays to include in tracking `(1-100)`\nModes/Severs: `-std` `-taiko` `-ctb` `-mania` `-ripple` `-akat` `-rxakat` `-hrz` `-rxhrz`', 'osutrack Tienei')
             addhelp('osutracklist', 'osutracklist', 'Get a list of player being tracked in the channel', 'None', 'osutracklist')
-            addhelp('untrack', 'untrack (username)', 'Untrack a player from the database (Required Administration)', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'untrack Tienei')
+            addhelp('untrack', 'untrack (username) (options)', 'Untrack a player from the database (Required MANAGE CHANNELS permission), Default: Remove all player with the name', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nBancho `(-bc)`: Remove a Bancho player with the name from tracking\nRipple `(-rp)`: Remove a Ripple player with the name from tracking\nAkatsuki `(-akat)`: Remove an Akatsuki player with the name from tracking\nHorizon `(-hrz)`: Remove a Horizon player with the name from tracking', 'untrack Tienei')
             addhelp('recent', '[recent|r] (username) (options)', 'Get player\'s most recent play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nRecent List `(-l)`: Get player 5 most recent plays\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-rxakat` `-ripple` `-hrz` `-rxhrz`', 'r Tienei -b')
             addhelp('compare', '[compare|c] (username) ', 'Compare to the last play in the chat', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nPrevious Play `(-p)`: Get a previous play mentioned in the chat `(Number)`', 'c Tienei')
             addhelp('osuset', 'osuset (username)', 'Link your profile to an osu! player', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuset Tienei')
@@ -82,7 +82,7 @@ function help(message = new Message()) {
             addhelp('rxhorizon', 'rxhorizon (username) (options)', 'Get a Relax Horizon Standard profile', 'username: Horizon username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetails `(-d)`: Get all the details of the player `(no param)`', 'rxhorizon Tienei -d')
             addhelp('rxhorizontop', 'rxhorizontop (username) (options)', 'View a player\'s Relax Horizon Standard top play', 'username: Horizon username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`', 'rxhorizontop Tienei -p 8')
             addhelp('definevar', 'Defined Variable for Custom command', 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence`` channel: ``selfname`` ``selflink`` ``members`` server: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``', '{require:admin}: Need Administrator to enable the command {$N}: Get text in message seperated by space (Not include command) {send:channelname "message"}: Send to a channel with a specific message', 'do ``!help customcmd``')
-            addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')            
+            addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')
         }
         var generalhelp = '**--- [General]:**\n`avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `checkbot`'
         var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
@@ -160,43 +160,9 @@ function avatar(message = new Message()) {
 
 function changelog(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let changes = [`**[February 4th, 2020]:**
---- **Update:**
-Rewriting bot's code, making all osu private server works together nicely
-Merging Akatsuki, Ripple and Bancho command code
-Moving user data to a new database
-Improved commands latency respond (!osutop -p, -r, -m; !r -b)
-Improved tracking latency
-Better suffixes check
-Makes osucard rarity based on acc
-Makes Akatsuki and Ripple use the same text overlay as Bancho
-Changed mod abbreviation 
-Added trivia
-Added commas in score/playcount (osu -d and every other commands that had scores)
-Added recent -l
-Added osutop -a, akattop -r, rippletop -r
-Added compare -p
-Added map -l
-Added approval status for beatmap
-Added legendary osucard`, `Moved akatr, rxakatr, rippler to recent (-akat, -rxakat, -ripple)
-Removed akatsuki -d, !ripple -d (for now)
-Removed osusig
---- **Bug fixes:**
-Mirror mods appears as no mod in mania
-Fixed "DTNC" and "SDPF" mods
-Fixed "undefined" prefix
-Fixed help commands display
-Fixed recent wrong time display
-Fixed osuavatar won't get osu! avatar
-Fixed avatar won't get Discord avatar
-Fixed beatmapid cache
-Fixed osutop -m`,`**[February 8th, 2020]:**
-Make osu commands not to use html scrapping a lot (bad thing)\n
-**[February 9th, 2020]:**
-Fix prefix problem
-**[February 12th, 2020]:**
-Improved osu command overall (mostly osutop)
-Added support for Horizon (osu! private server)`]
+    let changes = [`**[February 23rd, 2020]:**
+Added other modes/private servers tracking
+Added r -b for other modes/private servers`]
 
     let loadpage = async function (page, pages) {
         pages = changes

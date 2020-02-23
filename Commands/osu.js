@@ -1184,14 +1184,14 @@ async function recent(message = new Message()) {
         let check_type = fx.osu.get_mode_detail(mode).check_type
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let modename = fx.osu.get_mode_detail(mode).modename
-        if (mode == 0 && suffix.suffix.find(s => s.suffix == "-b").position > -1) {
-            let best = await fx.osu.get_osu_top(name, 0, 100, 'best', true)
+        if (suffix.suffix.find(s => s.suffix == "-b").position > -1) {
+            let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             if (best.length == 0) {
                 throw `I think ${name} didn't play anything yet~ **-Chino**`
             }
-            let userid = best[0].userid
-            let user = await osuApi.getUser({u: userid})
-            let username = user.name
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false)
+            let username = user.username
+            let userid = user.id
             best.sort(function (a,b) {
                 a1 = Date.parse(a.date)
                 b1 = Date.parse(b.date)
@@ -1205,17 +1205,11 @@ async function recent(message = new Message()) {
             let date = fx.osu.time_played(best[0].date)
             cache_beatmap_ID(message, best[0].beatmapid, modename)
             let parser = await fx.osu.precalc(best[0].beatmapid)     
-            let fccalc = fx.osu.osu_pp_calc(parser,bitpresent,best[0].fc,best[0].count100,best[0].count50,0,best[0].acc,'fc')
-            let fcpp = Number(fccalc.pp.total).toFixed(2)
-            let fcacc = fccalc.acc
-            let star = Number(fccalc.star.total).toFixed(2)
-            let fcguess = ''
-            if (best[0].perfect == 0) {
-                fcguess = `**${fcpp}pp for ${fcacc}%**`
-            }
-            let scoreoverlay = fx.osu.score_overlay(undefined,beatmap.title,best[0].beatmapid,star,shortenmod,best[0].pp,undefined,rank,beatmap.diff,best[0].score,best[0].combo,beatmap.fc,best[0].acc,best[0].accdetail,fcguess,undefined,date,'beatmap')
+            if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[0].beatmapid)}
+            let fc_stat = await fx.osu.get_pp(mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+            let scoreoverlay = fx.osu.score_overlay(undefined,beatmap.title,best[0].beatmapid,fc_stat.star,shortenmod,best[0].pp,undefined,rank,beatmap.diff,best[0].score,best[0].combo,beatmap.fc,best[0].acc,best[0].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
             const embed = new RichEmbed()
-            .setAuthor(`Top ${best[0].top} osu!Standard play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
+            .setAuthor(`Top ${best[0].top} osu!${modename} play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
             .setDescription(scoreoverlay)

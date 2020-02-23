@@ -6,6 +6,7 @@ let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 });
 
 module.exports = async function (beatmapID, mode) {
+    if (mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) mode = 0
     let beatmap = await osuApi.getBeatmaps({b: beatmapID, m: mode})
     return {
         beatmapid: Number(beatmap[0].id),
