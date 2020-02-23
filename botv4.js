@@ -138,7 +138,7 @@ bot.on("ready", (ready) => {
                     }
                     if (best[i].perfect == 0) {
                         fcguess = fc_stat.fcguess
-                    }             
+                    }
                     let embed = new Discord.RichEmbed()
                     .setAuthor(`New #${best[i].top} for ${user.username} in osu!${mode_detail.modename}:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
@@ -148,10 +148,13 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
 **Accuracy:** ${Number(best[i].acc).toFixed(2)}% ${best[i].accdetail} ${fcguess}
 **#${player_mode_detail.lastrank} → #${user.rank} (:flag_${user.country}: : #${player_mode_detail.lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`)
                     for (let channel of player.trackonchannel) {
-                        console.log(channel)
-                        stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: "Standard"})
-                        embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
-                        bot.channels.get(channel.id).send({embed})
+                        for (mode1 of channel.modes) {
+                            if (mode1.mode == mode) {
+                                stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: mode_detail.check_type})
+                                embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
+                                bot.channels.get(channel.id).send({embed})
+                            }
+                        }
                     }
                     player_mode_detail.lasttotalpp = user.pp
                     player_mode_detail.lastrank = user.rank
@@ -165,7 +168,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
         }
     }
     if (config.config.debug.osutrack == false) {
-        setInterval(real_time_osu_track, 90000)
+        setInterval(real_time_osu_track, 10000)
     }
 });
 
