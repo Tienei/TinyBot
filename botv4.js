@@ -383,7 +383,7 @@ bot.on("message", (message) => {
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
                 }
-                let player = osu_track.find(pl => pl.name.toLowerCase() == suffix.check && pl.type == type)
+                let player = osu_track.find(pl => pl.name.toLowerCase() == suffix.check.replace("_", " ") && pl.type == type)
                 if (player) {
                     if (player.trackonchannel.find(channel => channel.id == message.channel.id)) {
                         if (player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode)) {
