@@ -422,7 +422,7 @@ bot.on("message", (message) => {
                 }
                 console.log(osu_track[0].trackonchannel[0].modes[0].limit)
                 message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
-                //db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
                 message.channel.send(String(error))
             }
