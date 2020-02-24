@@ -1,5 +1,6 @@
 const cheerio = require('cheerio')
 const nodeosu = require('node-osu');
+const rippleAPI = require('./rippleAPI')
 const request = require('superagent');
 const { Profile } = require('./../../Classes/osu')
 // Function
@@ -62,8 +63,7 @@ module.exports = async function (name, mode, event, html = true) {
                                 user_web["cover_url"]])
         }
         if (mode >= 4 && mode <= 17) {
-            let serverlink = get_mode_deatail(mode).link
-            let user = (mode == 12 || mode == 17) ? (await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)).body : (await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`)).body
+            let user = (mode == 12 || mode == 17) ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0})
             return new Profile([user.username,
                                 Number(user.id),
                                 undefined,

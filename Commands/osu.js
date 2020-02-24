@@ -104,7 +104,7 @@ async function osuavatar(message = new Message(), mode) {
         pfp_link = `https://a.ppy.sh/${id}_1?date=${refresh}`
     } else {
         let serverlink = fx.osu.get_mode_detail(mode).link
-        let user = (await request.get(`https://${serverlink}/api/v1/users?name=${suffix.check}`)).body
+        let user = await fx.osu.rippleAPI.apiCall(`/v1/users`, mode, {name: suffix.check})
         username = user.username
         id = user.id
         pfp_link = `https://a.${serverlink}/${id}?date=${refresh}`
@@ -1509,19 +1509,19 @@ async function osuset(message = new Message(), type) {
             profilelink = `https://osu.ppy.sh/users/${user.id}`
             imagelink = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
         } else if (type == 'Akatsuki') {
-            user = (await request(`http://akatsuki.pw/api/v1/users?name=${check}`)).body
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 8, {name: suffix.check})
             settype = 'akatsukiname'
             name = user.username
             profilelink = `https://akatsuki.pw/u/${user.id}`
             imagelink = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
         } else if (type == 'Ripple') {
-            user = (await request(`http://ripple.moe/api/v1/users?name=${check}`)).body
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 4, {name: suffix.check})
             settype = 'ripplename'
             name = user.username
             profilelink = `https://ripple.moe/u/${user.id}`
             imagelink = `http://a.ripple.moe/${user.id}?date=${refresh}`
         } else if (type == 'Horizon') {
-            user = (await request(`http://lemres.de/api/v1/users?name=${check}`)).body
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 13, {name: suffix.check})
             settype = 'horizonname'
             name = user.username
             profilelink = `https://lemres.de/u/${user.id}`

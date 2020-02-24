@@ -1,4 +1,5 @@
 const nodeosu = require('node-osu');
+const rippleAPI = require('./rippleAPI')
 const request = require('superagent');
 const { Osutop } = require('./../../Classes/osu')
 // Function
@@ -126,9 +127,9 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
     }
     if (mode >= 4 && mode <= 17) {
         let serverlink = get_mode_detail(mode).link
-        let linkoption = (mode == 12 || mode == 17) ? '&rx=1' : ''
-        let best = (await request.get(`https://${serverlink}/api/v1/users/scores/${type}?name=${name}${linkoption}&l=${limit}`)).body
-        let user = (await request.get(`https://${serverlink}/api/v1/users?name=${name}`)).body
+        let relax = (mode == 12 || mode == 17) ? 1 : 0
+        let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, rx: relax, l: limit})
+        let user = await rippleAPI.apiCall(`/v1/users`, mode, {name: name})
         for (var i = 0; i < best.scores.length; i++) {
             let count300 = Number(best.scores[i].count_300)
             let count100 = Number(best.scores[i].count_100)
@@ -173,10 +174,10 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                                 undefined])
         }
         if (no_bm == false) {
-            let beatmaps = top.map(sc => {return request.get(`https://${serverlink}/api/get_beatmaps?b=${sc.beatmapid}`)})
+            let beatmaps = top.map(sc => {return rippleAPI.apiCall(`/get_beatmaps`, mode, {b: sc.beatmapid})})
             beatmaps = await Promise.all(beatmaps)
             for (let i = 0; i < top.length; i++) {
-                let beatmap = beatmaps[i].body
+                let beatmap = beatmaps[i]
                 top[i].title = beatmap[0].title
                 top[i].diff = beatmap[0].version
                 top[i].artist = beatmap[0].artist
