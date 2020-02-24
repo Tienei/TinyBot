@@ -386,7 +386,7 @@ bot.on("message", (message) => {
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
                 }
-                let player = osu_track.find(pl => pl.name.toLowerCase() == name && pl.type == type)
+                let player = osu_track.find(pl => pl.name.toLowerCase() == name.toLowerCase() && pl.type == type)
                 if (player) {
                     if (player.trackonchannel.find(channel => channel.id == message.channel.id)) {
                         if (player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode)) {
@@ -461,10 +461,10 @@ bot.on("message", (message) => {
                 let player = []
                 if (type == 'All') {
                     for (let pl of osu_track) {
-                        if (pl.name.toLowerCase() == name) player.push(pl)
+                        if (pl.name.toLowerCase() == name.toLowerCase()) player.push(pl)
                     }
                 } else {
-                    player.push(osu_track.find(pl => pl.name.toLowerCase() == name && pl.type == type))
+                    player.push(osu_track.find(pl => pl.name.toLowerCase() == name.toLowerCase() && pl.type == type))
                 }
                 if (player.length > 0) {
                     for (let track of player) {
