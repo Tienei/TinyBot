@@ -386,7 +386,7 @@ bot.on("message", (message) => {
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
                 }
-                let player = osu_track.find(pl => pl.name.toLowerCase() == suffix.check.replace("_", " ") && pl.type == type)
+                let player = osu_track.find(pl => pl.name.toLowerCase() == name && pl.type == type)
                 if (player) {
                     if (player.trackonchannel.find(channel => channel.id == message.channel.id)) {
                         if (player.trackonchannel.find(channel => channel.id == message.channel.id).modes.find(m => m.mode == mode)) {
@@ -440,22 +440,31 @@ bot.on("message", (message) => {
                                                             {"suffix": "-rp", "v_count": 0},
                                                             {"suffix": "-hrz", "v_count": 0},])
                 let type = 'All'
+                let mode = 0
                 if (suffix.suffix.find(s => s.suffix == "-bc").position > -1) {
                    type = 'Bancho'
                 } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
                     type = 'Akatsuki'
+                    mode = 8
                 } else if (suffix.suffix.find(s => s.suffix == "-rp").position > -1) {
                     type = 'Ripple'
+                    mode = 4
                 } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
                     type = 'Horizon'
+                    mode = 13
+                }
+                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false)
+                var name = user.username
+                if (name == undefined) {
+                    throw 'Please enter a valid osu username! >:c'
                 }
                 let player = []
                 if (type == 'All') {
                     for (let pl of osu_track) {
-                        if (pl.name.toLowerCase() == suffix.check.replace("_", " ")) player.push(pl)
+                        if (pl.name.toLowerCase() == name) player.push(pl)
                     }
                 } else {
-                    player.push(osu_track.find(pl => pl.name.toLowerCase() == suffix.check.replace("_", " ") && pl.type == type))
+                    player.push(osu_track.find(pl => pl.name.toLowerCase() == name && pl.type == type))
                 }
                 if (player.length > 0) {
                     for (let track of player) {
@@ -470,7 +479,9 @@ bot.on("message", (message) => {
                             db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                         }
                     }
-                    message.channel.send(`**${suffix.check.replace("_", " ")}** (${type}) has been removed from #${message.channel.name}`)
+                    message.channel.send(`**${name}** (${type}) has been removed from #${message.channel.name}`)
+                } else {
+                    throw `**${name}** (${type}) not found in the tracking database`
                 }
             } catch (error) {
                 message.channel.send(String(error))
