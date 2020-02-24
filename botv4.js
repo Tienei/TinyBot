@@ -38,16 +38,18 @@ var ee_number = 0
 var loading = 2
 var refresh = 0
 
+console.log(!config.config.debug.disable_db_save ? `
+-----------------------------------------[WARNING]-----------------------------------------
+                                        !!!!!!!!!!!
+   IF YOU'RE TESTING THE BOT THEN SET THIS TO TRUE OR ELSE THE DATABASE CAN BE OVERWRITED
+                                        !!!!!!!!!!!
+-------------------------------------------------------------------------------------------` 
+: `Disable database save is currently true`)
+
 osu_client.connect().then(() => {
     console.log("osu! client is ready")
     loading -= 1
 })
-
-/*
-
-Added other modes r -b
-
-*/
 
 bot.on("ready", (ready) => {
     console.log("Discord client is ready")
@@ -161,7 +163,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                     player_mode_detail.lastcountryrank = user.countryrank
                     player.recenttimeplay = best[i].date
                     if (i == best.length - 1) {
-                        db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                     }
                 }  
             }
@@ -233,7 +235,7 @@ bot.on("message", (message) => {
             let data = cmds.general.prefix(message, server_data)
             if (data !== null) {
                 server_data = data 
-                db.server_data.findAndModify({query: {}, update: server_data}, function(){});
+                if (!config.config.debug.disable_db_save) db.server_data.findAndModify({query: {}, update: server_data}, function(){});
             }
         }
         if (command == bot_prefix + 'report' && message.guild !== null) {
@@ -272,7 +274,7 @@ bot.on("message", (message) => {
             let data = cmds.custom_cmd.custom_cmd(message, custom_command)
             if (data !== null) {
                 custom_command = data
-                db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
+                if (!config.config.debug.disable_db_save) db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
             }
         }
 
@@ -295,7 +297,7 @@ bot.on("message", (message) => {
 
         if (ee[msg] !== undefined) {
             easter_egg = cmds.easter_egg.easter_detection(message, easter_egg)
-            db.easter_egg.findAndModify({query: {}, update: easter_egg}, function(){})
+            if (!config.config.debug.disable_db_save) db.easter_egg.findAndModify({query: {}, update: easter_egg}, function(){})
         }
 
         // Fun related
@@ -424,7 +426,7 @@ bot.on("message", (message) => {
                                     "recenttimeplay": new Date().getTime()})
                 }
                 message.channel.send(`**${user.username}** is now being tracked on **#${message.channel.name}**`)
-                db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch(error) {
                 message.channel.send(String(error))
             }
@@ -470,13 +472,13 @@ bot.on("message", (message) => {
                     for (let track of player) {
                         if (track.trackonchannel.find(channel => channel.id == message.channel.id) && track.trackonchannel.length > 1) {
                             osu_track.find(pl => pl.name.toLowerCase() == track.name.toLowerCase()).trackonchannel.splice(track.trackonchannel.findIndex(channel => channel.id == message.channel.id), 1)
-                            db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                         } else {
                             osu_track.splice(osu_track.findIndex(pl => pl.name.toLowerCase() == track.name.toLowerCase()),1)
                             if (Object.keys(osu_track).length < 1) {
                                 osu_track['a'] = 'a'
                             }
-                            db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                         }
                     }
                     message.channel.send(`**${name}** (${type}) has been removed from #${message.channel.name}`)

@@ -4,7 +4,7 @@ const generate = require('node-chartist');
 const sharp = require('sharp')
 const text2png = require('text2png')
 const jimp = require('jimp')
-const request = require('request-promise-native');
+const request = require('superagent');
 const fx = require('../Functions/load_fx')
 const nodeosu = require('node-osu');
 let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
@@ -47,7 +47,7 @@ function cache_beatmap_ID(message = new Message(), beatmapid, mode) {
         } else {
             saved_map_id.push({id:beatmapid,server:message.channel.id, mode: mode})
         }
-        db.saved_map_id.findAndModify({query: {}, update: {'0': saved_map_id}}, function(){})
+        if (!config.config.debug.disable_db_save) db.saved_map_id.findAndModify({query: {}, update: {'0': saved_map_id}}, function(){})
         stored_map_ID.push({id:beatmapid,server:message.channel.id, mode: mode})
     } else {
         stored_map_ID.push({id:beatmapid,user:message.author.id, mode: mode})
@@ -104,8 +104,7 @@ async function osuavatar(message = new Message(), mode) {
         pfp_link = `https://a.ppy.sh/${id}_1?date=${refresh}`
     } else {
         let serverlink = fx.osu.get_mode_detail(mode).link
-        let data = await request.get(`https://${serverlink}/api/v1/users?name=${suffix.check}`)
-        let user = JSON.parse(data)
+        let user = (await request.get(`https://${serverlink}/api/v1/users?name=${suffix.check}`)).body
         username = user.username
         id = user.id
         pfp_link = `https://a.${serverlink}/${id}?date=${refresh}`
@@ -323,7 +322,7 @@ Most common mods: ${sortedmod}`)
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
-                        db.user_data.findAndModify({query: {}, update: user_data}, function(){})
+                        if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
                         break
                     }
                 }
@@ -331,7 +330,7 @@ Most common mods: ${sortedmod}`)
         } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-rank").position > -1 && mode == 0) {
             let rank = Number(suffix.suffix.find(s => s.suffix == "-rank").value[0])
             let page = 1 + Math.floor((rank - 1) / 50)
-            let web_leaderboard = await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)
+            let web_leaderboard = (await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)).text
             let leaderboard = await cheerio.load(web_leaderboard)
             let table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
             let player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children('a[class="ranking-page-table__user-link-text js-usercard"]').attr('href').split('/')
@@ -367,7 +366,7 @@ Most common mods: ${sortedmod}`)
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
-                        db.user_data.findAndModify({query: {}, update: user_data}, function(){})
+                        if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
                         break
                     }
                 }
@@ -387,7 +386,7 @@ Most common mods: ${sortedmod}`)
             } else if (mode == 3) {
                 mode_name = 'mania'
             }
-            let web = await request.get(`https://osu.ppy.sh/users/${user.id}/${mode_name}`)
+            let web = (await request.get(`https://osu.ppy.sh/users/${user.id}/${mode_name}`)).text
             let user_history = await cheerio.load(web)
             user_history = user_history("#json-rankHistory").html()
             user_history = JSON.parse(user_history)
@@ -490,7 +489,7 @@ Most common mods: ${sortedmod}`)
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
-                        db.user_data.findAndModify({query: {}, update: user_data}, function(){})
+                        if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
                         break
                     }
                 }
@@ -577,7 +576,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
-                        db.user_data.findAndModify({query: {}, update: user_data}, function(){})
+                        if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
                         break
                     }
                 }
@@ -614,7 +613,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
-                        db.user_data.findAndModify({query: {}, update: user_data}, function(){})
+                        if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
                         break
                     }
                 }
@@ -1510,22 +1509,19 @@ async function osuset(message = new Message(), type) {
             profilelink = `https://osu.ppy.sh/users/${user.id}`
             imagelink = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
         } else if (type == 'Akatsuki') {
-            user = await request(`http://akatsuki.pw/api/v1/users?name=${check}`)
-            user = JSON.parse(user)
+            user = (await request(`http://akatsuki.pw/api/v1/users?name=${check}`)).body
             settype = 'akatsukiname'
             name = user.username
             profilelink = `https://akatsuki.pw/u/${user.id}`
             imagelink = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
         } else if (type == 'Ripple') {
-            user = await request(`http://ripple.moe/api/v1/users?name=${check}`)
-            user = JSON.parse(user)
+            user = (await request(`http://ripple.moe/api/v1/users?name=${check}`)).body
             settype = 'ripplename'
             name = user.username
             profilelink = `https://ripple.moe/u/${user.id}`
             imagelink = `http://a.ripple.moe/${user.id}?date=${refresh}`
         } else if (type == 'Horizon') {
-            user = await request(`http://lemres.de/api/v1/users?name=${check}`)
-            user = JSON.parse(user)
+            user = (await request(`http://lemres.de/api/v1/users?name=${check}`)).body
             settype = 'horizonname'
             name = user.username
             profilelink = `https://lemres.de/u/${user.id}`
@@ -1547,7 +1543,7 @@ async function osuset(message = new Message(), type) {
             .setColor(embedcolor)
             .setImage(imagelink)
             message.channel.send({embed})
-            db.user_data.findAndModify({query: {}, update: user_data}, function(){})
+            if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
         }
     } catch (error) {
         message.channel.send(String(error))
@@ -1732,7 +1728,7 @@ async function beatmapfiledetail(message = new Message()) {
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         let file = message.attachments.first().url
         let parser = new calc.parser()
-        let fmap = await request.get(file)
+        let fmap = (await request.get(file)).text
         parser.feed(fmap)
         let map = parser.map
         let mode = map.mode
@@ -1964,7 +1960,7 @@ async function topleaderboard(message = new Message(), type) {
         } else if (type == 'country') {
             link = `https://osu.ppy.sh/rankings/${mode}/performance?country=${countryname.toUpperCase()}&page=1`
         }
-        let web = await request(link)
+        let web = (await request(link)).text
         let leaderboard = await cheerio.load(web)
         let table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
         let country = ''

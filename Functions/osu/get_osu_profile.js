@@ -1,6 +1,6 @@
 const cheerio = require('cheerio')
 const nodeosu = require('node-osu');
-const request = require('request-promise-native');
+const request = require('superagent');
 const { Profile } = require('./../../Classes/osu')
 // Function
 const get_mode_deatail = require('./get_mode_detail')
@@ -27,7 +27,7 @@ module.exports = async function (name, mode, event, html = true) {
             let user_web = ''
             if (html == true && html_cooldown < new Date().getTime()) {
                 try {
-                    let web = await request.get(`https://osu.ppy.sh/users/${user.id}`)
+                    let web = (await request.get(`https://osu.ppy.sh/users/${user.id}`)).text
                     user_web = await cheerio.load(web)
                     user_web = user_web("#json-user").html()
                     user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
@@ -63,8 +63,7 @@ module.exports = async function (name, mode, event, html = true) {
         }
         if (mode >= 4 && mode <= 17) {
             let serverlink = get_mode_deatail(mode).link
-            let data = (mode == 12 || mode == 17) ? await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`) : await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`) 
-            let user = JSON.parse(data)
+            let user = (mode == 12 || mode == 17) ? (await request.get(`https://${serverlink}/api/v1/users/rxfull?name=${name}&mode=0`)).body : (await request.get(`https://${serverlink}/api/v1/users/full?name=${name}&mode=0`)).body
             return new Profile([user.username,
                                 Number(user.id),
                                 undefined,

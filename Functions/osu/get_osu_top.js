@@ -1,5 +1,5 @@
 const nodeosu = require('node-osu');
-const request = require('request-promise-native');
+const request = require('superagent');
 const { Osutop } = require('./../../Classes/osu')
 // Function
 const get_mode_detail = require('./get_mode_detail')
@@ -127,10 +127,8 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
     if (mode >= 4 && mode <= 17) {
         let serverlink = get_mode_detail(mode).link
         let linkoption = (mode == 12 || mode == 17) ? '&rx=1' : ''
-        let data1 = await request.get(`https://${serverlink}/api/v1/users/scores/${type}?name=${name}${linkoption}&l=${limit}`)
-        let data2 = await request.get(`https://${serverlink}/api/v1/users?name=${name}`)
-        let best = JSON.parse(data1)
-        let user = JSON.parse(data2)
+        let best = (await request.get(`https://${serverlink}/api/v1/users/scores/${type}?name=${name}${linkoption}&l=${limit}`)).body
+        let user = (await request.get(`https://${serverlink}/api/v1/users?name=${name}`)).body
         for (var i = 0; i < best.scores.length; i++) {
             let count300 = Number(best.scores[i].count_300)
             let count100 = Number(best.scores[i].count_100)
@@ -178,7 +176,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             let beatmaps = top.map(sc => {return request.get(`https://${serverlink}/api/get_beatmaps?b=${sc.beatmapid}`)})
             beatmaps = await Promise.all(beatmaps)
             for (let i = 0; i < top.length; i++) {
-                let beatmap = JSON.parse(beatmaps[i])
+                let beatmap = beatmaps[i].body
                 top[i].title = beatmap[0].title
                 top[i].diff = beatmap[0].version
                 top[i].artist = beatmap[0].artist

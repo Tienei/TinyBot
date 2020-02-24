@@ -1,6 +1,6 @@
 const { Message, RichEmbed } = require("discord.js")
 const fx = require('./../Functions/load_fx')
-const request = require('request-promise-native')
+const request = require('superagent')
 
 var question1 = {
     "response_code": 0,
@@ -47,8 +47,7 @@ async function trivia(message = new Message()){
         }
     }
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let question = await request.get('https://opentdb.com/api.php?amount=1&encode=url3986')
-    question = JSON.parse(question)
+    let question = (await request.get('https://opentdb.com/api.php?amount=1&encode=url3986')).body
     let question_type = question.results[0].type
     let awnsers = []
     let shuffled_awnsers = []
@@ -150,8 +149,7 @@ async function tenor(message = new Message(), start, search, action, aloneaction
         } else {
             text = `<@${user.id}>, ${action} <@${message.author.id}>`
         }
-        let data = await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=25&media_filter=minimal&contentfilter=medium`)
-        let gif = JSON.parse(data)
+        let gif = (await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=25&media_filter=minimal&contentfilter=medium`)).body
         const embed = new RichEmbed()
         .setColor(embedcolor)
         .setDescription(text)

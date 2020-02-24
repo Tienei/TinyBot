@@ -21,12 +21,10 @@
     "node-chartist": "^1.0.5",
     "node-osu": "github:tienei/node-osu",
     "ojsama": "^1.2.5",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.5",
-    "request-promise-native": "^1.0.8",
     "rippleapi": "^1.1.0",
     "rx-akatsuki-pp": "^1.0.1",
     "sharp": "^0.23.4",
+    "superagent": "^5.2.2",
     "text2png": "^2.3.0"
   }
 }
