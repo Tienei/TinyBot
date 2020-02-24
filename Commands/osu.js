@@ -7,6 +7,7 @@ const jimp = require('jimp')
 const request = require('superagent');
 const fx = require('../Functions/load_fx')
 const nodeosu = require('node-osu');
+const config = require('./../config')
 let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
