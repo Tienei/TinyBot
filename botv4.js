@@ -122,7 +122,7 @@ bot.on("ready", (ready) => {
                 for (var i = 0; i < best.length; i++) {
                     console.log('Found')
                     let mode_detail = fx.osu.get_mode_detail(mode)
-                    var user = await fx.osu.get_osu_profile(player.name, mode, 0, false)
+                    var user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
                     var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid)
                     var rank = fx.osu.ranking_letter(best[i].letter)
                     var modandbit = fx.osu.mods_enum(best[i].mod, 'text')
@@ -383,7 +383,7 @@ bot.on("message", (message) => {
                     mode = 17
                 }
                 let type = fx.osu.get_mode_detail(mode).check_type
-                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false)
+                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
                 var name = user.username
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
@@ -455,7 +455,7 @@ bot.on("message", (message) => {
                     type = 'Horizon'
                     mode = 13
                 }
-                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false)
+                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
                 var name = user.username
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'

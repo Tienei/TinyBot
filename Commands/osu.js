@@ -336,7 +336,7 @@ Most common mods: ${sortedmod}`)
             let table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
             let player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children('a[class="ranking-page-table__user-link-text js-usercard"]').attr('href').split('/')
             player = player[player.length-1]
-            let user = await fx.osu.get_osu_profile(player,0 ,0,false)
+            let user = await fx.osu.get_osu_profile(player,0 ,0,false,false)
             if (user.username == undefined) {
                 throw 'User not found!'
             }
@@ -373,7 +373,7 @@ Most common mods: ${sortedmod}`)
                 }
             }
         } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
-            let user = await fx.osu.get_osu_profile(name, mode)
+            let user = await fx.osu.get_osu_profile(name, mode, true, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -496,7 +496,7 @@ Most common mods: ${sortedmod}`)
                 }
             }
         } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && mode == 0) {
-            let user = await fx.osu.get_osu_profile(name, mode, 30, false)
+            let user = await fx.osu.get_osu_profile(name, mode, 30, false, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -632,7 +632,7 @@ async function osu_card(message = new Message(), mode) {
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
         // Get Information
         let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
-        let user = await fx.osu.get_osu_profile(name, mode, 1, false)
+        let user = await fx.osu.get_osu_profile(name, mode, 1, false, false)
         if (user == null) {
             throw 'User not found!'
         }
@@ -887,7 +887,7 @@ async function osutop(message = new Message(), mode) {
             if (range == true && Math.abs(Number(numberrange[0]) - Number(numberrange[1])) > 4) {
                 throw 'Range limited to 5 top play'
             }
-            let user = await fx.osu.get_osu_profile(name, mode, 0, false)
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -916,7 +916,7 @@ async function osutop(message = new Message(), mode) {
             .setDescription(top)
             message.channel.send({embed});
         } else if (suffix.suffix.find(s => s.suffix == "-r").position > -1) {
-            let user = await fx.osu.get_osu_profile(name, mode, 0, false)
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -1108,7 +1108,7 @@ async function osutop(message = new Message(), mode) {
             }
             fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${username} (Page {page} of {max_page})`, pfp_link, embedcolor, Math.ceil(best.length / 5))
         } else {
-            let user = await fx.osu.get_osu_profile(name, mode, 0, false)
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
                 throw 'User not found!'
             }
@@ -1189,7 +1189,7 @@ async function recent(message = new Message()) {
             if (best.length == 0) {
                 throw `I think ${name} didn't play anything yet~ **-Chino**`
             }
-            let user = await fx.osu.get_osu_profile(name, mode, 0, false)
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             let username = user.username
             let userid = user.id
             best.sort(function (a,b) {
@@ -1216,7 +1216,7 @@ async function recent(message = new Message()) {
             message.channel.send({embed})
         } else if (mode == 0 && suffix.suffix.find(s => s.suffix == "-l").position > -1) { 
             let top = ''
-            let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false)
+            let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             let recent = await fx.osu.get_osu_top(name, mode, 5, 'recent')
             if (recent.length == 0) {
                 throw 'No play found within 24 hours of this user **-Tiny**'
@@ -1249,7 +1249,7 @@ async function recent(message = new Message()) {
             .setDescription(top)
             message.channel.send({embed})
         } else {
-            let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false)
+            let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             let recent = await fx.osu.get_osu_top(name, mode, 1, 'recent')
             if (recent.length == 0) {
                 throw 'No play found within 24 hours of this user **-Tiny**'

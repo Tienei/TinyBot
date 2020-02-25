@@ -15,15 +15,17 @@ let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 
 let html_cooldown = 0
 
-module.exports = async function (name, mode, event, html = true) {
+module.exports = async function (name, mode, event, html = true, client = true) {
     try {
         if (mode >= 0 && mode <= 3) {
             let user = await osuApi.getUser({u: name, m: mode, event_days: event})
             let bancho_user = ''
-            try {
-                bancho_user = await osu_client.getUser(name).stats()
-            } catch (err) {
-                
+            if (client == true) {
+                try {
+                    bancho_user = await osu_client.getUser(user.name).stats()
+                } catch (err) {
+                    console.log(err)
+                }
             }
             let user_web = ''
             if (html == true && html_cooldown < new Date().getTime()) {
