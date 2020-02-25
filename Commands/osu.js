@@ -373,7 +373,7 @@ Most common mods: ${sortedmod}`)
                 }
             }
         } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
-            let user = await fx.osu.get_osu_profile(name, mode, true, false)
+            let user = await fx.osu.get_osu_profile(name, mode, 0, true, false)
             if (user == null) {
                 throw 'User not found!'
             }
