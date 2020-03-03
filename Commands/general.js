@@ -1,6 +1,7 @@
 const bot = require('./../client').bot
 const config = require('../config')
 const fx = require('./../Functions/load_fx')
+const package = require('../package.json')
 const { Message, RichEmbed } = require('discord.js')
 
 var bot_command_help = []
@@ -176,15 +177,13 @@ function bot_info(message = new Message()) {
     const embed = new RichEmbed()
     .setColor(embedcolor)
     .setThumbnail(bot.user.avatarURL)
-    .setDescription(`**----- [Info]:**
-Hello! I am Tiny Bot, a bot made by Tienei
-こんにちは！ 私はTieneiによって作られたボット、Tiny Botです <:chinoHappy:450684046129758208>
-**-----**
-To get started, type **"!help"** to get a list of command and then type **"!help (command)"** to get more detailed information
-If you wanted to help me improve, type **"!report"** or **"!suggestion"**
-**-----**
-Link to invite me: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)
-My senpai server: [server](https://discord.gg/H2mQMxd)`)
+    .addField('Information', `◆ Hello! I am Tiny Bot, a bot made by Tienei <:chinoHappy:450684046129758208>. This bot is primarily for osu! and most of the commands is the same as owo with more functionality`)
+    .addField('Bot setup', `◆ To get started, type **\`!help\`** to get a list of command and then type **\`!help (command)\`** to get more detailed information
+◆ If you wanted to help me improve, type **\`!report\`** or **\`!suggestion\`** if you have a suggestion/bugs`)
+    .addField('Links', `◆ Link to invite me: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)
+◆ My senpai server: [server](https://discord.gg/H2mQMxd)
+◆ Consider donating if you like the bot and help the creator: [donate](https://ko-fi.com/tienei)`)
+    .addField('Dependencies',`\`discord.js\`: ${package.dependencies['discord.js']}, \`ojsama\`: ${package.dependencies.ojsama}, \`osu!api\`: 1.0, \`Ripple API\`: 1.0`)
     message.channel.send({embed})
 }
 
