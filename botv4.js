@@ -118,6 +118,10 @@ bot.on("ready", (ready) => {
                         mode.limit = 1
                         if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                     }
+                    if (isNaN(mode.limit)) {
+                        mode.limit = 50
+                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                    }
                     if (!modes.includes(mode)) modes.push(mode)
                 }
             }
@@ -392,6 +396,9 @@ bot.on("message", (message) => {
                 }
                 if (limit > 100 || limit < 1) {
                     throw 'You can only set from top 1-100. Please try again'
+                }
+                if (isNaN(limit)) {
+                    throw 'You can only set top as a numeric value. Please try again'
                 }
                 let type = fx.osu.get_mode_detail(mode).check_type
                 var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
