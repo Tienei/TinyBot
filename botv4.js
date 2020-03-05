@@ -118,7 +118,7 @@ bot.on("ready", (ready) => {
                         mode.limit = 1
                         if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                     }
-                    if (String(number).search(/^\d+$/) < 0) {
+                    if (String(mode.limit).search(/^\d+$/) < 0) {
                         mode.limit = 50
                         if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                     }
