@@ -110,6 +110,10 @@ bot.on("ready", (ready) => {
             let modes = []
             for (let channel of player.trackonchannel) {
                 for (let mode of channel.modes) {
+                    if (mode.limit > 100) {
+                        mode.limit = 100
+                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                    }
                     if (!modes.includes(mode)) modes.push(mode)
                 }
             }
@@ -381,6 +385,9 @@ bot.on("message", (message) => {
                     mode = 13
                 } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
                     mode = 17
+                }
+                if (limit > 100) {
+                    throw 'You can only set from top 1-100. Please try again'
                 }
                 let type = fx.osu.get_mode_detail(mode).check_type
                 var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
