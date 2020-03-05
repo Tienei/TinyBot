@@ -397,7 +397,7 @@ bot.on("message", (message) => {
                 if (limit > 100 || limit < 1) {
                     throw 'You can only set from top 1-100. Please try again'
                 }
-                if (String(number).search(/^\d+$/) < 0) {
+                if (String(limit).search(/^\d+$/) < 0) {
                     throw 'You can only set top as a numeric value. Please try again'
                 }
                 let type = fx.osu.get_mode_detail(mode).check_type
