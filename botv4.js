@@ -114,6 +114,10 @@ bot.on("ready", (ready) => {
                         mode.limit = 100
                         if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                     }
+                    if (mode.limit < 1) {
+                        mode.limit = 1
+                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                    }
                     if (!modes.includes(mode)) modes.push(mode)
                 }
             }
@@ -386,7 +390,7 @@ bot.on("message", (message) => {
                 } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
                     mode = 17
                 }
-                if (limit > 100) {
+                if (limit > 100 || limit < 1) {
                     throw 'You can only set from top 1-100. Please try again'
                 }
                 let type = fx.osu.get_mode_detail(mode).check_type
