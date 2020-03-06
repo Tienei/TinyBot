@@ -217,7 +217,7 @@ async function osu(message = new Message(), mode) {
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0, 0, mapinfo.od, mapinfo.hp)
                     star_avg += mapinfo.star
                     speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                    acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.035) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                    acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
                     bpm_avg += detail.bpm
                     od_avg += detail.od
                     hp_avg += detail.hp
@@ -229,7 +229,7 @@ async function osu(message = new Message(), mode) {
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
                     star_avg += mapinfo.star
                     aim_avg += Math.pow(mapinfo.star, Math.log(detail.bpm)/Math.log(mapinfo.star*20)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
-                    acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.025) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                    acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.1) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
                     bpm_avg += detail.bpm
                     cs_avg += detail.cs
                     ar_avg += detail.ar
@@ -243,7 +243,7 @@ async function osu(message = new Message(), mode) {
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0,0,0,0)
                     star_avg += mapinfo.star
                     speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                    acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.035) * (Math.pow(mapinfo.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(mapinfo.hp, 0.02) / (Math.pow(5, 0.02)))
+                    acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.075) * (Math.pow(mapinfo.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(mapinfo.hp, 0.02) / (Math.pow(5, 0.02)))
                     finger_control_avg += Math.pow(mapinfo.star, 1.1 * Math.pow(detail.bpm/250, 0.4) * (Math.log(mapinfo.circle + mapinfo.slider)/Math.log(mapinfo.star*900)) * (Math.pow(mapinfo.od, 0.4) / Math.pow(8, 0.4)) * (Math.pow(mapinfo.hp, 0.2) / Math.pow(7.5, 0.2)) * Math.pow(mapinfo.cs/4, 0.1))
                     bpm_avg += detail.bpm
                     od_avg += mapinfo.od
@@ -662,21 +662,21 @@ async function osu_card(message = new Message(), mode) {
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0, 0, mapinfo.od, mapinfo.hp)
                 star_avg += mapinfo.star
                 speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.035) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
             }
             if (mode == 2) {
                 let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 2, modandbit.bitpresent)
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
                 star_avg += mapinfo.star
                 aim_avg += Math.pow(mapinfo.star, Math.log(detail.bpm)/Math.log(mapinfo.star*20)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
-                acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.025) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.1) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
             }
             if (mode == 3) {
                 let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 3, modandbit.bitpresent)
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0,0,0,0)
                 star_avg += mapinfo.star
                 speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.035) * (Math.pow(mapinfo.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(mapinfo.hp, 0.02) / (Math.pow(5, 0.02)))
+                acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.075) * (Math.pow(mapinfo.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(mapinfo.hp, 0.02) / (Math.pow(5, 0.02)))
                 finger_control_avg += Math.pow(mapinfo.star, 1.1 * Math.pow(detail.bpm/250, 0.4) * (Math.log(mapinfo.circle + mapinfo.slider)/Math.log(mapinfo.star*900)) * (Math.pow(mapinfo.od, 0.4) / Math.pow(8, 0.4)) * (Math.pow(mapinfo.hp, 0.2) / Math.pow(7.5, 0.2)) * Math.pow(mapinfo.cs/4, 0.1))
             }
         }
