@@ -148,15 +148,20 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
 }
 
 function avatar(message = new Message()) {
-    let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let user = fx.general.find_discord_user(message, message.content.substring(8))
-    let username = user.username
-    let image = user.avatarURL
-    const embed = new RichEmbed()
-    .setAuthor(`Avatar for ${username}`)
-    .setColor(embedcolor)
-    .setImage(image)
-    message.channel.send({embed})
+    try {
+        let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
+        let user = fx.general.find_discord_user(message, message.content.substring(8))
+        if (user == null) throw 'User not found!'
+        let username = user.username
+        let image = user.avatarURL
+        const embed = new RichEmbed()
+        .setAuthor(`Avatar for ${username}`)
+        .setColor(embedcolor)
+        .setImage(image)
+        message.channel.send({embed})
+    } catch (err) {
+        message.channel.send(String(err))
+    }
 }
 
 function changelog(message = new Message()) {
