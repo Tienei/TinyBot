@@ -691,14 +691,16 @@ async function osu_card(message = new Message(), mode) {
         if (mode == 0 || mode == 1 || mode == 2 || mode == 3) {
             if (acc_avg >= 0 && acc_avg < 300) {
                 card = await jimp.read('./osu_card/common_osu.png')
-            } else if (acc_avg >= 300 && acc_avg < 500) {
+            } else if (acc_avg >= 300 && acc_avg < 525) {
                 card = await jimp.read('./osu_card/rare_osu.png')
-            } else if (acc_avg >= 500 && acc_avg < 650) {
+            } else if (acc_avg >= 525 && acc_avg < 700) {
                 card = await jimp.read('./osu_card/elite_osu.png')
-            } else if (acc_avg >= 650 && acc_avg < 750) {
+            } else if (acc_avg >= 700 && acc_avg < 825) {
                 card = await jimp.read('./osu_card/super_rare_osu.png')
-            } else if (acc_avg >= 750) {
+            } else if (acc_avg >= 825 && acc_avg < 900) {
                 card = await jimp.read('./osu_card/ultra_rare_osu.png')
+            } else if (acc_avg >= 900) {
+                card = await jimp.read('./osu_card/master_osu.png')
             }
         }
         // Special card
