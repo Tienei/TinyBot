@@ -12,7 +12,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
     let star = 0
     let fcguess = ''
     let mapcomplete = 0
-    if (mode == 0 || mode == 4 || mode == 8 || mode == 13) {
+    if (mode == 'std') {
         let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,'fc')
         fcpp = Number(fccalc.pp.total).toFixed(2)
         fcacc = fccalc.acc
@@ -25,7 +25,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
             pp = Number(recentcalc.pp.total)
         }
     }
-    if (mode == 1) {
+    if (mode == 'taiko') {
         let mapinfo = await other_modes_precalc(beatmapid, 1, bitpresent)
         star = Number(mapinfo.star).toFixed(2)
         let count300 = mapinfo.fc - count100
@@ -36,7 +36,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
             pp = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, acc, countmiss, bitpresent)
         }
     }
-    if (mode == 2) {
+    if (mode == 'ctb') {
         let mapinfo = await other_modes_precalc(beatmapid, 2, bitpresent)
         star = Number(mapinfo.star).toFixed(2)
         let count300 = mapinfo.fc - count100 - countkatu - count50
@@ -47,7 +47,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
             pp = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, combo, acc, countmiss, bitpresent)
         }
     }
-    if (mode == 3) {
+    if (mode == 'mania') {
         let mapinfo = await other_modes_precalc(beatmapid, 3, bitpresent)
         star = Number(mapinfo.star).toFixed(2)
         fcacc = Number(21.7147240951625 * Math.log(score/10000)*10000).toFixed(0)
@@ -57,17 +57,17 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
             pp = mania_pp_calc(mapinfo.star, mapinfo.od, score, mapinfo.fc, bitpresent)
         }
     }
-    if (mode == 12 || mode == 17) {
+    if (mode == 'rx') {
         let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,2)
         fcpp = Number(fccalc.pp.total).toFixed(2)
         fcacc = fccalc.acc
         star = Number(fccalc.star.total).toFixed(2)
     }
     if (perfect == 0) {
-        if (mode == 0 || mode == 1 || mode == 2 || mode == 4 || mode == 8) {
+        if (mode == 'std' || mode == 'taiko' || mode == 'ctb') {
             fcguess = `**${fcpp}pp for ${fcacc}%**`
         }
-        if (mode == 3) {
+        if (mode == 'mania') {
             fcguess = `| **${fcpp}pp for ${fcacc} scores**`
         }
     }

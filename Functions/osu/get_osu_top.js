@@ -17,12 +17,16 @@ let osuApi_no_bm = new nodeosu.Api(process.env.OSU_KEY, {
 
 module.exports = async function (name, mode, limit, type, no_bm = false) {
     let top = []
-    if (mode >= 0 && mode <= 3) {
+    let modedetail = get_mode_detail(mode)
+    let modenum = modedetail.modenum
+    let a_mode = modedetail.a_mode
+    let check_type = modedetail.check_type
+    if (check_type == 'Bancho') {
         let best = ''
         if (type == 'best') {
-            best = no_bm == false ? await osuApi.getUserBest({u: name, m: mode, limit: limit}) : await osuApi_no_bm.getUserBest({u: name, m: mode, limit: limit}) 
+            best = no_bm == false ? await osuApi.getUserBest({u: name, m: modenum, limit: limit}) : await osuApi_no_bm.getUserBest({u: name, m: modenum, limit: limit}) 
         } else if (type == 'recent') {
-            best = no_bm == false ? await osuApi.getUserRecent({u: name, m: mode, limit: limit}) : await osuApi_no_bm.getUserRecent({u: name, m: mode, limit: limit})
+            best = no_bm == false ? await osuApi.getUserRecent({u: name, m: modenum, limit: limit}) : await osuApi_no_bm.getUserRecent({u: name, m: modenum, limit: limit})
         }
         for (var i = 0; i < best.length; i++) {
             if (no_bm == false) {
@@ -77,7 +81,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                                     best[i].beatmap.artist,
                                     Number(best[i].beatmap.bpm),
                                     Number(best[i].beatmap.beatmapSetId),
-                                    (mode == 0 || mode == 2) ? Number(best[i].beatmap.maxCombo) : '',
+                                    (modenum == 0 || modenum == 2) ? Number(best[i].beatmap.maxCombo) : '',
                                     star,
                                     Number(best[i].beatmap.length.total),
                                     Number(best[i].beatmap.length.drain)])
@@ -125,9 +129,9 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             }
         }
     }
-    if (mode >= 4 && mode <= 17) {
-        let serverlink = get_mode_detail(mode).link
-        let relax = (mode == 12 || mode == 17) ? 1 : 0
+    if (check_type !== "Bancho") {
+        let serverlink = modedetail.link
+        let relax = (a_mode == 'rx') ? 1 : 0
         let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, rx: relax, l: limit})
         let user = await rippleAPI.apiCall(`/v1/users`, mode, {name: name})
         for (var i = 0; i < best.scores.length; i++) {

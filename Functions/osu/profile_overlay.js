@@ -1,20 +1,20 @@
 const { Message, RichEmbed } = require('discord.js')
 
-module.exports = function (message = new Message(), mode, modeicon, supporter, modename, name, id, pp, rank, country, ct_rank, acc, playcount, level, playstyle, ss, s, a, stat_text, stat_icon, refresh) {
+module.exports = function (message = new Message(), check_type, modeicon, supporter, modename, name, id, pp, rank, country, ct_rank, acc, playcount, level, playstyle, ss, s, a, stat_text, stat_icon, refresh) {
     // Setup for modes
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
     let profile_link = ''
     let pfp_link = ''
-    if (mode >= 0 && mode <= 3) {
+    if (check_type == 'Bancho') {
         profile_link = `https://osu.ppy.sh/users/${id}`
         pfp_link = `http://s.ppy.sh/a/${id}.png?date=${refresh}`
-    } else if (mode >= 4 && mode <= 7) {
+    } else if (check_type == 'Ripple') {
         profile_link = `https://ripple.moe/u/${id}`
         pfp_link = `http://a.ripple.moe/${id}?date=${refresh}`
-    } else if (mode >= 8 && mode <= 12) {
+    } else if (check_type == 'Akatsuki') {
         profile_link = `https://akatsuki.pw/u/${id}`
         pfp_link = `http://a.akatsuki.pw/${id}?date=${refresh}`
-    } else if (mode >= 13 && mode <= 17) {
+    } else if (check_type == 'Horizon') {
         profile_link = `https://lemres.de/u/${id}`
         pfp_link = `http://a.lemres.de/${id}?date=${refresh}`
     }

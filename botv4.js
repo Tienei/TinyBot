@@ -128,14 +128,18 @@ bot.on("ready", (ready) => {
             for (let m of modes) {
                 let mode = m.mode
                 let limit = m.limit
-                let player_mode_detail = player.modedetail.find(m => m.mode == mode) 
+                let player_mode_detail = player.modedetail.find(m => m.mode == mode)
+                let modedetail = fx.osu.get_mode_detail(mode)
+                let modename = modedetail.modename
+                let check_type = modedetail.check_type
+                let modenum = modedetail.modenum
+                let a_mode = modedetail.a_mode
                 let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
                 best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
                 for (var i = 0; i < best.length; i++) {
                     console.log('Found')
-                    let mode_detail = fx.osu.get_mode_detail(mode)
                     var user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
-                    var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid)
+                    var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                     var rank = fx.osu.ranking_letter(best[i].letter)
                     var modandbit = fx.osu.mods_enum(best[i].mod, 'text')
                     var shortenmod = modandbit.shortenmod
@@ -143,8 +147,8 @@ bot.on("ready", (ready) => {
                     var pp = best[i].pp
                     var ppgain = (Number(user.pp).toFixed(2) - Number(player_mode_detail.lasttotalpp)).toFixed(2)
                     let parser = ''
-                    if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[0].beatmapid)}
-                    let fc_stat = await fx.osu.get_pp(mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+                    if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
+                    let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
                     var star = fc_stat.star
                     let fcguess = ''
                     if (best[i].letter == 'F') {
@@ -154,7 +158,7 @@ bot.on("ready", (ready) => {
                         fcguess = fc_stat.fcguess
                     }
                     let embed = new Discord.RichEmbed()
-                    .setAuthor(`New #${best[i].top} for ${user.username} in osu!${mode_detail.modename}:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
+                    .setAuthor(`New #${best[i].top} for ${user.username} in osu!${modename}:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
                     .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
                     .setDescription(`
 **[${beatmap.title}](https://osu.ppy.sh/b/${beatmap.beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
@@ -164,7 +168,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                     for (let channel of player.trackonchannel) {
                         for (mode1 of channel.modes) {
                             if (mode1.mode == mode) {
-                                stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: mode_detail.check_type})
+                                stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: check_type})
                                 embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
                                 bot.channels.get(channel.id).send({embed})
                             }
@@ -182,7 +186,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
         }
     }
     if (config.config.debug.osutrack == false) {
-        setInterval(real_time_osu_track, 120000)
+        setInterval(real_time_osu_track, 10000)
     }
 });
 
@@ -372,27 +376,27 @@ bot.on("message", (message) => {
                                                             {"suffix": "-hrz", "v_count": 0},
                                                             {"suffix": "-rxhrz", "v_count": 0},
                                                             {"suffix": "-p", "v_count": 1}])
-                let mode = 0 
+                let mode = "Bancho-std"
                 let limit = 50
                 if (suffix.suffix.find(s => s.suffix == "-p").position > -1) {
                     limit = suffix.suffix.find(s => s.suffix == "-p").value[0]
                 }
                 if (suffix.suffix.find(s => s.suffix == "-taiko").position > -1) {
-                    mode = 1
+                    mode = "Bancho-taiko"
                 } else if (suffix.suffix.find(s => s.suffix == "-ctb").position > -1) {
-                    mode = 2
+                    mode = "Bancho-ctb"
                 } else if (suffix.suffix.find(s => s.suffix == "-mania").position > -1) {
-                    mode = 3
+                    mode = "Bancho-mania"
                 } else if (suffix.suffix.find(s => s.suffix == "-ripple").position > -1) {
-                    mode = 4
+                    mode = "Ripple-std"
                 } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
-                    mode = 8
+                    mode = "Akatsuki-std"
                 } else if (suffix.suffix.find(s => s.suffix == "-rxakat").position > -1) {
-                    mode = 12
+                    mode = "Akatsuki-rx"
                 } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
-                    mode = 13
+                    mode = "Horizon-std"
                 } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
-                    mode = 17
+                    mode = "Horizon-rx"
                 }
                 if (limit > 100 || limit < 1) {
                     throw 'You can only set from top 1-100. Please try again'
@@ -460,18 +464,18 @@ bot.on("message", (message) => {
                                                             {"suffix": "-rp", "v_count": 0},
                                                             {"suffix": "-hrz", "v_count": 0},])
                 let type = 'All'
-                let mode = 0
+                let mode = 'Bancho-std'
                 if (suffix.suffix.find(s => s.suffix == "-bc").position > -1) {
                    type = 'Bancho'
                 } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
                     type = 'Akatsuki'
-                    mode = 8
+                    mode = 'Akatsuki-std'
                 } else if (suffix.suffix.find(s => s.suffix == "-rp").position > -1) {
                     type = 'Ripple'
-                    mode = 4
+                    mode = 'Ripple-std'
                 } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
                     type = 'Horizon'
-                    mode = 13
+                    mode = 'Horizon-std'
                 }
                 var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
                 var name = user.username
@@ -531,31 +535,31 @@ bot.on("message", (message) => {
 
         // Osu
         if (command == bot_prefix + 'osu') {
-            cmds.osu.osu(message, 0)
+            cmds.osu.osu(message, 'Bancho-std')
         }
         if (command == bot_prefix + 'taiko') {
-            cmds.osu.osu(message, 1)
+            cmds.osu.osu(message, 'Bancho-taiko')
         }
         if (command == bot_prefix + 'ctb') {
-            cmds.osu.osu(message, 2)
+            cmds.osu.osu(message, 'Bancho-ctb')
         }
         if (command == bot_prefix + 'mania') {
-            cmds.osu.osu(message, 3)
+            cmds.osu.osu(message, 'Bancho-mania')
         }
         if (command == bot_prefix + 'osucard') {
-            cmds.osu.osu_card(message, 0)
+            cmds.osu.osu_card(message, 'Bancho-std')
         }
         if (command == bot_prefix + 'taikocard') {
-            cmds.osu.osu_card(message, 1)
+            cmds.osu.osu_card(message, 'Bancho-taiko')
         }
         if (command == bot_prefix + 'ctbcard') {
-            cmds.osu.osu_card(message, 2)
+            cmds.osu.osu_card(message, 'Bancho-ctb')
         }
         if (command == bot_prefix + 'maniacard') {
-            cmds.osu.osu_card(message, 3)
+            cmds.osu.osu_card(message, 'Bancho-mania')
         }
         if (command == bot_prefix + 'osuavatar') {
-            cmds.osu.osuavatar(message, 0)
+            cmds.osu.osuavatar(message, 'Bancho-std')
         }
         if (command == bot_prefix + 'topglobal') {
             cmds.osu.topleaderboard(message, 'global')
@@ -573,16 +577,16 @@ bot.on("message", (message) => {
             cmds.osu.compare(message)
         }
         if (command == bot_prefix + 'osutop') {
-            cmds.osu.osutop(message, 0)
+            cmds.osu.osutop(message, 'Bancho-std')
         }
         if (command == bot_prefix + 'taikotop') {
-            cmds.osu.osutop(message, 1)
+            cmds.osu.osutop(message, 'Bancho-taiko')
         }
         if (command == bot_prefix + 'ctbtop') {
-            cmds.osu.osutop(message, 2)
+            cmds.osu.osutop(message, 'Bancho-ctb')
         }
         if (command == bot_prefix + 'maniatop') {
-            cmds.osu.osutop(message, 3)
+            cmds.osu.osutop(message, 'Bancho-mania')
         }
         if (command == bot_prefix + 'map' || command == bot_prefix + 'm') {
             cmds.osu.map(message)
@@ -609,34 +613,34 @@ bot.on("message", (message) => {
         // Akatuski
 
         if (command == bot_prefix + 'akatsuki') {
-            cmds.osu.osu(message, 8)
+            cmds.osu.osu(message, 'Akatsuki-std')
         }
         if (command == bot_prefix + 'akatavatar') {
-            cmds.osu.osuavatar(message, 8)
+            cmds.osu.osuavatar(message, 'Akatsuki-std')
         }
         if (command == bot_prefix + 'akattop') {
-            cmds.osu.osutop(message, 8)
+            cmds.osu.osutop(message, 'Akatsuki-std')
         }
         if (command == bot_prefix + 'akatsukiset') {
             cmds.osu.osuset(message, 'Akatsuki')
         }
         if (command == bot_prefix + 'rxakatsuki') {
-            cmds.osu.osu(message, 12)
+            cmds.osu.osu(message, 'Akatsuki-rx')
         }
         if (command == bot_prefix + 'rxakattop') {
-            cmds.osu.osutop(message, 12)
+            cmds.osu.osutop(message, 'Akatsuki-rx')
         }
 
         // Ripple
 
         if (command == bot_prefix + 'ripple') {
-            cmds.osu.osu(message, 4)
+            cmds.osu.osu(message, 'Ripple-std')
         }
         if (command == bot_prefix + 'rippleavatar') {
-            cmds.osu.osuavatar(message, 4)
+            cmds.osu.osuavatar(message, 'Ripple-std')
         }
         if (command == bot_prefix + 'rippletop') {
-            cmds.osu.osutop(message, 4)
+            cmds.osu.osutop(message, 'Ripple-std')
         }
         if (command == bot_prefix + 'rippleset') {
             cmds.osu.osuset(message, 'Ripple')
@@ -645,28 +649,28 @@ bot.on("message", (message) => {
         // Horizon
 
         if (command == bot_prefix + 'horizon') {
-            cmds.osu.osu(message, 13)
+            cmds.osu.osu(message, 'Horizon-std')
         }
         if (command == bot_prefix + 'horizonavatar') {
-            cmds.osu.osuavatar(message, 13)
+            cmds.osu.osuavatar(message, 'Horizon-std')
         }
         if (command == bot_prefix + 'horizontop') {
-            cmds.osu.osutop(message, 13)
+            cmds.osu.osutop(message, 'Horizon-std')
         }
         if (command == bot_prefix + 'horizonset') {
             cmds.osu.osuset(message, 'Horizon')
         }
         if (command == bot_prefix + 'rxhorizon') {
-            cmds.osu.osu(message, 17)
+            cmds.osu.osu(message, 'Horizon-rx')
         }
         if (command == bot_prefix + 'rxhorizontop') {
-            cmds.osu.osutop(message, 17)
+            cmds.osu.osutop(message, 'Horizon-rx')
         }
 
         // Detection
         // Beatmap Detection
         if (msg.includes("https://osu.ppy.sh/beatmapsets/") || msg.includes("https://osu.ppy.sh/b/")) {
-            cmds.osu.beatmaplinkdetail(message)
+            cmds.osu.beatmaplinkdetail(message, bot_prefix)
         }
         // .osu Detection
         if (message.attachments.array().length > 0) {

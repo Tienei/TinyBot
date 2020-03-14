@@ -4,7 +4,7 @@ const rippleAPI = require('./rippleAPI')
 const request = require('superagent');
 const { Profile } = require('./../../Classes/osu')
 // Function
-const get_mode_deatail = require('./get_mode_detail')
+const get_mode_detail = require('./get_mode_detail')
 // Client
 const osu_client = require('../../client').osu_client
 
@@ -17,8 +17,12 @@ let html_cooldown = 0
 
 module.exports = async function (name, mode, event, html = true, client = true) {
     try {
-        if (mode >= 0 && mode <= 3) {
-            let user = await osuApi.getUser({u: name, m: mode, event_days: event})
+        let modedetail = get_mode_detail(mode)
+        let modenum = modedetail.modenum
+        let a_mode = modedetail.a_mode
+        let check_type = modedetail.check_type
+        if (check_type == 'Bancho') {
+            let user = await osuApi.getUser({u: name, m: modenum, event_days: event})
             let bancho_user = ''
             if (client == true) {
                 try {
@@ -64,8 +68,8 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 '',
                                 user_web["cover_url"]])
         }
-        if (mode >= 4 && mode <= 17) {
-            let user = (mode == 12 || mode == 17) ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0})
+        if (check_type !== 'Bancho') {
+            let user = (a_mode == 'rx') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0})
             return new Profile([user.username,
                                 Number(user.id),
                                 undefined,

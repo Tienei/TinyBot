@@ -134,9 +134,10 @@ async function osu(message = new Message(), mode) {
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
         let modeicon = modedetail.modeicon
+        let modenum = modedetail.modenum
         let check_type = modedetail.check_type
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
-        if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
+        if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
             let user = await fx.osu.get_osu_profile(name, mode, 30, false)
             if (user == null) {
                 throw 'User not found!'
@@ -195,9 +196,9 @@ async function osu(message = new Message(), mode) {
             let sortedmod = ''
             for (var i = 0; i < 50; i++) {
                 let modandbit = fx.osu.mods_enum(best[i].mod)
-                if (mode == 0) {
+                if (modenum == 0) {
                     let parser = await fx.osu.precalc(best[i].beatmapid)
-                    let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
+                    let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,'acc')
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                     star_avg += thing.star.total
                     aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
@@ -212,7 +213,7 @@ async function osu(message = new Message(), mode) {
                     timetotal_avg += detail.timetotal
                     timedrain_avg += detail.timedrain
                 }
-                if (mode == 1) {
+                if (modenum == 1) {
                     let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 1, modandbit.bitpresent)
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0, 0, mapinfo.od, mapinfo.hp)
                     star_avg += mapinfo.star
@@ -224,7 +225,7 @@ async function osu(message = new Message(), mode) {
                     timetotal_avg += detail.timetotal
                     timedrain_avg += detail.timedrain
                 }
-                if (mode == 2) {
+                if (modenum == 2) {
                     let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 2, modandbit.bitpresent)
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
                     star_avg += mapinfo.star
@@ -238,7 +239,7 @@ async function osu(message = new Message(), mode) {
                     timetotal_avg += detail.timetotal
                     timedrain_avg += detail.timedrain
                 }
-                if (mode == 3) {
+                if (modenum == 3) {
                     let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 3, modandbit.bitpresent)
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0,0,0,0)
                     star_avg += mapinfo.star
@@ -279,7 +280,7 @@ async function osu(message = new Message(), mode) {
             for (var i in mod_avg) {
                 sortedmod += '``' + mod_avg[i].mod + '``: ' + `${Number(mod_avg[i].count / mod_avg_all.length * 100).toFixed(2)}% `
             }
-            if (mode == 0) {
+            if (modenum == 0) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)*2}★
@@ -289,7 +290,7 @@ Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
 Most common mods: ${sortedmod}`)
             }
-            if (mode == 1) {
+            if (modenum == 1) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Speed skill: ${Number(speed_avg/50).toFixed(2)}★
@@ -298,7 +299,7 @@ Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math
 BPM: ${Number(bpm_avg/50).toFixed(0)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
 Most common mods: ${sortedmod}`)
             }
-            if (mode == 2) {
+            if (modenum == 2) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)}★
@@ -307,7 +308,7 @@ Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
 Most common mods: ${sortedmod}`)
             }
-            if (mode == 3) {
+            if (modenum == 3) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Finger control skill: ${Number(finger_control_avg/50).toFixed(2)}★
@@ -318,7 +319,7 @@ BPM: ${Number(bpm_avg/50).toFixed(0)} / OD: ${Number(od_avg/50).toFixed(2)} / HP
 Most common mods: ${sortedmod}`)
             }
             msg1.edit({embed})
-            if (mode == 0) {
+            if (mode == "Bancho-std") {
                 for (var [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
@@ -328,7 +329,7 @@ Most common mods: ${sortedmod}`)
                     }
                 }
             }
-        } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-rank").position > -1 && mode == 0) {
+        } else if (suffix.suffix.find(s => s.suffix == "-rank").position > -1 && mode == "Bancho-std") {
             let rank = Number(suffix.suffix.find(s => s.suffix == "-rank").value[0])
             let page = 1 + Math.floor((rank - 1) / 50)
             let web_leaderboard = (await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)).text
@@ -341,7 +342,7 @@ Most common mods: ${sortedmod}`)
                 throw 'User not found!'
             }
             let embed = fx.osu.profile_overlay(message,
-                                                mode,
+                                                check_type,
                                                 modeicon, 
                                                 user.supporter, 
                                                 modename, 
@@ -362,7 +363,7 @@ Most common mods: ${sortedmod}`)
                                                 user.statusicon,
                                                 refresh)
             message.channel.send({embed});
-            if (mode == 0) {
+            if (mode == "Bancho-std") {
                 for (var [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
@@ -372,19 +373,19 @@ Most common mods: ${sortedmod}`)
                     }
                 }
             }
-        } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
+        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
             let user = await fx.osu.get_osu_profile(name, mode, 0, true, false)
             if (user == null) {
                 throw 'User not found!'
             }
             let mode_name = ''
-            if (mode == 0) {
+            if (modenum == 0) {
                 mode_name = 'osu'
-            } else if (mode == 1) {
+            } else if (modenum == 1) {
                 mode_name = 'taiko'
-            } else if (mode == 2) {
+            } else if (modenum == 2) {
                 mode_name = 'fruits'
-            } else if (mode == 3) {
+            } else if (modenum == 3) {
                 mode_name = 'mania'
             }
             let web = (await request.get(`https://osu.ppy.sh/users/${user.id}/${mode_name}`)).text
@@ -485,7 +486,7 @@ Most common mods: ${sortedmod}`)
             .attachFile(attachment)
             .setImage('attachment://rank.png')
             message.channel.send({embed})
-            if (mode == 0) {
+            if (mode == "Bancho-std") {
                 for (var [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
@@ -495,7 +496,7 @@ Most common mods: ${sortedmod}`)
                     }
                 }
             }
-        } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && mode == 0) {
+        } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && mode == "Bancho-std") {
             let user = await fx.osu.get_osu_profile(name, mode, 30, false, false)
             if (user == null) {
                 throw 'User not found!'
@@ -518,7 +519,7 @@ Most common mods: ${sortedmod}`)
             let top_acc = []
             for (var i = 0; i < 50; i++) {
                 let modandbit = fx.osu.mods_enum(best[i].mod)
-                if (mode == 0) {
+                if (modenum == 0) {
                     let parser = await fx.osu.precalc(best[i].beatmapid)
                     let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
@@ -572,7 +573,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
             .addField('Top old acc skill:', field[3])
             .addField('Top acc skill:', field[4])
             msg1.edit({embed})
-            if (mode == 0) {
+            if (mode == "Bancho-std") {
                 for (var [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
@@ -588,7 +589,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                 throw 'User not found!'
             }
             let embed = fx.osu.profile_overlay(message,
-                                                mode,
+                                                check_type,
                                                 modeicon, 
                                                 user.supporter, 
                                                 modename, 
@@ -609,7 +610,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                                                 user.statusicon,
                                                 refresh)
             message.channel.send({embed});
-            if (mode == 0) {
+            if (mode == "Bancho-std") {
                 for (var [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
@@ -632,6 +633,12 @@ async function osu_card(message = new Message(), mode) {
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
         // Get Information
         let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
+        let modedetail = fx.osu.get_mode_detail(mode)
+        let modenum = modedetail.modenum
+        let check_type = modedetail.check_type
+        if (check_type !== 'Bancho') {
+            throw 'Card is only available for Bancho (for now)'
+        }
         let user = await fx.osu.get_osu_profile(name, mode, 1, false, false)
         if (user == null) {
             throw 'User not found!'
@@ -648,7 +655,7 @@ async function osu_card(message = new Message(), mode) {
         var acc_avg = 0
         for (var i = 0; i < 50; i++) {
             let modandbit = fx.osu.mods_enum(best[i].mod)
-            if (mode == 0) {
+            if (modenum == 0) {
                 let parser = await fx.osu.precalc(best[i].beatmapid)
                 let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
@@ -657,21 +664,21 @@ async function osu_card(message = new Message(), mode) {
                 speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)) * 2
                 acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
             }
-            if (mode == 1) {
+            if (modenum == 1) {
                 let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 1, modandbit.bitpresent)
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0, 0, mapinfo.od, mapinfo.hp)
                 star_avg += mapinfo.star
                 speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
                 acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
             }
-            if (mode == 2) {
+            if (modenum == 2) {
                 let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 2, modandbit.bitpresent)
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
                 star_avg += mapinfo.star
                 aim_avg += Math.pow(mapinfo.star, Math.log(detail.bpm)/Math.log(mapinfo.star*20)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
                 acc_avg += Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.1) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
             }
-            if (mode == 3) {
+            if (modenum == 3) {
                 let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 3, modandbit.bitpresent)
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0,0,0,0)
                 star_avg += mapinfo.star
@@ -688,7 +695,7 @@ async function osu_card(message = new Message(), mode) {
         // Process image
         msg1.edit('Processing Image...')
         let card = ''
-        if (mode == 0 || mode == 1 || mode == 2 || mode == 3) {
+        if (check_type == 'Bancho') {
             if (acc_avg >= 0 && acc_avg < 300) {
                 card = await jimp.read('./osu_card/common_osu.png')
             } else if (acc_avg >= 300 && acc_avg < 525) {
@@ -705,7 +712,7 @@ async function osu_card(message = new Message(), mode) {
         }
         // Special card
         let special = false
-        if (mode == 0) {
+        if (modenum == 0) {
             let s_player = [124493, 39828, 50265, 2558286, 5339515, 4650315]
             for (var i in s_player) {
                 if (user.id == s_player[i]) {
@@ -752,16 +759,16 @@ async function osu_card(message = new Message(), mode) {
         card.composite(pfp, 40,110)
         // Get mode icon
         let mode_icon = ''
-        if (mode == 0) {
+        if (modenum == 0) {
             mode_icon = await jimp.read('./osu_card/osu.png')
         }
-        if (mode == 1) {
+        if (modenum == 1) {
             mode_icon = await jimp.read('./osu_card/taiko.png')
         }
-        if (mode == 2) {
+        if (modenum == 2) {
             mode_icon = await jimp.read('./osu_card/ctb.png')
         }
-        if (mode == 3) {
+        if (modenum == 3) {
             mode_icon = await jimp.read('./osu_card/mania.png')
         }
         mode_icon.resize(80,80)
@@ -788,7 +795,7 @@ async function osu_card(message = new Message(), mode) {
         let skillnumber = ''
         let text_line_spacing = 10
         let stat_number_x = 0
-        if (mode == 0) {
+        if (modenum == 0) {
             skillname = `Aim:\nSpeed:\nAccuracy:`
             skillnumber = `${aim_avg}\n${speed_avg}\n${acc_avg}`
             stat_number_x = 170
@@ -796,17 +803,17 @@ async function osu_card(message = new Message(), mode) {
                 skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
             }
         }
-        if (mode == 1) {
+        if (modenum == 1) {
             skillname = `Speed:\nAccuracy:`
             skillnumber = `${speed_avg}\n${acc_avg}`
             stat_number_x = 170
         }
-        if (mode == 2) {
+        if (modenum == 2) {
             skillname = `Aim:\nAccuracy:`
             skillnumber = `${aim_avg}\n${acc_avg}`
             stat_number_x = 170
         }
-        if (mode == 3) {
+        if (modenum == 3) {
             skillname = `Finger Control:\nSpeed:\nAccuracy:`
             skillnumber = `${finger_control_avg}\n${speed_avg}\n${acc_avg}`
             stat_number_x = 230
@@ -872,8 +879,9 @@ async function osutop(message = new Message(), mode) {
         let top = ''
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
-        let modeicon = modedetail.modeicon
         let check_type = modedetail.check_type
+        let modenum = modedetail.modenum
+        let a_mode = modedetail.a_mode
         let pfp_link = `http://a.${modedetail.link}/{user_id}?date=${refresh}`
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         if (suffix.suffix.find(s => s.suffix == "-p").position > -1) {
@@ -898,16 +906,16 @@ async function osutop(message = new Message(), mode) {
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, Number(numberrange[1]), 'best', true)
             for (var i = Number(numberrange[0]) - 1; i < Number(numberrange[1]) ; i++) {
-                let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid)
+                let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
                 let shortenmod = modandbit.shortenmod
                 let bitpresent = modandbit.bitpresent
                 let date = fx.osu.time_played(best[i].date)
-                cache_beatmap_ID(message, best[i].beatmapid, modename)
+                cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(i+1,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
@@ -935,16 +943,16 @@ async function osutop(message = new Message(), mode) {
                 return a1 - b1
             })
             for (var i = best.length-1; i > best.length - 6; i--) {
-                let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid)
+                let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
                 let shortenmod = modandbit.shortenmod
                 let bitpresent = modandbit.bitpresent
                 let date = fx.osu.time_played(best[i].date)
-                cache_beatmap_ID(message, best[i].beatmapid, modename)
+                cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(best[i].top,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
@@ -954,7 +962,7 @@ async function osutop(message = new Message(), mode) {
             .setColor(embedcolor)
             .setDescription(top)
             message.channel.send({embed});
-        } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-m").position > -1) {
+        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-m").position > -1) {
             let getmod = suffix.suffix.find(s => s.suffix == "-m").value[0]
             let mod = fx.osu.mods_enum(getmod).bitpresent
             let user = await osuApi.getUser({u: name})
@@ -969,16 +977,16 @@ async function osutop(message = new Message(), mode) {
                 let score_mod = best[i].mod
                 if (score_mod == mod && checktop < 5) {
                     checktop += 1
-                    let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid)
+                    let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                     let rank = fx.osu.ranking_letter(best[i].letter)
                     let modandbit = fx.osu.mods_enum(best[i].mod)
                     let shortenmod = modandbit.shortenmod
                     let bitpresent = modandbit.bitpresent
                     let date = fx.osu.time_played(best[i].date)
-                    cache_beatmap_ID(message, best[i].beatmapid, modename)
+                    cache_beatmap_ID(message, best[i].beatmapid, mode)
                     let parser = ''
-                    if (mode == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                    let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                    if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                    let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                     let scoreoverlay = fx.osu.score_overlay(i+1,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                     top += scoreoverlay
                 } else if (checktop > 4) {
@@ -994,7 +1002,7 @@ async function osutop(message = new Message(), mode) {
             .setColor(embedcolor)
             .setDescription(top)
             message.channel.send({embed});
-        } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
+        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
             let user = await osuApi.getUser({u: name})
             if (user == null) {
                 throw 'User not found!'
@@ -1012,7 +1020,7 @@ async function osutop(message = new Message(), mode) {
                     break
                 }
             }
-        } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-page").position > -1) {
+        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-page").position > -1) {
             let user = await osuApi.getUser({u: name})
             if (user == null) {
                 throw 'User not found!'
@@ -1031,10 +1039,10 @@ async function osutop(message = new Message(), mode) {
                         let shortenmod = modandbit.shortenmod
                         let bitpresent = modandbit.bitpresent
                         let date = fx.osu.time_played(best[i].date)
-                        cache_beatmap_ID(message, best[i].beatmapid, modename)
+                        cache_beatmap_ID(message, best[i].beatmapid, mode)
                         let parser = ''
-                        if (mode == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                        let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                        if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                        let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                         let scoreoverlay = fx.osu.score_overlay(i+1,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                         gathering += scoreoverlay
                     }
@@ -1043,7 +1051,7 @@ async function osutop(message = new Message(), mode) {
                 return pages
             }
             fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${username} (Page {page} of {max_page})`, pfp_link, embedcolor, Math.ceil(best.length / 5))
-        } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-s").position > -1) { 
+        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-s").position > -1) { 
             let map_name = suffix.suffix.find(s => s.suffix == "-s").value[0].replace("_", " ")
             let top = []
             let get = await fx.osu.get_osu_top(name, mode, 100, 'best')
@@ -1062,10 +1070,10 @@ async function osutop(message = new Message(), mode) {
                 let shortenmod = modandbit.shortenmod
                 let bitpresent = modandbit.bitpresent
                 let date = fx.osu.time_played(best[i].date)
-                cache_beatmap_ID(message, best[i].beatmapid, modename)
+                cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(best[i].top,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
@@ -1075,7 +1083,7 @@ async function osutop(message = new Message(), mode) {
             .setColor(embedcolor)
             .setDescription(top)
             message.channel.send({embed});
-        } else if ((mode >= 0 && mode <= 3) && suffix.suffix.find(s => s.suffix == "-a").position > -1) { 
+        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-a").position > -1) { 
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best')
             best.sort(function (a,b) {
                 return b.acc - a.acc
@@ -1097,10 +1105,10 @@ async function osutop(message = new Message(), mode) {
                         let shortenmod = modandbit.shortenmod
                         let bitpresent = modandbit.bitpresent
                         let date = fx.osu.time_played(best[i].date)
-                        cache_beatmap_ID(message, best[i].beatmapid, modename)
+                        cache_beatmap_ID(message, best[i].beatmapid, mode)
                         let parser = ''
-                        if (mode == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                        let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                        if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                        let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                         let scoreoverlay = fx.osu.score_overlay(best[i].top,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                         gathering += scoreoverlay
                     }
@@ -1124,10 +1132,10 @@ async function osutop(message = new Message(), mode) {
                 let shortenmod = modandbit.shortenmod
                 let bitpresent = modandbit.bitpresent
                 let date = fx.osu.time_played(best[i].date)
-                cache_beatmap_ID(message, best[i].beatmapid, modename)
+                cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
+                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay(i+1,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
@@ -1164,28 +1172,31 @@ async function recent(message = new Message()) {
                                                     {"suffix": "-rxakat", "v_count": 0},
                                                     {"suffix": "-hrz", "v_count": 0},
                                                     {"suffix": "-rxhrz", "v_count": 0},])
-        let mode = 0 
+        let mode = "Bancho-std"
         if (suffix.suffix.find(s => s.suffix == "-taiko").position > -1) {
-            mode = 1
+            mode = "Bancho-taiko"
         } else if (suffix.suffix.find(s => s.suffix == "-ctb").position > -1) {
-            mode = 2
+            mode = "Bancho-ctb"
         } else if (suffix.suffix.find(s => s.suffix == "-mania").position > -1) {
-            mode = 3
+            mode = "Bancho-mania"
         } else if (suffix.suffix.find(s => s.suffix == "-ripple").position > -1) {
-            mode = 4
+            mode = "Ripple-std"
         } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
-            mode = 8
+            mode = "Akatsuki-std"
         } else if (suffix.suffix.find(s => s.suffix == "-rxakat").position > -1) {
-            mode = 12
+            mode = "Akatsuki-rx"
         } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
-            mode = 13
+            mode = "Horizon-std"
         } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
-            mode = 17
+            mode = "Horizon-rx"
         }
         // Make recent best get modes later
-        let check_type = fx.osu.get_mode_detail(mode).check_type
+        let modedetail = fx.osu.get_mode_detail(mode)
+        let modenum = modedetail.modenum
+        let a_mode = modedetail.a_mode
+        let check_type = modedetail.check_type
+        let modename = modedetail.modename
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
-        let modename = fx.osu.get_mode_detail(mode).modename
         if (suffix.suffix.find(s => s.suffix == "-b").position > -1) {
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             if (best.length == 0) {
@@ -1205,10 +1216,10 @@ async function recent(message = new Message()) {
             let shortenmod = modandbit.shortenmod
             let bitpresent = modandbit.bitpresent
             let date = fx.osu.time_played(best[0].date)
-            cache_beatmap_ID(message, best[0].beatmapid, modename)
+            cache_beatmap_ID(message, best[0].beatmapid, mode)
             let parser = await fx.osu.precalc(best[0].beatmapid)     
-            if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(best[0].beatmapid)}
-            let fc_stat = await fx.osu.get_pp(mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+            if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
+            let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
             let scoreoverlay = fx.osu.score_overlay(undefined,beatmap.title,best[0].beatmapid,fc_stat.star,shortenmod,best[0].pp,undefined,rank,beatmap.diff,best[0].score,best[0].combo,beatmap.fc,best[0].acc,best[0].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
             const embed = new RichEmbed()
             .setAuthor(`Top ${best[0].top} osu!${modename} play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
@@ -1216,7 +1227,7 @@ async function recent(message = new Message()) {
             .setColor(embedcolor)
             .setDescription(scoreoverlay)
             message.channel.send({embed})
-        } else if (mode == 0 && suffix.suffix.find(s => s.suffix == "-l").position > -1) { 
+        } else if (mode == "Bancho-std" && suffix.suffix.find(s => s.suffix == "-l").position > -1) { 
             let top = ''
             let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             let recent = await fx.osu.get_osu_top(name, mode, 5, 'recent')
@@ -1233,9 +1244,9 @@ async function recent(message = new Message()) {
                 let nopp = ''
                 let mapcompleted = ''
                 let parser = ''
-                if (mode == 0 || mode == 4 || mode == 8 || mode == 12) {parser = await fx.osu.precalc(recent[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(mode, parser, recent[i].beatmapid, bitpresent, recent[i].score, recent[i].combo, recent[i].fc, recent[i].count300, recent[i].count100, recent[i].count50, recent[i].countmiss, recent[i].countgeki, recent[i].countkatu, recent[i].acc, recent[i].perfect, true)
-                cache_beatmap_ID(message, recent[i].beatmapid, modename)
+                if (modenum == 0) {parser = await fx.osu.precalc(recent[i].beatmapid)}
+                let fc_stat = await fx.osu.get_pp(a_mode, parser, recent[i].beatmapid, bitpresent, recent[i].score, recent[i].combo, recent[i].fc, recent[i].count300, recent[i].count100, recent[i].count50, recent[i].countmiss, recent[i].countgeki, recent[i].countkatu, recent[i].acc, recent[i].perfect, true)
+                cache_beatmap_ID(message, recent[i].beatmapid, mode)
                 if (recent[i].letter == 'F') {
                     nopp = '(No pp)'
                     date = '⬥ ' + date
@@ -1264,10 +1275,10 @@ async function recent(message = new Message()) {
             let nopp = ''
             let mapcompleted = ''
             let parser = ''
-            if (mode == 0 || mode == 4 || mode == 8 || mode == 12 || mode == 13 || mode == 17) {parser = await fx.osu.precalc(recent[0].beatmapid)}
-            let fc_stat = await fx.osu.get_pp(mode, parser, recent[0].beatmapid, bitpresent, recent[0].score, recent[0].combo, recent[0].fc, recent[0].count300, recent[0].count100, recent[0].count50, recent[0].countmiss, recent[0].countgeki, recent[0].countkatu, recent[0].acc, recent[0].perfect, true)
+            if (modenum == 0 ) {parser = await fx.osu.precalc(recent[0].beatmapid)}
+            let fc_stat = await fx.osu.get_pp(a_mode, parser, recent[0].beatmapid, bitpresent, recent[0].score, recent[0].combo, recent[0].fc, recent[0].count300, recent[0].count100, recent[0].count50, recent[0].countmiss, recent[0].countgeki, recent[0].countkatu, recent[0].acc, recent[0].perfect, true)
             let osuname = getplayer.username
-            cache_beatmap_ID(message, recent[0].beatmapid, modename)
+            cache_beatmap_ID(message, recent[0].beatmapid, mode)
             if (recent[0].letter == 'F') {
                 nopp = '(No pp)'
                 date = '⬥ ' + date
@@ -1298,7 +1309,9 @@ async function compare(message = new Message()) {
         fx.general.cmd_cooldown.set(message, command, 3000)
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-p", "v_count": 1}])
         let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
+        let mode = ''
         let storedid = 0
+        // Loop variable
         let counter = 0
         let get = 1
         let m = stored_map_ID.length - 1
@@ -1315,7 +1328,7 @@ async function compare(message = new Message()) {
                     if (stored_map_ID[m].server !== undefined) {
                         if (message.channel.id == stored_map_ID[m].server) {
                             storedid = stored_map_ID[m].id
-                            modename = stored_map_ID[m].mode
+                            mode = stored_map_ID[m].mode
                             counter += 1
                         }
                     }
@@ -1323,7 +1336,7 @@ async function compare(message = new Message()) {
                     if (stored_map_ID[m].user !== undefined) {
                         if (message.author.id == stored_map_ID[m].user) {
                             storedid = stored_map_ID[m].id
-                            modename = stored_map_ID[m].mode
+                            mode = stored_map_ID[m].mode
                             counter += 1
                         }
                     }
@@ -1333,15 +1346,13 @@ async function compare(message = new Message()) {
                 throw "No beatmap found this far back!"
             }
         } while (counter < get)
-        if (modename == 'Standard' || modename == 'Taiko' || modename == 'CTB' || modename == 'Mania') {
-            let modenumber = {
-                Standard: 0,
-                Taiko: 1,
-                CTB: 2,
-                Mania: 3
-            }
-            let mode = modenumber[modename]
-            let scores = await fx.osu.get_osu_scores(name, mode, storedid)
+        let modedetail = fx.osu.get_mode_detail(mode)
+        let modename = modedetail.modename
+        let check_type = modedetail.check_type
+        let modenum = modedetail.modenum
+        let a_mode = modedetail.a_mode
+        if (check_type == "Bancho") {
+            let scores = await fx.osu.get_osu_scores(name, modenum, storedid)
             scores.sort(function (a,b) {
                 a1 = Number(a.pp)
                 b1 = Number(b.pp)
@@ -1350,10 +1361,10 @@ async function compare(message = new Message()) {
             if (scores.length == 0) {
                 throw `${name} didn't play this map! D: **-Tiny**`
             }
-            let beatmap = await fx.osu.get_osu_beatmap(storedid)
+            let beatmap = await fx.osu.get_osu_beatmap(storedid, mode)
             let highscore = ''
             let parser = ''
-            if (mode == 0) {parser = await fx.osu.precalc(storedid)}
+            if (modenum == 0) {parser = await fx.osu.precalc(storedid)}
             for (var i = 0; i <= scores.length - 1; i++) {
                 let rank = fx.osu.ranking_letter(scores[i].letter)
                 let modandbit = fx.osu.mods_enum(scores[i].mod)
@@ -1361,13 +1372,13 @@ async function compare(message = new Message()) {
                 let bitpresent = modandbit.bitpresent
                 let date = fx.osu.time_played(scores[i].date)
                 let unrankedpp = ''
-                if (mode == 0) {
+                if (modenum == 0) {
                     if (beatmap.approvalStatus !== "Ranked" && beatmap.approvalStatus !== "Approved") {
                         let comparepp = fx.osu.osu_pp_calc(parser,bitpresent,scores[i].combo,scores[i].count100,scores[i].count50,scores[i].countmiss,scores[i].acc,'acc')
                         unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
                     }
                 }
-                let fc_stat = await fx.osu.get_pp(mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+                let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                 highscore += `
 ${i+1}. **${shortenmod}** Score (${fc_stat.star}★) | ***${scores[i].pp.toFixed(2)}pp*** ${unrankedpp}
 ${rank} **Score:** ${scores[i].score} | **Combo:** ${scores[i].combo}/${beatmap.fc}
@@ -1382,11 +1393,14 @@ ${date}
             .setDescription(highscore)
             message.channel.send({embed});
         } else {
-            if (modename == "Relax Akatsuki" || modename == 'Akatsuki') {
+            if (check_type == 'Akatsuki') {
                 throw 'Told cmyui to add **api/v1/user/scores** for me~ ありがとうございます!'
             }
-            if (modename == 'Ripple') {
+            if (check_type == 'Ripple') {
                 throw 'Told Howl or Nyo to add **api/v1/user/scores** for me~ ありがとうございます!'
+            }
+            if (check_type == 'Horizon') {
+                throw 'Told Gravy to add **api/v1/user/scores** for me~ ありがとうございます!'
             }
         }
     } catch (error) {
@@ -1406,27 +1420,36 @@ async function score(message = new Message()) {
         fx.general.cmd_cooldown.set(message, command, 3000)
         let beatmapid = 0
         let check = ''
-        let mode = 0
-        if (msg.substr(8,21) == 'https://osu.ppy.sh/b/') {
+        let mode = ''
+        if (msg.substr(command.length+1,21) == 'https://osu.ppy.sh/b/') {
             let data = msg.split("/")[4]
             beatmapid = data.split(" ")[0]
             if (msg.substring(0, msg.length).includes('?m=') == true) {
                 beatmapid = msg.substring(msg.indexOf(beatmapid[0]), msg.indexOf('?m='))
                 mode = msg.substr(msg.indexOf('?m=')+3, 1)
+                if (mode == 0) {
+                    mode = 'Bancho-std'
+                } else if (mode == 1) {
+                    mode = 'Bancho-taiko'
+                } else if (mode == 2) {
+                    mode = 'Bancho-ctb'
+                } else if (mode == 3) {
+                    mode = 'Bancho-mania'
+                }
             }
         }
-        if (msg.substr(8,31) == 'https://osu.ppy.sh/beatmapsets/') {
+        if (msg.substr(command.length+1,31) == 'https://osu.ppy.sh/beatmapsets/') {
             let data = msg.split("/")[5]
             beatmapid = data.split(" ")[0]
             let modedata = msg.split("/")[4]
             if (modedata.includes('#osu')) {
-                mode = 0
+                mode = 'Bancho-std'
             } else if (modedata.includes('#taiko')) {
-                mode = 1
+                mode = 'Bancho-taiko'
             } else if (modedata.includes('#fruits')) {
-                mode = 2
+                mode = 'Bancho-ctb'
             } else if (modedata.includes('#mania')) {
-                mode = 3
+                mode = 'Bancho-mania'
             }
         }
         let option = ''
@@ -1441,8 +1464,13 @@ async function score(message = new Message()) {
                 check = option[2]
             }
         }
+        console.log(mode)
+        let modedetail = fx.osu.get_mode_detail(mode)
+        let modename = modedetail.modename
+        let modenum = modedetail.modenum
+        let a_mode = modedetail.a_mode
         let name = fx.osu.check_player(user_data, message, check, 'Bancho')
-        let scores = await fx.osu.get_osu_scores(name, mode, beatmapid)
+        let scores = await fx.osu.get_osu_scores(name, modenum, beatmapid)
         scores.sort(function (a,b) {
             a1 = Number(a.pp)
             b1 = Number(b.pp)
@@ -1451,12 +1479,11 @@ async function score(message = new Message()) {
         if (scores.length == 0) {
             throw `${name} didn't play this map! D: **-Tiny**`
         }
-        let beatmap = await fx.osu.get_osu_beatmap(beatmapid)
+        let beatmap = await fx.osu.get_osu_beatmap(beatmapid, mode)
         let highscore = ''
-        let modename = fx.osu.get_mode_detail(mode).modename
         let parser = ''
-        if (mode == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
-        cache_beatmap_ID(message, beatmap.beatmapid, modename)
+        if (modenum == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
+        cache_beatmap_ID(message, beatmap.beatmapid, mode)
         for (var i = 0; i < scores.length; i++) {
             let rank = fx.osu.ranking_letter(scores[i].letter)
             let modandbit = fx.osu.mods_enum(scores[i].mod)
@@ -1465,10 +1492,10 @@ async function score(message = new Message()) {
             let date = fx.osu.time_played(scores[i].date)
             let unrankedpp = undefined
             if (beatmap.approvalStatus !== "Ranked" && beatmap.approvalStatus !== "Approved") {
-                let comparepp = await fx.osu.get_pp(mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
+                let comparepp = await fx.osu.get_pp(a_mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
                 unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
             }
-            let fc_stat = await fx.osu.get_pp(mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+            let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
             highscore += fx.osu.score_overlay(i+1,shortenmod,beatmap.beatmapid,fc_stat.star,'',scores[i].pp,unrankedpp,rank,beatmap.diff,scores[i].score,scores[i].combo,beatmap.fc,scores[i].acc,scores[i].accdetail,fc_stat.fcguess,undefined,date,'none')
         }
         const embed = new RichEmbed()
@@ -1554,6 +1581,7 @@ async function osuset(message = new Message(), type) {
 }
 
 async function map(message = new Message()){
+    try {
         let msg = message.content.toLowerCase();
         let command = msg.split(' ')[0]
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
@@ -1569,14 +1597,13 @@ async function map(message = new Message()){
             mods = 'NM'
         }
         let bitpresent = fx.osu.mods_enum(mods).bitpresent
-        let modename = ''
-        let mode = 0
+        let mode = ''
         for (var i = stored_map_ID.length -1 ; i > -1; i--) {
             if (message.guild !== null) {
                 if (stored_map_ID[i].server !== undefined) {
                     if (message.channel.id == stored_map_ID[i].server) {
                         beatmapid = stored_map_ID[i].id
-                        modename = stored_map_ID[i].mode
+                        mode = stored_map_ID[i].mode
                         break;
                     }
                 }
@@ -1584,26 +1611,21 @@ async function map(message = new Message()){
                 if (stored_map_ID[i].user !== undefined) {
                     if (message.author.id == stored_map_ID[i].user) {
                         beatmapid = stored_map_ID[i].id
-                        modename = stored_map_ID[i].mode
+                        mode = stored_map_ID[i].mode
                         break;
                     }
                 }
             }
         }
-        if (modename == 'Standard' || modename == 'Ripple' || modename == 'Akatsuki' || modename == 'Relax Akatsuki') {
-            mode = 0
-        } else if (modename == 'Taiko') {
-            mode = 1
-        } else if (modename == 'CTB') {
-            mode = 2
-        } else if (modename == 'Mania') {
-            mode = 3
-        }
+        let modedetail = fx.osu.get_mode_detail(mode)
+        let modename = modedetail.modename
+        let modenum = modedetail.modenum
+        let a_mode = modedetail.a_mode
         if (suffix.suffix.find(s => s.suffix == "-l").position > -1) {
             let scores = await fx.osu.get_osu_scores(undefined, mode, beatmapid, 50)
-            let beatmap = await fx.osu.get_osu_beatmap(beatmapid)
-            if (mode == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
-            cache_beatmap_ID(message, scores[0].beatmapid, modename)
+            let beatmap = await fx.osu.get_osu_beatmap(beatmapid, mode)
+            if (modenum == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
+            cache_beatmap_ID(message, scores[0].beatmapid, mode)
             let loadpage = async function (page, pages) {
                 let gathering = ''
                 for (var n = 0; n < 5; n++) {
@@ -1616,10 +1638,10 @@ async function map(message = new Message()){
                         let date = fx.osu.time_played(scores[i].date)
                         let unrankedpp = undefined
                         if (beatmap.approvalStatus !== "Ranked" && beatmap.approvalStatus !== "Approved") {
-                            let comparepp = await fx.osu.get_pp(mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
+                            let comparepp = await fx.osu.get_pp(a_mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
                             unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
                         }
-                        let fc_stat = await fx.osu.get_pp(mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+                        let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                         let scoreoverlay = fx.osu.score_overlay(i+1,scores[i].username,scores[i].userid,fc_stat.star,shortenmod,scores[i].pp,unrankedpp,rank,beatmap.diff,scores[i].score,scores[i].combo,beatmap.fc,scores[i].acc,scores[i].accdetail,fc_stat.fcguess,undefined,date,'profile')
                         gathering += scoreoverlay
                     }
@@ -1629,100 +1651,20 @@ async function map(message = new Message()){
             }
             fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${beatmap.title} (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5))
         } else {
-            let map = await fx.osu.get_osu_beatmap(beatmapid)
-            let maxCombo = ''
-            let diffdetail = ''
-            let mapdetail = ''
-            let ppdetail = ''
-            let star, bpm, time
-            if (mode == 0) {
-                maxCombo = map.fc
-                let parser = await fx.osu.precalc(beatmapid)
-                let acc95 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,95,'acc')
-                let acc97 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,97,'acc')
-                let acc99 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,99,'acc')
-                let acc100 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,100,'acc')
-                let detail = fx.osu.beatmap_detail(mods,map.timetotal,0,map.bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(acc100.star.total).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let ar = Number(detail.ar).toFixed(2)
-                let od = Number(detail.od).toFixed(2)
-                let hp = Number(detail.hp).toFixed(2)
-                let cs = Number(detail.cs).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                diffdetail = `(Aim: ${Number(acc100.star.aim).toFixed(2) * 2}★, Speed: ${Number(acc100.star.speed).toFixed(2) * 2}★)`
-                mapdetail = `**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}`
-                ppdetail = `**95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`
-            } else if (mode == 1) {
-                maxCombo = "Can't calculated"
-                let mapinfo = await fx.osu.other_modes_precalc(beatmapid, 1, bitpresent)
-                let acc95 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 95, 0, bitpresent).toFixed(2)
-                let acc97 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 97, 0, bitpresent).toFixed(2)
-                let acc99 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 99, 0, bitpresent).toFixed(2)
-                let acc100 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 100, 0, bitpresent).toFixed(2)
-                let detail = fx.osu.beatmap_detail(mods, map.timetotal, 0, map.bpm, 0, 0, mapinfo.od, mapinfo.hp)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(mapinfo.star).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let od = Number(detail.od).toFixed(2)
-                let hp = Number(detail.hp).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                mapdetail = `**OD:** ${od} / **HP:** ${hp}`
-                ppdetail = `**95%**-${Number(acc95).toFixed(2)}pp | **97%**-${Number(acc97).toFixed(2)}pp | **99%**-${Number(acc99).toFixed(2)}pp | **100%**-${Number(acc100).toFixed(2)}pp`
-            } else if (mode == 2) {
-                maxCombo = map.fc
-                let mapinfo = await fx.osu.other_modes_precalc(beatmapid, 2, bitpresent)
-                let acc95 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 95, 0, bitpresent).toFixed(2)
-                let acc97 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 97, 0, bitpresent).toFixed(2)
-                let acc99 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 99, 0, bitpresent).toFixed(2)
-                let acc100 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 100, 0, bitpresent).toFixed(2)
-                let detail = fx.osu.beatmap_detail(mods,map.timetotal,0, map.bpm, mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(mapinfo.star).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let ar = Number(detail.ar).toFixed(2)
-                let od = Number(detail.od).toFixed(2)
-                let hp = Number(detail.hp).toFixed(2)
-                let cs = Number(detail.cs).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                mapdetail = `**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}`
-                ppdetail = `**95%**-${Number(acc95).toFixed(2)}pp | **97%**-${Number(acc97).toFixed(2)}pp | **99%**-${Number(acc99).toFixed(2)}pp | **100%**-${Number(acc100).toFixed(2)}pp`
-            } else if (mode == 3) {
-                maxCombo = "Can't calculated"
-                let mapinfo = await fx.osu.other_modes_precalc(beatmapid, 3, bitpresent)
-                let score700k = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 700000, mapinfo.fc, bitpresent).toFixed(2)
-                let score800k = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 800000, mapinfo.fc, bitpresent).toFixed(2)
-                let score900k = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 900000, mapinfo.fc, bitpresent).toFixed(2)
-                let score1m = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 1000000, mapinfo.fc, bitpresent).toFixed(2)
-                let detail = fx.osu.beatmap_detail(mods, map.timetotal, 0, map.bpm, 0, 0, 0, 0)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(mapinfo.star).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let key = Number(mapinfo.cs).toFixed(0)
-                let od = Number(mapinfo.od).toFixed(2)
-                let hp = Number(mapinfo.hp).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                mapdetail = `**Keys:** ${key} / **OD:** ${od} / **HP:** ${hp}`
-                ppdetail = `**700k**-${Number(score700k).toFixed(2)}pp | **800k**-${Number(score800k).toFixed(2)}pp | **900k**-${Number(score900k).toFixed(2)}pp | **1m**-${Number(score1m).toFixed(2)}pp`
-            }
-            cache_beatmap_ID(message, beatmapid, modename)
+            let map = await fx.osu.get_osu_beatmap(beatmapid, mode)
+            let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
+            cache_beatmap_ID(message, beatmapid, mode)
             const embed = new RichEmbed()
             .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}?m=${mode}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
-            .setDescription(`
-**Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods.toUpperCase()}
-**Download:** [map](https://osu.ppy.sh/d/${map.beatmapsetID}) ([no vid](https://osu.ppy.sh/d/${map.beatmapsetID}n))
-<:difficultyIcon:507522545759682561> __${map.diff}__  
-**Difficulty:** ${star}★ ${diffdetail}
-**Max Combo:** ${maxCombo}
-${mapdetail}
-**PP:** ${ppdetail}`)
+            .setDescription(map_embed)
             .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`)
             message.channel.send({embed});
         }
-    
+    } catch (error) {
+        message.channel.send(String(error))
+    }
 }
 
 async function beatmapfiledetail(message = new Message()) {
@@ -1781,16 +1723,16 @@ ${mapdetail}
     }
 }
 
-async function beatmaplinkdetail(message = new Message()) {
+async function beatmaplinkdetail(message = new Message(), bot_prefix) {
     try {
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         let beatmapid = []
         let mods = ''
         let mode = 0
-        //Detect if this a command or link
+        //Detect if this a command or link alone
         let option = msg.split(" ")
-        if (option[0].substr(m,21) !== 'https://osu.ppy.sh/b/' && option[0].substr(m,31) !== 'https://osu.ppy.sh/beatmapsets/') return;
+        if (option[0].substring(0, bot_prefix.length) == bot_prefix) return;
         for (var m = 0; m < msg.length; m++) {
             if (msg.substr(m,21) == 'https://osu.ppy.sh/b/') {
                 let data = msg.split("/")[4]
@@ -1798,6 +1740,15 @@ async function beatmaplinkdetail(message = new Message()) {
                 if (msg.substring(0, msg.length).includes('?m=') == true) {
                     beatmapid[0] = msg.substring(msg.indexOf(beatmapid[0]), msg.indexOf('?m='))
                     mode = msg.substr(msg.indexOf('?m=')+3, 1)
+                    if (mode == 0) {
+                        mode = 'Bancho-std'
+                    } else if (mode == 1) {
+                        mode = 'Bancho-taiko'
+                    } else if (mode == 2) {
+                        mode = 'Bancho-ctb'
+                    } else if (mode == 3) {
+                        mode = 'Bancho-mania'
+                    }
                 }
                 if (data.split(" ")[1] !== undefined) {
                     mods = data.split(" ")[1]
@@ -1816,115 +1767,34 @@ async function beatmaplinkdetail(message = new Message()) {
                 }
                 let modedata = msg.split("/")[4]
                 if (modedata.includes('#osu')) {
-                    mode = 0
+                    mode = 'Bancho-std'
                 } else if (modedata.includes('#taiko')) {
-                    mode = 1
+                    mode = 'Bancho-taiko'
                 } else if (modedata.includes('#fruits')) {
-                    mode = 2
+                    mode = 'Bancho-ctb'
                 } else if (modedata.includes('#mania')) {
-                    mode = 3
+                    mode = 'Bancho-mania'
                 }
                 break
             }
         }
         for (i = 0; i < beatmapid.length; i++) {
             let bitpresent = fx.osu.mods_enum(mods).bitpresent
-            let map = await fx.osu.get_osu_beatmap(beatmapid[i])
+            let map = await fx.osu.get_osu_beatmap(beatmapid[i], mode)
             if (map.length == 0) {
                 throw 'Is this even a valid link?'
             }
-            let maxCombo = ''
-            let diffdetail = ''
-            let mapdetail = ''
-            let ppdetail = ''
-            let star, bpm, time
-            let modename = fx.osu.get_mode_detail(mode).modename
-            if (mode == 0) {
-                maxCombo = map.fc
-                let parser = await fx.osu.precalc(beatmapid[i])
-                let acc95 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,95,'acc')
-                let acc97 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,97,'acc')
-                let acc99 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,99,'acc')
-                let acc100 = fx.osu.osu_pp_calc(parser,bitpresent,maxCombo,0,0,0,100,'acc')
-                let detail = fx.osu.beatmap_detail(mods[i],map.timetotal,0,map.bpm,acc100.cs, acc100.ar,acc100.od,acc100.hp)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(acc100.star.total).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let ar = Number(detail.ar).toFixed(2)
-                let od = Number(detail.od).toFixed(2)
-                let hp = Number(detail.hp).toFixed(2)
-                let cs = Number(detail.cs).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                diffdetail = `(Aim: ${Number(acc100.star.aim).toFixed(2) * 2}★, Speed: ${Number(acc100.star.speed).toFixed(2) * 2}★)`
-                mapdetail = `**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}`
-                ppdetail = `**95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`
-            } else if (mode == 1) {
-                maxCombo = "Can't calculated"
-                let mapinfo = await fx.osu.other_modes_precalc(beatmapid[i], 1, bitpresent)
-                let acc95 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 95, 0, bitpresent).toFixed(2)
-                let acc97 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 97, 0, bitpresent).toFixed(2)
-                let acc99 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 99, 0, bitpresent).toFixed(2)
-                let acc100 = fx.osu.taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 100, 0, bitpresent).toFixed(2)
-                let detail = fx.osu.beatmap_detail(mods[i], map.timetotal, 0, map.bpm, 0, 0, mapinfo.od, mapinfo.hp)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(mapinfo.star).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let od = Number(detail.od).toFixed(2)
-                let hp = Number(detail.hp).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                mapdetail = `**OD:** ${od} / **HP:** ${hp}`
-                ppdetail = `**95%**-${Number(acc95).toFixed(2)}pp | **97%**-${Number(acc97).toFixed(2)}pp | **99%**-${Number(acc99).toFixed(2)}pp | **100%**-${Number(acc100).toFixed(2)}pp`
-            } else if (mode == 2) {
-                maxCombo = map.fc
-                let mapinfo = await fx.osu.other_modes_precalc(beatmapid[i], 2, bitpresent)
-                let acc95 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 95, 0, bitpresent).toFixed(2)
-                let acc97 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 97, 0, bitpresent).toFixed(2)
-                let acc99 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 99, 0, bitpresent).toFixed(2)
-                let acc100 = fx.osu.ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 100, 0, bitpresent).toFixed(2)
-                let detail = fx.osu.beatmap_detail(mods[i],map.timetotal,0, map.bpm, mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(mapinfo.star).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let ar = Number(detail.ar).toFixed(2)
-                let od = Number(detail.od).toFixed(2)
-                let hp = Number(detail.hp).toFixed(2)
-                let cs = Number(detail.cs).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                mapdetail = `**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}`
-                ppdetail = `**95%**-${Number(acc95).toFixed(2)}pp | **97%**-${Number(acc97).toFixed(2)}pp | **99%**-${Number(acc99).toFixed(2)}pp | **100%**-${Number(acc100).toFixed(2)}pp`
-            } else if (mode == 3) {
-                maxCombo = "Can't calculated"
-                let mapinfo = await fx.osu.other_modes_precalc(beatmapid[i], 3, bitpresent)
-                let score700k = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 700000, mapinfo.fc, bitpresent).toFixed(2)
-                let score800k = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 800000, mapinfo.fc, bitpresent).toFixed(2)
-                let score900k = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 900000, mapinfo.fc, bitpresent).toFixed(2)
-                let score1m = fx.osu.mania_pp_calc(mapinfo.star, mapinfo.od, 1000000, mapinfo.fc, bitpresent).toFixed(2)
-                let detail = fx.osu.beatmap_detail(mods[i], map.timetotal, 0, map.bpm, 0, 0, 0, 0)
-                let totallength = Number(detail.timetotal).toFixed(0)
-                star = Number(mapinfo.star).toFixed(2)
-                bpm = Number(detail.bpm).toFixed(0)
-                let key = Number(mapinfo.cs).toFixed(0)
-                let od = Number(mapinfo.od).toFixed(2)
-                let hp = Number(mapinfo.hp).toFixed(2)
-                time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
-                mapdetail = `**Keys:** ${key} / **OD:** ${od} / **HP:** ${hp}`
-                ppdetail = `**700k**-${Number(score700k).toFixed(2)}pp | **800k**-${Number(score800k).toFixed(2)}pp | **900k**-${Number(score900k).toFixed(2)}pp | **1m**-${Number(score1m).toFixed(2)}pp`
-            }
-            cache_beatmap_ID(message, beatmapid, modename)
+            let modedetail = fx.osu.get_mode_detail(mode)
+            let modenum = modedetail.modenum
+            let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
+            cache_beatmap_ID(message, beatmapid, mode)
             const embed = new RichEmbed()
             .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}?m=${mode}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
-            .setDescription(`
-**Length:** ${time} **BPM:** ${bpm} **Mods:** ${mods.toUpperCase()}
-**Download:** [map](https://osu.ppy.sh/d/${map.beatmapsetID}) ([no vid](https://osu.ppy.sh/d/${map.beatmapsetID}n))
-<:difficultyIcon:507522545759682561> __${map.diff}__  
-**Difficulty:** ${star}★ ${diffdetail}
-**Max Combo:** ${maxCombo}
-${mapdetail}
-**PP:** ${ppdetail}`)
+            .setDescription(map_embed)
             .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`)
-        message.channel.send({embed});
+            message.channel.send({embed});
         }
     } catch (error) {
         message.channel.send(String(error))

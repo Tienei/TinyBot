@@ -22,6 +22,7 @@ module.exports = {
         // Overlays
         profile_overlay     : require('./osu/profile_overlay'),
         score_overlay       : require('./osu/score_overlay'),
+        map_detail_overlay  : require('./osu/map_detail_overlay'),
         // Checks
         check_player        : require('./osu/check_player'),
         check_suffix        : require('./osu/check_suffix'),
