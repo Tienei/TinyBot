@@ -122,7 +122,13 @@ bot.on("ready", (ready) => {
                         mode.limit = 50
                         if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                     }
-                    if (!modes.includes(mode)) modes.push(mode)
+                    if (modes.find(m => m.mode == mode.mode) == undefined) {
+                        modes.push({"mode": mode.mode, "limit": mode.limit})
+                    } else {
+                        if (mode.limit > modes.find(m => m.mode == mode.mode).limit) {
+                            modes.find(m => m.mode == mode.mode).limit = mode.limit
+                        }
+                    }
                 }
             }
             for (let m of modes) {
@@ -167,7 +173,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
 **#${player_mode_detail.lastrank} → #${user.rank} (:flag_${user.country}: : #${player_mode_detail.lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`)
                     for (let channel of player.trackonchannel) {
                         for (mode1 of channel.modes) {
-                            if (mode1.mode == mode) {
+                            if (mode1.mode == mode && mode1.limit >= best[i].top) {
                                 stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: check_type})
                                 embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
                                 bot.channels.get(channel.id).send({embed})

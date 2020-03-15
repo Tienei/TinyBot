@@ -181,7 +181,8 @@ Fixed avatar crashing bot
 Added another rarity for osucard
 
 **[March 15th, 2020]:**
-Added support for Enjuu`]
+Added support for Enjuu
+Fixed tracking`]
 
     let loadpage = async function (page, pages) {
         pages = changes
