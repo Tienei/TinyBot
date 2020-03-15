@@ -69,7 +69,7 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 user_web["cover_url"]])
         }
         if (check_type !== 'Bancho') {
-            let user = (a_mode == 'rx') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0})
+            let user = (a_mode == 'rx') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0, relax: 0})
             return new Profile([user.username,
                                 Number(user.id),
                                 undefined,

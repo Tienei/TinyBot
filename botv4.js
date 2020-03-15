@@ -375,6 +375,7 @@ bot.on("message", (message) => {
                                                             {"suffix": "-rxakat", "v_count": 0},
                                                             {"suffix": "-hrz", "v_count": 0},
                                                             {"suffix": "-rxhrz", "v_count": 0},
+                                                            {"suffix": "-enjuu", "v_count": 0},
                                                             {"suffix": "-p", "v_count": 1}])
                 let mode = "Bancho-std"
                 let limit = 50
@@ -397,6 +398,8 @@ bot.on("message", (message) => {
                     mode = "Horizon-std"
                 } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
                     mode = "Horizon-rx"
+                } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
+                    mode = "Enjuu-std"
                 }
                 if (limit > 100 || limit < 1) {
                     throw 'You can only set from top 1-100. Please try again'
@@ -462,7 +465,8 @@ bot.on("message", (message) => {
                 let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-bc", "v_count": 0},
                                                             {"suffix": "-akat", "v_count": 0},
                                                             {"suffix": "-rp", "v_count": 0},
-                                                            {"suffix": "-hrz", "v_count": 0},])
+                                                            {"suffix": "-hrz", "v_count": 0},
+                                                            {"suffix": "-enjuu", "v_count": 0},])
                 let type = 'All'
                 let mode = 'Bancho-std'
                 if (suffix.suffix.find(s => s.suffix == "-bc").position > -1) {
@@ -476,6 +480,9 @@ bot.on("message", (message) => {
                 } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
                     type = 'Horizon'
                     mode = 'Horizon-std'
+                } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
+                    type = 'Enjuu'
+                    mode = 'Enjuu-std'
                 }
                 var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
                 var name = user.username
@@ -665,6 +672,21 @@ bot.on("message", (message) => {
         }
         if (command == bot_prefix + 'rxhorizontop') {
             cmds.osu.osutop(message, 'Horizon-rx')
+        }
+
+        // Enjuu
+
+        if (command == bot_prefix + 'enjuu') {
+            cmds.osu.osu(message, 'Enjuu-std')
+        }
+        if (command == bot_prefix + 'enjuuavatar') {
+            cmds.osu.osuavatar(message, 'Enjuu-std')
+        }
+        if (command == bot_prefix + 'enjuutop') {
+            cmds.osu.osutop(message, 'Enjuu-std')
+        }
+        if (command == bot_prefix + 'enjuuset') {
+            cmds.osu.osuset(message, 'Enjuu')
         }
 
         // Detection

@@ -14,6 +14,8 @@ module.exports = function (user_data, message = new Message(), name, type) {
                     osuname = user_data[message.author.id].ripplename
                 } else if (type == 'Horizon') {
                     osuname = user_data[message.author.id].horizonname
+                } else if (type == 'Enjuu') {
+                    osuname = user_data[message.author.id].enjuuname
                 }
                 return osuname
             } else {
@@ -26,6 +28,8 @@ module.exports = function (user_data, message = new Message(), name, type) {
                     error_text = error_text.replace('{server_cmd}', 'rippleset')
                 } else if (type == 'Horizon') {
                     error_text = error_text.replace('{server_cmd}', 'horizonset')
+                } else if (type == 'Enjuu') {
+                    error_text = error_text.replace('{server_cmd}', 'enjuuset')
                 }
                 throw error_text
             }
@@ -42,6 +46,8 @@ module.exports = function (user_data, message = new Message(), name, type) {
                         osuname = user_data[id].ripplename
                     } else if (type == 'Horizon') {
                         osuname = user_data[id].horizonname
+                    } else if (type == 'Enjuu') {
+                        osuname = user_data[id].enjuuname
                     }
                     return osuname
                 } else {

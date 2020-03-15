@@ -58,7 +58,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
         }
     }
     if (mode == 'rx') {
-        let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,2)
+        let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,'fc')
         fcpp = Number(fccalc.pp.total).toFixed(2)
         fcacc = fccalc.acc
         star = Number(fccalc.star.total).toFixed(2)

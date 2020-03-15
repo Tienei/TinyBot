@@ -1171,7 +1171,8 @@ async function recent(message = new Message()) {
                                                     {"suffix": "-akat", "v_count": 0},
                                                     {"suffix": "-rxakat", "v_count": 0},
                                                     {"suffix": "-hrz", "v_count": 0},
-                                                    {"suffix": "-rxhrz", "v_count": 0},])
+                                                    {"suffix": "-rxhrz", "v_count": 0},
+                                                    {"suffix": "-enjuu", "v_count": 0},])
         let mode = "Bancho-std"
         if (suffix.suffix.find(s => s.suffix == "-taiko").position > -1) {
             mode = "Bancho-taiko"
@@ -1189,6 +1190,8 @@ async function recent(message = new Message()) {
             mode = "Horizon-std"
         } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
             mode = "Horizon-rx"
+        } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
+            mode = "Enjuu-std"
         }
         // Make recent best get modes later
         let modedetail = fx.osu.get_mode_detail(mode)
@@ -1539,23 +1542,29 @@ async function osuset(message = new Message(), type) {
             profilelink = `https://osu.ppy.sh/users/${user.id}`
             imagelink = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
         } else if (type == 'Akatsuki') {
-            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 8, {name: check})
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Akatsuki-std', {name: check})
             settype = 'akatsukiname'
             name = user.username
             profilelink = `https://akatsuki.pw/u/${user.id}`
             imagelink = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
         } else if (type == 'Ripple') {
-            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 4, {name: check})
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Ripple-std', {name: check})
             settype = 'ripplename'
             name = user.username
             profilelink = `https://ripple.moe/u/${user.id}`
             imagelink = `http://a.ripple.moe/${user.id}?date=${refresh}`
         } else if (type == 'Horizon') {
-            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 13, {name: check})
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Horizon-std', {name: check})
             settype = 'horizonname'
             name = user.username
             profilelink = `https://lemres.de/u/${user.id}`
             imagelink = `http://a.lemres.de/${user.id}?date=${refresh}`
+        } else if (type == 'Enjuu') {
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Enjuu-std', {name: check})
+            settype = 'enjuuname'
+            name = user.username
+            profilelink = `https://enjuu.click/u/${user.id}`
+            imagelink = `http://a.enjuu.click/${user.id}?date=${refresh}`
         }
         if (name == undefined) {
             throw 'User not found!'

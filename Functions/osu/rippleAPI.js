@@ -7,6 +7,7 @@ function websiteKey(mode) {
         'Akatsuki': process.env.AKATSUKI_KEY,
         'Ripple': process.env.RIPPLE_KEY,
         'Horizon': process.env.HORIZON_KEY,
+        'Enjuu': process.env.ENJUU_KEY
     }
     return apiKey[type]
 }

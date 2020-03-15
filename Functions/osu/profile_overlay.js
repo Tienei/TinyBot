@@ -17,6 +17,9 @@ module.exports = function (message = new Message(), check_type, modeicon, suppor
     } else if (check_type == 'Horizon') {
         profile_link = `https://lemres.de/u/${id}`
         pfp_link = `http://a.lemres.de/${id}?date=${refresh}`
+    } else if (check_type == 'Enjuu') {
+        profile_link = `https://enjuu.click/u/${id}`
+        pfp_link = `http://a.enjuu.click/${id}?date=${refresh}`
     }
     // Description
     let desc = ''
