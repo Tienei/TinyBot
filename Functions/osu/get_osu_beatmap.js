@@ -8,7 +8,7 @@ let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 
 module.exports = async function (beatmapID, mode) {
     let modenum = get_mode_detail(mode).modenum
-    let beatmap = await osuApi.getBeatmaps({b: beatmapID, m: modenum})
+    let beatmap = await osuApi.getBeatmaps({b: beatmapID, m: modenum, a: 1})
     return {
         beatmapid: Number(beatmap[0].id),
         title: beatmap[0].title,
