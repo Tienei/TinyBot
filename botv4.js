@@ -107,87 +107,92 @@ bot.on("ready", (ready) => {
     async function real_time_osu_track() {
         console.log('osutrack: Checking')
         for (let player of osu_track) {
-            let modes = []
-            for (let channel of player.trackonchannel) {
-                for (let mode of channel.modes) {
-                    if (mode.limit > 100) {
-                        mode.limit = 100
-                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                    }
-                    if (mode.limit < 1) {
-                        mode.limit = 1
-                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                    }
-                    if (String(mode.limit).search(/^\d+$/) < 0) {
-                        mode.limit = 50
-                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                    }
-                    if (modes.find(m => m.mode == mode.mode) == undefined) {
-                        modes.push({"mode": mode.mode, "limit": mode.limit})
-                    } else {
-                        if (mode.limit > modes.find(m => m.mode == mode.mode).limit) {
-                            modes.find(m => m.mode == mode.mode).limit = mode.limit
+            try {
+                let modes = []
+                for (let channel of player.trackonchannel) {
+                    for (let mode of channel.modes) {
+                        if (mode.limit > 100) {
+                            mode.limit = 100
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                        }
+                        if (mode.limit < 1) {
+                            mode.limit = 1
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                        }
+                        if (String(mode.limit).search(/^\d+$/) < 0) {
+                            mode.limit = 50
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                        }
+                        if (modes.find(m => m.mode == mode.mode) == undefined) {
+                            modes.push({"mode": mode.mode, "limit": mode.limit})
+                        } else {
+                            if (mode.limit > modes.find(m => m.mode == mode.mode).limit) {
+                                modes.find(m => m.mode == mode.mode).limit = mode.limit
+                            }
                         }
                     }
                 }
-            }
-            for (let m of modes) {
-                let mode = m.mode
-                let limit = m.limit
-                let player_mode_detail = player.modedetail.find(m => m.mode == mode)
-                let modedetail = fx.osu.get_mode_detail(mode)
-                let modename = modedetail.modename
-                let check_type = modedetail.check_type
-                let modenum = modedetail.modenum
-                let a_mode = modedetail.a_mode
-                let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
-                best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
-                for (var i = 0; i < best.length; i++) {
-                    console.log('Found')
-                    var user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
-                    var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
-                    var rank = fx.osu.ranking_letter(best[i].letter)
-                    var modandbit = fx.osu.mods_enum(best[i].mod, 'text')
-                    var shortenmod = modandbit.shortenmod
-                    var bitpresent = modandbit.bitpresent
-                    var pp = best[i].pp
-                    var ppgain = (Number(user.pp).toFixed(2) - Number(player_mode_detail.lasttotalpp)).toFixed(2)
-                    let parser = ''
-                    if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
-                    let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
-                    var star = fc_stat.star
-                    let fcguess = ''
-                    if (best[i].letter == 'F') {
-                        pp = 'No PP'
-                    }
-                    if (best[i].perfect == 0) {
-                        fcguess = fc_stat.fcguess
-                    }
-                    let embed = new Discord.RichEmbed()
-                    .setAuthor(`New #${best[i].top} for ${user.username} in osu!${modename}:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
-                    .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
-                    .setDescription(`
+                for (let m of modes) {
+                    let mode = m.mode
+                    let limit = m.limit
+                    let player_mode_detail = player.modedetail.find(m => m.mode == mode)
+                    let modedetail = fx.osu.get_mode_detail(mode)
+                    let modename = modedetail.modename
+                    let check_type = modedetail.check_type
+                    let modenum = modedetail.modenum
+                    let a_mode = modedetail.a_mode
+                    let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
+                    best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
+                    for (var i = 0; i < best.length; i++) {
+                        console.log('Found')
+                        var user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
+                        console.log(best[i].beatmapid, mode)
+                        var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
+                        var rank = fx.osu.ranking_letter(best[i].letter)
+                        var modandbit = fx.osu.mods_enum(best[i].mod, 'text')
+                        var shortenmod = modandbit.shortenmod
+                        var bitpresent = modandbit.bitpresent
+                        var pp = best[i].pp
+                        var ppgain = (Number(user.pp).toFixed(2) - Number(player_mode_detail.lasttotalpp)).toFixed(2)
+                        let parser = ''
+                        if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
+                        let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+                        var star = fc_stat.star
+                        let fcguess = ''
+                        if (best[i].letter == 'F') {
+                            pp = 'No PP'
+                        }
+                        if (best[i].perfect == 0) {
+                            fcguess = fc_stat.fcguess
+                        }
+                        let embed = new Discord.RichEmbed()
+                        .setAuthor(`New #${best[i].top} for ${user.username} in osu!${modename}:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
+                        .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
+                        .setDescription(`
 **[${beatmap.title}](https://osu.ppy.sh/b/${beatmap.beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
 ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].combo}/${beatmap.fc}
 **Accuracy:** ${Number(best[i].acc).toFixed(2)}% ${best[i].accdetail} ${fcguess}
 **#${player_mode_detail.lastrank} → #${user.rank} (:flag_${user.country}: : #${player_mode_detail.lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`)
-                    for (let channel of player.trackonchannel) {
-                        for (mode1 of channel.modes) {
-                            if (mode1.mode == mode && mode1.limit >= best[i].top) {
-                                stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: check_type})
-                                embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
-                                bot.channels.get(channel.id).send({embed})
+                        for (let channel of player.trackonchannel) {
+                            for (mode1 of channel.modes) {
+                                if (mode1.mode == mode && mode1.limit >= best[i].top) {
+                                    stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: check_type})
+                                    embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
+                                    bot.channels.get(channel.id).send({embed})
+                                }
                             }
                         }
-                    }
-                    player_mode_detail.lasttotalpp = user.pp
-                    player_mode_detail.lastrank = user.rank
-                    player_mode_detail.lastcountryrank = user.countryrank
-                    player.recenttimeplay = best[i].date
-                    if (i == best.length - 1) {
-                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                    }
-                }  
+                        player_mode_detail.lasttotalpp = user.pp
+                        player_mode_detail.lastrank = user.rank
+                        player_mode_detail.lastcountryrank = user.countryrank
+                        player.recenttimeplay = best[i].date
+                        if (i == best.length - 1) {
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                        }
+                    }  
+                }
+            } catch (error) {
+                console.log(error.stack)
             }
         }
     }
