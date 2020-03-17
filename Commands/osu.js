@@ -1396,6 +1396,7 @@ ${date}
                 pages[page-1] = gathering
                 return pages
             }
+            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${scores[0].username} on ${beatmap.title} [${beatmap.diff}] (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5))
         } else {
             if (check_type == 'Akatsuki') {
                 throw 'Told cmyui to add **api/v1/user/scores** for me~ ありがとうございます!'
