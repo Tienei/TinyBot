@@ -182,7 +182,10 @@ Added another rarity for osucard
 
 **[March 15th, 2020]:**
 Added support for Enjuu
-Fixed tracking`]
+Fixed tracking
+
+**[March 17th, 2020]:**
+Fixed scores exceeding 2000 characters`]
 
     let loadpage = async function (page, pages) {
         pages = changes
