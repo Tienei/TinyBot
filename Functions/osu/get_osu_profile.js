@@ -83,7 +83,7 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 Number(user.std.total_score),
                                 Number(user.std.pp),
                                 Number(user.std.global_leaderboard_rank),
-                                undefined,
+                                Number(user.std.country_leaderboard_rank),
                                 user.country.toLowerCase(),
                                 Number(user.std.level).toFixed(2),
                                 Number(user.std.accuracy).toFixed(2),
