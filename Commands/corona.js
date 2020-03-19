@@ -279,7 +279,8 @@ async function corona_live_update(message = new Message()) {
                 } else {
                     code = `\`${country_data[i].name}\``
                 }
-                gathering += `\n ${code}: :bed:: **${country_data[i].case}** (:skull:: \`${country_data[i].death}\` :green_heart:: ${country_data[i].recover})`
+                let ill = country_data[i].case - country_data[i].death - country_data[i].recover
+                gathering += `\n ${code}: **Total Cases:** \`${country_data[i].case}\` (:bed:: **${ill}** :skull:: \`${country_data[i].death}\` :green_heart:: ${country_data[i].recover})`
             }
         }
         pages[page-1] = gathering
