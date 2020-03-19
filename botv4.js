@@ -327,6 +327,13 @@ bot.on("message", (message) => {
             if (!config.config.debug.disable_db_save) db.easter_egg.findAndModify({query: {}, update: easter_egg}, function(){})
         }
 
+        // Corona related
+
+        if (command == bot_prefix + 'corona') {
+            console.log('yep')
+            cmds.corona.corona_live_update(message)
+        }
+
         // Fun related
 
         if (command == bot_prefix + 'hug') {
