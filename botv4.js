@@ -241,13 +241,13 @@ bot.on("message", (message) => {
         // General related
 
         if (command == bot_prefix + 'help') {
-            cmds.general.help(message, bot_prefix)
+            cmds.general.help(message, command)
         }
         if (command == bot_prefix + 'credit') {
             cmds.general.credit(message)
         }
         if (command == bot_prefix + 'avatar') {
-            cmds.general.avatar(message)
+            cmds.general.avatar(message, corona)
         }
         if (command == bot_prefix + 'changelog') {
             cmds.general.changelog(message)

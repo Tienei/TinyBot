@@ -6,7 +6,7 @@ const { Message, RichEmbed } = require('discord.js')
 
 var bot_command_help = []
 
-function help(message = new Message()) {
+function help(message = new Message(), command) {
     try {
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
@@ -87,10 +87,11 @@ function help(message = new Message()) {
             addhelp('enjuutop', 'enjuutop (username) (options)', 'View a player\'s Enjuu Standard top play', 'username: Enjuu username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`', 'enjuutop Tienei -p 8')
             addhelp('enjuuavatar', 'enjuuavatar (username)', 'Get player\'s Enjuu avatar', 'username: Enjuu username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'enjuuavatar Tienei')
             addhelp('enjuuset', 'enjuuset (username)', 'Link your profile to a Enjuu player', 'username: Enjuu username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'enjuuset Tienei')
+            addhelp('corona', 'corona', 'Check the stats for current corona virus pandemic\n`Total Cases`: Total corona virus cases in a country\n:bed:: Active cases in a country (Still ill)\n:skull:: Total deaths in a country\n:green_heart:: Total recoveries in a country', 'None', 'corona')
             addhelp('definevar', 'Defined Variable for Custom command', 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence`` channel: ``selfname`` ``selflink`` ``members`` server: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``', '{require:admin}: Need Administrator to enable the command {$N}: Get text in message seperated by space (Not include command) {send:channelname "message"}: Send to a channel with a specific message', 'do ``!help customcmd``')
-            addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')
+            addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')            
         }
-        var generalhelp = '**--- [General]:**\n`avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `checkbot`'
+        var generalhelp = '**--- [General]:**\n`avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `corona`'
         var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
         var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
         var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatsukiset` `akatavatar` `akattop` `rxakatsuki` `rxakattop`'
@@ -99,10 +100,10 @@ function help(message = new Message()) {
         var enjuuhelp = '**--- [Enjuu]:**\n`enjuu` `enjuuset` `enjuuavatar` `enjuutop`'
         var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
         var text = ''
-        if (msg.substring(6) == '') {
+        if (msg.substring(command.length+1) == '') {
             text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${horizonhelp}\n\n${enjuuhelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
         } else {
-            var getcmd = msg.substring(6)
+            var getcmd = msg.substring(command.length+1)
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
                 throw 'No command was found!'
             }
@@ -153,10 +154,10 @@ ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
     message.channel.send({embed})
 }
 
-function avatar(message = new Message()) {
+function avatar(message = new Message(), command) {
     try {
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-        let user = fx.general.find_discord_user(message, message.content.substring(8))
+        let user = fx.general.find_discord_user(message, message.content.substring(command.length+1))
         if (user == null) throw 'User not found!'
         let username = user.username
         let image = user.avatarURL

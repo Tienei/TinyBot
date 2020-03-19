@@ -286,7 +286,7 @@ async function corona_live_update(message = new Message()) {
         pages[page-1] = gathering
         return pages
     }
-    fx.general.page_system(message, {load: loadpage}, `Live coronavirus update (Update per 5 mins): (Page {page} of {max_page})`, 'https://cdn.cnn.com/cnnnext/dam/assets/200130165125-corona-virus-cdc-image-super-tease.jpg', ' #FFFF00', Math.ceil(country_data.length / 15))
+    fx.general.page_system(message, {load: loadpage}, `Live coronavirus update (Updates every 5 mins): (Page {page} of {max_page})`, 'https://cdn.cnn.com/cnnnext/dam/assets/200130165125-corona-virus-cdc-image-super-tease.jpg', ' #FFFF00', Math.ceil(country_data.length / 15))
 }
 
 module.exports = {corona_live_update}
