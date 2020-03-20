@@ -1050,7 +1050,7 @@ async function osutop(message = new Message(), mode) {
                 pages[page-1] = gathering
                 return pages
             }
-            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${username} (Page {page} of {max_page})`, pfp_link, embedcolor, Math.ceil(best.length / 5))
+            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${username} (Page {page} of {max_page})`, pfp_link, embedcolor, Math.ceil(best.length / 5), 240000)
         } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-s").position > -1) { 
             let map_name = suffix.suffix.find(s => s.suffix == "-s").value[0].replace("_", " ")
             let top = []
@@ -1116,7 +1116,7 @@ async function osutop(message = new Message(), mode) {
                 pages[page-1] = gathering
                 return pages
             }
-            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${username} (Page {page} of {max_page})`, pfp_link, embedcolor, Math.ceil(best.length / 5))
+            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${username} (Page {page} of {max_page})`, pfp_link, embedcolor, Math.ceil(best.length / 5), 240000)
         } else {
             let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
@@ -1659,7 +1659,7 @@ async function map(message = new Message()){
                 pages[page-1] = gathering
                 return pages
             }
-            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${beatmap.title} (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5))
+            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${beatmap.title} (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5), 240000)
         } else {
             let map = await fx.osu.get_osu_beatmap(beatmapid, mode)
             let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
@@ -1875,7 +1875,7 @@ async function topleaderboard(message = new Message(), type) {
         } else if (type == 'country') {
             title = `${country} country leaderboard for osu!${mode} (Page {page} of {max_page})`
         }
-        fx.general.page_system(message, {load: loadpage}, title, 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Osu%21Logo_%282015%29.svg/220px-Osu%21Logo_%282015%29.svg.png', embedcolor, Math.ceil(table.length / 10))
+        fx.general.page_system(message, {load: loadpage}, title, 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Osu%21Logo_%282015%29.svg/220px-Osu%21Logo_%282015%29.svg.png', embedcolor, Math.ceil(table.length / 10), 180000)
     } catch (error) {
         message.channel.send(String(error))
     }
@@ -1914,7 +1914,7 @@ async function serverleaderboard(message = new Message()) {
             pages[page-1] = gathering
             return pages
         }
-        fx.general.page_system(message, {load: loadpage}, `Server leaderboard for ${message.guild.name} (Page {page} of {max_page})`, message.guild.iconURL, embedcolor, Math.ceil(player.length / 10))
+        fx.general.page_system(message, {load: loadpage}, `Server leaderboard for ${message.guild.name} (Page {page} of {max_page})`, message.guild.iconURL, embedcolor, Math.ceil(player.length / 10), 15000 * Math.ceil(player.length / 10))
     } catch (error) {
         message.channel.send(String(error))
     }

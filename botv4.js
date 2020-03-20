@@ -247,7 +247,7 @@ bot.on("message", (message) => {
             cmds.general.credit(message)
         }
         if (command == bot_prefix + 'avatar') {
-            cmds.general.avatar(message, corona)
+            cmds.general.avatar(message, command)
         }
         if (command == bot_prefix + 'changelog') {
             cmds.general.changelog(message)
@@ -330,7 +330,6 @@ bot.on("message", (message) => {
         // Corona related
 
         if (command == bot_prefix + 'corona') {
-            console.log('yep')
             cmds.corona.corona_live_update(message)
         }
 

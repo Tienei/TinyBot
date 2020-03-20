@@ -1,6 +1,6 @@
 const { Message, RichEmbed } = require('discord.js')
 
-module.exports = async function (message = new Message(), page_fx, author, thumbnail, color, max_page) {
+module.exports = async function (message = new Message(), page_fx, author, thumbnail, color, max_page, max_duration = 120000) {
     var page = 1
     var pages = []
     pages = await page_fx.load(page, pages)
@@ -18,8 +18,8 @@ module.exports = async function (message = new Message(), page_fx, author, thumb
         await msg1.react('➡')
         var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
         var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
-        var previous = msg1.createReactionCollector(previousfilter, {time: 120000}) 
-        var next = msg1.createReactionCollector(nextfilter, {time: 120000})
+        var previous = msg1.createReactionCollector(previousfilter, {time: max_duration}) 
+        var next = msg1.createReactionCollector(nextfilter, {time: max_duration})
         previous.on('collect', reaction => {
             if (page <= 1) {return}
             page -= 1
