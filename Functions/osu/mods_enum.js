@@ -31,7 +31,7 @@ module.exports = function (mod) {
         {mod: "1K", bitpresent: Constants.Mods.Key1,        pos: 5},
         {mod: "3K", bitpresent: Constants.Mods.Key3,        pos: 4},
         {mod: "2K", bitpresent: Constants.Mods.Key2,        pos: 3},
-        {mod: "S2", bitpresent: Constants.Mods.ScoreV2,     pos: 2},
+        {mod: "V2", bitpresent: Constants.Mods.ScoreV2,     pos: 2},
         {mod: "MR", bitpresent: Constants.Mods.Mirror,      pos: 1}
     ]
     let shortenmod = '+';
