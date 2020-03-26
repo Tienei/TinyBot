@@ -331,6 +331,9 @@ Most common mods: ${sortedmod}`)
             }
         } else if (suffix.suffix.find(s => s.suffix == "-rank").position > -1 && mode == "Bancho-std") {
             let rank = Number(suffix.suffix.find(s => s.suffix == "-rank").value[0])
+            if (rank < 1 || rank > 10000) {
+                throw 'Please provide a number between 1-10000'
+            }
             let page = 1 + Math.floor((rank - 1) / 50)
             let web_leaderboard = (await request(`https://osu.ppy.sh/rankings/osu/performance?page=${page}#scores`)).text
             let leaderboard = await cheerio.load(web_leaderboard)
@@ -897,6 +900,9 @@ async function osutop(message = new Message(), mode) {
             if (range == true && Math.abs(Number(numberrange[0]) - Number(numberrange[1])) > 4) {
                 throw 'Range limited to 5 top play'
             }
+            if (range == false && (Number(numberrange[0]) < 1 || Number(numberrange[0]) > 100)) {
+                throw 'Please provide a number between 1-100'
+            }
             let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
                 throw 'User not found!'
@@ -905,6 +911,9 @@ async function osutop(message = new Message(), mode) {
             console.log(pfp_link)
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, Number(numberrange[1]), 'best', true)
+            if (best[Number(numberrange[0]) - 1] == undefined) {
+                throw "Top play doesn't found!"
+            }
             for (var i = Number(numberrange[0]) - 1; i < Number(numberrange[1]) ; i++) {
                 let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                 let rank = fx.osu.ranking_letter(best[i].letter)
@@ -934,15 +943,15 @@ async function osutop(message = new Message(), mode) {
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             if (best.length == 0) {
-                throw `I think ${name} didn't play anything yet~ **-Chino**`
+                throw `I think ${name} didn't play anything yet~`
             }
             let userid = best[0].userid
             best.sort(function (a,b) {
                 a1 = Date.parse(a.date)
                 b1 = Date.parse(b.date)
-                return a1 - b1
+                return b1 - a1
             })
-            for (var i = best.length-1; i > best.length - 6; i--) {
+            for (var i = 0; i < (best.length > 5 ? 5 : best.length); i++) {
                 let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
@@ -1003,13 +1012,16 @@ async function osutop(message = new Message(), mode) {
             .setDescription(top)
             message.channel.send({embed});
         } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
+            let gtpp = Number(suffix.suffix.find(s => s.suffix == "-g").value[0])
+            if (gtpp < 0) {
+                throw 'How you even have negative pp? Are you the reverse farmer or something?'
+            }
             let user = await osuApi.getUser({u: name})
             if (user == null) {
                 throw 'User not found!'
             }
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             let username = user.name
-            let gtpp = Number(suffix.suffix.find(s => s.suffix == "-g").value[0])
             for (var i = best.length - 1; i > -1; i--) {
                 if (best[i].pp > gtpp) {
                     message.channel.send(`${username} has **${i+1} plays** worth more than **${gtpp}pp**`)
@@ -1062,6 +1074,9 @@ async function osutop(message = new Message(), mode) {
             pfp_link = pfp_link.replace('{user_id}', user.id)
             let username = user.name
             let best = get.filter(function(map) {return map.title.toLowerCase().includes(map_name) || map.creator.toLowerCase().includes(map_name) || map.diff.toLowerCase().includes(map_name) || map.source.toLowerCase().includes(map_name) || map.artist.toLowerCase().includes(map_name)})
+            if (best.length = 0) {
+                throw 'No search result found!'
+            }
             let userid = best[0].userid
             let maplength = best.length > 5 ? 5 : best.length
             for (var i = 0; i < maplength; i++) {
@@ -1124,9 +1139,12 @@ async function osutop(message = new Message(), mode) {
             }
             pfp_link = pfp_link.replace('{user_id}', user.id)
             let best = await fx.osu.get_osu_top(name, mode, 5, 'best')
+            if (best.length == 0) {
+                throw `I think ${name} didn't play anything yet~`
+            }
             let userid = best[0].userid
             let username = user.username
-            for (var i = 0; i < 5; i++) {
+            for (var i = 0; i < (best.length > 5 ? 5 : best.length); i++) {
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
                 let shortenmod = modandbit.shortenmod
@@ -1203,7 +1221,7 @@ async function recent(message = new Message()) {
         if (suffix.suffix.find(s => s.suffix == "-b").position > -1) {
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             if (best.length == 0) {
-                throw `I think ${name} didn't play anything yet~ **-Chino**`
+                throw `I think ${name} didn't play anything yet`
             }
             let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             let username = user.username
@@ -1235,7 +1253,7 @@ async function recent(message = new Message()) {
             let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             let recent = await fx.osu.get_osu_top(name, mode, 5, 'recent')
             if (recent.length == 0) {
-                throw 'No play found within 24 hours of this user **-Tiny**'
+                throw 'No play found within 24 hours of this user'
             }
             let osuname = getplayer.username
             for (var i in recent) {
@@ -1268,7 +1286,7 @@ async function recent(message = new Message()) {
             let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             let recent = await fx.osu.get_osu_top(name, mode, 1, 'recent')
             if (recent.length == 0) {
-                throw 'No play found within 24 hours of this user **-Tiny**'
+                throw 'No play found within 24 hours of this user'
             }
             let rank = fx.osu.ranking_letter(recent[0].letter)
             let modandbit = fx.osu.mods_enum(recent[0].mod)
@@ -1362,7 +1380,7 @@ async function compare(message = new Message()) {
                 return b1 - a1
             })
             if (scores.length == 0) {
-                throw `${name} didn't play this map! D: **-Tiny**`
+                throw `${name} didn't play this map!`
             }
             let beatmap = await fx.osu.get_osu_beatmap(storedid, mode)
             let parser = ''
@@ -1481,7 +1499,7 @@ async function score(message = new Message()) {
             return b1 - a1
         })
         if (scores.length == 0) {
-            throw `${name} didn't play this map! D: **-Tiny**`
+            throw `${name} didn't play this map!`
         }
         let beatmap = await fx.osu.get_osu_beatmap(beatmapid, mode)
         let parser = ''
@@ -1635,7 +1653,6 @@ async function map(message = new Message()){
             let scores = await fx.osu.get_osu_scores(undefined, mode, beatmapid, 50)
             let beatmap = await fx.osu.get_osu_beatmap(beatmapid, mode)
             if (modenum == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
-            cache_beatmap_ID(message, scores[0].beatmapid, mode)
             let loadpage = async function (page, pages) {
                 let gathering = ''
                 for (var n = 0; n < 5; n++) {

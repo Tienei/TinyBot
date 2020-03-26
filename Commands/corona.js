@@ -20,6 +20,7 @@ async function corona_live_update(message = new Message()) {
             "BOSNIA-HERZEGOVINA": "Bosnia and Herzegovina",
             "CABO VERDE": "Cape Verde",
             "CHINA, Mainland": "China",
+            "CZECH REPUBLIC": "Czechia",
             "MACAU": "Macao",
             "DPR KOREA": "North Korea",
             "MICRONESIA (FED. STATES OF)": "Micronesia",
