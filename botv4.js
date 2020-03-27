@@ -110,24 +110,34 @@ bot.on("ready", (ready) => {
             try {
                 let modes = []
                 for (let channel of player.trackonchannel) {
-                    for (let mode of channel.modes) {
-                        if (mode.limit > 100) {
-                            mode.limit = 100
+                    if (bot.channels.get(channel.id) == undefined) {
+                        if (player.trackonchannel.length > 1) {
+                            player.trackonchannel.splice(player.trackonchannel.findIndex(c => c.id == channel.id), 1)
                             if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                        }
-                        if (mode.limit < 1) {
-                            mode.limit = 1
-                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                        }
-                        if (String(mode.limit).search(/^\d+$/) < 0) {
-                            mode.limit = 50
-                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                        }
-                        if (modes.find(m => m.mode == mode.mode) == undefined) {
-                            modes.push({"mode": mode.mode, "limit": mode.limit})
                         } else {
-                            if (mode.limit > modes.find(m => m.mode == mode.mode).limit) {
-                                modes.find(m => m.mode == mode.mode).limit = mode.limit
+                            osu_track.splice(osu_track.findIndex(p => p.name == player.name && p.type == player.type), 1)
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                        }
+                    } else {
+                        for (let mode of channel.modes) {
+                            if (mode.limit > 100) {
+                                mode.limit = 100
+                                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            }
+                            if (mode.limit < 1) {
+                                mode.limit = 1
+                                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            }
+                            if (String(mode.limit).search(/^\d+$/) < 0) {
+                                mode.limit = 50
+                                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            }
+                            if (modes.find(m => m.mode == mode.mode) == undefined) {
+                                modes.push({"mode": mode.mode, "limit": mode.limit})
+                            } else {
+                                if (mode.limit > modes.find(m => m.mode == mode.mode).limit) {
+                                    modes.find(m => m.mode == mode.mode).limit = mode.limit
+                                }
                             }
                         }
                     }
