@@ -719,13 +719,19 @@ async function osu_card(message = new Message(), mode) {
             let s_player = [124493, 39828, 50265, 2558286, 5339515, 4650315]
             for (var i in s_player) {
                 if (user.id == s_player[i]) {
-                    special = true
+                    special = 'normal'
                     card = await jimp.read('./osu_card/legendary_osu.png')
                     star_avg = 10
                     break
                 }
+                if (user.id == 4504101) {
+                    special = 'whitecat'
+                    card = await jimp.read('./osu_card/legendary_osu_whitecat.png')
+                    star_avg = 10
+                    break
+                }
             }
-            if (special == true) {
+            if (special == 'normal' || special == 'whitecat') {
                 if (user.id == 124493) { // Cokiezi
                     aim_avg *= 1.05
                     speed_avg *= 1.075
@@ -750,6 +756,10 @@ async function osu_card(message = new Message(), mode) {
                     aim_avg *= 1.05
                     speed_avg *= 1.05
                     acc_avg *= 1.075
+                } else if (user.id == 4504101) { // whitecat
+                    aim_avg *= 1.075
+                    speed_avg *= 1.025
+                    acc_avg *= 1.025
                 }
                 aim_avg = aim_avg.toFixed(0)
                 speed_avg = speed_avg.toFixed(0)
@@ -778,8 +788,12 @@ async function osu_card(message = new Message(), mode) {
         card.composite(mode_icon, 20, 20)
         // Get username
         let text_color = 'white'
+        let n_text_color = 'white'
+        if (special == 'whitecat') {
+            n_text_color = '#D19D23'
+        }
         let nametext = await jimp.read(text2png(user.username, {
-            color: text_color,
+            color: n_text_color,
             font: '80px Antipasto',
             localFontPath: './font/Antipasto.otf',
             localFontName: 'Antipasto',
@@ -802,7 +816,7 @@ async function osu_card(message = new Message(), mode) {
             skillname = `Aim:\nSpeed:\nAccuracy:`
             skillnumber = `${aim_avg}\n${speed_avg}\n${acc_avg}`
             stat_number_x = 170
-            if (special == true) {
+            if (special == 'normal' || special == 'whitecat') {
                 skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
             }
         }
@@ -834,22 +848,30 @@ async function osu_card(message = new Message(), mode) {
             font: '34px Antipasto',
             localFontPath: './font/Antipasto.otf',
             localFontName: 'Antipasto',
-            lineSpacing: 16}))
+            lineSpacing: 16,
+            textAlign: 'left'}))
         card.composite(statnumber, stat_number_x, 444)
         // Star
         let fullstar = await jimp.read('./osu_card/full_star.png')
         let halfstar = await jimp.read('./osu_card/half_star.png')
-        let width = (Math.floor(star_avg) + ((star_avg % 1) >= 0.5 ? 1 : 0)) * 32 + 2
+        let star_width = 32
+        let width = (Math.floor(star_avg) + ((star_avg % 1) >= 0.5 ? 1 : 0)) * star_width + 2
         let starholder = await new jimp(width, 33, 0x00000000)
         for (var i = 0; i < Math.ceil(star_avg); i++) {
             if (i+1 > Math.floor(star_avg)) {
-                starholder.composite(halfstar, i*32, 0)
+                starholder.composite(halfstar, i*star_width, 0)
             } else {
-                starholder.composite(fullstar, i*32, 0)
+                starholder.composite(fullstar, i*star_width, 0)
             }
         }
-        starholder.contain(400,33, jimp.HORIZONTAL_ALIGN_CENTER)
-        card.composite(starholder, 10, 551)
+        if (special == false || special == 'normal') {
+            starholder.contain(400,33, jimp.HORIZONTAL_ALIGN_CENTER)
+            card.composite(starholder, 10, 551)
+        } else {
+            starholder.contain(240,27, jimp.HORIZONTAL_ALIGN_CENTER)
+            card.composite(starholder, 15, 556)
+        }
+        
         msg1.edit('Done!')
         message.channel.send({
             files: [{
