@@ -98,8 +98,8 @@ bot.on("ready", (ready) => {
     getFile()
     
     // Server count
-    function server_count() {
-        bot.channels.get("572093442042232842").setName(`Server Count: ${bot.guilds.size}`)
+    async function server_count() {
+        bot.channels.cache.get("572093442042232842").setName(`Server Count: ${bot.guilds.cache.size}`)
     }
     setInterval(server_count, 10000)
 
@@ -110,7 +110,7 @@ bot.on("ready", (ready) => {
             try {
                 let modes = []
                 for (let channel of player.trackonchannel) {
-                    if (bot.channels.get(channel.id) == undefined) {
+                    if (bot.channels.cache.get(channel.id) == undefined) {
                         if (player.trackonchannel.length > 1) {
                             player.trackonchannel.splice(player.trackonchannel.findIndex(c => c.id == channel.id), 1)
                             if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
@@ -175,20 +175,20 @@ bot.on("ready", (ready) => {
                         if (best[i].perfect == 0) {
                             fcguess = fc_stat.fcguess
                         }
-                        let embed = new Discord.RichEmbed()
+                        let embed = new Discord.MessageEmbed()
                         .setAuthor(`New #${best[i].top} for ${user.username} in osu!${modename}:`, `http://s.ppy.sh/a/${best[i].userid}.png?date=${refresh}`)
                         .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
                         .setDescription(`
 **[${beatmap.title}](https://osu.ppy.sh/b/${beatmap.beatmapid})** (${star}★) ${shortenmod} | **${pp}pp** (+${ppgain}pp)
 ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].combo}/${beatmap.fc}
 **Accuracy:** ${Number(best[i].acc).toFixed(2)}% ${best[i].accdetail} ${fcguess}
-**#${player_mode_detail.lastrank} → #${user.rank} (:flag_${user.country}: : #${player_mode_detail.lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`)
+**#${player_mode_detail.lastrank} → #${user.rank} (:flag_${user.country}: : #${player_mode_detail.lastcountryrank} → #${user.countryrank})** | Total PP: **${user.pp}**`);
                         for (let channel of player.trackonchannel) {
                             for (mode1 of channel.modes) {
                                 if (mode1.mode == mode && mode1.limit >= best[i].top) {
                                     stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: check_type})
-                                    embed.setColor(bot.channels.get(channel.id).guild.me.displayColor)
-                                    bot.channels.get(channel.id).send({embed})
+                                    embed.setColor(bot.channels.cache.get(channel.id).guild.me.displayColor)
+                                    bot.channels.cache.get(channel.id).send({embed})
                                 }
                             }
                         }
@@ -215,7 +215,7 @@ bot.on("guildMemberAdd", (member) => {
     async function welcome_message() {
         if (member.guild.id == "450576647976910869") {
             var imageholder = await jimp.read('./image/welcomebanner.png')
-            var avatar = await jimp.read(member.user.avatarURL)
+            var avatar = await jimp.read(member.user.avatarURL())
             var placeholder = await new jimp(563, 125)
             avatar.resize(105,105)
             placeholder.composite(avatar, 214, 10)
@@ -223,7 +223,7 @@ bot.on("guildMemberAdd", (member) => {
             var text = await jimp.loadFont('./font/anjelika_36_white.fnt')
             placeholder.print(text, 347, 10, member.user.username + ',')
             placeholder.write('./welcome.png')
-            bot.channels.get("487479898903150612").send(`<@${member.id}>`, {files: ['./welcome.png']})
+            bot.channels.cache.get("487479898903150612").send(`<@${member.id}>`, {files: ['./welcome.png']})
         }
     }
    welcome_message()
@@ -560,10 +560,10 @@ bot.on("message", (message) => {
                 }
             }
             if (currentlytrack !== '') currentlytrack = currentlytrack.substring(0,currentlytrack.length-2)
-            const embed = new Discord.RichEmbed()
+            const embed = new Discord.MessageEmbed()
             .setAuthor(`Player(s) currently being tracked on #${message.channel.name}`)
             .setColor(embedcolor)
-            .setDescription(currentlytrack)
+            .setDescription(currentlytrack);
             message.channel.send(embed)
         }
 
@@ -754,11 +754,11 @@ bot.on("message", (message) => {
                 async function respond() {
                     var channelid = msg.split(" ")[1]
                     var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
-                    const embed = new Discord.RichEmbed()
-                    .setAuthor(`${message.author.username} responded`, message.author.avatarURL)
+                    const embed = new Discord.MessageEmbed()
+                    .setAuthor(`${message.author.username} responded`, message.author.avatarURL())
                     .setColor(embedcolor)
-                    .setDescription(msg_send)
-                    bot.channels.get(channelid).send({embed})
+                    .setDescription(msg_send);
+                    bot.channels.cache.get(channelid).send({embed})
                     var msg1 = await message.channel.send('Message has been sent')
                     setTimeout(function(){ msg1.delete(); }, 3000);
                 }
@@ -771,10 +771,10 @@ bot.on("message", (message) => {
                     message.channel.send(msg_quote[1])
                     message.delete(0)
                 } else if (option[1] == 'embed') {
-                    const embed = new Discord.RichEmbed()
-                    .setAuthor(msg_quote[1], bot.user.avatarURL)
+                    const embed = new Discord.MessageEmbed()
+                    .setAuthor(msg_quote[1], bot.user.avatarURL())
                     .setColor(embedcolor)
-                    .setDescription(msg_quote[3])
+                    .setDescription(msg_quote[3]);
                     message.channel.send({embed})
                     message.delete(0)
                 }
@@ -782,3 +782,4 @@ bot.on("message", (message) => {
         }
     }
 })
+    

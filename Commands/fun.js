@@ -1,4 +1,4 @@
-const { Message, RichEmbed } = require("discord.js")
+const { Message, MessageEmbed } = require("discord.js")
 const fx = require('./../Functions/load_fx')
 const request = require('superagent')
 
@@ -81,9 +81,9 @@ async function trivia(message = new Message()){
         description += `\n :heavy_check_mark: ◆ ${shuffled_awnsers[0]}
 :x: ◆ ${shuffled_awnsers[1]}`
     }
-    let embed = new RichEmbed()
+    let embed = new MessageEmbed()
     .setColor(embedcolor)
-    .setAuthor(`Catergory: ${decodeURIComponent(question.results[0].category)}`, message.client.user.avatarURL)
+    .setAuthor(`Catergory: ${decodeURIComponent(question.results[0].category)}`, message.client.user.avatarURL())
     .setDescription(description)
     let msg1 = await message.channel.send({embed})
     if (question_type == 'multiple') {
@@ -150,10 +150,10 @@ async function tenor(message = new Message(), start, search, action, aloneaction
             text = `<@${user.id}>, ${action} <@${message.author.id}>`
         }
         let gif = (await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=25&media_filter=minimal&contentfilter=medium`)).body
-        const embed = new RichEmbed()
+        const embed = new MessageEmbed()
         .setColor(embedcolor)
         .setDescription(text)
-        .setImage(gif.results[Math.floor(Math.random()*24)].media[0].gif.url)
+        .setImage(gif.results[Math.floor(Math.random()*24)].media[0].gif.url);
         message.channel.send({embed})
     } catch (error) {
        message.channel.send(String(error))

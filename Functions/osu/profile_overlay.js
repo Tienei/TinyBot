@@ -1,4 +1,4 @@
-const { Message, RichEmbed } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js')
 
 module.exports = function (message = new Message(), check_type, modeicon, supporter, modename, name, id, pp, rank, country, ct_rank, acc, playcount, level, playstyle, ss, s, a, stat_text, stat_icon, refresh) {
     // Setup for modes
@@ -66,7 +66,7 @@ module.exports = function (message = new Message(), check_type, modeicon, suppor
     if (ss !== undefined && s !== undefined && a !== undefined) {
         field2 += `<:rankingX:520932410746077184>: ${ss}\n<:rankingS:520932426449682432>: ${s}\n<:rankingA:520932311613571072>: ${a}`
     }
-    let embed = new RichEmbed()
+    let embed = new MessageEmbed()
     embed.setColor(embedcolor)
     embed.setThumbnail(pfp_link)
     if (desc !== '') {

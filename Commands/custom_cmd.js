@@ -1,4 +1,4 @@
-const { Message, RichEmbed } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js')
 
 function custom_cmd(message = new Message(), custom_command) {
     try {
@@ -43,10 +43,10 @@ function custom_cmd(message = new Message(), custom_command) {
             for (var i = 0; i < custom_command[message.guild.id].length; i++) {
                 savedcmd += "``" + custom_command[message.guild.id][i].cmd + "``: " + custom_command[message.guild.id][i].respond
             }
-            const embed = new RichEmbed()
-            .setThumbnail(message.guild.iconURL)
+            const embed = new MessageEmbed()
+            .setThumbnail(message.guild.iconURL())
             .setColor(embedcolor)
-            .setDescription(savedcmd)
+            .setDescription(savedcmd);
             message.channel.send({embed})
         }
         if (option == "remove") {

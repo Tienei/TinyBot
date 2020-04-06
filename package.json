@@ -13,7 +13,7 @@
     "canvas": "^2.6.1",
     "chalk": "^3.0.0",
     "cheerio": "^1.0.0-rc.3",
-    "discord.js": "^11.5.1",
+    "discord.js": "^12.1.1",
     "dotenv": "^8.2.0",
     "jimp": "^0.9.3",
     "lz-string": "^1.4.4",

@@ -1,4 +1,4 @@
-const { Message, RichEmbed } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js')
 
 module.exports = async function (message = new Message(), page_fx, author, thumbnail, color, max_page, max_duration = 120000) {
     var page = 1
@@ -7,11 +7,11 @@ module.exports = async function (message = new Message(), page_fx, author, thumb
     var t_author = author
     t_author = t_author.replace("{page}", page)
     t_author = t_author.replace("{max_page}", max_page)
-    var embed = new RichEmbed()
+    var embed = new MessageEmbed()
     .setAuthor(t_author)
     .setThumbnail(thumbnail)
     .setColor(color)
-    .setDescription(pages[page-1])
+    .setDescription(pages[page-1]);
     var msg1 = await message.channel.send({embed});
     if (max_page > 1) {
         await msg1.react('⬅')

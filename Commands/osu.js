@@ -1,4 +1,4 @@
-const { Attachment, RichEmbed, Message } = require('discord.js')
+const { Attachment, MessageEmbed, Message } = require('discord.js')
 const cheerio = require('cheerio')
 const generate = require('node-chartist');
 const sharp = require('sharp')
@@ -110,10 +110,10 @@ async function osuavatar(message = new Message(), mode) {
         id = user.id
         pfp_link = `https://a.${serverlink}/${id}?date=${refresh}`
     }
-    const embed = new RichEmbed()
+    const embed = new MessageEmbed()
     .setAuthor(`Avatar for ${username}`)
     .setColor(embedcolor)
-    .setImage(pfp_link)
+    .setImage(pfp_link);
     message.channel.send({embed})
 }
 
@@ -159,7 +159,7 @@ async function osu(message = new Message(), mode) {
             if (events == 0) {
                 event = 'No event'
             }
-            let embed = new RichEmbed()
+            let embed = new MessageEmbed()
             .setDescription(`${modeicon} ${user.supporter} **osu!${modename} Statistics for [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
             .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
             .setColor(embedcolor)
@@ -172,7 +172,7 @@ async function osu(message = new Message(), mode) {
 **Play Style:** ${user.playstyle}
 <:rankingX:520932410746077184> : ${user.ss} (${Number(user.ss/totalrank*100).toFixed(2)}%) <:rankingS:520932426449682432> : ${user.s} (${Number(user.s/totalrank*100).toFixed(2)}%) <:rankingA:520932311613571072> : ${user.a} (${Number(user.a/totalrank*100).toFixed(2)}%)`)
             .addField(`${user.username} recent events:`, event)
-            .setFooter(user.statustext, user.statusicon)
+            .setFooter(user.statustext, user.statusicon);
             let msg1 = await message.channel.send('Calculating skills...', {embed});
             // Calculating skills
             if (best.length < 50) {
@@ -482,12 +482,12 @@ Most common mods: ${sortedmod}`)
             banner.composite(image, 0, 0)
 
             const attachment = new Attachment(await banner.getBufferAsync(jimp.MIME_PNG), 'rank.png')
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setDescription(`${modeicon} ${user.supporter} **osu!Standard rank history for [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
             .addField('Current rank', `Global: ${user.rank} (:flag_${user.country}:: ${user.countryrank})`, true)
             .addField('Current PP', user.pp, true)
             .attachFile(attachment)
-            .setImage('attachment://rank.png')
+            .setImage('attachment://rank.png');
             message.channel.send({embed})
             if (mode == "Bancho-std") {
                 for (var [key,value] of Object.entries(user_data)) {
@@ -562,7 +562,7 @@ Most common mods: ${sortedmod}`)
             textloading(top_speed)
             textloading(top_old_acc)
             textloading(top_acc)
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setDescription(`${modeicon} **Osu!${modename} top skill for: [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
             .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
             .addField(`${user.username} average skill:`, `
@@ -574,7 +574,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
             .addField('Top aim skill:', field[1])
             .addField('Top speed skill:', field[2])
             .addField('Top old acc skill:', field[3])
-            .addField('Top acc skill:', field[4])
+            .addField('Top acc skill:', field[4]);
             msg1.edit({embed})
             if (mode == "Bancho-std") {
                 for (var [key,value] of Object.entries(user_data)) {
@@ -950,11 +950,11 @@ async function osutop(message = new Message(), mode) {
                 let scoreoverlay = fx.osu.score_overlay(i+1,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Top osu!${modename} Plays for ${username}`)
             .setThumbnail(pfp_link)
             .setColor(embedcolor)
-            .setDescription(top)
+            .setDescription(top);
             message.channel.send({embed});
         } else if (suffix.suffix.find(s => s.suffix == "-r").position > -1) {
             let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
@@ -987,11 +987,11 @@ async function osutop(message = new Message(), mode) {
                 let scoreoverlay = fx.osu.score_overlay(best[i].top,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Top osu!${modename} most recent plays for ${username}`)
             .setThumbnail(pfp_link)
             .setColor(embedcolor)
-            .setDescription(top)
+            .setDescription(top);
             message.channel.send({embed});
         } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-m").position > -1) {
             let getmod = suffix.suffix.find(s => s.suffix == "-m").value[0]
@@ -1027,11 +1027,11 @@ async function osutop(message = new Message(), mode) {
             if (top.length == 0) {
                 top += `This user doesn't have any ${getmod.toUpperCase()} top play`
             }
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Top osu!${modename} Plays with ${getmod.toUpperCase()} for ${username}`)
             .setThumbnail(pfp_link)
             .setColor(embedcolor)
-            .setDescription(top)
+            .setDescription(top);
             message.channel.send({embed});
         } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
             let gtpp = Number(suffix.suffix.find(s => s.suffix == "-g").value[0])
@@ -1114,11 +1114,11 @@ async function osutop(message = new Message(), mode) {
                 let scoreoverlay = fx.osu.score_overlay(best[i].top,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Top osu!${modename} Plays for ${username} (Searching: ${map_name})`)
             .setThumbnail(pfp_link)
             .setColor(embedcolor)
-            .setDescription(top)
+            .setDescription(top);
             message.channel.send({embed});
         } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-a").position > -1) { 
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best')
@@ -1179,11 +1179,11 @@ async function osutop(message = new Message(), mode) {
                 let scoreoverlay = fx.osu.score_overlay(i+1,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
                 top += scoreoverlay
             }
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Top osu!${modename} Plays for ${username}`)
             .setThumbnail(pfp_link)
             .setColor(embedcolor)
-            .setDescription(top)
+            .setDescription(top);
             message.channel.send({embed});
         }
     } catch (error) {
@@ -1264,11 +1264,11 @@ async function recent(message = new Message()) {
             if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
             let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
             let scoreoverlay = fx.osu.score_overlay(undefined,beatmap.title,best[0].beatmapid,fc_stat.star,shortenmod,best[0].pp,undefined,rank,beatmap.diff,best[0].score,best[0].combo,beatmap.fc,best[0].acc,best[0].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Top ${best[0].top} osu!${modename} play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
-            .setDescription(scoreoverlay)
+            .setDescription(scoreoverlay);
             message.channel.send({embed})
         } else if (mode == "Bancho-std" && suffix.suffix.find(s => s.suffix == "-l").position > -1) { 
             let top = ''
@@ -1298,11 +1298,11 @@ async function recent(message = new Message()) {
                 let scoreoverlay = fx.osu.score_overlay(undefined,recent[i].title,recent[i].beatmapid,fc_stat.star,shortenmod,fc_stat.pp,nopp,rank,recent[i].diff,recent[i].score,recent[i].combo,recent[i].fc,recent[i].acc,recent[i].accdetail,fc_stat.fcguess,mapcompleted,date,'beatmap')
                 top += scoreoverlay
             }
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Most recent osu! ${modename} play for ${osuname}:`)
             .setThumbnail(`http://s.ppy.sh/a/${recent[0].userid}.png?date=${refresh}`)
             .setColor(embedcolor)
-            .setDescription(top)
+            .setDescription(top);
             message.channel.send({embed})
         } else {
             let getplayer = await fx.osu.get_osu_profile(name, mode, 0, false, false)
@@ -1328,11 +1328,11 @@ async function recent(message = new Message()) {
                 mapcompleted = `**Map Completion:** ${Number(fc_stat.mapcomplete).toFixed(2)}%`
             }
             let scoreoverlay = fx.osu.score_overlay(undefined,recent[0].title,recent[0].beatmapid,fc_stat.star,shortenmod,fc_stat.pp,nopp,rank,recent[0].diff,recent[0].score,recent[0].combo,recent[0].fc,recent[0].acc,recent[0].accdetail,fc_stat.fcguess,mapcompleted,date,'beatmap')
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Most recent osu! ${modename} play for ${osuname}:`, `http://s.ppy.sh/a/${recent[0].userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${recent[0].beatmapsetID}l.jpg`)
             .setColor(embedcolor)
-            .setDescription(scoreoverlay)
+            .setDescription(scoreoverlay);
             message.channel.send({embed})
         }
     } catch (error) {
@@ -1618,10 +1618,10 @@ async function osuset(message = new Message(), type) {
                 user_data[message.author.id] = {}
                 user_data[message.author.id][settype] = name
             }
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`Your account has been linked to ${type} username: ${name}`,'', profilelink)
             .setColor(embedcolor)
-            .setImage(imagelink)
+            .setImage(imagelink);
             message.channel.send({embed})
             if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
         }
@@ -1703,12 +1703,12 @@ async function map(message = new Message()){
             let map = await fx.osu.get_osu_beatmap(beatmapid, mode)
             let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
             cache_beatmap_ID(message, beatmapid, mode)
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}?m=${mode}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
             .setDescription(map_embed)
-            .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`)
+            .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`);
             message.channel.send({embed});
         }
     } catch (error) {
@@ -1756,7 +1756,7 @@ async function beatmapfiledetail(message = new Message()) {
             mapdetail = `**AR:** ${ar} / **OD:** ${od} / **HP:** ${hp} / **CS:** ${cs}`
             ppdetail = `**95%**-${Number(acc95.pp.total).toFixed(2)}pp | **97%**-${Number(acc97.pp.total).toFixed(2)}pp | **99%**-${Number(acc99.pp.total).toFixed(2)}pp | **100%**-${Number(acc100.pp.total).toFixed(2)}pp`
         }
-        const embed = new RichEmbed()
+        const embed = new MessageEmbed()
         .setAuthor(`${map.title} by ${map.creator}`)
         .setColor(embedcolor)
         .setDescription(`
@@ -1765,7 +1765,7 @@ async function beatmapfiledetail(message = new Message()) {
 **Difficulty:** ${star}★ ${diffdetail}
 **Max Combo:** ${maxCombo}
 ${mapdetail}
-**PP:** ${ppdetail}`)
+**PP:** ${ppdetail}`);
     message.channel.send({embed});
     } catch (error) {
         message.channel.send(String(error))
@@ -1837,12 +1837,12 @@ async function beatmaplinkdetail(message = new Message(), bot_prefix) {
             let modenum = modedetail.modenum
             let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
             cache_beatmap_ID(message, beatmapid, mode)
-            const embed = new RichEmbed()
+            const embed = new MessageEmbed()
             .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}?m=${mode}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
             .setDescription(map_embed)
-            .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`)
+            .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`);
             message.channel.send({embed});
         }
     } catch (error) {
@@ -1953,7 +1953,7 @@ async function serverleaderboard(message = new Message()) {
             pages[page-1] = gathering
             return pages
         }
-        fx.general.page_system(message, {load: loadpage}, `Server leaderboard for ${message.guild.name} (Page {page} of {max_page})`, message.guild.iconURL, embedcolor, Math.ceil(player.length / 10), 15000 * Math.ceil(player.length / 10))
+        fx.general.page_system(message, {load: loadpage}, `Server leaderboard for ${message.guild.name} (Page {page} of {max_page})`, message.guild.iconURL(), embedcolor, Math.ceil(player.length / 10), 15000 * Math.ceil(player.length / 10))
     } catch (error) {
         message.channel.send(String(error))
     }

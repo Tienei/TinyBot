@@ -2,7 +2,7 @@ const bot = require('./../client').bot
 const config = require('../config')
 const fx = require('./../Functions/load_fx')
 const package = require('../package.json')
-const { Message, RichEmbed } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js')
 
 var bot_command_help = []
 
@@ -127,11 +127,11 @@ function help(message = new Message(), command) {
                 text = text.replace('{prefix}', config.config.bot_prefix)
             }
         }
-        const embed = new RichEmbed()
+        const embed = new MessageEmbed()
         .setAuthor(`Commands for Tiny Bot ${config.config.bot_ver}`)
         .setColor(embedcolor)
-        .setThumbnail(bot.user.avatarURL)
-        .setDescription(text)
+        .setThumbnail(bot.user.avatarURL())
+        .setDescription(text);
         message.channel.send({embed})
     } catch (error) {
         message.channel.send(String(error))
@@ -140,17 +140,17 @@ function help(message = new Message(), command) {
 
 function credit(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    const embed = new RichEmbed()
+    const embed = new MessageEmbed()
     .setAuthor(`Special thanks to:`)
     .setColor(embedcolor)
-    .setThumbnail(bot.user.avatarURL)
+    .setThumbnail(bot.user.avatarURL())
     .setDescription(`
 **--- Special helper ❤:**
 Great Fog (!m, partial !osud, !acc, total pp in !osud, v3, !osutop -a)
 **--- Command idea from:**
 Yeong Yuseong (!calcpp, !compare sorted by pp, !r Map completion, !osutop -p with ranges, !suggestion, !osu -d common mods, !c -p, !osutop -s), 1OneHuman (!mosutop, !rosutop, !scores), Shienei (!c Unranked pp calculation), jpg (Time ago), lokser (!osu -d length avg), Xpekade (Economy), Rimu (new !osu design), zibi (!topglobal, !topcountry), PotatoBoy123 (!lb)
 **--- Tester:**
-ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`)
+ReiSevia, Shienei, FinnHeppu, Hugger, rinku, Rosax, -Seoul`);
     message.channel.send({embed})
 }
 
@@ -160,11 +160,11 @@ function avatar(message = new Message(), command) {
         let user = fx.general.find_discord_user(message, message.content.substring(command.length+1))
         if (user == null) throw 'User not found!'
         let username = user.username
-        let image = user.avatarURL
-        const embed = new RichEmbed()
+        let image = user.avatarURL()
+        const embed = new MessageEmbed()
         .setAuthor(`Avatar for ${username}`)
         .setColor(embedcolor)
-        .setImage(image)
+        .setImage(image);
         message.channel.send({embed})
     } catch (err) {
         message.channel.send(String(err))
@@ -192,14 +192,14 @@ Fixed scores exceeding 2000 characters`]
         pages = changes
         return pages
     }
-    fx.general.page_system(message, {load: loadpage}, `Changelog for TinyBot ${config.config.bot_ver} (Page {page} of {max_page})`, message.client.user.avatarURL, embedcolor, changes.length)
+    fx.general.page_system(message, {load: loadpage}, `Changelog for TinyBot ${config.config.bot_ver} (Page {page} of {max_page})`, message.client.user.avatarURL(), embedcolor, changes.length)
 }
 
 function bot_info(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    const embed = new RichEmbed()
+    const embed = new MessageEmbed()
     .setColor(embedcolor)
-    .setThumbnail(bot.user.avatarURL)
+    .setThumbnail(bot.user.avatarURL())
     .addField('Information', `◆ Hello! I am Tiny Bot, a bot made by Tienei <:chinoHappy:450684046129758208>. This bot is primarily for osu! and most of the commands is the same as owo with more functionality`)
     .addField('Bot setup', `◆ To get started, type **\`!help\`** to get a list of command and then type **\`!help (command)\`** to get more detailed information
 ◆ If you wanted to help me improve, type **\`!report\`** or **\`!suggestion\`** if you have a suggestion/bugs`)
@@ -207,7 +207,7 @@ function bot_info(message = new Message()) {
 ◆ My senpai server: [server](https://discord.gg/H2mQMxd)
 ◆ Consider donating if you like the bot and help the creator: [donate](https://ko-fi.com/tienei)`)
     .addField('Supported osu servers', `◆ \`Bancho\` \`Ripple\` \`Akatsuki\` \`Enjuu\` \`Horizon\``)
-    .addField('Dependencies',`\`discord.js\`: ${package.dependencies['discord.js']}, \`ojsama\`: ${package.dependencies.ojsama}, \`osu!api\`: 1.0, \`Ripple API\`: 1.0`)
+    .addField('Dependencies',`\`discord.js\`: ${package.dependencies['discord.js']}, \`ojsama\`: ${package.dependencies.ojsama}, \`osu!api\`: 1.0, \`Ripple API\`: 1.0`);
     message.channel.send({embed})
 }
 
@@ -248,7 +248,7 @@ function prefix(message = new Message(), server_data) {
     }
 }
 
-function report(message = new Message()) {
+async function report(message = new Message()) {
     try {
         let msg = message.content.toLowerCase();
         let command = msg.split(' ')[0]
@@ -257,27 +257,27 @@ function report(message = new Message()) {
             throw 'You need to wait 30 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 30000)
-        let error = message.content.substring(8)
+        let error = message.content.substring(command[0].length + 1)
         if (error == '') {
             throw "Type an error"
         }
         let channelid = message.channel.id
         let user = message.author.username
-        let pfp = message.author.avatarURL
-        const embed = new RichEmbed()
+        let pfp = message.author.avatarURL()
+        const embed = new MessageEmbed()
         .setAuthor(`Username: ${user}`, pfp)
         .setColor(embedcolor)
         .setDescription(`
 Channel ID: **${channelid}**
-Problem: ${error}`)
-        bot.channels.get('564396177878155284').send({embed})
+Problem: ${error}`);
+        bot.channels.cache.get('564396177878155284').send({embed})
         message.channel.send('Error has been reported')
     } catch (error) {
         message.channel.send(String(error))
     }
 }
 
-function suggestion(message = new Message()) {
+async function suggestion(message = new Message()) {
     try {
         let msg = message.content.toLowerCase();
         let command = msg.split(' ')[0]
@@ -286,20 +286,20 @@ function suggestion(message = new Message()) {
             throw 'You need to wait 30 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 30000)
-        let suggestion = message.content.substring(12)
+        let suggestion = message.content.substring(command[0].length + 1)
         if (suggestion == '') {
             throw 'Type a suggestion for the bot'
         }
         let channelid = message.channel.id
         let user = message.author.username
-        let pfp = message.author.avatarURL
-        const embed = new RichEmbed()
+        let pfp = message.author.avatarURL()
+        const embed = new MessageEmbed()
         .setAuthor(`Username: ${user}`, pfp)
         .setColor(embedcolor)
         .setDescription(`
 Channel ID: **${channelid}**
-Suggestion: ${suggestion}`)
-        bot.channels.get('564439362218229760').send({embed})
+Suggestion: ${suggestion}`);
+        bot.channels.cache.get('564439362218229760').send({embed})
         message.channel.send('Suggestion has been reported')
     } catch (error) {
         message.channel.send(String(error))
@@ -317,16 +317,16 @@ function checkcomp(message = new Message()) {
             compatibility.push('❌')
         }
     }
-    const embed = new RichEmbed()
+    const embed = new MessageEmbed()
     .setAuthor(`Compatibility for Tiny Bot ${botver} in ${message.guild.name}`)
-    .setThumbnail(message.guild.iconURL)
+    .setThumbnail(message.guild.iconURL())
     .setColor(embedcolor)
     .setDescription(`Send Message: ${compatibility[0]}
 Attach Files: ${compatibility[1]}
 Add Reactions: ${compatibility[2]}
 Embed Links: ${compatibility[3]}
 Read Message History: ${compatibility[4]}
-Use External Emojis: ${compatibility[5]}`)
+Use External Emojis: ${compatibility[5]}`);
     message.channel.send({embed})
 }
 
