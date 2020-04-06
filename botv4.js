@@ -724,8 +724,10 @@ bot.on("message", (message) => {
         // .osu Detection
         if (message.attachments.array().length > 0) {
             var file = message.attachments.first()
-            if (file.filename.substring(file.filename.length - 4, file.filename.length) == ".osu") {
-                cmds.osu.beatmapfiledetail(message)           
+            if (file !== undefined) {
+                if (file.filename.substring(file.filename.length - 4, file.filename.length) == ".osu") {
+                    cmds.osu.beatmapfiledetail(message)           
+                }
             }
         }
         // Bot Owner commands
