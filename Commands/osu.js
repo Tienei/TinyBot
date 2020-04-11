@@ -875,7 +875,7 @@ async function osu_card(message = new Message(), mode) {
                 starholder.composite(fullstar, i*star_width, 0)
             }
         }
-        if (special == false || special == 'normal') {
+        if (special == undefined || special == 'normal') {
             starholder.contain(400,33, jimp.HORIZONTAL_ALIGN_CENTER)
             card.composite(starholder, 10, 551)
         } else {
