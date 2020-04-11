@@ -24,7 +24,7 @@ async function trivia(message = new Message()){
             message.channel.send('Congratulation! Your answer is correct!')
             stopCollection(reactions, 'correct')
         } else {
-            message.channel.send(`Incorrect! The correct anwser is **${decodeURIComponent(question.results[0].correct_answer)}**`)
+            message.channel.send(`Incorrect! The correct answer is **${decodeURIComponent(question.results[0].correct_answer)}**`)
             stopCollection(reactions, 'incorrect')
         }
     }
