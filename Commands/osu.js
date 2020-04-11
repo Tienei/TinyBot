@@ -715,7 +715,7 @@ async function osu_card(message = new Message(), mode) {
             }
         }
         // Special card
-        let special = false
+        let special;
         if (modenum == 0) {
             let s_player = [124493, 39828, 50265, 2558286, 5339515, 4650315]
             for (let i in s_player) {
@@ -731,8 +731,14 @@ async function osu_card(message = new Message(), mode) {
                     star_avg = 10
                     break
                 }
+                if (user.id == 6447454) {
+                    special = 'merami'
+                    card = await jimp.read('./osu_card/legendary_osu_merami.png')
+                    star_avg = 10
+                    break
+                }
             }
-            if (special == 'normal' || special == 'whitecat') {
+            if (special) {
                 if (user.id == 124493) { // Cokiezi
                     aim_avg *= 1.05
                     speed_avg *= 1.075
@@ -760,6 +766,10 @@ async function osu_card(message = new Message(), mode) {
                 } else if (user.id == 4504101) { // whitecat
                     aim_avg *= 1.075
                     speed_avg *= 1.025
+                    acc_avg *= 1.025
+                } else if (user.id == 6447454) { // merami
+                    aim_avg *= 1.025
+                    speed_avg *= 1.075
                     acc_avg *= 1.025
                 }
                 aim_avg = aim_avg.toFixed(0)
@@ -817,7 +827,7 @@ async function osu_card(message = new Message(), mode) {
             skillname = `Aim:\nSpeed:\nAccuracy:`
             skillnumber = `${aim_avg}\n${speed_avg}\n${acc_avg}`
             stat_number_x = 170
-            if (special == 'normal' || special == 'whitecat') {
+            if (special) {
                 skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
             }
         }
