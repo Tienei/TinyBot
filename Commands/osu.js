@@ -16,7 +16,8 @@ let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
 let osuApi_no_bm = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: false
-});
+}); //This is unused.
+
 let db = ''
 let user_data = {}
 let stored_map_ID = []
@@ -69,7 +70,7 @@ function ping(message = new Message(), command) {
             let timelater = Date.now()
             let ping = timelater - timenow
             let visual = '['
-            for (var i = 0; i < 20; i++) {
+            for (let i = 0; i < 20; i++) {
                 let comp = (100 + Math.pow(100, 0.50 * Math.log(i)))
                 if (ping < comp) {
                     visual += '⎯'
@@ -152,7 +153,7 @@ async function osu(message = new Message(), mode) {
             } else {
                 events = user.events.length
             }
-            for (var i = 0; i < events; i++) {
+            for (let i = 0; i < events; i++) {
                 let text = user.events[i].html.replace(/(<([^>]+)>)/ig,"")
                 event += `\n ${text}`
             }
@@ -194,7 +195,7 @@ async function osu(message = new Message(), mode) {
             let mod_avg_all = []
             let mod_avg = []
             let sortedmod = ''
-            for (var i = 0; i < 50; i++) {
+            for (let i = 0; i < 50; i++) {
                 let modandbit = fx.osu.mods_enum(best[i].mod)
                 if (modenum == 0) {
                     let parser = await fx.osu.precalc(best[i].beatmapid)
@@ -255,7 +256,7 @@ async function osu(message = new Message(), mode) {
                 if (modandbit.shortenmod == "+No Mod") {
                     mod_avg_all.push('No Mod')
                 } else {
-                    for (var m = 0; m < modandbit.shortenmod.length-1; m+=2) {
+                    for (let m = 0; m < modandbit.shortenmod.length-1; m+=2) {
                         mod_avg_all.push(modandbit.shortenmod.substr(m+1, 2))
                     }
                 }
@@ -263,9 +264,9 @@ async function osu(message = new Message(), mode) {
             timetotal_avg = Number(timetotal_avg / 50).toFixed(0)
             timedrain_avg = Number(timedrain_avg / 50).toFixed(0)
             let modtofind = ['No Mod','NF','EZ','TD','HD','HR','SD','DT','HT','NC','FL','SO','PF']
-            for (var i in modtofind) {
+            for (let i in modtofind) {
                 let count = 0
-                for (var m in mod_avg_all) {
+                for (let m in mod_avg_all) {
                     if (mod_avg_all[m] == modtofind[i]) {
                         count += 1
                     }
@@ -277,7 +278,7 @@ async function osu(message = new Message(), mode) {
             }
             mod_avg.sort(function (a,b) {return b.count - a.count})
             mod_avg.splice(3,3)
-            for (var i in mod_avg) {
+            for (let i in mod_avg) {
                 sortedmod += '``' + mod_avg[i].mod + '``: ' + `${Number(mod_avg[i].count / mod_avg_all.length * 100).toFixed(2)}% `
             }
             if (modenum == 0) {
@@ -320,7 +321,7 @@ Most common mods: ${sortedmod}`)
             }
             msg1.edit({embed})
             if (mode == "Bancho-std") {
-                for (var [key,value] of Object.entries(user_data)) {
+                for (let [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
@@ -367,7 +368,7 @@ Most common mods: ${sortedmod}`)
                                                 refresh)
             message.channel.send({embed});
             if (mode == "Bancho-std") {
-                for (var [key,value] of Object.entries(user_data)) {
+                for (let [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
@@ -409,7 +410,7 @@ Most common mods: ${sortedmod}`)
                 chartPadding: {left: 60},
             };
           
-            for (var i in rankHistory) {
+            for (let i in rankHistory) {
                 rankHistory[i] = rankHistory[i] * -1
             }
 
@@ -434,30 +435,30 @@ Most common mods: ${sortedmod}`)
             // Get line
           
             graphline = graph('path')
-            for (var i = 0; i < graphline.length; i++) {
+            for (let i = 0; i < graphline.length; i++) {
                 graph(graphline[i]).attr('style', 'stroke: rgb(255,0,255); stroke-width: 3; fill: none')
             }
           
             // Get grid (h/v)
           
             gridline = graph('line[class="ct-grid ct-horizontal"]')
-            for (var i = 0; i < gridline.length; i+=Math.round(gridline.length / 6)) {
+            for (let i = 0; i < gridline.length; i+=Math.round(gridline.length / 6)) {
                 graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
             }
             graph(gridline[gridline.length-1]).attr('style', 'stroke: white; stroke-width: 2')
             gridline = graph('line[class="ct-grid ct-vertical"]')
-            for (var i = 0; i < gridline.length; i++) {
+            for (let i = 0; i < gridline.length; i++) {
                 graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
             }
           
             // Get Text
           
             let text = graph('text')
-            for (var i = 0; i < text.length; i++) {
+            for (let i = 0; i < text.length; i++) {
                 graph(text[i]).attr('style', 'font-family: Comfortaa; font-size: 18px; font-weight: 900; fill: white;')
             }
             text = graph('text[class="ct-label ct-vertical ct-start"]')
-            for (var i = 0; i < text.length; i++) {
+            for (let i = 0; i < text.length; i++) {
                 graph(text[i]).attr('style', 'font-family: Comfortaa; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
             }
             let linegraph = graph('div[class="ct-chart"]').html()
@@ -490,7 +491,7 @@ Most common mods: ${sortedmod}`)
             .setImage('attachment://rank.png');
             message.channel.send({embed})
             if (mode == "Bancho-std") {
-                for (var [key,value] of Object.entries(user_data)) {
+                for (let [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
@@ -520,7 +521,7 @@ Most common mods: ${sortedmod}`)
             let top_speed = []
             let top_old_acc = []
             let top_acc = []
-            for (var i = 0; i < 50; i++) {
+            for (let i = 0; i < 50; i++) {
                 let modandbit = fx.osu.mods_enum(best[i].mod)
                 if (modenum == 0) {
                     let parser = await fx.osu.precalc(best[i].beatmapid)
@@ -552,7 +553,7 @@ Most common mods: ${sortedmod}`)
             let text = ''
             function textloading (top) {
                 let text = ''
-                for (var i in top) {
+                for (let i in top) {
                     text += `${top[i].beatmap}: **${Number(top[i].skill).toFixed(2)}★**\n`
                 }
                 field.push(text)
@@ -577,7 +578,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
             .addField('Top acc skill:', field[4]);
             msg1.edit({embed})
             if (mode == "Bancho-std") {
-                for (var [key,value] of Object.entries(user_data)) {
+                for (let [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
@@ -614,7 +615,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                                                 refresh)
             message.channel.send({embed});
             if (mode == "Bancho-std") {
-                for (var [key,value] of Object.entries(user_data)) {
+                for (let [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {
                         user_data[key].osurank = user.rank
                         user_data[key].osucountry = user.country
@@ -651,12 +652,12 @@ async function osu_card(message = new Message(), mode) {
             throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
         }
         let msg1 = await message.channel.send('Calculating skills...') 
-        var star_avg = 0
-        var aim_avg = 0
-        var speed_avg = 0
-        var finger_control_avg = 0
-        var acc_avg = 0
-        for (var i = 0; i < 50; i++) {
+        let star_avg = 0
+        let aim_avg = 0
+        let speed_avg = 0
+        let finger_control_avg = 0
+        let acc_avg = 0
+        for (let i = 0; i < 50; i++) {
             let modandbit = fx.osu.mods_enum(best[i].mod)
             if (modenum == 0) {
                 let parser = await fx.osu.precalc(best[i].beatmapid)
@@ -717,7 +718,7 @@ async function osu_card(message = new Message(), mode) {
         let special = false
         if (modenum == 0) {
             let s_player = [124493, 39828, 50265, 2558286, 5339515, 4650315]
-            for (var i in s_player) {
+            for (let i in s_player) {
                 if (user.id == s_player[i]) {
                     special = 'normal'
                     card = await jimp.read('./osu_card/legendary_osu.png')
@@ -857,7 +858,7 @@ async function osu_card(message = new Message(), mode) {
         let star_width = 32
         let width = (Math.floor(star_avg) + ((star_avg % 1) >= 0.5 ? 1 : 0)) * star_width + 2
         let starholder = await new jimp(width, 33, 0x00000000)
-        for (var i = 0; i < Math.ceil(star_avg); i++) {
+        for (let i = 0; i < Math.ceil(star_avg); i++) {
             if (i+1 > Math.floor(star_avg)) {
                 starholder.composite(halfstar, i*star_width, 0)
             } else {
@@ -936,7 +937,7 @@ async function osutop(message = new Message(), mode) {
             if (best[Number(numberrange[0]) - 1] == undefined) {
                 throw "Top play doesn't found!"
             }
-            for (var i = Number(numberrange[0]) - 1; i < Number(numberrange[1]) ; i++) {
+            for (let i = Number(numberrange[0]) - 1; i < Number(numberrange[1]) ; i++) {
                 let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
@@ -973,7 +974,7 @@ async function osutop(message = new Message(), mode) {
                 b1 = Date.parse(b.date)
                 return b1 - a1
             })
-            for (var i = 0; i < (best.length > 5 ? 5 : best.length); i++) {
+            for (let i = 0; i < (best.length > 5 ? 5 : best.length); i++) {
                 let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
@@ -1004,7 +1005,7 @@ async function osutop(message = new Message(), mode) {
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             let checktop = 0
             let username = user.name
-            for (var i = 0; i < best.length; i++) {
+            for (let i = 0; i < best.length; i++) {
                 let score_mod = best[i].mod
                 if (score_mod == mod && checktop < 5) {
                     checktop += 1
@@ -1044,7 +1045,7 @@ async function osutop(message = new Message(), mode) {
             }
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             let username = user.name
-            for (var i = best.length - 1; i > -1; i--) {
+            for (let i = best.length - 1; i > -1; i--) {
                 if (best[i].pp > gtpp) {
                     message.channel.send(`${username} has **${i+1} plays** worth more than **${gtpp}pp**`)
                     break
@@ -1065,7 +1066,7 @@ async function osutop(message = new Message(), mode) {
             let username = user.name
             let loadpage = async function (page, pages) {
                 let gathering = ''
-                for (var n = 0; n < 5; n++) {
+                for (let n = 0; n < 5; n++) {
                     let i = (page - 1) * 5 - 1 + (n+1)
                     if (i <= best.length- 1) {
                         let rank = fx.osu.ranking_letter(best[i].letter)
@@ -1101,7 +1102,7 @@ async function osutop(message = new Message(), mode) {
             }
             let userid = best[0].userid
             let maplength = best.length > 5 ? 5 : best.length
-            for (var i = 0; i < maplength; i++) {
+            for (let i = 0; i < maplength; i++) {
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
                 let shortenmod = modandbit.shortenmod
@@ -1134,7 +1135,7 @@ async function osutop(message = new Message(), mode) {
             let userid = best[0].userid
             let loadpage = async function (page, pages) {
                 let gathering = ''
-                for (var n = 0; n < 5; n++) {
+                for (let n = 0; n < 5; n++) {
                     let i = (page - 1) * 5 - 1 + (n+1)
                     if (i <= best.length- 1) {
                         let rank = fx.osu.ranking_letter(best[i].letter)
@@ -1166,7 +1167,7 @@ async function osutop(message = new Message(), mode) {
             }
             let userid = best[0].userid
             let username = user.username
-            for (var i = 0; i < (best.length > 5 ? 5 : best.length); i++) {
+            for (let i = 0; i < (best.length > 5 ? 5 : best.length); i++) {
                 let rank = fx.osu.ranking_letter(best[i].letter)
                 let modandbit = fx.osu.mods_enum(best[i].mod)
                 let shortenmod = modandbit.shortenmod
@@ -1278,7 +1279,7 @@ async function recent(message = new Message()) {
                 throw 'No play found within 24 hours of this user'
             }
             let osuname = getplayer.username
-            for (var i in recent) {
+            for (let i in recent) {
                 let rank = fx.osu.ranking_letter(recent[i].letter)
                 let modandbit = fx.osu.mods_enum(recent[i].mod)
                 let shortenmod = modandbit.shortenmod
@@ -1409,7 +1410,7 @@ async function compare(message = new Message()) {
             if (modenum == 0) {parser = await fx.osu.precalc(storedid)}
             let loadpage = async function (page, pages) {
                 let gathering = ''
-                for (var n = 0; n < 5; n++) {
+                for (let n = 0; n < 5; n++) {
                     let i = (page - 1) * 5 - 1 + (n+1)
                     if (i <= scores.length- 1) {
                         let rank = fx.osu.ranking_letter(scores[i].letter)
@@ -1529,7 +1530,7 @@ async function score(message = new Message()) {
         cache_beatmap_ID(message, beatmap.beatmapid, mode)
         let loadpage = async function (page, pages) {
             let gathering = ''
-            for (var n = 0; n < 5; n++) {
+            for (let n = 0; n < 5; n++) {
                 let i = (page - 1) * 5 - 1 + (n+1)
                 if (i <= scores.length- 1) {
                     let rank = fx.osu.ranking_letter(scores[i].letter)
@@ -1648,7 +1649,7 @@ async function map(message = new Message()){
         }
         let bitpresent = fx.osu.mods_enum(mods).bitpresent
         let mode = ''
-        for (var i = stored_map_ID.length -1 ; i > -1; i--) {
+        for (let i = stored_map_ID.length -1 ; i > -1; i--) {
             if (message.guild !== null) {
                 if (stored_map_ID[i].server !== undefined) {
                     if (message.channel.id == stored_map_ID[i].server) {
@@ -1677,7 +1678,7 @@ async function map(message = new Message()){
             if (modenum == 0) {parser = await fx.osu.precalc(beatmap.beatmapid)}
             let loadpage = async function (page, pages) {
                 let gathering = ''
-                for (var n = 0; n < 5; n++) {
+                for (let n = 0; n < 5; n++) {
                     let i = (page - 1) * 5 - 1 + (n+1)
                     if (i <= scores.length- 1) {
                         let rank = fx.osu.ranking_letter(scores[i].letter)
@@ -1782,7 +1783,7 @@ async function beatmaplinkdetail(message = new Message(), bot_prefix) {
         //Detect if this a command or link alone
         let option = msg.split(" ")
         if (option[0].substring(0, bot_prefix.length) == bot_prefix) return;
-        for (var m = 0; m < msg.length; m++) {
+        for (let m = 0; m < msg.length; m++) {
             if (msg.substr(m,21) == 'https://osu.ppy.sh/b/') {
                 let data = msg.split("/")[4]
                 beatmapid.push(data.split(" ")[0])
@@ -1891,7 +1892,7 @@ async function topleaderboard(message = new Message(), type) {
         }
         let loadpage = function (page, pages) {
             let gathering = ''
-            for (var n = 0; n < 10; n++) {
+            for (let n = 0; n < 10; n++) {
                 let i = (page - 1) * 10 - 1 + (n+1)
                 if (i <= table.length- 1) {
                     let player = leaderboard(table[i]).children('td').children('div[class=ranking-page-table__user-link]').children().text().replace(/\s+/g," ").substring(1)
@@ -1931,7 +1932,7 @@ async function serverleaderboard(message = new Message()) {
         fx.general.cmd_cooldown.set(message, command, 3000)
         let player = []
         let members = message.guild.members.cache.array()
-        for (var i = 0; i < members.length; i++) {
+        for (let i = 0; i < members.length; i++) {
             let user = members[i]
             if (user_data[user.id]) {
                 if (user_data[user.id].osurank !== undefined) {
@@ -1944,7 +1945,7 @@ async function serverleaderboard(message = new Message()) {
         })
         let loadpage = function (page, pages) {
             let gathering = ''
-            for (var n = 0; n < 10; n++) {
+            for (let n = 0; n < 10; n++) {
                 let top = (page - 1) * 10 - 1 + (n+1)
                 if (top <= player.length - 1) {
                     gathering += `${top+1}. :flag_${player[top].country}: **${player[top].osuname}** (${player[top].username}) | **Rank:** ${player[top].rank}\n`
