@@ -41,7 +41,7 @@ async function corona_live_update(message = new Message()) {
     country_data.sort((a,b) => b.case - a.case)
     let loadpage = async function (page, pages) {
         let gathering = ''
-        for (var n = 0; n < 10; n++) {
+        for (let n = 0; n < 10; n++) {
             let i = (page - 1) * 10 - 1 + (n+1)
             if (i <= country_data.length- 1) {
                 let data = country_list.find(c => c.Country_Name.toLowerCase().includes(country_data[i].name.toLowerCase()))
