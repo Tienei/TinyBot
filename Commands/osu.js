@@ -341,7 +341,7 @@ Most common mods: ${sortedmod}`)
             let table = leaderboard('table[class="ranking-page-table"]').children('tbody').children()
             let player = leaderboard(table[49 - ((page*50) - rank)]).children('td').children('div[class=ranking-page-table__user-link]').children('a[class="ranking-page-table__user-link-text js-usercard"]').attr('href').split('/')
             player = player[player.length-1]
-            let user = await fx.osu.get_osu_profile(player,0 ,0,false,false)
+            let user = await fx.osu.get_osu_profile(player,'Bancho-std',0,false,false)
             if (user.username == undefined) {
                 throw 'User not found!'
             }
