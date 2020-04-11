@@ -36,7 +36,7 @@ module.exports = function (user_data, message = new Message(), name, type) {
         } else {
             let id = ''
             if (name.includes('@') == true) {
-                let id = message.mentions.users.first().id
+                id = message.mentions.users.first().id
                 if (user_data[id] !== undefined) {
                     if (type == 'Bancho') {
                         osuname = user_data[id].osuname
