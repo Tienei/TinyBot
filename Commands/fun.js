@@ -65,7 +65,7 @@ async function trivia(message = new Message()){
     }
     let embed = new MessageEmbed()
     .setColor(embedcolor)
-    .setAuthor(`Catergory: ${decodeURIComponent(question.results[0].category)}`, message.client.user.avatarURL())
+    .setAuthor(`Category: ${decodeURIComponent(question.results[0].category)}`, message.client.user.avatarURL())
     .setDescription(description)
     let msg1 = await message.channel.send({embed})
     if (question_type == 'multiple') {
