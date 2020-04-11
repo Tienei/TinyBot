@@ -7,21 +7,21 @@ async function trivia(message = new Message()){
         arr.sort(() => Math.random() - 0.5);
         return arr;
       }
-    function isCorrect(awnsers, correct_awnser, pos) {
+    function isCorrect(answers, correct_awnser, pos) {
         let correct = false
-        if (decodeURIComponent(correct_awnser) == awnsers[pos]) {
+        if (decodeURIComponent(correct_awnser) == answers[pos]) {
             correct = true
         }
         return correct
     }
     function stopCollection(reactions, reason) {
-        for (var i in reactions) {
+        for (let i in reactions) {
             reactions[i].stop(reason)
         }
     }
     function checkAnswer(reactions, shuffled_answers, question, pos) {
         if (isCorrect(shuffled_answers, question.results[0].correct_answer, pos)) {
-            message.channel.send('Congratulation! Your answer is correct!')
+            message.channel.send('Congratulations! Your answer is correct!')
             stopCollection(reactions, 'correct')
         } else {
             message.channel.send(`Incorrect! The correct answer is **${decodeURIComponent(question.results[0].correct_answer)}**`)
@@ -31,14 +31,14 @@ async function trivia(message = new Message()){
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
     let question = (await request.get('https://opentdb.com/api.php?amount=1&encode=url3986')).body
     let question_type = question.results[0].type
-    let awnsers = []
+    let answers = []
     let shuffled_answers = []
     if (question_type == 'multiple') {
-        awnsers.push(decodeURIComponent(question.results[0].correct_answer))
-        for (var i in question.results[0].incorrect_answers) {
-            awnsers.push(decodeURIComponent(question.results[0].incorrect_answers[i]))
+        answers.push(decodeURIComponent(question.results[0].correct_answer))
+        for (let i in question.results[0].incorrect_answers) {
+            answers.push(decodeURIComponent(question.results[0].incorrect_answers[i]))
         }
-        shuffled_answers = shuffle(awnsers)
+        shuffled_answers = shuffle(answers)
     } else if (question_type == 'boolean') {
         console.log(decodeURIComponent(question.results[0].correct_answer))
         if (decodeURIComponent(question.results[0].correct_answer) == 'True') {
@@ -65,7 +65,7 @@ async function trivia(message = new Message()){
     }
     let embed = new MessageEmbed()
     .setColor(embedcolor)
-    .setAuthor(`Catergory: ${decodeURIComponent(question.results[0].category)}`, message.client.user.avatarURL())
+    .setAuthor(`Category: ${decodeURIComponent(question.results[0].category)}`, message.client.user.avatarURL())
     .setDescription(description)
     let msg1 = await message.channel.send({embed})
     if (question_type == 'multiple') {
@@ -73,14 +73,14 @@ async function trivia(message = new Message()){
         await msg1.react('2️⃣')
         await msg1.react('3️⃣')
         await msg1.react('4️⃣')
-        var onefilter = (reaction, user) => reaction.emoji.name == "1️⃣" && user.id == message.author.id
-        var twofilter = (reaction, user) => reaction.emoji.name == "2️⃣" && user.id == message.author.id
-        var threefilter = (reaction, user) => reaction.emoji.name == "3️⃣" && user.id == message.author.id
-        var fourfilter = (reaction, user) => reaction.emoji.name == "4️⃣" && user.id == message.author.id
-        var react_one = msg1.createReactionCollector(onefilter, {time: 10000, maxEmojis: 1}) 
-        var react_two = msg1.createReactionCollector(twofilter, {time: 10000, maxEmojis: 1})
-        var react_three = msg1.createReactionCollector(threefilter, {time: 10000, maxEmojis: 1}) 
-        var react_four = msg1.createReactionCollector(fourfilter, {time: 10000, maxEmojis: 1})
+        let onefilter = (reaction, user) => reaction.emoji.name == "1️⃣" && user.id == message.author.id
+        let twofilter = (reaction, user) => reaction.emoji.name == "2️⃣" && user.id == message.author.id
+        let threefilter = (reaction, user) => reaction.emoji.name == "3️⃣" && user.id == message.author.id
+        let fourfilter = (reaction, user) => reaction.emoji.name == "4️⃣" && user.id == message.author.id
+        let react_one = msg1.createReactionCollector(onefilter, {time: 10000, maxEmojis: 1}) 
+        let react_two = msg1.createReactionCollector(twofilter, {time: 10000, maxEmojis: 1})
+        let react_three = msg1.createReactionCollector(threefilter, {time: 10000, maxEmojis: 1}) 
+        let react_four = msg1.createReactionCollector(fourfilter, {time: 10000, maxEmojis: 1})
         react_one.on('collect', reaction => {
             checkAnswer([react_one, react_two, react_three, react_four], shuffled_answers, question, 0)
         })
@@ -101,10 +101,10 @@ async function trivia(message = new Message()){
     } else if (question_type == 'boolean') {
         await msg1.react('❌')
         await msg1.react('✔️')
-        var falsefilter = (reaction, user) => reaction.emoji.name == "❌" && user.id == message.author.id
-        var truefilter = (reaction, user) => reaction.emoji.name == "✔️" && user.id == message.author.id
-        var react_false = msg1.createReactionCollector(falsefilter, {time: 10000, maxEmojis: 1}) 
-        var react_true = msg1.createReactionCollector(truefilter, {time: 10000, maxEmojis: 1})
+        let falsefilter = (reaction, user) => reaction.emoji.name == "❌" && user.id == message.author.id
+        let truefilter = (reaction, user) => reaction.emoji.name == "✔️" && user.id == message.author.id
+        let react_false = msg1.createReactionCollector(falsefilter, {time: 10000, maxEmojis: 1}) 
+        let react_true = msg1.createReactionCollector(truefilter, {time: 10000, maxEmojis: 1})
         react_false.on('collect', reaction => {
             checkAnswer([react_false, react_true], shuffled_answers, question, 1)
         })

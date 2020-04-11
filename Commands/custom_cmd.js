@@ -9,7 +9,7 @@ function custom_cmd(message = new Message(), custom_command) {
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         let start = 11
         let option = ''
-        for (var i = start; i <= msg.length; i++) {
+        for (let i = start; i <= msg.length; i++) {
             if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
                 option = msg.substring(start,i)
                 start = i + 1
@@ -19,7 +19,7 @@ function custom_cmd(message = new Message(), custom_command) {
         if (option == "add") {
             let cmd = ""
             let respond = ""
-            for (var i = start; i < msg.length; i++) {
+            for (let i = start; i < msg.length; i++) {
                 if (msg.substr(i,1) == ' ') {
                     cmd = message.content.substring(start,i)
                     respond = message.content.substring(i+1)
@@ -40,7 +40,7 @@ function custom_cmd(message = new Message(), custom_command) {
         }
         if (option == "list") {
             let savedcmd = ""
-            for (var i = 0; i < custom_command[message.guild.id].length; i++) {
+            for (let i = 0; i < custom_command[message.guild.id].length; i++) {
                 savedcmd += "``" + custom_command[message.guild.id][i].cmd + "``: " + custom_command[message.guild.id][i].respond
             }
             const embed = new MessageEmbed()
@@ -51,14 +51,14 @@ function custom_cmd(message = new Message(), custom_command) {
         }
         if (option == "remove") {
             let cmd = ""
-            for (var i = start; i <= msg.length; i++) {
+            for (let i = start; i <= msg.length; i++) {
                 if (msg.substr(i,1) == ' ' || msg.substr(i,1) == '') {
                     cmd = msg.substring(start,i)
                     break
                 }
             }
             if (custom_command[message.guild.id].length > 1) {
-                for (var i = 0; i < custom_command[message.guild.id].length; i++) {
+                for (let i = 0; i < custom_command[message.guild.id].length; i++) {
                     if (custom_command[message.guild.id][i].cmd == cmd) {
                         custom_command[message.guild.id].splice(i,1)
                     }
@@ -108,9 +108,9 @@ function cmd_detection(message = new Message(), custom_command) {
         }
     }
     let requireAdmin = false
-    for (var s = 0; s < respond.length; s++) {
+    for (let s = 0; s < respond.length; s++) {
         if (respond.substr(s,1) == '{') {
-            for (var e = s; e < respond.length; e++) {
+            for (let e = s; e < respond.length; e++) {
                 if (respond.substr(e,1) == '}') {
                     let type = respond.substring(s+1,e)
                     type = type.replace(".", " ")

@@ -4,7 +4,7 @@ const fx = require('./../Functions/load_fx')
 const package = require('../package.json')
 const { Message, MessageEmbed } = require('discord.js')
 
-var bot_command_help = []
+let bot_command_help = []
 
 function help(message = new Message(), command) {
     try {
@@ -91,19 +91,19 @@ function help(message = new Message(), command) {
             addhelp('definevar', 'Defined Variable for Custom command', 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence`` channel: ``selfname`` ``selflink`` ``members`` server: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``', '{require:admin}: Need Administrator to enable the command {$N}: Get text in message seperated by space (Not include command) {send:channelname "message"}: Send to a channel with a specific message', 'do ``!help customcmd``')
             addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')            
         }
-        var generalhelp = '**--- [General]:**\n`avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `corona`'
-        var funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
-        var osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
-        var akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatsukiset` `akatavatar` `akattop` `rxakatsuki` `rxakattop`'
-        var ripplehelp = '**--- [Ripple]:**\n`ripple` `rippleset` `rippleavatar` `rippletop`'
-        var horizonhelp = '**--- [Horizon]:**\n`horizon` `horizonset` `horizonavatar` `horizontop` `rxhorizon` `rxhorizon`'
-        var enjuuhelp = '**--- [Enjuu]:**\n`enjuu` `enjuuset` `enjuuavatar` `enjuutop`'
-        var otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
-        var text = ''
+        let generalhelp = '**--- [General]:**\n`avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `corona`'
+        let funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
+        let osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
+        let akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatsukiset` `akatavatar` `akattop` `rxakatsuki` `rxakattop`'
+        let ripplehelp = '**--- [Ripple]:**\n`ripple` `rippleset` `rippleavatar` `rippletop`'
+        let horizonhelp = '**--- [Horizon]:**\n`horizon` `horizonset` `horizonavatar` `horizontop` `rxhorizon` `rxhorizon`'
+        let enjuuhelp = '**--- [Enjuu]:**\n`enjuu` `enjuuset` `enjuuavatar` `enjuutop`'
+        let otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
+        let text = ''
         if (msg.substring(command.length+1) == '') {
             text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${horizonhelp}\n\n${enjuuhelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
         } else {
-            var getcmd = msg.substring(command.length+1)
+            let getcmd = msg.substring(command.length+1)
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
                 throw 'No command was found!'
             }
@@ -123,7 +123,7 @@ function help(message = new Message(), command) {
                 getcmd = 'leaderboard'
             }
             text = bot_command_help.find(helpcmd => helpcmd.command == getcmd).helptext
-            for (var i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 text = text.replace('{prefix}', config.config.bot_prefix)
             }
         }
@@ -310,7 +310,7 @@ function checkcomp(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
     let compatibility = []
     let permissions = ['SEND_MESSAGES', 'ATTACH_FILES', 'ADD_REACTIONS', 'EMBED_LINKS', 'READ_MESSAGE_HISTORY', 'USE_EXTERNAL_EMOJIS']
-    for (var i in permissions) {
+    for (let i in permissions) {
         if (message.guild.me.hasPermission(permissions[i]) == true) {
             compatibility.push('✅')
         } else {

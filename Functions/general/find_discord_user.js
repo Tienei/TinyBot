@@ -11,7 +11,7 @@ module.exports = function (message = new Message(), name = name.toLowerCase()) {
             }
         } else if (message.guild !== null) {
             let member = message.guild.members.array()
-            for (var i = 0; i < message.guild.memberCount; i++) {
+            for (let i = 0; i < message.guild.memberCount; i++) {
                 if (member[i].nickname !== null) {
                     if (member[i].nickname.substring(0, name.length).toLowerCase() == name) {
                         user = member[i].user
