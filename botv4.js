@@ -1,10 +1,10 @@
-var user_data = {}
-var osu_track = []
-var stored_map_ID = []
-var saved_map_id = []
-var easter_egg = {}
-var custom_command = {}
-var server_data = {}
+let user_data = {}
+let osu_track = []
+let stored_map_ID = []
+let saved_map_id = []
+let easter_egg = {}
+let custom_command = {}
+let server_data = {}
 
 require('dotenv').config();
 const Discord = require('discord.js');
@@ -22,21 +22,21 @@ const osu_client = clients.osu_client
 const mongojs = require('mongojs')
 const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id"])
 
-var osuApi = new nodeosu.Api(process.env.OSU_KEY, {
+let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
 });
 
-var osuApi_no_bm = new nodeosu.Api(process.env.OSU_KEY, {
+let osuApi_no_bm = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: false
 });
 
-var ee = JSON.parse(process.env.EASTER_EGG)
-var ee_number = 0
+let ee = JSON.parse(process.env.EASTER_EGG)
+let ee_number = 0
 
-var loading = 2
-var refresh = 0
+let loading = 2
+let refresh = 0
 
 console.log(!config.config.debug.disable_db_save ? `
 -----------------------------------------[WARNING]-----------------------------------------
@@ -69,7 +69,7 @@ bot.on("ready", (ready) => {
             easter_egg = await new Promise(resolve => {
                 db.easter_egg.find((err, docs) => resolve(docs[0]));
             });
-            for (var i = 0 ; i < Object.keys(ee).length; i++) {
+            for (let i = 0 ; i < Object.keys(ee).length; i++) {
                 ee_number += '0'
             }
 
@@ -98,9 +98,7 @@ bot.on("ready", (ready) => {
     getFile()
     
     // Server count
-    async function server_count() {
-        bot.channels.cache.get("572093442042232842").setName(`Server Count: ${bot.guilds.cache.size}`)
-    }
+    const server_count = async () => bot.channels.cache.get("572093442042232842").setName(`Server Count: ${bot.guilds.cache.size}`)
     setInterval(server_count, 10000)
 
     // osutrack
@@ -153,21 +151,21 @@ bot.on("ready", (ready) => {
                     let a_mode = modedetail.a_mode
                     let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
                     best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
-                    for (var i = 0; i < best.length; i++) {
+                    for (let i = 0; i < best.length; i++) {
                         console.log('Found')
-                        var user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
+                        let user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
                         console.log(best[i].beatmapid, mode)
-                        var beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
-                        var rank = fx.osu.ranking_letter(best[i].letter)
-                        var modandbit = fx.osu.mods_enum(best[i].mod, 'text')
-                        var shortenmod = modandbit.shortenmod
-                        var bitpresent = modandbit.bitpresent
-                        var pp = best[i].pp
-                        var ppgain = (Number(user.pp).toFixed(2) - Number(player_mode_detail.lasttotalpp)).toFixed(2)
+                        let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
+                        let rank = fx.osu.ranking_letter(best[i].letter)
+                        let modandbit = fx.osu.mods_enum(best[i].mod, 'text')
+                        let shortenmod = modandbit.shortenmod
+                        let bitpresent = modandbit.bitpresent
+                        let pp = best[i].pp
+                        let ppgain = (Number(user.pp).toFixed(2) - Number(player_mode_detail.lasttotalpp)).toFixed(2)
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
                         let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
-                        var star = fc_stat.star
+                        let star = fc_stat.star
                         let fcguess = ''
                         if (best[i].letter == 'F') {
                             pp = 'No PP'
@@ -214,13 +212,13 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
 bot.on("guildMemberAdd", (member) => {
     async function welcome_message() {
         if (member.guild.id == "450576647976910869") {
-            var imageholder = await jimp.read('./image/welcomebanner.png')
-            var avatar = await jimp.read(member.user.avatarURL())
-            var placeholder = await new jimp(563, 125)
+            let imageholder = await jimp.read('./image/welcomebanner.png')
+            let avatar = await jimp.read(member.user.avatarURL())
+            let placeholder = await new jimp(563, 125)
             avatar.resize(105,105)
             placeholder.composite(avatar, 214, 10)
             placeholder.composite(imageholder,0,0)
-            var text = await jimp.loadFont('./font/anjelika_36_white.fnt')
+            let text = await jimp.loadFont('./font/anjelika_36_white.fnt')
             placeholder.print(text, 347, 10, member.user.username + ',')
             placeholder.write('./welcome.png')
             bot.channels.cache.get("487479898903150612").send(`<@${member.id}>`, {files: ['./welcome.png']})
@@ -234,12 +232,12 @@ bot.on("message", (message) => {
         return;
     }
     if (message.author.bot == false && loading == 0) {
-        var msg = message.content.toLowerCase();
+        let msg = message.content.toLowerCase();
         refresh = Math.round(Math.random()* 2147483648)
-        var command = msg.split(' ')[0]
-        var embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
+        let command = msg.split(' ')[0]
+        let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
 
-        var bot_prefix = config.config.bot_default_prefix
+        let bot_prefix = config.config.bot_default_prefix
 
         if (message.guild !== null) {
             if (server_data[message.guild.id] !== undefined) {
@@ -284,7 +282,7 @@ bot.on("message", (message) => {
         }
 
         if (msg.includes(`<@${bot.user.id}>`) == true || msg.includes(`<@!${bot.user.id}>`) == true) {
-            var respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,
+            let respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,
                             `Why you keep pinging me?`,
                             `Stop pinging me! <:chinoangry:450686707881213972>`,
                             `What do you need senpai? <:chinohappy:450684046129758208>`,
@@ -297,7 +295,7 @@ bot.on("message", (message) => {
                             `Me don't know what me is doing right now qwq`,
                             `Me love my senpai`,
                             `Please don't bully my senpai!`]
-            var roll = Math.floor(Math.random()*respone.length)
+            let roll = Math.floor(Math.random()*respone.length)
             message.channel.send(respone[roll])
         }
 
@@ -325,7 +323,7 @@ bot.on("message", (message) => {
 
         if (command == bot_prefix + 'ee') {
             if (easter_egg[message.author.id] !== undefined) {
-                var number = easter_egg[message.author.id]
+                let number = easter_egg[message.author.id]
                 message.channel.send(`You have found: **${number.match(/1/g).length} easter egg(s)**`)
             } else {
                 message.channel.send("You haven't found any!")
@@ -435,8 +433,8 @@ bot.on("message", (message) => {
                     throw 'You can only set top as a numeric value. Please try again'
                 }
                 let type = fx.osu.get_mode_detail(mode).check_type
-                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
-                var name = user.username
+                let user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
+                let name = user.username
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
                 }
@@ -511,8 +509,8 @@ bot.on("message", (message) => {
                     type = 'Enjuu'
                     mode = 'Enjuu-std'
                 }
-                var user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
-                var name = user.username
+                let user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
+                let name = user.username
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
                 }
@@ -547,8 +545,8 @@ bot.on("message", (message) => {
         }
         
         async function osutracklist() {
-            var currentlytrack = ''
-            for (var i = 0; i < osu_track.length; i++) {
+            let currentlytrack = ''
+            for (let i = 0; i < osu_track.length; i++) {
                 let channel = osu_track[i].trackonchannel.find(channel => channel.id == message.channel.id)
                 if (channel) {
                     let modes = ''
@@ -723,7 +721,7 @@ bot.on("message", (message) => {
         }
         // .osu Detection
         if (message.attachments.array().length > 0) {
-            var file = message.attachments.first()
+            let file = message.attachments.first()
             if (file.name.substring(file.name.length - 4, file.name.length) == ".osu") {
                 cmds.osu.beatmapfiledetail(message)           
             }
@@ -735,7 +733,7 @@ bot.on("message", (message) => {
                 try {
                     let guilds = bot.guilds.array()
                     let msg_send = message.content.substring(9)
-                    for (var i in guilds) {
+                    for (let i in guilds) {
                         let channels = guilds[i].channels.array().reverse()
                         let osu_filter = (c) => c.name.toLowerCase().substring(0,3) == 'osu' && c.guild.me.permissionsIn(c).has(['VIEW_CHANNEL', 'SEND_MESSAGES']) && c.type == 'text'
                         let bot_cmd_filter = (c) => c.name.toLowerCase().substring(0,3) == 'bot' && c.guild.me.permissionsIn(c).has(['VIEW_CHANNEL', 'SEND_MESSAGES']) && c.type == 'text'
@@ -752,21 +750,21 @@ bot.on("message", (message) => {
             }
             if (command == bot_prefix + 'respond') {
                 async function respond() {
-                    var channelid = msg.split(" ")[1]
-                    var msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
+                    let channelid = msg.split(" ")[1]
+                    let msg_send = message.content.substring(msg.indexOf(channelid) + channelid.length)
                     const embed = new Discord.MessageEmbed()
                     .setAuthor(`${message.author.username} responded`, message.author.avatarURL())
                     .setColor(embedcolor)
                     .setDescription(msg_send);
                     bot.channels.cache.get(channelid).send({embed})
-                    var msg1 = await message.channel.send('Message has been sent')
+                    let msg1 = await message.channel.send('Message has been sent')
                     setTimeout(function(){ msg1.delete(); }, 3000);
                 }
                 respond()
             }
             if (command == bot_prefix + 'say') {
-                var option = msg.split(" ")
-                var msg_quote = message.content.split('"')
+                let option = msg.split(" ")
+                let msg_quote = message.content.split('"')
                 if (option[1] == 'text') {
                     message.channel.send(msg_quote[1])
                     message.delete(0)
