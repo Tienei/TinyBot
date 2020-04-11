@@ -21,7 +21,7 @@ async function trivia(message = new Message()){
     }
     function checkAnswer(reactions, shuffled_answers, question, pos) {
         if (isCorrect(shuffled_answers, question.results[0].correct_answer, pos)) {
-            message.channel.send('Congratulation! Your answer is correct!')
+            message.channel.send('Congratulations! Your answer is correct!')
             stopCollection(reactions, 'correct')
         } else {
             message.channel.send(`Incorrect! The correct answer is **${decodeURIComponent(question.results[0].correct_answer)}**`)
