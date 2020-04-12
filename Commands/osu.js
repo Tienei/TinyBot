@@ -1465,6 +1465,7 @@ ${date}
 }
 
 async function score(message = new Message()) {
+    try {
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
         let command = msg.split(' ')[0]
@@ -1519,7 +1520,6 @@ async function score(message = new Message()) {
                 check = option[2]
             }
         }
-        console.log(mode)
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
         let modenum = modedetail.modenum
@@ -1561,7 +1561,9 @@ async function score(message = new Message()) {
             return pages
         }
         fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${scores[0].username} on ${beatmap.title} [${beatmap.diff}] (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5))
-   
+    } catch (error) {
+        message.channel.send(String(error))
+    }
 }
 
 async function osuset(message = new Message(), type) {
