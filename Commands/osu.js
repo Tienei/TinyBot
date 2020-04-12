@@ -1712,7 +1712,7 @@ async function map(message = new Message()){
             let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
             cache_beatmap_ID(message, beatmapid, mode)
             const embed = new MessageEmbed()
-            .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}?m=${mode}`)
+            .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid}?m=${mode}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapsetID}l.jpg`)
             .setColor(embedcolor)
             .setDescription(map_embed)
