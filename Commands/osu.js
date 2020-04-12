@@ -1072,7 +1072,6 @@ async function osutop(message = new Message(), mode) {
             }
             pfp_link = pfp_link.replace('{user_id}', user.id)
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best')
-            let userid = best[0].userid
             let username = user.name
             let loadpage = async function (page, pages) {
                 let gathering = ''
@@ -1098,7 +1097,6 @@ async function osutop(message = new Message(), mode) {
             fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${username} (Page {page} of {max_page})`, pfp_link, embedcolor, Math.ceil(best.length / 5), 240000)
         } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-s").position > -1) { 
             let map_name = suffix.suffix.find(s => s.suffix == "-s").value[0].replace("_", " ")
-            let top = []
             let get = await fx.osu.get_osu_top(name, mode, 100, 'best')
             let user = await osuApi.getUser({u: name})
             if (user == null) {
@@ -1107,10 +1105,9 @@ async function osutop(message = new Message(), mode) {
             pfp_link = pfp_link.replace('{user_id}', user.id)
             let username = user.name
             let best = get.filter(function(map) {return map.title.toLowerCase().includes(map_name) || map.creator.toLowerCase().includes(map_name) || map.diff.toLowerCase().includes(map_name) || map.source.toLowerCase().includes(map_name) || map.artist.toLowerCase().includes(map_name)})
-            if (best.length = 0) {
+            if (best.length == 0) {
                 throw 'No search result found!'
             }
-            let userid = best[0].userid
             let maplength = best.length > 5 ? 5 : best.length
             for (let i = 0; i < maplength; i++) {
                 let rank = fx.osu.ranking_letter(best[i].letter)
@@ -1142,7 +1139,6 @@ async function osutop(message = new Message(), mode) {
             }
             pfp_link = pfp_link.replace('{user_id}', user.id)
             let username = user.name
-            let userid = best[0].userid
             let loadpage = async function (page, pages) {
                 let gathering = ''
                 for (let n = 0; n < 5; n++) {
@@ -1175,7 +1171,6 @@ async function osutop(message = new Message(), mode) {
             if (best.length == 0) {
                 throw `I think ${name} didn't play anything yet~`
             }
-            let userid = best[0].userid
             let username = user.username
             for (let i = 0; i < (best.length > 5 ? 5 : best.length); i++) {
                 let rank = fx.osu.ranking_letter(best[i].letter)
