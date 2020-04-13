@@ -68,7 +68,37 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 '',
                                 user_web["cover_url"]])
         }
-        if (check_type !== 'Bancho') {
+        if (check_type == 'Gatari') {
+            let options = {u: name, mode: 0}
+            const s_resp = await request.get('https://api.gatari.pw/user/stats').query(options);
+            const i_resp = await request.get('https://api.gatari.pw/users/get').query(options);
+            let user_stats = (s_resp.body).stats;
+            let user_info = (i_resp.body).users[0];
+            return new Profile([user_info.username,
+                                Number(user_info.id),
+                                undefined,
+                                undefined,
+                                undefined,
+                                Number(user_stats.x_count) + Number(user_stats.xh_count),
+                                Number(user_stats.s_count) + Number(user_stats.sh_count),
+                                Number(user_stats.a_count),
+                                Number(user_stats.playcount),
+                                Number(user_stats.ranked_score),
+                                Number(user_stats.total_score),
+                                Number(user_stats.pp).toFixed(2),
+                                Number(user_stats.rank),
+                                Number(user_stats.country_rank),
+                                user_info.country.toLowerCase(),
+                                Number(user_stats.level),
+                                Number(user_stats.avg_accuracy).toFixed(2),
+                                undefined,
+                                undefined,
+                                undefined,
+                                undefined,
+                                undefined,
+                                undefined])
+        }
+        if (check_type !== 'Bancho' && check_type !== 'Gatari') {
             let user = (a_mode == 'rx') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0, relax: 0})
             return new Profile([user.username,
                                 Number(user.id),

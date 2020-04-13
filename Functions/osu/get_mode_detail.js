@@ -11,6 +11,7 @@ module.exports = function (mode) {
 {modename: "Relax Akatsuki", modeicon: '<:rxakatsuki:583314118933610497>' , modenum: 0, a_mode: 'rx'   , check_type: 'Akatsuki', link: 'akatsuki.pw'},
 {modename: "Horizon",        modeicon: ''                                 , modenum: 0, a_mode: 'std'  , check_type: 'Horizon' , link: 'lemres.de'},
 {modename: "Relax Horizon",  modeicon: ''                                 , modenum: 0, a_mode: 'rx'   , check_type: 'Horizon' , link: 'lemres.de'},
-{modename: "Enjuu",          modeiccn: ''                                 , modenum: 0, a_mode: 'std'  , check_type: 'Enjuu'   , link: 'enjuu.click'}]
+{modename: "Enjuu",          modeiccn: ''                                 , modenum: 0, a_mode: 'std'  , check_type: 'Enjuu'   , link: 'enjuu.click'},
+{modename: "Gatari",         modeiccn: ''                                 , modenum: 0, a_mode: 'std'  , check_type: 'Gatari'  , link: 'gatari.pw'},]
     return modelist.find(m => m.check_type == server_mode && m.a_mode == a_mode)
 }

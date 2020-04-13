@@ -20,6 +20,9 @@ module.exports = function (message = new Message(), check_type, modeicon, suppor
     } else if (check_type == 'Enjuu') {
         profile_link = `https://enjuu.click/u/${id}`
         pfp_link = `http://a.enjuu.click/${id}?date=${refresh}`
+    } else if (check_type == 'Gatari') {
+        profile_link = `https://gatari.pw/u/${id}`
+        pfp_link = `http://a.gatari.pw/${id}?date=${refresh}`
     }
     // Description
     let desc = ''

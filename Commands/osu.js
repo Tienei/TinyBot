@@ -104,9 +104,16 @@ async function osuavatar(message = new Message(), mode) {
         username = user[0].username
         id = user[0].user_id
         pfp_link = `https://a.ppy.sh/${id}_1?date=${refresh}`
+    } else if (check_type == 'Gatari') {
+        let options = {u: name, mode: 0}
+        const i_resp = await request.get('https://api.gatari.pw/users/get').query(options);
+        let user_info = (i_resp.body).users[0];
+        username = user_info.username
+        id = user_info.id
+        pfp_link = `https://a.gatari.pw/${id}?date=${refresh}`
     } else {
         let serverlink = fx.osu.get_mode_detail(mode).link
-        let user = await fx.osu.rippleAPI.apiCall(`/v1/users`, mode, {name: suffix.check})
+        let user = await fx.osu.rippleAPI.apiCall(`/v1/users`, mode, {name: name})
         username = user.username
         id = user.id
         pfp_link = `https://a.${serverlink}/${id}?date=${refresh}`
@@ -1218,7 +1225,8 @@ async function recent(message = new Message()) {
                                                     {"suffix": "-rxakat", "v_count": 0},
                                                     {"suffix": "-hrz", "v_count": 0},
                                                     {"suffix": "-rxhrz", "v_count": 0},
-                                                    {"suffix": "-enjuu", "v_count": 0},])
+                                                    {"suffix": "-enjuu", "v_count": 0},
+                                                    {"suffix": "-gatari", "v_count": 0},])
         let mode = "Bancho-std"
         if (suffix.suffix.find(s => s.suffix == "-taiko").position > -1) {
             mode = "Bancho-taiko"
@@ -1238,6 +1246,8 @@ async function recent(message = new Message()) {
             mode = "Horizon-rx"
         } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
             mode = "Enjuu-std"
+        } else if (suffix.suffix.find(s => s.suffix == "-gatari").position > -1) {
+            mode = "Gatari-std"
         }
         // Make recent best get modes later
         let modedetail = fx.osu.get_mode_detail(mode)
@@ -1614,7 +1624,15 @@ async function osuset(message = new Message(), type) {
             name = user.username
             profilelink = `https://enjuu.click/u/${user.id}`
             imagelink = `http://a.enjuu.click/${user.id}?date=${refresh}`
-        }
+        } else if (type == 'Gatari') {
+            let options = {u: check, mode: 0}
+            const i_resp = await request.get('https://api.gatari.pw/users/get').query(options);
+            let user_info = (i_resp.body).users[0];
+            settype = 'gatariname'
+            name = user_info.username
+            profilelink = `https://gatari.pw/u/${user_info.id}`
+            imagelink = `http://a.gatari.pw/${user_info.id}?date=${refresh}`
+        } 
         if (name == undefined) {
             throw 'User not found!'
         } else {

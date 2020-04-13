@@ -425,6 +425,8 @@ bot.on("message", (message) => {
                     mode = "Horizon-rx"
                 } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
                     mode = "Enjuu-std"
+                } else if (suffix.suffix.find(s => s.suffix == "-gatari").position > -1) {
+                    mode = "Gatari-std"
                 }
                 if (limit > 100 || limit < 1) {
                     throw 'You can only set from top 1-100. Please try again'
@@ -508,6 +510,9 @@ bot.on("message", (message) => {
                 } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
                     type = 'Enjuu'
                     mode = 'Enjuu-std'
+                } else if (suffix.suffix.find(s => s.suffix == "-gatari").position > -1) {
+                    type = 'Gatari'
+                    mode = 'Gatari-std'
                 }
                 let user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
                 let name = user.username
@@ -545,7 +550,7 @@ bot.on("message", (message) => {
         }
         
         async function osutracklist() {
-            let currentlytrack = ''
+            let players = []
             for (let i = 0; i < osu_track.length; i++) {
                 let channel = osu_track[i].trackonchannel.find(channel => channel.id == message.channel.id)
                 if (channel) {
@@ -554,15 +559,22 @@ bot.on("message", (message) => {
                         modes += `${fx.osu.get_mode_detail(mode.mode).modename} (p: ${mode.limit}), `
                     }
                     if (modes !== '') modes = modes.substring(0,modes.length-2)
-                    currentlytrack += osu_track[i].name + `: \`\`mode:${modes}\`\`, ` 
+                    let view = osu_track[i].name + `: \`\`mode:${modes}\`\`\n` 
+                    players.push(view)
                 }
             }
-            if (currentlytrack !== '') currentlytrack = currentlytrack.substring(0,currentlytrack.length-2)
-            const embed = new Discord.MessageEmbed()
-            .setAuthor(`Player(s) currently being tracked on #${message.channel.name}`)
-            .setColor(embedcolor)
-            .setDescription(currentlytrack);
-            message.channel.send(embed)
+            let loadpage = async function (page, pages) {
+                let gathering = ''
+                for (let n = 0; n < 15; n++) {
+                    let i = (page - 1) * 15 - 1 + (n+1)
+                    if (i < players.length) {
+                        gathering += players[i]
+                    }
+                }
+                pages[page-1] = gathering
+                return pages
+            }
+            fx.general.page_system(message, {load: loadpage}, `Player(s) currently being tracked on #${message.channel.name} (Page {page} of {max_page})`, message.guild.iconURL(), embedcolor, Math.ceil(players.length / 15), 15000 * Math.ceil(players.length / 15))
         }
 
         // Osu
@@ -712,6 +724,20 @@ bot.on("message", (message) => {
         }
         if (command == bot_prefix + 'enjuuset') {
             cmds.osu.osuset(message, 'Enjuu')
+        }
+
+        // Gatari
+        if (command == bot_prefix + 'gatari') {
+            cmds.osu.osu(message, 'Gatari-std')
+        }
+        if (command == bot_prefix + 'gatariavatar') {
+            cmds.osu.osuavatar(message, 'Gatari-std')
+        }
+        if (command == bot_prefix + 'gataritop') {
+            cmds.osu.osutop(message, 'Gatari-std')
+        }
+        if (command == bot_prefix + 'gatariset') {
+            cmds.osu.osuset(message, 'Gatari')
         }
 
         // Detection

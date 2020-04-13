@@ -54,7 +54,7 @@ function help(message = new Message(), command) {
             addhelp('osutrack', 'osutrack (username) (options)', 'Track a player\'s osu!Standard top 50 (Required MANAGE\_CHANNELS permission). Default: osu!Std, top 50', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nTop Play `(-p)`: Number of top plays to include in tracking `(1-100)`\nModes/Severs: `-std` `-taiko` `-ctb` `-mania` `-ripple` `-akat` `-rxakat` `-hrz` `-rxhrz`', 'osutrack Tienei')
             addhelp('osutracklist', 'osutracklist', 'Get a list of player being tracked in the channel', 'None', 'osutracklist')
             addhelp('untrack', 'untrack (username) (options)', 'Untrack a player from the database (Required MANAGE\_CHANNELS permission), Default: Remove all player with the name', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nBancho `(-bc)`: Remove a Bancho player with the name from tracking\nRipple `(-rp)`: Remove a Ripple player with the name from tracking\nAkatsuki `(-akat)`: Remove an Akatsuki player with the name from tracking\nHorizon `(-hrz)`: Remove a Horizon player with the name from tracking', 'untrack Tienei')
-            addhelp('recent', '[recent|r] (username) (options)', 'Get player\'s most recent play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nRecent List `(-l)`: Get player 5 most recent plays\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-rxakat` `-ripple` `-hrz` `-rxhrz` `-enjuu`', 'r Tienei -b')
+            addhelp('recent', '[recent|r] (username) (options)', 'Get player\'s most recent play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nRecent List `(-l)`: Get player 5 most recent plays\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-rxakat` `-ripple` `-hrz` `-rxhrz` `-enjuu` `-gatari`', 'r Tienei -b')
             addhelp('compare', '[compare|c] (username) ', 'Compare to the last play in the chat', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nPrevious Play `(-p)`: Get a previous play mentioned in the chat `(Number)`', 'c Tienei')
             addhelp('osuset', 'osuset (username)', 'Link your profile to an osu! player', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuset Tienei')
             addhelp('osuavatar', 'osuavatar (username)', 'Get player\'s osu! avatar', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuavatar Tienei')
@@ -86,22 +86,26 @@ function help(message = new Message(), command) {
             addhelp('enjuuset', 'enjuuset (username)', 'Link your profile to an Enjuu player', 'username: Enjuu username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'enjuuset Tienei')
             addhelp('enjuutop', 'enjuutop (username) (options)', 'View a player\'s Enjuu Standard top play', 'username: Enjuu username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`', 'enjuutop Tienei -p 8')
             addhelp('enjuuavatar', 'enjuuavatar (username)', 'Get player\'s Enjuu avatar', 'username: Enjuu username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'enjuuavatar Tienei')
-            addhelp('enjuuset', 'enjuuset (username)', 'Link your profile to a Enjuu player', 'username: Enjuu username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'enjuuset Tienei')
+            addhelp('gatari', 'gatari (username) (options)', 'Get a Gatari Standard profile', 'username: Gatari username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'gatari Tienei')
+            addhelp('gatariset', 'gatariset (username)', 'Link your profile to a Gatari player', 'username: Gatari username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'gatariset Tienei')
+            addhelp('gataritop', 'gataritop (username) (options)', 'View a player\'s Gatari Standard top play', 'username: Gatari username of the player (Space replaced with "_" or just use quotation mark ``"``)\nSpecific Play `(-p)`: Get a specific play from top 100 `(Number)`\nRecent Play `(-r)`: Get a top recent play from top 100 `(No param)`\nMods Play `(-m)`: Get a top mods play from top 100 `(Shorten mods)`', 'gataritop Tienei -p 8')
+            addhelp('gatariavatar', 'gatariavatar (username)', 'Get player\'s Gatari avatar', 'username: Gatari username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'gatariavatar Tienei')
             addhelp('corona', 'corona', 'Check the stats for current corona virus pandemic\n`Total Cases`: Total corona virus cases in a country\n:bed:: Active cases in a country (Still ill)\n:skull:: Total deaths in a country\n:green_heart:: Total recoveries in a country', 'None', 'corona')
             addhelp('definevar', 'Defined Variable for Custom command', 'user: ``selfname`` ``selfping`` ``selfcreatedtime`` ``selfpresence`` ``othercreatedtime`` ``otherpresence`` channel: ``selfname`` ``selflink`` ``members`` server: ``name`` ``members`` ``channels`` ``roles`` ``defaultchannel`` ``owner`` ``region`` ``createdtime``', '{require:admin}: Need Administrator to enable the command {$N}: Get text in message seperated by space (Not include command) {send:channelname "message"}: Send to a channel with a specific message', 'do ``!help customcmd``')
-            addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')            
+            addhelp('osu -d calculation', 'Osu -d calculation', 'Star: Avg stars of the top 50 plays\nAim: Aim stars play * (CS ^ 0.1 / 4 ^ 0.1)\nSpeed: Speed stars play * (BPM ^ 0.3 / 180 ^ 0.3) * (AR ^ 0.1 / 6 ^ 0.1)\nAccuracy: (Plays accuracy ^ 2.5 / 100 ^ 2.5) * 1.08 * Map stars * (OD ^ 0.03 / 6 ^ 0.03) * (HP ^ 0.03 / 6 ^ 0.03)', 'None', 'None')           
         }
-        let generalhelp = '**--- [General]:**\n`avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `corona`'
-        let funhelp = '**--- [Fun]:**\n`hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
-        let osuhelp = '**--- [osu!]:**\n`osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
-        let akatsukihelp = '**--- [Akatsuki]:**\n`akatsuki` `akatsukiset` `akatavatar` `akattop` `rxakatsuki` `rxakattop`'
-        let ripplehelp = '**--- [Ripple]:**\n`ripple` `rippleset` `rippleavatar` `rippletop`'
-        let horizonhelp = '**--- [Horizon]:**\n`horizon` `horizonset` `horizonavatar` `horizontop` `rxhorizon` `rxhorizon`'
-        let enjuuhelp = '**--- [Enjuu]:**\n`enjuu` `enjuuset` `enjuuavatar` `enjuutop`'
-        let otherhelp = '**--- [Other]:**\n`definevar` `osu -d calculation`'
+        let generalhelp = '**[General]:** `avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `corona`'
+        let funhelp = '**[Fun]:** `hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
+        let osuhelp = '**[osu!]:** `osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
+        let akatsukihelp = '**[Akatsuki]:** `akatsuki` `akatsukiset` `akatavatar` `akattop` `rxakatsuki` `rxakattop`'
+        let ripplehelp = '**[Ripple]:** `ripple` `rippleset` `rippleavatar` `rippletop`'
+        let horizonhelp = '**[Horizon]:** `horizon` `horizonset` `horizonavatar` `horizontop` `rxhorizon` `rxhorizon`'
+        let enjuuhelp = '**[Enjuu]:** `enjuu` `enjuuset` `enjuuavatar` `enjuutop`'
+        let gatarihelp = '**[Gatari]:** `gatari` `gatariset` `gatariavatar` `gataritop`'
+        let otherhelp = '**[Other]:** `definevar` `osu -d calculation`'
         let text = ''
         if (msg.substring(command.length+1) == '') {
-            text = `${generalhelp}\n\n${funhelp}\n\n${osuhelp}\n\n${akatsukihelp}\n\n${ripplehelp}\n\n${horizonhelp}\n\n${enjuuhelp}\n\n${otherhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
+            text = `${generalhelp}\n${funhelp}\n${osuhelp}\n${akatsukihelp}\n${ripplehelp}\n${horizonhelp}\n${enjuuhelp}\n${otherhelp}\n${gatarihelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
         } else {
             let getcmd = msg.substring(command.length+1)
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
@@ -186,7 +190,11 @@ Added support for Enjuu
 Fixed tracking
 
 **[March 17th, 2020]:**
-Fixed scores exceeding 2000 characters`]
+Fixed scores exceeding 2000 characters
+
+**[April 13th, 2020]:**
+Added support for Gatari
+Change osutracklist overlay`]
 
     let loadpage = async function (page, pages) {
         pages = changes
@@ -206,7 +214,7 @@ function bot_info(message = new Message()) {
     .addField('Links', `◆ Link to invite me: [invite](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)
 ◆ My senpai server: [server](https://discord.gg/H2mQMxd)
 ◆ Consider donating if you like the bot and help the creator: [donate](https://ko-fi.com/tienei)`)
-    .addField('Supported osu servers', `◆ \`Bancho\` \`Ripple\` \`Akatsuki\` \`Enjuu\` \`Horizon\``)
+    .addField('Supported osu servers', `◆ \`Bancho\` \`Ripple\` \`Akatsuki\` \`Enjuu\` \`Horizon\` \`Gatari\``)
     .addField('Dependencies',`\`discord.js\`: ${package.dependencies['discord.js']}, \`ojsama\`: ${package.dependencies.ojsama}, \`osu!api\`: 1.0, \`Ripple API\`: 1.0`);
     message.channel.send({embed})
 }
@@ -257,7 +265,7 @@ async function report(message = new Message()) {
             throw 'You need to wait 30 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 30000)
-        let error = message.content.substring(command[0].length + 1)
+        let error = message.content.substring(command.length + 1)
         if (error == '') {
             throw "Type an error"
         }
@@ -286,7 +294,7 @@ async function suggestion(message = new Message()) {
             throw 'You need to wait 30 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 30000)
-        let suggestion = message.content.substring(command[0].length + 1)
+        let suggestion = message.content.substring(command.length + 1)
         if (suggestion == '') {
             throw 'Type a suggestion for the bot'
         }

@@ -129,7 +129,71 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             }
         }
     }
-    if (check_type !== "Bancho") {
+    if (check_type == 'Gatari') {
+        let u_options = {u: name}
+        const u_resp = await request.get('https://api.gatari.pw/users/get').query(u_options);
+        let user = (u_resp.body).users[0]
+        let b_options = {id: user.id, mode: 0, p: 1, l: limit}
+        const b_resp = await request.get(`https://api.gatari.pw/user/scores/${type}`).query(b_options);
+        let best = b_resp.body
+        for (var i = 0; i < best.scores.length; i++) {
+            let count300 = Number(best.scores[i].count_300)
+            let count100 = Number(best.scores[i].count_100)
+            let count50 = Number(best.scores[i].count_50)
+            let countmiss = Number(best.scores[i].count_miss)
+            let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
+            let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+            let diff = ''
+            let title = ''
+            let artist = ''
+            top[i] = new Osutop([
+                //Score
+                Number(i+1),
+                Number(best.scores[i].score),
+                Number(user.id),
+                count300,
+                count100,
+                count50,
+                countmiss,
+                undefined,
+                undefined,
+                acc,
+                accdetail,
+                Number(best.scores[i].max_combo),
+                best.scores[i].full_combo == true ? 1 : 0,
+                best.scores[i].time,
+                best.scores[i].ranking,
+                Number(best.scores[i].pp),
+                best.scores[i].mods,
+                // Beatmap
+                Number(best.scores[i].beatmap.beatmap_id),
+                title,
+                undefined,
+                diff,
+                undefined,
+                artist,
+                undefined,
+                Number(best.scores[i].beatmap.beatmapset_id),
+                best.scores[i].beatmap.fc,
+                best.scores[i].beatmap.difficulty,
+                undefined,
+                undefined])
+        }
+        if (no_bm == false) {
+            let beatmaps = top.map(async sc => {
+                const resp = await request.get('https://api.gatari.pw/beatmaps/get').query({bb: sc.beatmapid})
+                return resp.body;
+            })
+            beatmaps = await Promise.all(beatmaps)
+            for (let i = 0; i < top.length; i++) {
+                let beatmap = beatmaps[i].data
+                top[i].title = beatmap[0].title
+                top[i].diff = beatmap[0].version
+                top[i].artist = beatmap[0].artist
+            }
+        }
+    }
+    if (check_type !== "Bancho" && check_type !== 'Gatari') {
         let relax = (a_mode == 'rx') ? 1 : 0
         let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, rx: relax, l: limit, relax: 0})
         let user = await rippleAPI.apiCall(`/v1/users`, mode, {name: name})
