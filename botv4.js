@@ -401,6 +401,7 @@ bot.on("message", (message) => {
                                                             {"suffix": "-hrz", "v_count": 0},
                                                             {"suffix": "-rxhrz", "v_count": 0},
                                                             {"suffix": "-enjuu", "v_count": 0},
+                                                            {"suffix": "-gatari", "v_count": 0},
                                                             {"suffix": "-p", "v_count": 1}])
                 let mode = "Bancho-std"
                 let limit = 50
