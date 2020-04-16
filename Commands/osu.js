@@ -509,6 +509,7 @@ Most common mods: ${sortedmod}`)
                 }
             }
         } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && mode == "Bancho-std") {
+            throw "Due to the current pandemic, heavy API commands will be disabled. Sorry for the inconvenient!"
             let user = await fx.osu.get_osu_profile(name, mode, 30, false, false)
             if (user == null) {
                 throw 'User not found!'
