@@ -67,8 +67,7 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 bancho_user.online == true ? 'Online' : 'Offline',
                                 '',
                                 user_web["cover_url"]])
-        }
-        if (check_type == 'Gatari') {
+        } else if (check_type == 'Gatari') {
             let options = {u: name, mode: 0}
             const s_resp = await request.get('https://api.gatari.pw/user/stats').query(options);
             const i_resp = await request.get('https://api.gatari.pw/users/get').query(options);
@@ -97,8 +96,7 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 undefined,
                                 undefined,
                                 undefined])
-        }
-        if (check_type !== 'Bancho' && check_type !== 'Gatari') {
+        } else if (check_type !== 'Bancho' && check_type !== 'Gatari') {
             let user = (a_mode == 'rx') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0, relax: 0})
             return new Profile([user.username,
                                 Number(user.id),

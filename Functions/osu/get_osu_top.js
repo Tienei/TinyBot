@@ -128,8 +128,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                                     Number(best[i].beatmapId)])
             }
         }
-    }
-    if (check_type == 'Gatari') {
+    } else if (check_type == 'Gatari') {
         let u_options = {u: name}
         const u_resp = await request.get('https://api.gatari.pw/users/get').query(u_options);
         let user = (u_resp.body).users[0]
@@ -192,8 +191,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                 top[i].artist = beatmap[0].artist
             }
         }
-    }
-    if (check_type !== "Bancho" && check_type !== 'Gatari') {
+    } else if (check_type !== "Bancho" && check_type !== 'Gatari') {
         let relax = (a_mode == 'rx') ? 1 : 0
         let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, rx: relax, l: limit, relax: 0})
         let user = await rippleAPI.apiCall(`/v1/users`, mode, {name: name})
