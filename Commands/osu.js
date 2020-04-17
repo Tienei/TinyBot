@@ -146,7 +146,6 @@ async function osu(message = new Message(), mode) {
         let check_type = modedetail.check_type
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
-            throw "Due to the current pandemic, heavy API commands will be disabled. Sorry for the inconvenient!"
             let user = await fx.osu.get_osu_profile(name, mode, 30, false)
             if (user == null) {
                 throw 'User not found!'
@@ -509,7 +508,6 @@ Most common mods: ${sortedmod}`)
                 }
             }
         } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && mode == "Bancho-std") {
-            throw "Due to the current pandemic, heavy API commands will be disabled. Sorry for the inconvenient!"
             let user = await fx.osu.get_osu_profile(name, mode, 30, false, false)
             if (user == null) {
                 throw 'User not found!'
@@ -641,7 +639,6 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
 
 async function osu_card(message = new Message(), mode) {
     try {
-        throw "Due to the current pandemic, heavy API commands will be disabled. Sorry for the inconvenient!"
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
