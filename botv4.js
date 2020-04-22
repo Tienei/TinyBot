@@ -494,7 +494,8 @@ bot.on("message", (message) => {
                                                             {"suffix": "-akat", "v_count": 0},
                                                             {"suffix": "-rp", "v_count": 0},
                                                             {"suffix": "-hrz", "v_count": 0},
-                                                            {"suffix": "-enjuu", "v_count": 0},])
+                                                            {"suffix": "-enjuu", "v_count": 0},
+                                                            {"suffix": "-gatari", "v_count": 0},])
                 let type = 'All'
                 let mode = 'Bancho-std'
                 if (suffix.suffix.find(s => s.suffix == "-bc").position > -1) {
