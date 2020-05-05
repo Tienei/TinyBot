@@ -131,7 +131,7 @@ async function tenor(message = new Message(), start, search, action, aloneaction
         } else {
             text = `<@${user.id}>, ${action} <@${message.author.id}>`
         }
-        let gif = (await request.get(`https://api.tenor.com/v1/search?q=${search}&key=LIVDSRZULELA&limit=25&media_filter=minimal&contentfilter=medium`)).body
+        let gif = (await request.get(`https://api.tenor.com/v1/search?q=${search}&key=${process.env.TENOR_KEY}&limit=25&media_filter=minimal&contentfilter=medium`)).body
         const embed = new MessageEmbed()
         .setColor(embedcolor)
         .setDescription(text)
