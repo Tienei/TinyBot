@@ -11,7 +11,7 @@ module.exports = function (mode) {
 {modename: "Relax Akatsuki", modeicon: '<:akatsuki_rx:707169500977561621>'  , modenum: 0, a_mode: 'rx'   , check_type: 'Akatsuki', link: 'akatsuki.pw'},
 {modename: "Horizon",        modeicon: '<:horizon_std:707170004763803688>'  , modenum: 0, a_mode: 'std'  , check_type: 'Horizon' , link: 'lemres.de'},
 {modename: "Relax Horizon",  modeicon: '<:horizon_rx:707172160828866560>'   , modenum: 0, a_mode: 'rx'   , check_type: 'Horizon' , link: 'lemres.de'},
-{modename: "Enjuu",          modeiccn: '<:enjuu_std:707169893157437451>'    , modenum: 0, a_mode: 'std'  , check_type: 'Enjuu'   , link: 'enjuu.click'},
-{modename: "Gatari",         modeiccn: '<:gatari_std:707169945863323700>'   , modenum: 0, a_mode: 'std'  , check_type: 'Gatari'  , link: 'gatari.pw'},]
+{modename: "Enjuu",          modeicon: '<:enjuu_std:707169893157437451>'    , modenum: 0, a_mode: 'std'  , check_type: 'Enjuu'   , link: 'enjuu.click'},
+{modename: "Gatari",         modeicon: '<:gatari_std:707169945863323700>'   , modenum: 0, a_mode: 'std'  , check_type: 'Gatari'  , link: 'gatari.pw'},]
     return modelist.find(m => m.check_type == server_mode && m.a_mode == a_mode)
 }
