@@ -182,7 +182,8 @@ function rate_waifu(message = new Message()) {
         if (waifu == '') {
             throw 'Type your waifu name please'
         }
-        let score = Math.floor(Math.random() * 100)
+        let score = Math.floor(Math.random() * 101)
+        if (score >= 101) score = 100;
         let random_respond = [`Hmm... i rate ${waifu} a ${score}/100`, `This is tough... ${score}/100`, `Maybe ${waifu} is a ${score}/100`,
                             `I would rate ${waifu} a ${score}/100`, `I rate ${waifu} a solid ${score}/100`]
         let random = Math.floor(Math.random() * 5)
