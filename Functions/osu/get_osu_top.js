@@ -129,10 +129,10 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             }
         }
     } else if (check_type == 'Gatari') {
-        let u_options = {u: name}
+        let u_options = {u: name, mode: modenum}
         const u_resp = await request.get('https://api.gatari.pw/users/get').query(u_options);
         let user = (u_resp.body).users[0]
-        let b_options = {id: user.id, mode: 0, p: 1, l: limit}
+        let b_options = {id: user.id, mode: modenum, p: 1, l: limit}
         const b_resp = await request.get(`https://api.gatari.pw/user/scores/${type}`).query(b_options);
         let best = b_resp.body
         for (var i = 0; i < best.scores.length; i++) {
@@ -189,11 +189,15 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                 top[i].title = beatmap[0].title
                 top[i].diff = beatmap[0].version
                 top[i].artist = beatmap[0].artist
+                top[i].bpm = Number(beatmap[0].bpm)
+                top[i].timedrain = Number(beatmap[0].hit_length)
+                top[i].timetotal = Number(beatmap[0].hit_length)
             }
         }
     } else if (check_type !== "Bancho" && check_type !== 'Gatari') {
+        let ripple_relax = (a_mode == 'rx' && check_type == 'Ripple') ? 1 : 0
         let relax = (a_mode == 'rx') ? 1 : 0
-        let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, rx: relax, l: limit, relax: 0})
+        let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, rx: relax, l: limit, relax: ripple_relax})
         let user = await rippleAPI.apiCall(`/v1/users`, mode, {name: name})
         for (var i = 0; i < best.scores.length; i++) {
             let count300 = Number(best.scores[i].count_300)
@@ -246,6 +250,9 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                 top[i].title = beatmap[0].title
                 top[i].diff = beatmap[0].version
                 top[i].artist = beatmap[0].artist
+                top[i].bpm = Number(beatmap[0].bpm)
+                top[i].timedrain = Number(beatmap[0].hit_length)
+                top[i].timetotal = Number(beatmap[0].total_length)
             }
         }
     }

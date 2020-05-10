@@ -44,11 +44,10 @@ function get_db(data1, data2, data3, data4) {
 
 function cache_beatmap_ID(message = new Message(), beatmapid, mode) {
     if (message.guild !== null) {
-        if (saved_map_id.find(m => m.server == message.channel.id) !== undefined) {
-            saved_map_id.find(m => m.server == message.channel.id).id = beatmapid
-        } else {
-            saved_map_id.push({id:beatmapid,server:message.channel.id, mode: mode})
+        for (let i = 0; i < saved_map_id.length; i++) {
+            if (saved_map_id[i].server == message.channel.id) saved_map_id.splice(i, 1)
         }
+        saved_map_id.push({id:beatmapid,server:message.channel.id, mode: mode})
         if (!config.config.debug.disable_db_save) db.saved_map_id.findAndModify({query: {}, update: {'0': saved_map_id}}, function(){})
         stored_map_ID.push({id:beatmapid,server:message.channel.id, mode: mode})
     } else {
@@ -140,12 +139,13 @@ async function osu(message = new Message(), mode) {
                                                         {"suffix": "-ts", "v_count": 0},
                                                         {"suffix": "-g", "v_count": 0}])
         let modedetail = fx.osu.get_mode_detail(mode)
+        let a_mode = modedetail.a_mode
         let modename = modedetail.modename
         let modeicon = modedetail.modeicon
         let modenum = modedetail.modenum
         let check_type = modedetail.check_type
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
-        if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
+        if (a_mode !== 'rx' && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
             let user = await fx.osu.get_osu_profile(name, mode, 30, false)
             if (user == null) {
                 throw 'User not found!'
@@ -155,32 +155,59 @@ async function osu(message = new Message(), mode) {
             // User
             let totalrank = user.ss + user.s + user.a
             let events = 0
-            if (user.events.length > 3) {
-                events = 3
-            } else {
-                events = user.events.length
+            if (check_type == 'Bancho') {
+                if (user.events.length > 3) events = 3;
+                else events = user.events.length;
             }
             for (let i = 0; i < events; i++) {
                 let text = user.events[i].html.replace(/(<([^>]+)>)/ig,"")
                 event += `\n ${text}`
             }
-            if (events == 0) {
-                event = 'No event'
+            if (events == 0) event = 'No event';
+            let supporter = user.supporter !== undefined ? user.supporter : ''
+
+            let desc = ''; let field1 = ''
+            if (modeicon) desc += `${modeicon} `
+            if (supporter) desc += `${supporter}`
+            if (user.rank) field1 += `**Global Rank:** #${user.rank} `;
+            if (user.countryrank) field1 += `(:flag_${user.country}:: #${user.countryrank}) `;
+            if (user.pp) field1 += `| ***${user.pp}pp***\n`;
+            if (user.level) field1 += `**Level:** ${user.level}\n`;
+            if (user.acc) field1 += `**Accuracy:** ${user.acc}%\n`;
+            if (user.playcount) field1 += `**Playcount:** ${(user.playcount).toLocaleString('en')}\n`;
+            if (user.totalscore && user.rankedscore) field1 += `**Ranked Score:** ${(user.rankedscore).toLocaleString('en')} | **Total Score:** ${(user.totalscore).toLocaleString('en')}`;
+            if (user.playstyle) field1 += `**Play Style:** ${user.playstyle}\n`;
+            if (user.ss && user.s && user.a) field1 += `<:rankingX:520932410746077184> : ${user.ss} (${Number(user.ss/totalrank*100).toFixed(2)}%) <:rankingS:520932426449682432> : ${user.s} (${Number(user.s/totalrank*100).toFixed(2)}%) <:rankingA:520932311613571072> : ${user.a} (${Number(user.a/totalrank*100).toFixed(2)}%)`;
+
+            let profile_link = ''
+            let pfp_link = ''
+            if (check_type == 'Bancho') {
+                profile_link = `https://osu.ppy.sh/users/${user.id}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+            } else if (check_type == 'Ripple') {
+                profile_link = `https://ripple.moe/u/${user.id}`
+                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
+            } else if (check_type == 'Akatsuki') {
+                profile_link = `https://akatsuki.pw/u/${user.id}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (check_type == 'Horizon') {
+                profile_link = `https://lemres.de/u/${user.id}`
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
+            } else if (check_type == 'Enjuu') {
+                profile_link = `https://enjuu.click/u/${user.id}`
+                pfp_link = `http://a.enjuu.click/${user.id}?date=${refresh}`
+            } else if (check_type == 'Gatari') {
+                profile_link = `https://gatari.pw/u/${user.id}`
+                pfp_link = `http://a.gatari.pw/${user.id}?date=${refresh}`
             }
+
             let embed = new MessageEmbed()
-            .setDescription(`${modeicon} ${user.supporter} **osu!${modename} Statistics for [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
-            .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
+            .setDescription(`${desc}**osu!${modename} Statistics for [${user.username}](${profile_link})**`)
+            .setThumbnail(pfp_link)
             .setColor(embedcolor)
-            .addField(`Performance:`, `
-**Global Rank:** #${user.rank} (:flag_${user.country}:: #${user.countryrank}) | ***${user.pp}pp***
-**Level:** ${user.level}
-**Accuracy:** ${user.acc}%
-**Playcount:** ${(user.playcount).toLocaleString('en')}
-**Ranked Score:** ${(user.rankedscore).toLocaleString('en')} | **Total Score:** ${(user.totalscore).toLocaleString('en')}
-**Play Style:** ${user.playstyle}
-<:rankingX:520932410746077184> : ${user.ss} (${Number(user.ss/totalrank*100).toFixed(2)}%) <:rankingS:520932426449682432> : ${user.s} (${Number(user.s/totalrank*100).toFixed(2)}%) <:rankingA:520932311613571072> : ${user.a} (${Number(user.a/totalrank*100).toFixed(2)}%)`)
+            .addField(`Performance:`, field1)
             .addField(`${user.username} recent events:`, event)
-            .setFooter(user.statustext, user.statusicon);
+            if (user.statusicon && user.statustext) embed.setFooter(user.statustext, user.statusicon);
             let msg1 = await message.channel.send('Calculating skills...', {embed});
             // Calculating skills
             if (best.length < 50) {
@@ -199,7 +226,6 @@ async function osu(message = new Message(), mode) {
             let hp_avg = 0
             let timetotal_avg = 0
             let timedrain_avg = 0
-            let mod_avg_all = []
             let mod_avg = []
             let sortedmod = ''
             for (let i = 0; i < 50; i++) {
@@ -260,34 +286,21 @@ async function osu(message = new Message(), mode) {
                     timetotal_avg += detail.timetotal
                     timedrain_avg += detail.timedrain
                 }
-                if (modandbit.shortenmod == "+No Mod") {
-                    mod_avg_all.push('No Mod')
+                let find_mod = mod_avg.find(m => m.mod == modandbit.shortenmod.substr(1))
+                if (find_mod == undefined) {
+                    mod_avg.push({mod: modandbit.shortenmod.substr(1), count: 1})
                 } else {
-                    for (let m = 0; m < modandbit.shortenmod.length-1; m+=2) {
-                        mod_avg_all.push(modandbit.shortenmod.substr(m+1, 2))
-                    }
+                    find_mod.count += 1
                 }
             }
+            mod_avg.sort((a,b) => b.count - a.count)
+            for (let i in mod_avg) {
+                sortedmod += '`' + mod_avg[i].mod + '`: ' + `${Number(mod_avg[i].count / 50 * 100).toFixed(2)}% **(${mod_avg[i].count})**, `
+            }
+            sortedmod = sortedmod.substring(0, sortedmod.length-2)
             timetotal_avg = Number(timetotal_avg / 50).toFixed(0)
             timedrain_avg = Number(timedrain_avg / 50).toFixed(0)
-            let modtofind = ['No Mod','NF','EZ','TD','HD','HR','SD','DT','HT','NC','FL','SO','PF']
-            for (let i in modtofind) {
-                let count = 0
-                for (let m in mod_avg_all) {
-                    if (mod_avg_all[m] == modtofind[i]) {
-                        count += 1
-                    }
-                }
-                if (count > 0) {
-                    mod_avg.push({mod: modtofind[i], count: count})
-                }
-                count = 0
-            }
-            mod_avg.sort(function (a,b) {return b.count - a.count})
-            mod_avg.splice(3,3)
-            for (let i in mod_avg) {
-                sortedmod += '``' + mod_avg[i].mod + '``: ' + `${Number(mod_avg[i].count / mod_avg_all.length * 100).toFixed(2)}% `
-            }
+            
             if (modenum == 0) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
@@ -384,130 +397,7 @@ Most common mods: ${sortedmod}`)
                     }
                 }
             }
-        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
-            let user = await fx.osu.get_osu_profile(name, mode, 0, true, false)
-            if (user == null) {
-                throw 'User not found!'
-            }
-            let mode_name = ''
-            if (modenum == 0) {
-                mode_name = 'osu'
-            } else if (modenum == 1) {
-                mode_name = 'taiko'
-            } else if (modenum == 2) {
-                mode_name = 'fruits'
-            } else if (modenum == 3) {
-                mode_name = 'mania'
-            }
-            let web = (await request.get(`https://osu.ppy.sh/users/${user.id}/${mode_name}`)).text
-            let user_history = await cheerio.load(web)
-            user_history = user_history("#json-rankHistory").html()
-            user_history = JSON.parse(user_history)
-            let rankHistory = user_history["data"]
-            //Graph
-            const options = {
-                width: 600,
-                height: 200,
-                axisX: {title: ''},
-                axisY: {title: '', labelOffset: {x: 0, y: 10}, onlyInteger: true,labelInterpolationFnc: function(value) {
-                    return -value;
-                }},
-                showLine: true,
-                fullWidth: true,
-                chartPadding: {left: 60},
-            };
-          
-            for (let i in rankHistory) {
-                rankHistory[i] = rankHistory[i] * -1
-            }
-
-            let line = await generate('line', options, {
-                labels: [],
-                series: [
-                    {value: rankHistory},
-                ]
-            })
-          
-            // CSS Layout
-          
-            // Load graph
-    
-            let graph = cheerio.load(line)
-
-            // Add local font
-
-            let graphline = graph('svg')
-            graphline.prepend(`<defs> <style type="text/css"> @font-face { font-family: 'Comfortaa'; src: url('./font/Comfortaa.ttf'); font-weight: normal; font-style: normal; } </style>`)
-          
-            // Get line
-          
-            graphline = graph('path')
-            for (let i = 0; i < graphline.length; i++) {
-                graph(graphline[i]).attr('style', 'stroke: rgb(255,0,255); stroke-width: 3; fill: none')
-            }
-          
-            // Get grid (h/v)
-          
-            gridline = graph('line[class="ct-grid ct-horizontal"]')
-            for (let i = 0; i < gridline.length; i+=Math.round(gridline.length / 6)) {
-                graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
-            }
-            graph(gridline[gridline.length-1]).attr('style', 'stroke: white; stroke-width: 2')
-            gridline = graph('line[class="ct-grid ct-vertical"]')
-            for (let i = 0; i < gridline.length; i++) {
-                graph(gridline[i]).attr('style', 'stroke: white; stroke-width: 2')
-            }
-          
-            // Get Text
-          
-            let text = graph('text')
-            for (let i = 0; i < text.length; i++) {
-                graph(text[i]).attr('style', 'font-family: Comfortaa; font-size: 18px; font-weight: 900; fill: white;')
-            }
-            text = graph('text[class="ct-label ct-vertical ct-start"]')
-            for (let i = 0; i < text.length; i++) {
-                graph(text[i]).attr('style', 'font-family: Comfortaa; font-size: 18px; font-weight: 900; fill: white; text-anchor: end')
-            }
-            let linegraph = graph('div[class="ct-chart"]').html()
-            linegraph = linegraph.substring(0, linegraph.indexOf('<div class="ct-legend">'))
-          
-            // Format SVG to PNG
-            let svg = new Buffer(linegraph)
-            svg = await sharp(svg).sharpen(0.01,1,10000).toBuffer()
-            let image = await jimp.read(svg)                   
-            let banner = await jimp.read(user.bannerurl)
-            let bannerwidth = banner.getWidth()
-            let bannerHeight = banner.getHeight()
-            if (bannerwidth / 600 >= bannerHeight / 200) {
-                banner.resize(jimp.AUTO, 200)
-            } else {
-                banner.resize(600, jimp.AUTO)
-            }         
-            banner.crop(0, 0, 600, 200)
-            banner.brightness(-0.5)
-            banner.blur(5)
-            image.brightness(0.25)
-            banner.composite(image, 0, 0)
-
-            const attachment = new Attachment(await banner.getBufferAsync(jimp.MIME_PNG), 'rank.png')
-            const embed = new MessageEmbed()
-            .setDescription(`${modeicon} ${user.supporter} **osu!Standard rank history for [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
-            .addField('Current rank', `Global: ${user.rank} (:flag_${user.country}:: ${user.countryrank})`, true)
-            .addField('Current PP', user.pp, true)
-            .attachFile(attachment)
-            .setImage('attachment://rank.png');
-            message.channel.send({embed})
-            if (mode == "Bancho-std") {
-                for (let [key,value] of Object.entries(user_data)) {
-                    if (value.osuname == user.username) {
-                        user_data[key].osurank = user.rank
-                        user_data[key].osucountry = user.country
-                        if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
-                        break
-                    }
-                }
-            }
-        } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && mode == "Bancho-std") {
+        } else if (suffix.suffix.find(s => s.suffix == "-ts").position > -1 && a_mode !== 'rx') {
             let user = await fx.osu.get_osu_profile(name, mode, 30, false, false)
             if (user == null) {
                 throw 'User not found!'
@@ -570,9 +460,30 @@ Most common mods: ${sortedmod}`)
             textloading(top_speed)
             textloading(top_old_acc)
             textloading(top_acc)
+            let profile_link = ''
+            let pfp_link = ''
+            if (check_type == 'Bancho') {
+                profile_link = `https://osu.ppy.sh/users/${user.id}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+            } else if (check_type == 'Ripple') {
+                profile_link = `https://ripple.moe/u/${user.id}`
+                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
+            } else if (check_type == 'Akatsuki') {
+                profile_link = `https://akatsuki.pw/u/${user.id}`
+                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
+            } else if (check_type == 'Horizon') {
+                profile_link = `https://lemres.de/u/${user.id}`
+                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
+            } else if (check_type == 'Enjuu') {
+                profile_link = `https://enjuu.click/u/${user.id}`
+                pfp_link = `http://a.enjuu.click/${user.id}?date=${refresh}`
+            } else if (check_type == 'Gatari') {
+                profile_link = `https://gatari.pw/u/${user.id}`
+                pfp_link = `http://a.gatari.pw/${user.id}?date=${refresh}`
+            }
             const embed = new MessageEmbed()
-            .setDescription(`${modeicon} **Osu!${modename} top skill for: [${user.username}](https://osu.ppy.sh/users/${user.id})**`)
-            .setThumbnail(`http://s.ppy.sh/a/${user.id}.png?date=${refresh}`)
+            .setDescription(`${modeicon} **Osu!${modename} top skill for: [${user.username}](${profile_link})**`)
+            .setThumbnail(pfp_link)
             .addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)}★
@@ -643,12 +554,13 @@ async function osu_card(message = new Message(), mode) {
         let refresh = Math.round(Math.random()* 2147483648)
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
         // Get Information
-        let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
         let modedetail = fx.osu.get_mode_detail(mode)
         let modenum = modedetail.modenum
         let check_type = modedetail.check_type
-        if (check_type !== 'Bancho') {
-            throw 'Card is only available for Bancho (for now)'
+        let a_mode = modedetail.a_mode
+        let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
+        if (a_mode == 'rx') {
+            throw 'Card is only available for other modes except relax'
         }
         let user = await fx.osu.get_osu_profile(name, mode, 1, false, false)
         if (user == null) {
@@ -706,41 +618,39 @@ async function osu_card(message = new Message(), mode) {
         // Process image
         msg1.edit('Processing Image...')
         let card = ''
-        if (check_type == 'Bancho') {
-            if (acc_avg >= 0 && acc_avg < 300) {
-                card = await jimp.read('./osu_card/common_osu.png')
-            } else if (acc_avg >= 300 && acc_avg < 525) {
-                card = await jimp.read('./osu_card/rare_osu.png')
-            } else if (acc_avg >= 525 && acc_avg < 700) {
-                card = await jimp.read('./osu_card/elite_osu.png')
-            } else if (acc_avg >= 700 && acc_avg < 825) {
-                card = await jimp.read('./osu_card/super_rare_osu.png')
-            } else if (acc_avg >= 825 && acc_avg < 900) {
-                card = await jimp.read('./osu_card/ultra_rare_osu.png')
-            } else if (acc_avg >= 900) {
-                card = await jimp.read('./osu_card/master_osu.png')
-            }
+        if (acc_avg >= 0 && acc_avg < 300) {
+            card = await jimp.read('./osu_card/card/common_osu.png')
+        } else if (acc_avg >= 300 && acc_avg < 525) {
+            card = await jimp.read('./osu_card/card/rare_osu.png')
+        } else if (acc_avg >= 525 && acc_avg < 700) {
+            card = await jimp.read('./osu_card/card/elite_osu.png')
+        } else if (acc_avg >= 700 && acc_avg < 825) {
+            card = await jimp.read('./osu_card/card/super_rare_osu.png')
+        } else if (acc_avg >= 825 && acc_avg < 900) {
+            card = await jimp.read('./osu_card/card/ultra_rare_osu.png')
+        } else if (acc_avg >= 900) {
+            card = await jimp.read('./osu_card/card/master_osu.png')
         }
         // Special card
         let special;
-        if (modenum == 0) {
+        if (modenum == 0 && check_type == "Bancho") {
             let s_player = [124493, 39828, 50265, 2558286, 5339515, 4650315]
             for (let i in s_player) {
                 if (user.id == s_player[i]) {
                     special = 'normal'
-                    card = await jimp.read('./osu_card/legendary_osu.png')
+                    card = await jimp.read('./osu_card/card/legendary_osu.png')
                     star_avg = 10
                     break
                 }
                 if (user.id == 4504101) {
                     special = 'whitecat'
-                    card = await jimp.read('./osu_card/legendary_osu_whitecat.png')
+                    card = await jimp.read('./osu_card/card/legendary_osu_whitecat.png')
                     star_avg = 10
                     break
                 }
                 if (user.id == 6447454) {
                     special = 'merami'
-                    card = await jimp.read('./osu_card/legendary_osu_merami.png')
+                    card = await jimp.read('./osu_card/card/legendary_osu_merami.png')
                     star_avg = 10
                     break
                 }
@@ -784,24 +694,21 @@ async function osu_card(message = new Message(), mode) {
                 acc_avg = acc_avg.toFixed(0)
             }
         }
-        
-        let pfp = await jimp.read(`http://a.ppy.sh/${user.id}?.png?date=${refresh}`)
+
+        let pfp_link = ''
+        if (check_type == 'Bancho')        pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`;
+        else if (check_type == 'Ripple')   pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`;
+        else if (check_type == 'Akatsuki') pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`;
+        else if (check_type == 'Horizon')  pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`;
+        else if (check_type == 'Enjuu')    pfp_link = `http://a.enjuu.click/${user.id}?date=${refresh}`;
+        else if (check_type == 'Gatari')   pfp_link = `http://a.gatari.pw/${user.id}?date=${refresh}`;
+        let pfp = await jimp.read(pfp_link)
         pfp.resize(320,320)
         card.composite(pfp, 40,110)
         // Get mode icon
-        let mode_icon = ''
-        if (modenum == 0) {
-            mode_icon = await jimp.read('./osu_card/osu.png')
-        }
-        if (modenum == 1) {
-            mode_icon = await jimp.read('./osu_card/taiko.png')
-        }
-        if (modenum == 2) {
-            mode_icon = await jimp.read('./osu_card/ctb.png')
-        }
-        if (modenum == 3) {
-            mode_icon = await jimp.read('./osu_card/mania.png')
-        }
+        const icon_path = './osu_card/icon/'
+        const path_suffix = mode.toLowerCase().replace('-', '_') 
+        let mode_icon = await jimp.read(`${icon_path}${path_suffix}.png`)
         mode_icon.resize(80,80)
         card.composite(mode_icon, 20, 20)
         // Get username
@@ -1011,17 +918,17 @@ async function osutop(message = new Message(), mode) {
             .setColor(embedcolor)
             .setDescription(top);
             message.channel.send({embed});
-        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-m").position > -1) {
+        } else if (suffix.suffix.find(s => s.suffix == "-m").position > -1) {
             let getmod = suffix.suffix.find(s => s.suffix == "-m").value[0]
             let mod = fx.osu.mods_enum(getmod).bitpresent
-            let user = await osuApi.getUser({u: name})
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
                 throw 'User not found!'
             }
             pfp_link = pfp_link.replace('{user_id}', user.id)
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
             let checktop = 0
-            let username = user.name
+            let username = user.username
             for (let i = 0; i < best.length; i++) {
                 let score_mod = best[i].mod
                 if (score_mod == mod && checktop < 5) {
@@ -1051,17 +958,17 @@ async function osutop(message = new Message(), mode) {
             .setColor(embedcolor)
             .setDescription(top);
             message.channel.send({embed});
-        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-g").position > -1) {
+        } else if (suffix.suffix.find(s => s.suffix == "-g").position > -1) {
             let gtpp = Number(suffix.suffix.find(s => s.suffix == "-g").value[0])
             if (gtpp < 0) {
                 throw 'How you even have negative pp? Are you the reverse farmer or something?'
             }
-            let user = await osuApi.getUser({u: name})
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
                 throw 'User not found!'
             }
             let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
-            let username = user.name
+            let username = user.username
             for (let i = best.length - 1; i > -1; i--) {
                 if (best[i].pp > gtpp) {
                     message.channel.send(`${username} has **${i+1} plays** worth more than **${gtpp}pp**`)
@@ -1220,34 +1127,36 @@ async function recent(message = new Message()) {
                                                     {"suffix": "-taiko", "v_count": 0},
                                                     {"suffix": "-ctb", "v_count": 0},
                                                     {"suffix": "-mania", "v_count": 0},
+                                                    {"suffix": "-rx", "v_count": 0},
+                                                    {"suffix": "-bancho", "v_count": 0},
                                                     {"suffix": "-ripple", "v_count": 0},
                                                     {"suffix": "-akat", "v_count": 0},
-                                                    {"suffix": "-rxakat", "v_count": 0},
                                                     {"suffix": "-hrz", "v_count": 0},
-                                                    {"suffix": "-rxhrz", "v_count": 0},
                                                     {"suffix": "-enjuu", "v_count": 0},
                                                     {"suffix": "-gatari", "v_count": 0},])
-        let mode = "Bancho-std"
-        if (suffix.suffix.find(s => s.suffix == "-taiko").position > -1) {
-            mode = "Bancho-taiko"
-        } else if (suffix.suffix.find(s => s.suffix == "-ctb").position > -1) {
-            mode = "Bancho-ctb"
-        } else if (suffix.suffix.find(s => s.suffix == "-mania").position > -1) {
-            mode = "Bancho-mania"
+        let mode = "Bancho"
+        if (suffix.suffix.find(s => s.suffix == "-bancho").position > -1) {
+            mode = 'Bancho'
         } else if (suffix.suffix.find(s => s.suffix == "-ripple").position > -1) {
-            mode = "Ripple-std"
+            mode = 'Ripple'
         } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
-            mode = "Akatsuki-std"
-        } else if (suffix.suffix.find(s => s.suffix == "-rxakat").position > -1) {
-            mode = "Akatsuki-rx"
+            mode = 'Akatsuki'
         } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
-            mode = "Horizon-std"
-        } else if (suffix.suffix.find(s => s.suffix == "-rxhrz").position > -1) {
-            mode = "Horizon-rx"
+            mode = 'Horizon'
         } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
-            mode = "Enjuu-std"
+            mode = 'Enjuu'
         } else if (suffix.suffix.find(s => s.suffix == "-gatari").position > -1) {
-            mode = "Gatari-std"
+            mode = 'Gatari'
+        }
+        let osu_mode_check = ["-std", "-taiko", "-ctb", "-mania", "-rx"]
+        for (let osu_mode of osu_mode_check) {
+            if (suffix.suffix.find(s => s.suffix == osu_mode).position > -1) {
+                mode += osu_mode
+            }
+        }
+        console.log(mode)
+        if (mode == "Bancho") {
+            mode = "Bancho-std"
         }
         // Make recent best get modes later
         let modedetail = fx.osu.get_mode_detail(mode)
@@ -1463,6 +1372,9 @@ ${date}
             if (check_type == 'Horizon') {
                 throw 'Told Gravy to add **api/v1/user/scores** for me~ ありがとうございます!'
             }
+            if (check_type == 'Gatari') {
+                throw 'Uhh... This is the error message for now :3c'
+            }
         }
     } catch (error) {
         message.channel.send(String(error))
@@ -1481,49 +1393,28 @@ async function score(message = new Message()) {
         fx.general.cmd_cooldown.set(message, command, 3000)
         let beatmapid = 0
         let check = ''
-        let mode = ''
-        if (msg.substr(command.length+1,21) == 'https://osu.ppy.sh/b/') {
-            let data = msg.split("/")[4]
-            beatmapid = data.split(" ")[0]
-            if (msg.substring(0, msg.length).includes('?m=') == true) {
-                beatmapid = msg.substring(msg.indexOf(beatmapid[0]), msg.indexOf('?m='))
-                mode = msg.substr(msg.indexOf('?m=')+3, 1)
-                if (mode == 0) {
-                    mode = 'Bancho-std'
-                } else if (mode == 1) {
-                    mode = 'Bancho-taiko'
-                } else if (mode == 2) {
-                    mode = 'Bancho-ctb'
-                } else if (mode == 3) {
-                    mode = 'Bancho-mania'
-                }
-            }
-        }
-        if (msg.substr(command.length+1,31) == 'https://osu.ppy.sh/beatmapsets/') {
-            let data = msg.split("/")[5]
-            beatmapid = data.split(" ")[0]
-            let modedata = msg.split("/")[4]
-            if (modedata.includes('#osu')) {
-                mode = 'Bancho-std'
-            } else if (modedata.includes('#taiko')) {
-                mode = 'Bancho-taiko'
-            } else if (modedata.includes('#fruits')) {
-                mode = 'Bancho-ctb'
-            } else if (modedata.includes('#mania')) {
-                mode = 'Bancho-mania'
-            }
-        }
-        let option = ''
-        if (msg.includes('"') == true) {
-            option = msg.split('"')
-            check = option[1]
-        } else {
-            option = msg.split(' ')
-            if (option.length < 3) {
-                check = ''
+        let mode = 'Bancho-'
+        let link = msg.split(' ')
+        link.shift()
+        link = link.toString().replace(',', '')
+        if (link.startsWith("https://osu.ppy.sh/b/")) {
+            let args = link.split("/")
+            beatmapid = args[4].split('?')[0]
+            let osu_mode = ["std", "taiko", "ctb", "mania"]
+            if (link.includes("?m=")) {
+                mode += osu_mode[args[4].split('?')[1].substr(2)]
             } else {
-                check = option[2]
+                mode += 'std'
             }
+        } else if (link.startsWith("https://osu.ppy.sh/beatmapsets/")) {
+            let args = link.split("/")
+            if (args.length == 5) {
+                throw "Sorry the bot doesn't support beatmapset displaying yet"
+            }
+            args = link.split("#")[1].split('/')
+            beatmapid = args[1]
+            let osu_mode = {"osu": "std", "taiko": "taiko", "fruits": "ctb", "mania": "mania"}
+            mode += osu_mode[args[0]]
         }
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
@@ -1802,57 +1693,39 @@ async function beatmaplinkdetail(message = new Message(), bot_prefix) {
     try {
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-        let beatmapid = []
-        let mods = ''
-        let mode = 0
-        //Detect if this a command or link alone
         let option = msg.split(" ")
+        console.log(option[0].substring(0, bot_prefix.length))
         if (option[0].substring(0, bot_prefix.length) == bot_prefix) return;
-        for (let m = 0; m < msg.length; m++) {
-            if (msg.substr(m,21) == 'https://osu.ppy.sh/b/') {
-                let data = msg.split("/")[4]
-                beatmapid.push(data.split(" ")[0])
-                if (msg.substring(0, msg.length).includes('?m=') == true) {
-                    beatmapid[0] = msg.substring(msg.indexOf(beatmapid[0]), msg.indexOf('?m='))
-                    mode = msg.substr(msg.indexOf('?m=')+3, 1)
-                    if (mode == 0) {
-                        mode = 'Bancho-std'
-                    } else if (mode == 1) {
-                        mode = 'Bancho-taiko'
-                    } else if (mode == 2) {
-                        mode = 'Bancho-ctb'
-                    } else if (mode == 3) {
-                        mode = 'Bancho-mania'
-                    }
-                }
-                if (data.split(" ")[1] !== undefined) {
-                    mods = data.split(" ")[1]
-                } else {
-                    mods = 'NM'
-                }
-                break
+        let beatmapid = []
+        let mods = 'nm'
+        let mode = 'Bancho-'
+        let link = msg
+        if (link.startsWith("https://osu.ppy.sh/b/")) {
+            let args = link.split("/")
+            beatmapid.push(args[4].split(" ")[0].split('?')[0])
+            let osu_mode = ["std", "taiko", "ctb", "mania"]
+            if (link.includes("?m=")) {
+                mode += osu_mode[args[4].split(" ")[0].split('?')[1].substr(2)]
+            } else {
+                mode += 'std'
             }
-            if (msg.substr(m,31) == 'https://osu.ppy.sh/beatmapsets/') {
-                let data = msg.split("/")[5]
-                beatmapid.push(data.split(" ")[0])
-                if (data.split(" ")[1] !== undefined) {
-                    mods = data.split(" ")[1]
-                } else {
-                    mods = 'NM'
-                }
-                let modedata = msg.split("/")[4]
-                if (modedata.includes('#osu')) {
-                    mode = 'Bancho-std'
-                } else if (modedata.includes('#taiko')) {
-                    mode = 'Bancho-taiko'
-                } else if (modedata.includes('#fruits')) {
-                    mode = 'Bancho-ctb'
-                } else if (modedata.includes('#mania')) {
-                    mode = 'Bancho-mania'
-                }
-                break
+            if (args[4].includes("+")) {
+                mods = args[4].split("+")[1]
+            }
+        } else if (link.startsWith("https://osu.ppy.sh/beatmapsets/")) {
+            let args = link.split("/")
+            if (args.length == 5) {
+                throw "Sorry the bot doesn't support beatmapset displaying yet"
+            }
+            args = link.split("#")[1].split('/')
+            beatmapid.push(args[1].split(" ")[0])
+            let osu_mode = {"osu": "std", "taiko": "taiko", "fruits": "ctb", "mania": "mania"}
+            mode = osu_mode[args[0]]
+            if (args[1].includes("+")) {
+                mods = args[1].split("+")[1]
             }
         }
+        console.log(beatmapid, mode, mods)
         for (i = 0; i < beatmapid.length; i++) {
             let bitpresent = fx.osu.mods_enum(mods).bitpresent
             let map = await fx.osu.get_osu_beatmap(beatmapid[i], mode)

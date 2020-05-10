@@ -142,7 +142,63 @@ async function tenor(message = new Message(), start, search, action, aloneaction
     }
 }
 
+function roll(message = new Message()) {
+    try {
+        let msg = message.content.toLowerCase()
+        let number = msg.split(' ')[1]
+        if (isNaN(number) || number < 1) number = 100;
+        let rolled = Math.floor(Math.random() * number)
+        message.channel.send(`You roll ${rolled}!`)
+    } catch (error) {
+        message.channel.send(String(error))
+    }
+}
+
+function eight_ball(message = new Message()) {
+    try {
+        let msg = message.content.toLowerCase()
+        let command = msg.split(' ')[0]
+        let text = msg.substring(command.length + 1)
+        if (text == '') {
+            throw 'Enter a message to guess your fate'
+        }
+        let random_respond = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes – definitely.', 'You may rely on it.',
+                            'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.',
+                            'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Cannot predict now.', 'Concentrate and ask again.',
+                            "Don't count on it.", 'My reply is no.', 'My sources say no.', 'Outlook not so good.', 'Very doubtful.']
+        let random = Math.floor(Math.random() * 19)
+        if (random > 20) random = 19
+        message.channel.send(random_respond[random])
+    } catch (error) {
+        message.channel.send(String(error))
+    }
+}
+
+function rate_waifu(message = new Message()) {
+    try {
+        let msg = message.content.toLowerCase()
+        let command = msg.split(' ')[0]
+        let waifu = msg.substring(command.length + 1)
+        if (waifu == '') {
+            throw 'Type your waifu name please'
+        }
+        let score = Math.floor(Math.random() * 100)
+        let random_respond = [`Hmm... i rate ${waifu} a ${score}/100`, `This is tough... ${score}/100`, `Maybe ${waifu} is a ${score}/100`,
+                            `I would rate ${waifu} a ${score}/100`, `I rate ${waifu} a solid ${score}/100`]
+        let random = Math.floor(Math.random() * 5)
+        if (random > 6) random = 5
+        if (score == 0) message.channel.send(`Your ${waifu} is too ugly! ${score}/100`);
+        else if (score == 100) message.channel.send(`Woah! A pefect match! ${score}/100`);
+        else message.channel.send(random_respond[random])
+    } catch (error) {
+        message.channel.send(String(error))
+    }
+}
+
 module.exports = {
     tenor,
-    trivia
+    trivia,
+    roll,
+    eight_ball,
+    rate_waifu
 }

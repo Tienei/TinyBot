@@ -14,35 +14,70 @@ module.exports = async function (message = new Message(), page_fx, author, thumb
     .setDescription(pages[page-1]);
     var msg1 = await message.channel.send({embed});
     if (max_page > 1) {
-        await msg1.react('⬅')
-        await msg1.react('➡')
-        var previousfilter = (reaction, user) => reaction.emoji.name == "⬅" && user.id == message.author.id
-        var nextfilter = (reaction, user) => reaction.emoji.name == "➡" && user.id == message.author.id
-        var previous = msg1.createReactionCollector(previousfilter, {time: max_duration}) 
-        var next = msg1.createReactionCollector(nextfilter, {time: max_duration})
-        previous.on('collect', reaction => {
-            if (page <= 1) {return}
-            page -= 1
+        function create_collector(emote, fx) {
+            let filter = (reaction, user) => reaction.emoji.name == emote && user.id == message.author.id
+            let collector = msg1.createReactionCollector(filter, {time: max_duration}) 
+            collector.on('collect', reaction => {
+                fx.load()
+            })
+        }
+        async function load_fx() {
+            if (pages[page-1] == undefined) pages = await page_fx.load(page, pages);
             t_author = author
             t_author = t_author.replace("{page}", page)
             t_author = t_author.replace("{max_page}", max_page)    
             embed.setAuthor(t_author)
             embed.setDescription(pages[page-1])
             msg1.edit({embed})
-        })
-        next.on('collect', async reaction => {
-            if (page >= max_page) {return}
+        }
+        let divider = (Math.pow(max_page, 0.5))
+        let begin_fx = async function () {
+            page = 1
+            msg1.edit('Loading page...')
+            await load_fx()
+        }
+        let backward_fx = async function() {
+            page -= Math.floor(max_page/divider)
+            if (page <= 1) page = 1
+            msg1.edit('Loading page...')
+            await load_fx()
+        }
+        let previous_fx = async function() {
+            page -= 1
+            msg1.edit('Loading page...')
+            await load_fx()
+        }
+        let next_fx = async function() {
             page += 1
             msg1.edit('Loading page...')
-            if (pages[page-1] == undefined) {
-                pages = await page_fx.load(page, pages)
+            await load_fx()
+        }
+        let forward_fx = async function() {
+            page += Math.floor(max_page/divider)
+            if (page >= max_page) page = max_page
+            msg1.edit('Loading page...')
+            await load_fx()
+        }
+        let end_fx = async function () {
+            page = max_page
+            msg1.edit('Loading page...')
+            await load_fx()
+        }
+        await msg1.react('⏮️')
+        create_collector('⏮️', {load: begin_fx})
+        if (Math.floor(max_page/divider) >= 2) {
+            await msg1.react('⏪')
+            create_collector('⏪', {load: backward_fx})
+            if (max_page >= 3) {
+                await msg1.react('⬅')
+                await msg1.react('➡')
+                create_collector('⬅', {load: previous_fx})
+                create_collector('➡', {load: next_fx})
             }
-            t_author = author
-            t_author = t_author.replace("{page}", page)
-            t_author = t_author.replace("{max_page}", max_page)
-            embed.setAuthor(t_author)
-            embed.setDescription(pages[page-1])
-            msg1.edit({embed})
-        })
+            await msg1.react('⏩')
+            create_collector('⏩', {load: forward_fx})
+        }
+        await msg1.react('⏭️')
+        create_collector('⏭️', {load: end_fx})
     }
 }

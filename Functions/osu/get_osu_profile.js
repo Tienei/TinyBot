@@ -68,7 +68,7 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 '',
                                 user_web["cover_url"]])
         } else if (check_type == 'Gatari') {
-            let options = {u: name, mode: 0}
+            let options = {u: name, mode: modenum}
             const s_resp = await request.get('https://api.gatari.pw/user/stats').query(options);
             const i_resp = await request.get('https://api.gatari.pw/users/get').query(options);
             let user_stats = (s_resp.body).stats;
@@ -97,7 +97,16 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 undefined,
                                 undefined])
         } else if (check_type !== 'Bancho' && check_type !== 'Gatari') {
-            let user = (a_mode == 'rx') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name, mode: 0}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, mode: 0, relax: 0})
+            let ripple_relax = (a_mode == 'rx' && check_type == 'Ripple') ? 1 : 0
+            let user = (a_mode == 'rx' && check_type !== 'Ripple') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, relax: ripple_relax})
+            a_mode = (a_mode == 'rx') ? 'std' : a_mode
+            let online_status = undefined
+            let online_icon = undefined
+            if (check_type == 'Horizon') {
+                online_status = JSON.parse((await request.get(`https://c.lemres.de/api/v1/playerstatus?uid=${user.id}`)).text).Status
+                online_icon = online_status !== 'Offline' ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1'
+                online_status = online_status !== 'Offline' ? online_status : 'Offline'
+            }
             return new Profile([user.username,
                                 Number(user.id),
                                 undefined,
@@ -106,19 +115,19 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 undefined,
                                 undefined,
                                 undefined,
-                                Number(user.std.playcount),
-                                Number(user.std.ranked_score),
-                                Number(user.std.total_score),
-                                Number(user.std.pp),
-                                Number(user.std.global_leaderboard_rank),
-                                Number(user.std.country_leaderboard_rank),
+                                Number(user[a_mode].playcount),
+                                Number(user[a_mode].ranked_score),
+                                Number(user[a_mode].total_score),
+                                Number(user[a_mode].pp),
+                                Number(user[a_mode].global_leaderboard_rank),
+                                Number(user[a_mode].country_leaderboard_rank),
                                 user.country.toLowerCase(),
-                                Number(user.std.level).toFixed(2),
-                                Number(user.std.accuracy).toFixed(2),
+                                Number(user[a_mode].level).toFixed(2),
+                                Number(user[a_mode].accuracy).toFixed(2),
                                 undefined,
                                 undefined,
-                                undefined,
-                                undefined,
+                                online_icon,
+                                online_status,
                                 undefined,
                                 undefined])
         }

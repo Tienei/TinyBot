@@ -290,7 +290,7 @@ bot.on("message", (message) => {
                             `Hewwo ${message.author.username}! <:chinohappy:450684046129758208>`,
                             `Me is sleepy Zzz.........`,
                             `Where is my senpai? :c`,
-                            `Me is busy working for ${bot.guilds.size} servers right now`,
+                            `Me is busy working for ${bot.guilds.cache.size} servers right now`,
                             `Poked you! :3`,
                             `Me don't know what me is doing right now qwq`,
                             `Me love my senpai`,
@@ -373,7 +373,15 @@ bot.on("message", (message) => {
         if (command == bot_prefix + 'trivia') {
             cmds.fun.trivia(message)
         }
-
+        if (command == bot_prefix + 'roll') {
+            cmds.fun.roll(message)
+        }
+        if (command == bot_prefix + '8ball') {
+            cmds.fun.eight_ball(message)
+        }
+        if (command == bot_prefix + 'ratewaifu') {
+            cmds.fun.rate_waifu(message)
+        }
         /* Supported:   
         
         Osu (General): calcpp, osuavatar, osuset, acc
@@ -580,167 +588,123 @@ bot.on("message", (message) => {
         }
 
         // Osu
-        if (command == bot_prefix + 'osu') {
-            cmds.osu.osu(message, 'Bancho-std')
-        }
-        if (command == bot_prefix + 'taiko') {
-            cmds.osu.osu(message, 'Bancho-taiko')
-        }
-        if (command == bot_prefix + 'ctb') {
-            cmds.osu.osu(message, 'Bancho-ctb')
-        }
-        if (command == bot_prefix + 'mania') {
-            cmds.osu.osu(message, 'Bancho-mania')
-        }
-        if (command == bot_prefix + 'osucard') {
-            cmds.osu.osu_card(message, 'Bancho-std')
-        }
-        if (command == bot_prefix + 'taikocard') {
-            cmds.osu.osu_card(message, 'Bancho-taiko')
-        }
-        if (command == bot_prefix + 'ctbcard') {
-            cmds.osu.osu_card(message, 'Bancho-ctb')
-        }
-        if (command == bot_prefix + 'maniacard') {
-            cmds.osu.osu_card(message, 'Bancho-mania')
-        }
-        if (command == bot_prefix + 'osuavatar') {
-            cmds.osu.osuavatar(message, 'Bancho-std')
-        }
-        if (command == bot_prefix + 'topglobal') {
-            cmds.osu.topleaderboard(message, 'global')
-        }
-        if (command == bot_prefix + 'topcountry') {
-            cmds.osu.topleaderboard(message, 'country')
-        }
-        if (command == bot_prefix + 'lb' || command == bot_prefix + 'leaderboard') {
-            cmds.osu.serverleaderboard(message)
-        }
-        if (command == bot_prefix + 'recent' || command == bot_prefix + 'r') {
-            cmds.osu.recent(message)
-        }
-        if (command == bot_prefix + 'compare' || command == bot_prefix + 'c') {
-            cmds.osu.compare(message)
-        }
-        if (command == bot_prefix + 'osutop') {
-            cmds.osu.osutop(message, 'Bancho-std')
-        }
-        if (command == bot_prefix + 'taikotop') {
-            cmds.osu.osutop(message, 'Bancho-taiko')
-        }
-        if (command == bot_prefix + 'ctbtop') {
-            cmds.osu.osutop(message, 'Bancho-ctb')
-        }
-        if (command == bot_prefix + 'maniatop') {
-            cmds.osu.osutop(message, 'Bancho-mania')
-        }
-        if (command == bot_prefix + 'map' || command == bot_prefix + 'm') {
-            cmds.osu.map(message)
-        }
-        if (command == bot_prefix + 'scores') {
-            cmds.osu.score(message)
-        }
-        if (command == bot_prefix + 'osuset') {
-            cmds.osu.osuset(message, 'Osu')
-        }
-        if (command == bot_prefix + 'acc') {
-            cmds.osu.acccalc(message)
-        }
-        if (command == bot_prefix + 'osutrack') {
-            osutrack()            
-        }
-        if (command == bot_prefix + 'osutracklist') {
-            osutracklist()            
-        }
-        if (command == bot_prefix + 'untrack') {
-            untrack()
-        }
+        if (command == bot_prefix + 'osu')          cmds.osu.osu(message, 'Bancho-std');
+        if (command == bot_prefix + 'taiko')        cmds.osu.osu(message, 'Bancho-taiko');
+        if (command == bot_prefix + 'ctb')          cmds.osu.osu(message, 'Bancho-ctb') ;
+        if (command == bot_prefix + 'mania')        cmds.osu.osu(message, 'Bancho-mania');
+        if (command == bot_prefix + 'osucard')      cmds.osu.osu_card(message, 'Bancho-std');
+        if (command == bot_prefix + 'taikocard')    cmds.osu.osu_card(message, 'Bancho-taiko');
+        if (command == bot_prefix + 'ctbcard')      cmds.osu.osu_card(message, 'Bancho-ctb');
+        if (command == bot_prefix + 'maniacard')    cmds.osu.osu_card(message, 'Bancho-mania');
+        if (command == bot_prefix + 'osuavatar')    cmds.osu.osuavatar(message, 'Bancho-std');
+        if (command == bot_prefix + 'topglobal')    cmds.osu.topleaderboard(message, 'global');
+        if (command == bot_prefix + 'topcountry')   cmds.osu.topleaderboard(message, 'country');
+        if (command == bot_prefix + 'osutop')       cmds.osu.osutop(message, 'Bancho-std');
+        if (command == bot_prefix + 'taikotop')     cmds.osu.osutop(message, 'Bancho-taiko');
+        if (command == bot_prefix + 'ctbtop')       cmds.osu.osutop(message, 'Bancho-ctb');
+        if (command == bot_prefix + 'maniatop')     cmds.osu.osutop(message, 'Bancho-mania');
+        if (command == bot_prefix + 'scores')       cmds.osu.score(message);
+        if (command == bot_prefix + 'osuset')       cmds.osu.osuset(message, 'Osu');
+        if (command == bot_prefix + 'acc')          cmds.osu.acccalc(message);
+        if (command == bot_prefix + 'osutrack')     osutrack();          
+        if (command == bot_prefix + 'osutracklist') osutracklist();
+        if (command == bot_prefix + 'untrack')      untrack();
+
+        if (command == bot_prefix + 'lb' || command == bot_prefix + 'leaderboard') cmds.osu.serverleaderboard(message);
+        if (command == bot_prefix + 'recent' || command == bot_prefix + 'r')       cmds.osu.recent(message);
+        if (command == bot_prefix + 'compare' || command == bot_prefix + 'c')      cmds.osu.compare(message);
+        if (command == bot_prefix + 'map' || command == bot_prefix + 'm')          cmds.osu.map(message);
 
         // Akatuski
 
-        if (command == bot_prefix + 'akatsuki') {
-            cmds.osu.osu(message, 'Akatsuki-std')
-        }
-        if (command == bot_prefix + 'akatavatar') {
-            cmds.osu.osuavatar(message, 'Akatsuki-std')
-        }
-        if (command == bot_prefix + 'akattop') {
-            cmds.osu.osutop(message, 'Akatsuki-std')
-        }
-        if (command == bot_prefix + 'akatsukiset') {
-            cmds.osu.osuset(message, 'Akatsuki')
-        }
-        if (command == bot_prefix + 'rxakatsuki') {
-            cmds.osu.osu(message, 'Akatsuki-rx')
-        }
-        if (command == bot_prefix + 'rxakattop') {
-            cmds.osu.osutop(message, 'Akatsuki-rx')
-        }
+        if (command == bot_prefix + 'akatsuki')      cmds.osu.osu(message, 'Akatsuki-std');
+        if (command == bot_prefix + 'taikoakatsuki') cmds.osu.osu(message, 'Akatsuki-taiko');
+        if (command == bot_prefix + 'ctbakatsuki')   cmds.osu.osu(message, 'Akatsuki-ctb');
+        if (command == bot_prefix + 'maniaakatsuki') cmds.osu.osu(message, 'Akatsuki-mania');
+        if (command == bot_prefix + 'akatavatar')    cmds.osu.osuavatar(message, 'Akatsuki-std');
+        if (command == bot_prefix + 'akatsukiset')   cmds.osu.osuset(message, 'Akatsuki');
+        if (command == bot_prefix + 'rxakatsuki')    cmds.osu.osu(message, 'Akatsuki-rx');
+
+        if (command == bot_prefix + 'akattop' || command == bot_prefix + 'akatsukitop')             cmds.osu.osutop(message, 'Akatsuki-std');
+        if (command == bot_prefix + 'taikoakattop' || command == bot_prefix + 'taikoakatsukitop')   cmds.osu.osutop(message, 'Akatsuki-taiko');
+        if (command == bot_prefix + 'ctbakattop' || command == bot_prefix + 'ctbakatsukitop')       cmds.osu.osutop(message, 'Akatsuki-ctb');
+        if (command == bot_prefix + 'maniaakattop' || command == bot_prefix + 'maniaakatsukitop')   cmds.osu.osutop(message, 'Akatsuki-mania');
+        if (command == bot_prefix + 'rxakattop' || command == bot_prefix + 'rxakatsukitop')         cmds.osu.osutop(message, 'Akatsuki-rx');
+        if (command == bot_prefix + 'akatsukicard' || command == bot_prefix + 'akatcard')           cmds.osu.osu_card(message, 'Akatsuki-std');
+        if (command == bot_prefix + 'taikoakatsukicard' || command == bot_prefix + 'taikoakatcard') cmds.osu.osu_card(message, 'Akatsuki-taiko');
+        if (command == bot_prefix + 'ctbakatsukicard' || command == bot_prefix + 'ctbakatcard')     cmds.osu.osu_card(message, 'Akatsuki-ctb');
+        if (command == bot_prefix + 'maniaakatuskicard' || command == bot_prefix + 'maniaakatcard') cmds.osu.osu_card(message, 'Akatsuki-mania');
 
         // Ripple
 
-        if (command == bot_prefix + 'ripple') {
-            cmds.osu.osu(message, 'Ripple-std')
-        }
-        if (command == bot_prefix + 'rippleavatar') {
-            cmds.osu.osuavatar(message, 'Ripple-std')
-        }
-        if (command == bot_prefix + 'rippletop') {
-            cmds.osu.osutop(message, 'Ripple-std')
-        }
-        if (command == bot_prefix + 'rippleset') {
-            cmds.osu.osuset(message, 'Ripple')
-        }
+        if (command == bot_prefix + 'ripple')          cmds.osu.osu(message, 'Ripple-std');
+        if (command == bot_prefix + 'taikoripple')     cmds.osu.osu(message, 'Ripple-taiko');
+        if (command == bot_prefix + 'ctbripple')       cmds.osu.osu(message, 'Ripple-ctb');
+        if (command == bot_prefix + 'maniaripple')     cmds.osu.osu(message, 'Ripple-mania');
+        if (command == bot_prefix + 'rxripple')        cmds.osu.osu(message, 'Ripple-rx');
+        if (command == bot_prefix + 'rippleavatar')    cmds.osu.osuavatar(message, 'Ripple-std');
+        if (command == bot_prefix + 'rippletop')       cmds.osu.osutop(message, 'Ripple-std');
+        if (command == bot_prefix + 'taikorippletop')  cmds.osu.osutop(message, 'Ripple-taiko');
+        if (command == bot_prefix + 'ctbrippletop')    cmds.osu.osutop(message, 'Ripple-ctb');
+        if (command == bot_prefix + 'maniarippletop')  cmds.osu.osutop(message, 'Ripple-mania');
+        if (command == bot_prefix + 'rxrippletop')     cmds.osu.osutop(message, 'Ripple-rx');
+        if (command == bot_prefix + 'rippleset')       cmds.osu.osuset(message, 'Ripple');
+        if (command == bot_prefix + 'ripplecard')      cmds.osu.osu_card(message, 'Ripple-std');
+        if (command == bot_prefix + 'taikoripplecard') cmds.osu.osu_card(message, 'Ripple-taiko');
+        if (command == bot_prefix + 'ctbripplecard')   cmds.osu.osu_card(message, 'Ripple-ctb');
+        if (command == bot_prefix + 'maniaripplecard') cmds.osu.osu_card(message, 'Ripple-mania');
 
         // Horizon
 
-        if (command == bot_prefix + 'horizon') {
-            cmds.osu.osu(message, 'Horizon-std')
-        }
-        if (command == bot_prefix + 'horizonavatar') {
-            cmds.osu.osuavatar(message, 'Horizon-std')
-        }
-        if (command == bot_prefix + 'horizontop') {
-            cmds.osu.osutop(message, 'Horizon-std')
-        }
-        if (command == bot_prefix + 'horizonset') {
-            cmds.osu.osuset(message, 'Horizon')
-        }
-        if (command == bot_prefix + 'rxhorizon') {
-            cmds.osu.osu(message, 'Horizon-rx')
-        }
-        if (command == bot_prefix + 'rxhorizontop') {
-            cmds.osu.osutop(message, 'Horizon-rx')
-        }
+        if (command == bot_prefix + 'horizon')          cmds.osu.osu(message, 'Horizon-std');
+        if (command == bot_prefix + 'taikohorizon')     cmds.osu.osu(message, 'Horizon-taiko');
+        if (command == bot_prefix + 'ctbhorizon')       cmds.osu.osu(message, 'Horizon-ctb');
+        if (command == bot_prefix + 'maniahorizon')     cmds.osu.osu(message, 'Horizon-mania');
+        if (command == bot_prefix + 'horizonavatar')    cmds.osu.osuavatar(message, 'Horizon-std');
+        if (command == bot_prefix + 'horizontop')       cmds.osu.osutop(message, 'Horizon-std');
+        if (command == bot_prefix + 'taikohorizontop')  cmds.osu.osutop(message, 'Horizon-taiko');
+        if (command == bot_prefix + 'ctbhorizontop')    cmds.osu.osutop(message, 'Horizon-ctb');
+        if (command == bot_prefix + 'maniahorizontop')  cmds.osu.osutop(message, 'Horizon-mania');
+        if (command == bot_prefix + 'horizonset')       cmds.osu.osuset(message, 'Horizon');
+        if (command == bot_prefix + 'rxhorizon')        cmds.osu.osu(message, 'Horizon-rx');
+        if (command == bot_prefix + 'rxhorizontop')     cmds.osu.osutop(message, 'Horizon-rx');
+        if (command == bot_prefix + 'horizoncard')      cmds.osu.osu_card(message, 'Horizon-std');
+        if (command == bot_prefix + 'taikohorizoncard') cmds.osu.osu_card(message, 'Horizon-taiko');
+        if (command == bot_prefix + 'ctbhorizoncard')   cmds.osu.osu_card(message, 'Horizon-ctb');
+        if (command == bot_prefix + 'maniahorizoncard') cmds.osu.osu_card(message, 'Horizon-mania');
 
         // Enjuu
 
-        if (command == bot_prefix + 'enjuu') {
-            cmds.osu.osu(message, 'Enjuu-std')
-        }
-        if (command == bot_prefix + 'enjuuavatar') {
-            cmds.osu.osuavatar(message, 'Enjuu-std')
-        }
-        if (command == bot_prefix + 'enjuutop') {
-            cmds.osu.osutop(message, 'Enjuu-std')
-        }
-        if (command == bot_prefix + 'enjuuset') {
-            cmds.osu.osuset(message, 'Enjuu')
-        }
+        if (command == bot_prefix + 'enjuu')          cmds.osu.osu(message, 'Enjuu-std');
+        if (command == bot_prefix + 'taikoenjuu')     cmds.osu.osu(message, 'Enjuu-taiko');
+        if (command == bot_prefix + 'ctbenjuu')       cmds.osu.osu(message, 'Enjuu-ctb');
+        if (command == bot_prefix + 'maniaenjuu')     cmds.osu.osu(message, 'Enjuu-mania');
+        if (command == bot_prefix + 'enjuuavatar')    cmds.osu.osuavatar(message, 'Enjuu-std');
+        if (command == bot_prefix + 'enjuutop')       cmds.osu.osutop(message, 'Enjuu-std');
+        if (command == bot_prefix + 'taikoenjuutop')  cmds.osu.osutop(message, 'Enjuu-taiko');
+        if (command == bot_prefix + 'ctbenjuutop')    cmds.osu.osutop(message, 'Enjuu-ctb');
+        if (command == bot_prefix + 'maniaenjuutop')  cmds.osu.osutop(message, 'Enjuu-mania');
+        if (command == bot_prefix + 'enjuuset')       cmds.osu.osuset(message, 'Enjuu');
+        if (command == bot_prefix + 'enjuucard')      cmds.osu.osu_card(message, 'Enjuu-std');
+        if (command == bot_prefix + 'taikoenjuucard') cmds.osu.osu_card(message, 'Enjuu-taiko');
+        if (command == bot_prefix + 'ctbenjuucard')   cmds.osu.osu_card(message, 'Enjuu-ctb');
+        if (command == bot_prefix + 'maniaenjuucard') cmds.osu.osu_card(message, 'Enjuu-mania');
 
         // Gatari
-        if (command == bot_prefix + 'gatari') {
-            cmds.osu.osu(message, 'Gatari-std')
-        }
-        if (command == bot_prefix + 'gatariavatar') {
-            cmds.osu.osuavatar(message, 'Gatari-std')
-        }
-        if (command == bot_prefix + 'gataritop') {
-            cmds.osu.osutop(message, 'Gatari-std')
-        }
-        if (command == bot_prefix + 'gatariset') {
-            cmds.osu.osuset(message, 'Gatari')
-        }
+        if (command == bot_prefix + 'gatari')          cmds.osu.osu(message, 'Gatari-std');
+        if (command == bot_prefix + 'taikogatari')     cmds.osu.osu(message, 'Gatari-taiko');
+        if (command == bot_prefix + 'ctbgatari')       cmds.osu.osu(message, 'Gatari-ctb');
+        if (command == bot_prefix + 'maniagatari')     cmds.osu.osu(message, 'Gatari-mania');
+        if (command == bot_prefix + 'gatariavatar')    cmds.osu.osuavatar(message, 'Gatari-std');
+        if (command == bot_prefix + 'gataritop')       cmds.osu.osutop(message, 'Gatari-std');
+        if (command == bot_prefix + 'taikogataritop')  cmds.osu.osutop(message, 'Gatari-taiko');
+        if (command == bot_prefix + 'ctbgataritop')    cmds.osu.osutop(message, 'Gatari-ctb');
+        if (command == bot_prefix + 'maniagataritop')  cmds.osu.osutop(message, 'Gatari-mania');
+        if (command == bot_prefix + 'gatariset')       cmds.osu.osuset(message, 'Gatari');
+        if (command == bot_prefix + 'gataricard')      cmds.osu.osu_card(message, 'Gatari-std');
+        if (command == bot_prefix + 'taikogataricard') cmds.osu.osu_card(message, 'Gatari-taiko');
+        if (command == bot_prefix + 'ctbgataricard')   cmds.osu.osu_card(message, 'Gatari-ctb');
+        if (command == bot_prefix + 'maniagataricard') cmds.osu.osu_card(message, 'Gatari-mania');
 
         // Detection
         // Beatmap Detection
