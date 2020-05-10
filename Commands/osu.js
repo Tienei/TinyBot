@@ -1720,12 +1720,11 @@ async function beatmaplinkdetail(message = new Message(), bot_prefix) {
             args = link.split("#")[1].split('/')
             beatmapid.push(args[1].split(" ")[0])
             let osu_mode = {"osu": "std", "taiko": "taiko", "fruits": "ctb", "mania": "mania"}
-            mode = osu_mode[args[0]]
+            mode += osu_mode[args[0]]
             if (args[1].includes("+")) {
                 mods = args[1].split("+")[1]
             }
         }
-        console.log(beatmapid, mode, mods)
         for (i = 0; i < beatmapid.length; i++) {
             let bitpresent = fx.osu.mods_enum(mods).bitpresent
             let map = await fx.osu.get_osu_beatmap(beatmapid[i], mode)
