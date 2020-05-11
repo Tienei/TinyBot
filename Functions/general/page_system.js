@@ -43,12 +43,12 @@ module.exports = async function (message = new Message(), page_fx, author, thumb
             await load_fx()
         }
         let previous_fx = async function() {
-            if (page > 0) page -= 1
+            if (page > 1) page -= 1
             msg1.edit('Loading page...')
             await load_fx()
         }
         let next_fx = async function() {
-            if (page <= max_page) page += 1
+            if (page < max_page) page += 1
             msg1.edit('Loading page...')
             await load_fx()
         }
