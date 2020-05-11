@@ -1162,9 +1162,8 @@ async function recent(message = new Message()) {
                 mode += osu_mode
             }
         }
-        console.log(mode)
-        if (mode == "Bancho") {
-            mode = "Bancho-std"
+        if (!mode.includes('-')) {
+            mode += '-std'
         }
         // Make recent best get modes later
         let modedetail = fx.osu.get_mode_detail(mode)
