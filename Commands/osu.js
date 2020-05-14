@@ -1399,10 +1399,8 @@ async function score(message = new Message()) {
         }
         fx.general.cmd_cooldown.set(message, command, 3000)
         let beatmapid = 0
-        let check = ''
         let mode = 'Bancho-'
-        let link = msg.split(' ')
-        link.shift()
+        let link = msg.split(' ').find(l => l.includes("https://osu.ppy.sh/"))
         link = link.toString().replace(',', '')
         if (link.startsWith("https://osu.ppy.sh/b/")) {
             let args = link.split("/")
@@ -1422,12 +1420,15 @@ async function score(message = new Message()) {
             beatmapid = args[1]
             let osu_mode = {"osu": "std", "taiko": "taiko", "fruits": "ctb", "mania": "mania"}
             mode += osu_mode[args[0]]
+            console.log(args[0], mode)
         }
+        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": link, "v_count": 0}])
+        console.log(suffix.check)
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
         let modenum = modedetail.modenum
         let a_mode = modedetail.a_mode
-        let name = fx.osu.check_player(user_data, message, check, 'Bancho')
+        let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
         let scores = await fx.osu.get_osu_scores(name, modenum, beatmapid)
         scores.sort(function (a,b) {
             a1 = Number(a.pp)
@@ -1701,7 +1702,6 @@ async function beatmaplinkdetail(message = new Message(), bot_prefix) {
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         let option = msg.split(" ")
-        console.log(option[0].substring(0, bot_prefix.length))
         if (option[0].substring(0, bot_prefix.length) == bot_prefix) return;
         let beatmapid = []
         let mods = 'nm'
@@ -1728,6 +1728,7 @@ async function beatmaplinkdetail(message = new Message(), bot_prefix) {
             beatmapid.push(args[1].split(" ")[0])
             let osu_mode = {"osu": "std", "taiko": "taiko", "fruits": "ctb", "mania": "mania"}
             mode += osu_mode[args[0]]
+            console.log(args[0], mode)
             if (args[1].includes("+")) {
                 mods = args[1].split("+")[1]
             }
