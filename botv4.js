@@ -21,7 +21,9 @@ const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
 const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id"])
-
+// top.gg
+const topgg = require("dblapi.js")
+const topgg_client = new topgg(process.env.TOPGG_KEY, bot)
 let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
@@ -99,7 +101,9 @@ bot.on("ready", (ready) => {
     
     // Server count
     const server_count = async () => bot.channels.cache.get("572093442042232842").setName(`Server Count: ${bot.guilds.cache.size}`)
+    const topgg_server_count = async () => topgg_client.postStats(bot.guilds.cache.size);
     setInterval(server_count, 10000)
+    setInterval(topgg_server_count, 300000)
 
     // osutrack
     async function real_time_osu_track() {
@@ -190,6 +194,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                                 }
                             }
                         }
+                        player.name = user.username
                         player_mode_detail.lasttotalpp = user.pp
                         player_mode_detail.lastrank = user.rank
                         player_mode_detail.lastcountryrank = user.countryrank
@@ -498,12 +503,13 @@ bot.on("message", (message) => {
                 if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
                     throw 'You need to have `Manage Channels` permission to untrack'
                 }
-                let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-bc", "v_count": 0},
-                                                            {"suffix": "-akat", "v_count": 0},
-                                                            {"suffix": "-rp", "v_count": 0},
-                                                            {"suffix": "-hrz", "v_count": 0},
-                                                            {"suffix": "-enjuu", "v_count": 0},
-                                                            {"suffix": "-gatari", "v_count": 0},])
+                let suffix = fx.osu.check_suffix(message.content, true, [{"suffix": "-bc", "v_count": 0},
+                                                                        {"suffix": "-akat", "v_count": 0},
+                                                                        {"suffix": "-rp", "v_count": 0},
+                                                                        {"suffix": "-hrz", "v_count": 0},
+                                                                        {"suffix": "-enjuu", "v_count": 0},
+                                                                        {"suffix": "-gatari", "v_count": 0},
+                                                                        {"suffix": "-on", "v_count": 0}])
                 let type = 'All'
                 let mode = 'Bancho-std'
                 if (suffix.suffix.find(s => s.suffix == "-bc").position > -1) {
@@ -524,8 +530,12 @@ bot.on("message", (message) => {
                     type = 'Gatari'
                     mode = 'Gatari-std'
                 }
-                let user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
-                let name = user.username
+                let name = ''
+                if (suffix.suffix.find(s => s.suffix == "-on").position > -1)  name = suffix.check;
+                else { 
+                    let user = await fx.osu.get_osu_profile(suffix.check, mode, 0, false, false)
+                    name = user.username
+                }
                 if (name == undefined) {
                     throw 'Please enter a valid osu username! >:c'
                 }
@@ -772,4 +782,3 @@ bot.on("message", (message) => {
         }
     }
 })
-    
