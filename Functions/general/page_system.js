@@ -68,7 +68,7 @@ module.exports = async function (message = new Message(), page_fx, author, thumb
         if (Math.floor(max_page/divider) >= 2) {
             await msg1.react('⏪')
             create_collector('⏪', {load: backward_fx})
-            if (max_page >= 3) {
+            if (max_page >= 2) {
                 await msg1.react('⬅')
                 await msg1.react('➡')
                 create_collector('⬅', {load: previous_fx})
