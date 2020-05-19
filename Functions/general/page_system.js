@@ -65,15 +65,17 @@ module.exports = async function (message = new Message(), page_fx, author, thumb
         }
         await msg1.react('⏮️')
         create_collector('⏮️', {load: begin_fx})
-        if (Math.floor(max_page/divider) >= 2) {
+        if (Math.floor(max_page/divider) >= 3) {
             await msg1.react('⏪')
             create_collector('⏪', {load: backward_fx})
-            if (max_page >= 2) {
-                await msg1.react('⬅')
-                await msg1.react('➡')
-                create_collector('⬅', {load: previous_fx})
-                create_collector('➡', {load: next_fx})
-            }
+        }
+        if (max_page >= 2) {
+            await msg1.react('⬅')
+            await msg1.react('➡')
+            create_collector('⬅', {load: previous_fx})
+            create_collector('➡', {load: next_fx})
+        }
+        if (Math.floor(max_page/divider) >= 3) {
             await msg1.react('⏩')
             create_collector('⏩', {load: forward_fx})
         }
