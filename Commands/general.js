@@ -248,7 +248,9 @@ function changelog(message = new Message()) {
 Note: No tracking for other modes in private servers`,`--- Bug Fixes:
 - Fixed link commands
 - Fixed Merami unique card
-- Fixed TinyBot pinging respond`]
+- Fixed TinyBot pinging respond`,
+`**[May 20th, 2020]:**
+- Now you don't need quote for commands. (!osutop im a fancy lad -p 2) is now valid`]
 
     let loadpage = async function (page, pages) {
         pages = changes

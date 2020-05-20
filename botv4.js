@@ -21,9 +21,13 @@ const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
 const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id"])
-// top.gg
-const topgg = require("dblapi.js")
-const topgg_client = new topgg(process.env.TOPGG_KEY, bot)
+
+let topgg_client = ''
+if (!config.config.debug.command) {
+    // top.gg
+    const topgg = require("dblapi.js")
+    topgg_client = new topgg(process.env.TOPGG_KEY, bot)
+}
 let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
     notFoundAsError: false,
     completeScores: true
@@ -103,7 +107,7 @@ bot.on("ready", (ready) => {
     const server_count = async () => bot.channels.cache.get("572093442042232842").setName(`Server Count: ${bot.guilds.cache.size}`)
     const topgg_server_count = async () => topgg_client.postStats(bot.guilds.cache.size);
     setInterval(server_count, 10000)
-    setInterval(topgg_server_count, 300000)
+    if (!config.config.debug.command) setInterval(topgg_server_count, 300000)
 
     // osutrack
     async function real_time_osu_track() {
