@@ -1475,56 +1475,44 @@ async function osuset(message = new Message(), type) {
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-        let option = ''
-        let check = ''
-        if (msg.includes('"') == true) {
-            option = msg.split('"')
-            check = option[1]
-        } else {
-            option = msg.split(' ')
-            if (option.length < 2) {
-                check = ''
-            } else {
-                check = option[1]
-            }
-        }
+        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
         let user = ''
         let name = ''
         let settype = ''
         let profilelink = ''
         let imagelink = ''
         if (type == 'Osu') {
-            user = await osuApi.getUser({u: check})
+            user = await osuApi.getUser({u: suffix.check})
             settype = 'osuname'
             name = user.name
             profilelink = `https://osu.ppy.sh/users/${user.id}`
             imagelink = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
         } else if (type == 'Akatsuki') {
-            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Akatsuki-std', {name: check})
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Akatsuki-std', {name: suffix.check})
             settype = 'akatsukiname'
             name = user.username
             profilelink = `https://akatsuki.pw/u/${user.id}`
             imagelink = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
         } else if (type == 'Ripple') {
-            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Ripple-std', {name: check})
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Ripple-std', {name: suffix.check})
             settype = 'ripplename'
             name = user.username
             profilelink = `https://ripple.moe/u/${user.id}`
             imagelink = `http://a.ripple.moe/${user.id}?date=${refresh}`
         } else if (type == 'Horizon') {
-            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Horizon-std', {name: check})
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Horizon-std', {name: suffix.check})
             settype = 'horizonname'
             name = user.username
             profilelink = `https://lemres.de/u/${user.id}`
             imagelink = `http://a.lemres.de/${user.id}?date=${refresh}`
         } else if (type == 'Enjuu') {
-            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Enjuu-std', {name: check})
+            user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Enjuu-std', {name: suffix.check})
             settype = 'enjuuname'
             name = user.username
             profilelink = `https://enjuu.click/u/${user.id}`
             imagelink = `http://a.enjuu.click/${user.id}?date=${refresh}`
         } else if (type == 'Gatari') {
-            let options = {u: check, mode: 0}
+            let options = {u: suffix.check, mode: 0}
             const i_resp = await request.get('https://api.gatari.pw/users/get').query(options);
             let user_info = (i_resp.body).users[0];
             settype = 'gatariname'
