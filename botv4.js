@@ -314,7 +314,7 @@ bot.on("message", (message) => {
 
         // Custom commands
 
-        /*if (command == bot_prefix + 'customcmd' && message.guild !== null) {
+        if (command == bot_prefix + 'customcmd' && message.guild !== null) {
             let data = cmds.custom_cmd.custom_cmd(message, custom_command)
             if (data !== null) {
                 custom_command = data
@@ -326,7 +326,7 @@ bot.on("message", (message) => {
             if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
                 cmds.custom_cmd.cmd_detection(message, custom_command)
             }
-        }   */
+        }   
 
         // Easter Egg
 

@@ -78,85 +78,89 @@ function custom_cmd(message = new Message(), custom_command) {
 }
 
 function cmd_detection(message = new Message(), custom_command) {
-    let msg = message.content.toLowerCase();
-    let command = msg.split(' ')[0]
-    let respond = custom_command[message.guild.id].find(cmd => cmd.cmd == command).respond
-    let define = {
-        "user": {
-            "selfname": message.author.username,
-            "selfping": `<@${message.author.id}>`,
-            "selfcreatedtime": message.author.createdAt,
-            "selfpresence": message.author.presence.status,
-            "othercreatedtime": message.mentions.users.size > 0 ? message.mentions.users.first().createdAt : null,
-            "otherpresence": message.mentions.users.size > 0 ? message.mentions.users.first().presence.status : null
-        },
-        "channel": {
-            "selfname": message.channel.name,
-            "selflink": `<@${message.channel.id}>`,
-            "members": message.channel.members
-        },
-        "server": {
-            "name": message.guild.name,
-            "members": message.guild.members.filter(x => x.user.bot == false).size,
-            "bots": message.guild.members.filter(x => x.user.bot == true).size,
-            "channels": message.guild.channels.size,
-            "roles": message.guild.roles.size,
-            "defaultchannel": message.guild.defaultChannel,
-            "owner": message.guild.owner,
-            "region": message.guild.region,
-            "createdtime": message.guild.createdAt
+    try {
+        let msg = message.content.toLowerCase();
+        let command = msg.split(' ')[0]
+        let respond = custom_command[message.guild.id].find(cmd => cmd.cmd == command).respond
+        let define = {
+            "user": {
+                "selfname": message.author.username,
+                "selfping": `<@${message.author.id}>`,
+                "selfcreatedtime": message.author.createdAt,
+                "selfpresence": message.author.presence.status,
+                "othercreatedtime": message.mentions.users.size > 0 ? message.mentions.users.first().createdAt : null,
+                "otherpresence": message.mentions.users.size > 0 ? message.mentions.users.first().presence.status : null
+            },
+            "channel": {
+                "selfname": message.channel.name,
+                "selflink": `<@${message.channel.id}>`,
+                "members": message.channel.members
+            },
+            "server": {
+                "name": message.guild.name,
+                "members": message.guild.members.cache.filter(x => x.user.bot == false).size,
+                "bots": message.guild.members.cache.filter(x => x.user.bot == true).size,
+                "channels": message.guild.channels.cache.size,
+                "roles": message.guild.roles.cache.size,
+                "defaultchannel": message.guild.defaultChannel,
+                "owner": message.guild.owner,
+                "region": message.guild.region,
+                "createdtime": message.guild.createdAt
+            }
         }
-    }
-    let requireAdmin = false
-    for (let s = 0; s < respond.length; s++) {
-        if (respond.substr(s,1) == '{') {
-            for (let e = s; e < respond.length; e++) {
-                if (respond.substr(e,1) == '}') {
-                    let type = respond.substring(s+1,e)
-                    type = type.replace(".", " ")
-                    type = type.split(" ")
-                    let found = false
-                    if (type[0].substring(0,1) == "$") {
-                        if (type[0].substring(1,3) == "n+") {
-                            let option = message.content.split(" ")
-                            let cmd = option[0].length
-                            respond = respond.replace(respond.substring(s,e+1), message.content.substring(cmd+1))
-                        } else {
-                            let number = Number(type[0].substring(1))
-                            let option = message.content.split(" ")
-                            option.splice(0,1)
-                            respond = respond.replace(respond.substring(s,e+1), option[number])
+        let requireAdmin = false
+        for (let s = 0; s < respond.length; s++) {
+            if (respond.substr(s,1) == '{') {
+                for (let e = s; e < respond.length; e++) {
+                    if (respond.substr(e,1) == '}') {
+                        let type = respond.substring(s+1,e)
+                        type = type.replace(".", " ")
+                        type = type.split(" ")
+                        let found = false
+                        if (type[0].substring(0,1) == "$") {
+                            if (type[0].substring(1,3) == "n+") {
+                                let option = message.content.split(" ")
+                                let cmd = option[0].length
+                                respond = respond.replace(respond.substring(s,e+1), message.content.substring(cmd+1))
+                            } else {
+                                let number = Number(type[0].substring(1))
+                                let option = message.content.split(" ")
+                                option.splice(0,1)
+                                respond = respond.replace(respond.substring(s,e+1), option[number])
+                                found = true
+                            }
+                        }
+                        if (type[0].substring(0,2) == "@&") {
+                            let roles = message.guild.roles.array()
+                            let rolename = type[0].substring(2)
+                            let role = roles.find(role => role.name.toLowerCase() == rolename).id
+                            respond = respond.replace(respond.substring(s,e+1), `<@&${role}>`)
                             found = true
                         }
+                        if (type[0] == "require:admin") {
+                            requireAdmin = true
+                            found = true
+                        }
+                        if (type[0].substring(0,5) == "send:") {
+                            let channel = message.guild.channels.find(c => c.name == type[0].substring(5))
+                            let custommsg = respond.substring(s+1,e).split('"')
+                            channel.send(custommsg[1])
+                            found = true
+                        }
+                        break
                     }
-                    if (type[0].substring(0,2) == "@&") {
-                        let roles = message.guild.roles.array()
-                        let rolename = type[0].substring(2)
-                        let role = roles.find(role => role.name.toLowerCase() == rolename).id
-                        respond = respond.replace(respond.substring(s,e+1), `<@&${role}>`)
-                        found = true
-                    }
-                    if (type[0] == "require:admin") {
-                        requireAdmin = true
-                        found = true
-                    }
-                    if (type[0].substring(0,5) == "send:") {
-                        let channel = message.guild.channels.find(c => c.name == type[0].substring(5))
-                        let custommsg = respond.substring(s+1,e).split('"')
-                        channel.send(custommsg[1])
-                        found = true
-                    }
-                    break
                 }
             }
         }
-    }
-    if (requireAdmin == true) {
-        if (message.member.hasPermission("ADMINISTRATOR") == false) {
-            throw "You need administrator enabled to use this!"
+        if (requireAdmin == true) {
+            if (message.member.hasPermission("ADMINISTRATOR") == false) {
+                throw "You need administrator enabled to use this!"
+            }
         }
+        message.channel.send(respond)
+    } catch (err) {
+        message.channel.send(String(err))
     }
-    message.channel.send(respond)
 }
 
 module.exports = {
