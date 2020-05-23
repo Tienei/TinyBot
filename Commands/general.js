@@ -329,7 +329,7 @@ async function report(message = new Message()) {
         let user = message.author.username
         let pfp = message.author.avatarURL()
         const embed = new MessageEmbed()
-        .setAuthor(`Username: ${user}`, pfp)
+        .setAuthor(`Username: ${user} (${message.author.id})`, pfp)
         .setColor(embedcolor)
         .setDescription(`
 Channel ID: **${channelid}**
@@ -358,7 +358,7 @@ async function suggestion(message = new Message()) {
         let user = message.author.username
         let pfp = message.author.avatarURL()
         const embed = new MessageEmbed()
-        .setAuthor(`Username: ${user}`, pfp)
+        .setAuthor(`Username: ${user} (${message.author.id})`, pfp)
         .setColor(embedcolor)
         .setDescription(`
 Channel ID: **${channelid}**

@@ -5,6 +5,7 @@ let saved_map_id = []
 let easter_egg = {}
 let custom_command = {}
 let server_data = {}
+let report_ban_data = {}
 
 require('dotenv').config();
 const Discord = require('discord.js');
@@ -20,7 +21,7 @@ const bot = clients.bot
 const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id"])
+const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id", 'report_ban'])
 
 let topgg_client = ''
 if (!config.config.debug.command) {
@@ -87,6 +88,11 @@ bot.on("ready", (ready) => {
             // Get server data
             server_data = await new Promise(resolve => {
                 db.server_data.find((err, docs) => resolve(docs[0]));
+            });
+
+            // Get report ban data
+            report_ban_data = await new Promise(resolve => {
+                db.report_ban.find((err, docs) => resolve(docs[0]));
             });
 
             // Get cached map id
@@ -282,13 +288,17 @@ bot.on("message", (message) => {
                 if (!config.config.debug.disable_db_save) db.server_data.findAndModify({query: {}, update: server_data}, function(){});
             }
         }
+        
         if (command == bot_prefix + 'report' && message.guild !== null) {
-            cmds.general.report(message)
+            if (!report_ban_data.hasOwnProperty(message.author.id)) cmds.general.report(message)
+            else message.channel.send("You have been ban from reporting any suggestion/bugs")
         }
 
         if (command == bot_prefix + 'suggestion' && message.guild !== null) {
-            cmds.general.suggestion(message)
+            if (!report_ban_data.hasOwnProperty(message.author.id)) cmds.general.suggestion(message)
+            else message.channel.send("You have been ban from reporting any suggestion/bugs")
         }
+        
 
         if (msg.includes(`<@${bot.user.id}>`) == true || msg.includes(`<@!${bot.user.id}>`) == true) {
             let respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,
@@ -781,6 +791,27 @@ bot.on("message", (message) => {
                     .setDescription(msg_quote[3]);
                     message.channel.send({embed})
                     message.delete(0)
+                }
+            }
+            if (command == bot_prefix + 'reportban') {
+                let userid = msg.split(" ")[1]
+                if (report_ban_data.hasOwnProperty(userid)) message.channel.send('You already ban this user')
+                else {
+                    report_ban_data[userid] = true
+                    if (!config.config.debug.disable_db_save) db.report_ban.findAndModify({query: {}, update: report_ban_data}, function(){})
+                    message.channel.send(`${userid} has been ban from making any report`)
+                }
+            }
+            if (command == bot_prefix + 'reportunban') {
+                let userid = msg.split(" ")[1]
+                if (!report_ban_data.hasOwnProperty(userid)) message.channel.send('This user isnt found in the database')
+                else {
+                    delete report_ban_data[userid]
+                    if (Object.keys(report_ban_data).length == 0) {
+                        report_ban_data.a = true
+                    }
+                    if (!config.config.debug.disable_db_save) db.report_ban.findAndModify({query: {}, update: report_ban_data}, function(){})
+                    message.channel.send(`${userid} has been unban from making any report`)
                 }
             }
         }
