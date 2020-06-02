@@ -208,14 +208,6 @@
         "Two_Letter_Country_Code":"BZ"
     },
     {
-        "Continent_Code":"AS",
-        "Continent_Name":"Asia",
-        "Country_Name":"British Indian Ocean Territory (Chagos Archipelago)",
-        "Country_Number":86,
-        "Three_Letter_Country_Code":"IOT",
-        "Two_Letter_Country_Code":"IO"
-    },
-    {
         "Continent_Code":"OC",
         "Continent_Name":"Oceania",
         "Country_Name":"Solomon Islands",
