@@ -13,7 +13,7 @@ module.exports = async function (beatmapid) {
         let map = lz_string.decompressFromEncodedURIComponent(decode)
         parser.feed(map)
         return parser
-    } else if (!current_process.includes(`${path}${beatmapid}.osu`)) {
+    } else if (current_process.includes(`${path}${beatmapid}.osu`)) {
         console.log("Already saving file")  
     } else {
         current_process.push(`${path}${beatmapid}.osu`)
