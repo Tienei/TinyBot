@@ -15,6 +15,9 @@ module.exports = async function (beatmapid) {
         return parser
     } else if (current_process.includes(`${path}${beatmapid}.osu`)) {
         console.log("Already saving file")  
+        let map = (await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)).text
+        parser.feed(map)
+        return parser
     } else {
         current_process.push(`${path}${beatmapid}.osu`)
         let map = (await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)).text
