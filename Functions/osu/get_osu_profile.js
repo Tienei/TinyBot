@@ -96,7 +96,34 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 undefined,
                                 undefined,
                                 undefined])
-        } else if (check_type !== 'Bancho' && check_type !== 'Gatari') {
+        } else if (check_type == 'Akatsuki') {
+            let user = await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name})
+            let relax = (a_mode == 'rx') ? 1 : 0
+            a_mode = (a_mode == 'rx') ? 'std' : a_mode
+            return new Profile([user.username,
+                Number(user.id),
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                Number(user.stats[relax][a_mode].playcount),
+                Number(user.stats[relax][a_mode].ranked_score),
+                Number(user.stats[relax][a_mode].total_score),
+                Number(user.stats[relax][a_mode].pp),
+                Number(user.stats[relax][a_mode].global_leaderboard_rank),
+                Number(user.stats[relax][a_mode].country_leaderboard_rank),
+                user.country.toLowerCase(),
+                Number(user.stats[relax][a_mode].level).toFixed(2),
+                Number(user.stats[relax][a_mode].accuracy).toFixed(2),
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined])
+        } else if (check_type !== 'Bancho' && check_type !== 'Gatari' && check_type !== 'Akatsuki') {
             let ripple_relax = (a_mode == 'rx' && check_type == 'Ripple') ? 1 : 0
             let user = (a_mode == 'rx' && check_type !== 'Ripple') ? await rippleAPI.apiCall(`/v1/users/rxfull`, mode, {name: name}) : await rippleAPI.apiCall(`/v1/users/full`, mode, {name: name, relax: ripple_relax})
             a_mode = (a_mode == 'rx') ? 'std' : a_mode
