@@ -197,7 +197,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
     } else if (check_type !== "Bancho" && check_type !== 'Gatari') {
         let ripple_relax = (a_mode == 'rx' && check_type == 'Ripple') ? 1 : 0
         let relax = (a_mode == 'rx') ? 1 : 0
-        let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, rx: relax, l: limit, relax: ripple_relax})
+        let best = await rippleAPI.apiCall(`/v1/users/scores/${type}`, mode, {name: name, mode: modenum, rx: relax, l: limit, relax: ripple_relax})
         let user = await rippleAPI.apiCall(`/v1/users`, mode, {name: name})
         for (var i = 0; i < best.scores.length; i++) {
             let count300 = Number(best.scores[i].count_300)
