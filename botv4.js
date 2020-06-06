@@ -635,9 +635,10 @@ bot.on("message", (message) => {
         if (command == bot_prefix + 'untrack')      untrack();
 
         if (command == bot_prefix + 'lb' || command == bot_prefix + 'leaderboard') cmds.osu.serverleaderboard(message);
-        if (command == bot_prefix + 'recent' || command == bot_prefix + 'r')       cmds.osu.recent(message);
         if (command == bot_prefix + 'compare' || command == bot_prefix + 'c')      cmds.osu.compare(message);
         if (command == bot_prefix + 'map' || command == bot_prefix + 'm')          cmds.osu.map(message);
+
+        if (command == bot_prefix + 'recent' || command == bot_prefix + 'r' || command  == bot_prefix + 'rs') cmds.osu.recent(message);
 
         // Akatuski
 

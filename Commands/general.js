@@ -57,7 +57,7 @@ function help(message = new Message(), command) {
             addhelp('osutrack', 'osutrack (username) (options)', 'Track a player\'s osu!Standard top 50 (Required MANAGE\_CHANNELS permission). Default: osu!Std, top 50', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nTop Play `(-p)`: Number of top plays to include in tracking `(1-100)`\nModes/Severs: `-std` `-taiko` `-ctb` `-mania` `-ripple` `-akat` `-rxakat` `-hrz` `-rxhrz`', 'osutrack Tienei')
             addhelp('osutracklist', 'osutracklist', 'Get a list of player being tracked in the channel', 'None', 'osutracklist')
             addhelp('untrack', 'untrack (username) (options)', 'Untrack a player from the database (Required MANAGE\_CHANNELS permission), Default: Remove all player with the name', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nBancho `(-bc)`: Remove a Bancho player with the name from tracking\nRipple `(-rp)`: Remove a Ripple player with the name from tracking\nAkatsuki `(-akat)`: Remove an Akatsuki player with the name from tracking\nHorizon `(-hrz)`: Remove a Horizon player with the name from tracking\nOld Name `(-on)`: Remove an old username from the tracking (Case sensitive)', 'untrack Tienei')
-            addhelp('recent', '[recent|r] (username) (options)', 'Get player\'s most recent play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nRecent List `(-l)`: Get player 5 most recent plays\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-ripple` `-hrz` `-enjuu` `-gatari` `-rx`', 'r Tienei -akat -mania')
+            addhelp('recent', '[recent|r|rs] (username) (options)', 'Get player\'s most recent play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nRecent List `(-l)`: Get player 5 most recent plays\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-ripple` `-hrz` `-enjuu` `-gatari` `-rx`', 'r Tienei -akat -mania')
             addhelp('compare', '[compare|c] (username) ', 'Compare to the last play in the chat', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nPrevious Play `(-p)`: Get a previous play mentioned in the chat `(Number)`\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-rxakat` `-ripple` `-hrz` `-rxhrz` `-enjuu` `-gatari`', 'c Tienei')
             addhelp('osuset', 'osuset (username)', 'Link your profile to an osu! player', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuset Tienei')
             addhelp('osuavatar', 'osuavatar (username)', 'Get player\'s osu! avatar', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuavatar Tienei')
@@ -164,7 +164,6 @@ function help(message = new Message(), command) {
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
                 throw 'No command was found!'
             }
-            if (getcmd == 'r')             getcmd = 'recent';
             if (getcmd == 'c')             getcmd = 'compare';
             if (getcmd == 'm')             getcmd = 'map';
             if (getcmd == 'bg')            getcmd = 'background';
@@ -178,6 +177,7 @@ function help(message = new Message(), command) {
             if (getcmd == 'ctbakatcard')   getcmd = 'ctbakatsukicard';
             if (getcmd == 'maniaakatcard') getcmd = 'maniaakatsukicard';
 
+            if (getcmd == 'r' || getcmd == 'rs') getcmd = 'recent';
 
             text = bot_command_help.find(helpcmd => helpcmd.command == getcmd).helptext
             for (let i = 0; i < 2; i++) {
