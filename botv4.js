@@ -323,7 +323,7 @@ bot.on("message", (message) => {
             }
         }
 
-        if (command == bot_prefix + 'checkcomp' && message.guild !== null) {
+        if (command == bot_prefix + 'checkperm' && message.guild !== null) {
             cmds.general.checkcomp(message)
         }
 
