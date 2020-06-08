@@ -263,6 +263,9 @@ bot.on("message", (message) => {
 
         // General related
 
+        if (command == bot_prefix + 'ping') {
+            cmds.general.ping(message)
+        }
         if (command == bot_prefix + 'help') {
             cmds.general.help(message, command)
         }
@@ -277,9 +280,6 @@ bot.on("message", (message) => {
         }
         if (command == bot_prefix + 'bot') {
             cmds.general.bot_info(message)
-        }
-        if (command == bot_prefix + 'ping') {
-            cmds.osu.ping(message, command)
         }
         if (command == bot_prefix + 'prefix' && message.guild !== null) {
             let data = cmds.general.prefix(message, server_data)
@@ -301,7 +301,11 @@ bot.on("message", (message) => {
         
 
         if (msg.includes(`<@${bot.user.id}>`) == true || msg.includes(`<@!${bot.user.id}>`) == true) {
-            let respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,
+            let cmd = msg.split(' ')[1]
+            if (cmd == 'check_prefix') {
+                message.channel.send(`Your current prefix in the server is: ${bot_prefix}`)
+            } else {
+                let respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,
                             `Why you keep pinging me?`,
                             `Stop pinging me! <:chinoangry:450686707881213972>`,
                             `What do you need senpai? <:chinohappy:450684046129758208>`,
@@ -314,8 +318,9 @@ bot.on("message", (message) => {
                             `Me don't know what me is doing right now qwq`,
                             `Me love my senpai`,
                             `Please don't bully my senpai!`]
-            let roll = Math.floor(Math.random()*respone.length)
-            message.channel.send(respone[roll])
+                let roll = Math.floor(Math.random()*respone.length)
+                message.channel.send(respone[roll])
+            }
         }
 
         if (command == bot_prefix + 'checkcomp' && message.guild !== null) {
@@ -612,6 +617,7 @@ bot.on("message", (message) => {
         }
 
         // Osu
+        if (command == bot_prefix + 'banchoping')   cmds.osu.ping(message, command);
         if (command == bot_prefix + 'osu')          cmds.osu.osu(message, 'Bancho-std');
         if (command == bot_prefix + 'taiko')        cmds.osu.osu(message, 'Bancho-taiko');
         if (command == bot_prefix + 'ctb')          cmds.osu.osu(message, 'Bancho-ctb') ;

@@ -23,7 +23,7 @@ function help(message = new Message(), command) {
             addhelp('report', 'report (error)', 'Report an error or bug to the owner', 'error: Type any error or bug you found', 'report osu is broken')
             addhelp('suggestion', 'suggestion (suggestion)', 'Suggesting an idea for the bot to the owner', 'error: Type any error or bug you found', 'report osu is broken')
             addhelp('bot', 'bot', 'Get invitation of the bot', 'None', 'bot')
-            addhelp('checkcomp', 'checkcomp', 'Check the compatibility of the bot to the server permissions', 'None', 'checkcomp')
+            addhelp('checkcomp', 'checkcomp', 'Check the permission of the bot', 'None', 'checkcomp')
             addhelp('prefix', 'prefix (prefix)', 'Change the prefix for the entire server', 'prefix: The prefix you wanted', 'prefix >')
             addhelp('command', 'command (action) (command_category)', 'Disable/Enable/List a list of commands', '`action`: enable, disable, list\n`command_category`: custom_cmd, fun, osu', 'command disable custom_cmd')
             addhelp('ee', 'ee', 'View how many easter eggs you have', 'None', 'ee')
@@ -149,7 +149,7 @@ function help(message = new Message(), command) {
         }
         let generalhelp = '**[General]:** `avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `customcmd` `bot` `prefix` `corona`'
         let funhelp = '**[Fun]:** `hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
-        let osuhelp = '**[osu!]:** `osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
+        let osuhelp = '**[osu!]:** `banchoping` `osu` `taiko` `ctb` `mania` `osutop` `taikotop` `ctbtop` `maniatop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
         let akatsukihelp = '**[Akatsuki]:** `(mode name)akatsuki` `akatsukiset` `akatavatar` `(mode name)akattop` `rxakatsuki` `rxakattop` `(mode name)akatcard`'
         let ripplehelp = '**[Ripple]:** `(mode name)ripple` `rippleset` `rippleavatar` `(mode name)rippletop` `(mode name)ripplecard`'
         let horizonhelp = '**[Horizon]:** `(mode name)horizon` `horizonset` `horizonavatar` `(mode name)horizontop` `rxhorizon` `(mode name)horizoncard`'
@@ -158,7 +158,7 @@ function help(message = new Message(), command) {
         let otherhelp = '**[Other]:** `definevar` `osu -d calculation`'
         let text = ''
         if (msg.substring(command.length+1) == '') {
-            text = `${generalhelp}\n${funhelp}\n${osuhelp}\n${akatsukihelp}\n${ripplehelp}\n${horizonhelp}\n${enjuuhelp}\n${otherhelp}\n${gatarihelp}\n\n**Mode name:** \`std\`: None, \`taiko\`, \`ctb\`, \`mania\`\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**`
+            text = `${generalhelp}\n${funhelp}\n${osuhelp}\n${akatsukihelp}\n${ripplehelp}\n${horizonhelp}\n${enjuuhelp}\n${otherhelp}\n${gatarihelp}\n\n**Mode name:** \`std\`: None, \`taiko\`, \`ctb\`, \`mania\`\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**\nIf you forgot the prefix, remember: **<Ping the bot> check_prefix**`
         } else {
             let getcmd = msg.substring(command.length+1)
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
@@ -230,27 +230,10 @@ function avatar(message = new Message(), command) {
 
 function changelog(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let changes = [`**[May 10th, 2020] \`(Natsu Update)\`:**
---- Features:
-- Added live online indicator for Horizon
-- Added support (taiko, ctb, mania) for other servers
-- Added osutop (-,m, -g) for other modes/servers
-- Added osu (-d, -ts) for other modes/servers (except RX)
-- Added osucard for other modes/servers (except RX, again)
-- Added beatmap cache for quick calculation and grabbing information
-- Added more emotes for other servers
-- Added 8ball, roll, ratewaifu
-- Changed recent suffix (was **-rxakat**, now **-akat -rx**)
-- Changed most common mods in osu -d
-- Changed beatmap link detection (Has to put "+" next to the mods)
-- Improved paging system
-- Removed osu -g (peppy remove data)
-Note: No tracking for other modes in private servers`,`--- Bug Fixes:
-- Fixed link commands
-- Fixed Merami unique card
-- Fixed TinyBot pinging respond`,
-`**[May 20th, 2020]:**
-- Now you don't need quote for commands. (!osutop im a fancy lad -p 2) is now valid`]
+    let changes = [`**[May 10th, 2020]:
+- Readded checkcomp
+- Added ping (Discord ping)
+- Added a way to check prefix if you forgot`]
 
     let loadpage = async function (page, pages) {
         pages = changes
@@ -371,30 +354,58 @@ Suggestion: ${suggestion}`);
 }
 
 function checkcomp(message = new Message()) {
-    let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let compatibility = []
-    let permissions = ['SEND_MESSAGES', 'ATTACH_FILES', 'ADD_REACTIONS', 'EMBED_LINKS', 'READ_MESSAGE_HISTORY', 'USE_EXTERNAL_EMOJIS']
-    for (let i in permissions) {
-        if (message.guild.me.hasPermission(permissions[i]) == true) {
-            compatibility.push('✅')
-        } else {
-            compatibility.push('❌')
+    try {
+        let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
+        let compatibility = []
+        let permissions = ['SEND_MESSAGES', 'ATTACH_FILES', 'ADD_REACTIONS', 'EMBED_LINKS', 'USE_EXTERNAL_EMOJIS']
+        for (let i in permissions) {
+            if (message.guild.me.hasPermission(permissions[i])) compatibility.push('✅')
+            else compatibility.push('❌');
         }
-    }
-    const embed = new MessageEmbed()
-    .setAuthor(`Compatibility for Tiny Bot ${botver} in ${message.guild.name}`)
-    .setThumbnail(message.guild.iconURL())
-    .setColor(embedcolor)
-    .setDescription(`Send Message: ${compatibility[0]}
+        const embed = new MessageEmbed()
+        .setAuthor(`Permissions for Tiny Bot ${config.config.bot_ver} in ${message.guild.name}`)
+        .setThumbnail(message.guild.iconURL())
+        .setColor(embedcolor)
+        .setDescription(`Send Message: ${compatibility[0]}
 Attach Files: ${compatibility[1]}
 Add Reactions: ${compatibility[2]}
 Embed Links: ${compatibility[3]}
-Read Message History: ${compatibility[4]}
-Use External Emojis: ${compatibility[5]}`);
-    message.channel.send({embed})
+Use External Emojis: ${compatibility[4]}`);
+        message.channel.send({embed})
+    } catch (error) {
+        message.channel.send(String(error))
+    }
+}
+
+async function ping(message = new Message()) {
+    try {
+        let msg = message.content.toLowerCase();
+        let command = msg.split(' ')[0]
+        if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
+            throw 'You need to wait 5 seconds before using this again!'
+        }
+        fx.general.cmd_cooldown.set(message, command, 5000)
+        let edit_msg = await message.channel.send("Checking Discord mental health...");
+        let ping = edit_msg.createdTimestamp - message.createdTimestamp
+        let visual = '['
+        for (let i = 0; i < 20; i++) {
+            let comp = (50 + Math.pow(63.5, 0.50 * Math.log(i)))
+            if (ping < comp) {
+                visual += '⎯'
+            } else {
+                visual += '▬'
+            }
+        }
+        visual += ']'
+        edit_msg.edit(`Discord respond! **${ping}ms**                                                         
+Good   ${visual}   Bad`)
+    } catch (error) {
+        message.channel.send(String(error))
+    }
 }
 
 module.exports = {
+    ping,
     help,
     credit,
     avatar,
