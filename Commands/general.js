@@ -230,7 +230,7 @@ function avatar(message = new Message(), command) {
 
 function changelog(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let changes = [`**[May 10th, 2020]:
+    let changes = [`**[June 8th, 2020]:**
 - Readded checkcomp
 - Added ping (Discord ping)
 - Added a way to check prefix if you forgot`]
