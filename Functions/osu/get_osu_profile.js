@@ -32,18 +32,6 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                 }
             }
             let user_web = ''
-            if (html == true && html_cooldown < new Date().getTime()) {
-                try {
-                    let web = (await request.get(`https://osu.ppy.sh/users/${user.id}`)).text
-                    user_web = await cheerio.load(web)
-                    user_web = user_web("#json-user").html()
-                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/<\/?[^>]+>|&quot;/gi, "");
-                    user_web = user_web.substring(0, user_web.indexOf(',"page"')) + user_web.substring(user_web.indexOf(',"page"')).replace(/\/\//gi, "/")
-                    user_web = JSON.parse(user_web)
-                } catch (error) {
-                    html_cooldown = new Date().getTime() * 3600000
-                }
-            }
             return new Profile([user.name,
                                 Number(user.id),
                                 Number(user.counts['300']),
@@ -66,7 +54,7 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 bancho_user.online == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1',
                                 bancho_user.online == true ? 'Online' : 'Offline',
                                 '',
-                                user_web["cover_url"]])
+                                ''])
         } else if (check_type == 'Gatari') {
             let options = {u: name, mode: modenum}
             const s_resp = await request.get('https://api.gatari.pw/user/stats').query(options);
