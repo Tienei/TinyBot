@@ -54,7 +54,7 @@ module.exports = async function (name, mode, event, html = true, client = true) 
                                 bancho_user.online == true ? 'https://cdn.discordapp.com/emojis/589092415818694672.png' : 'https://cdn.discordapp.com/emojis/589092383308775434.png?v=1',
                                 bancho_user.online == true ? 'Online' : 'Offline',
                                 '',
-                                '')
+                                ''])
         } else if (check_type == 'Gatari') {
             let options = {u: name, mode: modenum}
             const s_resp = await request.get('https://api.gatari.pw/user/stats').query(options);
