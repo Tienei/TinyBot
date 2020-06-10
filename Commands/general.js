@@ -385,8 +385,10 @@ async function ping(message = new Message()) {
             throw 'You need to wait 5 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 5000)
+        let timenow = Date.now()
         let edit_msg = await message.channel.send("Checking Discord mental health...");
-        let ping = edit_msg.createdTimestamp - message.createdTimestamp
+        let timelater = Date.now()
+        let ping = timelater - timenow
         let visual = '['
         for (let i = 0; i < 20; i++) {
             let comp = (50 + Math.pow(63.5, 0.50 * Math.log(i)))
