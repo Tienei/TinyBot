@@ -62,4 +62,27 @@ class Osutop {
     }
 }
 
-module.exports = { Profile, Osutop }
+class Score {
+    constructor (value) {
+        this.scoreid = value[0]
+        this.score = value[1]
+        this.username = value[2]
+        this.count300 = value[3]
+        this.count100 = value[4]
+        this.count50 = value[5]
+        this.countmiss = value[6]
+        this.combo = value[7]
+        this.countkatu = value[8]
+        this.countgeki = value[9]
+        this.perfect = value[10]
+        this.mod = value[11]
+        this.userid = value[12]
+        this.date = value[13]
+        this.letter = value[14]
+        this.pp = value[15]
+        this.acc = value[16]
+        this.accdetail = value[17]
+    }
+}
+
+module.exports = { Profile, Osutop, Score }

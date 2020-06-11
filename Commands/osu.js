@@ -1326,63 +1326,48 @@ async function compare(message = new Message()) {
         let check_type = modedetail.check_type
         let modenum = modedetail.modenum
         let a_mode = modedetail.a_mode
-        if (check_type == "Bancho") {
-            let scores = await fx.osu.get_osu_scores(name, modenum, storedid)
-            scores.sort(function (a,b) {
-                a1 = Number(a.pp)
-                b1 = Number(b.pp)
-                return b1 - a1
-            })
-            if (scores.length == 0) {
-                throw `${name} didn't play this map!`
-            }
-            let beatmap = await fx.osu.get_osu_beatmap(storedid, mode)
-            let parser = ''
-            if (modenum == 0) {parser = await fx.osu.precalc(storedid)}
-            let loadpage = async function (page, pages) {
-                let gathering = ''
-                for (let n = 0; n < 5; n++) {
-                    let i = (page - 1) * 5 - 1 + (n+1)
-                    if (i <= scores.length- 1) {
-                        let rank = fx.osu.ranking_letter(scores[i].letter)
-                        let modandbit = fx.osu.mods_enum(scores[i].mod)
-                        let shortenmod = modandbit.shortenmod
-                        let bitpresent = modandbit.bitpresent
-                        let date = fx.osu.time_played(scores[i].date)
-                        let unrankedpp = ''
-                        if (modenum == 0) {
-                            if (beatmap.approvalStatus !== "Ranked" && beatmap.approvalStatus !== "Approved") {
-                                let comparepp = fx.osu.osu_pp_calc(parser,bitpresent,scores[i].combo,scores[i].count100,scores[i].count50,scores[i].countmiss,scores[i].acc,'acc')
-                                unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
-                            }
+        let scores = await fx.osu.get_osu_scores(name, mode, storedid)
+        scores.sort(function (a,b) {
+            a1 = Number(a.pp)
+            b1 = Number(b.pp)
+            return b1 - a1
+        })
+        if (scores.length == 0) {
+            throw `${name} didn't play this map! (${mode})`
+        }
+        let beatmap = await fx.osu.get_osu_beatmap(storedid, mode)
+        let parser = ''
+        if (modenum == 0) {parser = await fx.osu.precalc(storedid)}
+        let loadpage = async function (page, pages) {
+            let gathering = ''
+            for (let n = 0; n < 5; n++) {
+                let i = (page - 1) * 5 - 1 + (n+1)
+                if (i <= scores.length- 1) {
+                    let rank = fx.osu.ranking_letter(scores[i].letter)
+                    let modandbit = fx.osu.mods_enum(scores[i].mod)
+                    let shortenmod = modandbit.shortenmod
+                    let bitpresent = modandbit.bitpresent
+                    let date = fx.osu.time_played(scores[i].date)
+                    let unrankedpp = ''
+                    if (modenum == 0) {
+                        if (beatmap.approvalStatus !== "Ranked" && beatmap.approvalStatus !== "Approved") {
+                            let comparepp = fx.osu.osu_pp_calc(parser,bitpresent,scores[i].combo,scores[i].count100,scores[i].count50,scores[i].countmiss,scores[i].acc,'acc')
+                            unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
                         }
-                        let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
-                        gathering += `
+                    }
+                    let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+                    gathering += `
 ${i+1}. **${shortenmod}** Score (${fc_stat.star}★) | ***${scores[i].pp.toFixed(2)}pp*** ${unrankedpp}
 ${rank} **Score:** ${scores[i].score} | **Combo:** ${scores[i].combo}/${beatmap.fc}
 **Accuracy:** ${scores[i].acc.toFixed(2)}% ${scores[i].accdetail} ${fc_stat.fcguess}
 ${date}
 `         
-                    }
                 }
-                pages[page-1] = gathering
-                return pages
             }
-            fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${scores[0].username} on ${beatmap.title} [${beatmap.diff}] (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5))
-        } else {
-            if (check_type == 'Akatsuki') {
-                throw 'Told cmyui to add **api/v1/user/scores** for me~ ありがとうございます!'
-            }
-            if (check_type == 'Ripple') {
-                throw 'Told Howl or Nyo to add **api/v1/user/scores** for me~ ありがとうございます!'
-            }
-            if (check_type == 'Horizon') {
-                throw 'Told Gravy to add **api/v1/user/scores** for me~ ありがとうございます!'
-            }
-            if (check_type == 'Gatari') {
-                throw 'Uhh... This is the error message for now :3c'
-            }
+            pages[page-1] = gathering
+            return pages
         }
+        fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${scores[0].username} on ${beatmap.title} [${beatmap.diff}] (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5))
     } catch (error) {
         message.channel.send(String(error))
     }
