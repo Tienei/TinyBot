@@ -233,7 +233,9 @@ function changelog(message = new Message()) {
     let changes = [`**[June 8th, 2020]:**
 - Readded checkcomp
 - Added ping (Discord ping)
-- Added a way to check prefix if you forgot`]
+- Added a way to check prefix if you forgot
+** [June 11th, 2020]: **
+- Added compare for Ripple API based server`]
 
     let loadpage = async function (page, pages) {
         pages = changes
