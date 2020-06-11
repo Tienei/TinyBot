@@ -235,7 +235,8 @@ function changelog(message = new Message()) {
 - Added ping (Discord ping)
 - Added a way to check prefix if you forgot
 ** [June 11th, 2020]: **
-- Added compare for Ripple API based server`]
+- Added compare for Ripple API based server
+- Fixed API throw error when getting "unavailable map" (only private server)`]
 
     let loadpage = async function (page, pages) {
         pages = changes

@@ -13,16 +13,18 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
     let fcguess = ''
     let mapcomplete = 0
     if (mode == 'std') {
-        let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,'fc')
-        fcpp = Number(fccalc.pp.total).toFixed(2)
-        fcacc = fccalc.acc
-        star = Number(fccalc.star.total).toFixed(2)
-        if (recent == true) {
-            let end = fccalc.star.objects[fccalc.star.objects.length - 1].obj.time - fccalc.star.objects[0].obj.time
-            let point = fccalc.star.objects[count300 + count100 + count50 + countmiss - 1].obj.time - fccalc.star.objects[0].obj.time
-            mapcomplete = Number((point / end) * 100).toFixed(2)
-            let recentcalc = osu_pp_calc(parser,bitpresent,combo,count100,count50,countmiss,acc,'acc')
-            pp = Number(recentcalc.pp.total)
+        if (parser.map.objects.length !== 0) {
+            let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,'fc')
+            fcpp = Number(fccalc.pp.total).toFixed(2)
+            fcacc = fccalc.acc
+            star = Number(fccalc.star.total).toFixed(2)
+            if (recent == true) {
+                let end = fccalc.star.objects[fccalc.star.objects.length - 1].obj.time - fccalc.star.objects[0].obj.time
+                let point = fccalc.star.objects[count300 + count100 + count50 + countmiss - 1].obj.time - fccalc.star.objects[0].obj.time
+                mapcomplete = Number((point / end) * 100).toFixed(2)
+                let recentcalc = osu_pp_calc(parser,bitpresent,combo,count100,count50,countmiss,acc,'acc')
+                pp = Number(recentcalc.pp.total)
+            }
         }
     }
     if (mode == 'taiko') {
@@ -58,10 +60,12 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
         }
     }
     if (mode == 'rx') {
-        let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,'fc')
-        fcpp = Number(fccalc.pp.total).toFixed(2)
-        fcacc = fccalc.acc
-        star = Number(fccalc.star.total).toFixed(2)
+        if (parser.map.objects.length !== 0) {
+            let fccalc = osu_pp_calc(parser,bitpresent,fc,count100,count50,0,acc,'fc')
+            fcpp = Number(fccalc.pp.total).toFixed(2)
+            fcacc = fccalc.acc
+            star = Number(fccalc.star.total).toFixed(2)
+        }
     }
     if (perfect == 0) {
         if (mode == 'std' || mode == 'taiko' || mode == 'ctb') {
