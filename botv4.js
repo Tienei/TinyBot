@@ -254,7 +254,7 @@ bot.on("message", (message) => {
 
         let bot_prefix = config.config.bot_default_prefix
 
-        if (message.guild !== null) {
+        if (message.guild !== null && config.config.debug.command == false) {
             if (server_data[message.guild.id] !== undefined) {
                 bot_prefix = server_data[message.guild.id].prefix
             }

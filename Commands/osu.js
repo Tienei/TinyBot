@@ -235,11 +235,22 @@ async function osu(message = new Message(), mode) {
                     let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,'acc')
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                     star_avg += thing.star.total
-                    aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1))
-                    speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1))
-                    old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    let temp_acc = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    if (temp_acc !== Infinity) acc_avg += temp_acc
+                    let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
+                    let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
+                    aim_avg += aim_skill
+                    speed_avg +=  speed_skill
+                    old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                    //
+                    let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
+                    if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
+                        aim_skill /= 1.05
+                        speed_skill /= 1.05
+                    }
+                    let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                    if (modandbit.shortenmod.includes('FL')) {
+                        acc_skill *= (0.095 * Math.log10(nsingles*900000000))
+                    }
+                    if (acc_skill !== Infinity) acc_avg += acc_skill
                     bpm_avg += detail.bpm
                     cs_avg += detail.cs
                     ar_avg += detail.ar
@@ -430,13 +441,21 @@ Most common mods: ${sortedmod}`)
                     let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                     let star_skill = thing.star.total
                     let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
-                    let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
-                    let old_acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.093 * Math.log10(thing.star.nsingles*900000000))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.1 * Math.log10(thing.star.nsingles*900000000)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    let acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                    let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
+                    let old_acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                     star_avg += star_skill
                     aim_avg += aim_skill
                     speed_avg += speed_skill
                     old_acc_avg += old_acc_skill
+                    let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
+                    if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
+                        aim_skill /= 1.05
+                        speed_skill /= 1.05
+                    }
+                    let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                    if (modandbit.shortenmod.includes('FL')) {
+                        acc_skill *= (0.095 * Math.log10(nsingles*900000000))
+                    }
                     if (acc_skill !== Infinity) acc_avg += acc_skill
                     top_star.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: star_skill})
                     top_aim.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: aim_skill})
@@ -587,10 +606,20 @@ async function osu_card(message = new Message(), mode) {
                 let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
                 let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
                 star_avg += thing.star.total
-                aim_avg += thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)) * 2
-                speed_avg += thing.star.speed * (Math.pow(detail.bpm, 0.3) / Math.pow(180, 0.3)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)) * 2
-                let temp_acc = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                if (temp_acc !== Infinity) acc_avg += temp_acc
+                let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
+                let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
+                aim_avg += aim_skill
+                speed_avg += speed_skill
+                let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
+                if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
+                    aim_skill /= 1.05
+                    speed_skill /= 1.05
+                }
+                let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                if (modandbit.shortenmod.includes('FL')) {
+                    acc_skill *= (0.095 * Math.log10(nsingles*900000000))
+                }
+                if (acc_skill !== Infinity) acc_avg += acc_skill
             }
             if (modenum == 1) {
                 let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 1, modandbit.bitpresent)
