@@ -249,7 +249,7 @@ async function osu(message = new Message(), mode) {
                     }
                     let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                     if (modandbit.shortenmod.includes('FL')) {
-                        acc_skill *= (0.095 * Math.log10(nsingles*900000000))
+                        acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
                     }
                     if (acc_skill !== Infinity) acc_avg += acc_skill
                     bpm_avg += detail.bpm
@@ -455,7 +455,7 @@ Most common mods: ${sortedmod}`)
                     }
                     let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                     if (modandbit.shortenmod.includes('FL')) {
-                        acc_skill *= (0.095 * Math.log10(nsingles*900000000))
+                        acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
                     }
                     if (acc_skill !== Infinity) acc_avg += acc_skill
                     top_star.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: star_skill})
@@ -618,7 +618,7 @@ async function osu_card(message = new Message(), mode) {
                 }
                 let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
                 if (modandbit.shortenmod.includes('FL')) {
-                    acc_skill *= (0.095 * Math.log10(nsingles*900000000))
+                    acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
                 }
                 if (acc_skill !== Infinity) acc_avg += acc_skill
             }
