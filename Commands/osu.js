@@ -237,6 +237,7 @@ async function osu(message = new Message(), mode) {
                     star_avg += thing.star.total
                     let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
                     let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
+                    console.log(aim_skill,speed_skill)
                     aim_avg += aim_skill
                     speed_avg +=  speed_skill
                     old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
@@ -319,8 +320,8 @@ async function osu(message = new Message(), mode) {
             if (modenum == 0) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50).toFixed(2)*2}★
-Speed skill: ${Number(speed_avg/50).toFixed(2)*2}★
+Aim skill: ${Number(aim_avg/50).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50*1.03).toFixed(2)}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_acc_avg/50).toFixed(2)}★)
 Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
@@ -510,7 +511,7 @@ Most common mods: ${sortedmod}`)
             .addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
 Aim skill: ${Number(aim_avg/50).toFixed(2)}★
-Speed skill: ${Number(speed_avg/50).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50*1.03).toFixed(2)}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_acc_avg/50).toFixed(2)}★)`)
             .addField('Top star skill:', field[0])
             .addField('Top aim skill:', field[1])
@@ -649,7 +650,7 @@ async function osu_card(message = new Message(), mode) {
         }
         star_avg = Number(star_avg / 50)
         aim_avg = Number(aim_avg / 50 * 100).toFixed(0)
-        speed_avg = Number(speed_avg / 50 * 100).toFixed(0)
+        speed_avg = Number(speed_avg / 50 * 100*1.03).toFixed(0)
         acc_avg = Number(acc_avg / 50 * 100).toFixed(0)
         finger_control_avg = Number(finger_control_avg/50 * 100).toFixed(0)
         // Process image
