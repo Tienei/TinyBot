@@ -137,6 +137,7 @@ async function osu(message = new Message(), mode) {
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-d", "v_count": 0},
                                                         {"suffix": "-rank", "v_count": 1},
                                                         {"suffix": "-ts", "v_count": 0},
+                                                        {"suffix": "-accts", "v_count": 0},
                                                         {"suffix": "-g", "v_count": 0}])
         let modedetail = fx.osu.get_mode_detail(mode)
         let a_mode = modedetail.a_mode
@@ -519,6 +520,71 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
             .addField('Top old acc skill:', field[3])
             .addField('Top acc skill:', field[4]);
             msg1.edit({embed})
+            if (mode == "Bancho-std") {
+                for (let [key,value] of Object.entries(user_data)) {
+                    if (value.osuname == user.username) {
+                        user_data[key].osurank = user.rank
+                        user_data[key].osucountry = user.country
+                        if (!config.config.debug.disable_db_save) db.user_data.findAndModify({query: {}, update: user_data}, function(){})
+                        break
+                    }
+                }
+            }
+        } else if (suffix.suffix.find(s => s.suffix == "-accts").position > -1 && mode == 'Bancho-std') {
+            let user = await fx.osu.get_osu_profile(name, mode, 30, false, false)
+            if (user == null) {
+                throw 'User not found!'
+            }
+            let best = await fx.osu.get_osu_top(name, mode, 50, 'best')
+            if (best.length < 50) {
+                throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
+            }
+            let msg1 = await message.channel.send('Calculating skills...') 
+            let acc_avg = 0
+            let top_acc = []
+            for (let i = 0; i < 50; i++) {
+                let modandbit = fx.osu.mods_enum(best[i].mod)
+                if (modenum == 0) {
+                    let parser = await fx.osu.precalc(best[i].beatmapid)
+                    let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
+                    let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
+                    let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
+                    let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
+                    let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
+                    if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
+                        aim_skill /= 1.05
+                        speed_skill /= 1.05
+                    }
+                    let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+                    if (modandbit.shortenmod.includes('FL')) {
+                        acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
+                    }
+                    if (acc_skill !== Infinity) acc_avg += acc_skill
+                    let rank = fx.osu.ranking_letter(best[i].letter)
+                    top_acc.push({title: best[i].title, diff: best[i].diff, skill: acc_skill, mod: modandbit.shortenmod, rank: rank, acc: best[i].acc, star: thing.star.total, id: best[i].beatmapid})
+                }
+            }
+            top_acc.sort(function(a,b){return b.skill-a.skill})
+            let loadpage = async function (page, pages) {
+                let gathering = ''
+                for (let n = 0; n < 5; n++) {
+                    let i = (page - 1) * 5 - 1 + (n+1)
+                    if (i <= best.length- 1) {
+                        gathering += `${i+1}. **[${top_acc[i].title}](https://osu.ppy.sh/b/${top_acc[i].id})** (${Number(top_acc[i].star).toFixed(2)}) ${top_acc[i].mod}
+${top_acc[i].rank} *${top_acc[i].diff}* ◆ **Acc:** ${Number(top_acc[i].acc).toFixed(2)}%
+\`Acc skill: ${Number(top_acc[i].skill).toFixed(2)}★\`\n\n`
+                    }
+                }
+                pages[page-1] = gathering
+                return pages
+            }
+            let profile_link = ''
+            let pfp_link = ''
+            if (check_type == 'Bancho') {
+                profile_link = `https://osu.ppy.sh/users/${user.id}`
+                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
+            }
+            fx.general.page_system(message, {load: loadpage}, `Osu!${modename} top acc skill for: ${user.username} (Page {page} of {max_page})`, pfp_link, embedcolor, 50/5, 240000)
             if (mode == "Bancho-std") {
                 for (let [key,value] of Object.entries(user_data)) {
                     if (value.osuname == user.username) {

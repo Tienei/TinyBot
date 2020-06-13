@@ -19,7 +19,8 @@ function help(message = new Message(), command) {
             addhelp('credit', 'credit', 'A list of users who has helped the bot to grow!', 'None', 'credit')
             addhelp('changelog', 'changelog', 'View update and fix for the bot', 'None', 'changelog')
             addhelp('help', 'help (command)', 'Get a full command list or view a specific command help', 'command: Command help you wanted to see', 'help osu')
-            addhelp('ping', 'ping', 'Ping Bancho (probably making Bancho mad sometimes lol)\n100ms: Good\n200ms: OK\n300ms: Bad\n600ms: Pretty bad', 'None', 'ping')
+            addhelp('ping', 'ping', 'Connection of the bot to Discord', 'None', 'ping')
+            addhelp('banchoping', 'banchoping', 'Ping Bancho (probably making Bancho mad sometimes lol)\n100ms: Good\n200ms: OK\n300ms: Bad\n600ms: Pretty bad', 'None', 'banchoping')
             addhelp('report', 'report (error)', 'Report an error or bug to the owner', 'error: Type any error or bug you found', 'report osu is broken')
             addhelp('suggestion', 'suggestion (suggestion)', 'Suggesting an idea for the bot to the owner', 'error: Type any error or bug you found', 'report osu is broken')
             addhelp('bot', 'bot', 'Get invitation of the bot', 'None', 'bot')
@@ -41,7 +42,7 @@ function help(message = new Message(), command) {
             addhelp('8ball', '8ball (message)', 'The magic ball that has all the answers for your questoin', 'None', '8ball Am i old?')
             addhelp('roll', 'roll (number)', 'Roll a dice', 'None', 'roll 90')
             addhelp('ratewaifu', 'ratewaifu (text)', 'Rate your waifu', 'None', 'ratewaifu TinyBot')
-            addhelp('osu', 'osu (username) (options)', 'Get an osuStandard profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nRank `(-rank)`: Get an osu!Standard profile by rank\nTop Skills `(-ts)`: Calculate player skill using bot formula', 'osu Tienei -d')
+            addhelp('osu', 'osu (username) (options)', 'Get an osuStandard profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nRank `(-rank)`: Get an osu!Standard profile by rank\nTop Skills `(-ts)`: Calculate player skill using bot formula\nAcc Top Skills `(-accts)`: Calculate player acc skill using bot formula', 'osu Tienei -d')
             addhelp('taiko', 'taiko (username)', 'Get an osu!Taiko profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nTop Skills `(-ts)`: Calculate player skill using bot formula', 'taiko Tienei')
             addhelp('ctb', 'ctb (username)', 'Get an osu!Catch the beat profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nTop Skills `(-ts)`: Calculate player skill using bot formula', 'ctb Tienei')
             addhelp('mania', 'mania (username)', 'Get an osu!Mania profile', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nDetailed `(-d)`: Get all the details of the player `(no param)`\nTop Skills `(-ts)`: Calculate player skill using bot formula', 'mania Tienei')
@@ -57,7 +58,7 @@ function help(message = new Message(), command) {
             addhelp('osutrack', 'osutrack (username) (options)', 'Track a player\'s osu!Standard top 50 (Required MANAGE\_CHANNELS permission). Default: osu!Std, top 50', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nTop Play `(-p)`: Number of top plays to include in tracking `(1-100)`\nModes/Severs: `-std` `-taiko` `-ctb` `-mania` `-ripple` `-akat` `-rxakat` `-hrz` `-rxhrz`', 'osutrack Tienei')
             addhelp('osutracklist', 'osutracklist', 'Get a list of player being tracked in the channel', 'None', 'osutracklist')
             addhelp('untrack', 'untrack (username) (options)', 'Untrack a player from the database (Required MANAGE\_CHANNELS permission), Default: Remove all player with the name', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nBancho `(-bc)`: Remove a Bancho player with the name from tracking\nRipple `(-rp)`: Remove a Ripple player with the name from tracking\nAkatsuki `(-akat)`: Remove an Akatsuki player with the name from tracking\nHorizon `(-hrz)`: Remove a Horizon player with the name from tracking\nOld Name `(-on)`: Remove an old username from the tracking (Case sensitive)', 'untrack Tienei')
-            addhelp('recent', '[recent|r|rs] (username) (options)', 'Get player\'s most recent play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nRecent List `(-l)`: Get player 5 most recent plays\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-ripple` `-hrz` `-enjuu` `-gatari` `-rx`', 'r Tienei -akat -mania')
+            addhelp('recent', '[recent|r] (username) (options)', 'Get player\'s most recent play', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nRecent Best `(-b)`: Get player most recent best from top 100 `(No param)`\nRecent List `(-l)`: Get player 5 most recent plays\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-ripple` `-hrz` `-enjuu` `-gatari` `-rx`', 'r Tienei -akat -mania')
             addhelp('compare', '[compare|c] (username) ', 'Compare to the last play in the chat', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nPrevious Play `(-p)`: Get a previous play mentioned in the chat `(Number)`\nModes/Servers: `-std` `-taiko` `-ctb` `-mania` `-akat` `-rxakat` `-ripple` `-hrz` `-rxhrz` `-enjuu` `-gatari`', 'c Tienei')
             addhelp('osuset', 'osuset (username)', 'Link your profile to an osu! player', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuset Tienei')
             addhelp('osuavatar', 'osuavatar (username)', 'Get player\'s osu! avatar', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuavatar Tienei')
@@ -236,7 +237,11 @@ function changelog(message = new Message()) {
 - Added a way to check prefix if you forgot
 ** [June 11th, 2020]: **
 - Added compare for Ripple API based server
-- Fixed API throw error when getting "unavailable map" (only private server)`]
+- Fixed API throw error when getting "unavailable map" (only private server)
+** [June 12th, 2020]: **
+New acc formula
+** [June 13th, 2020]: **
+- Added osu -accts`]
 
     let loadpage = async function (page, pages) {
         pages = changes
