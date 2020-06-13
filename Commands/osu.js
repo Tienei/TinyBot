@@ -570,7 +570,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                 for (let n = 0; n < 5; n++) {
                     let i = (page - 1) * 5 - 1 + (n+1)
                     if (i <= best.length- 1) {
-                        gathering += `${i+1}. **[${top_acc[i].title}](https://osu.ppy.sh/b/${top_acc[i].id})** (${Number(top_acc[i].star).toFixed(2)}) ${top_acc[i].mod}
+                        gathering += `${i+1}. **[${top_acc[i].title}](https://osu.ppy.sh/b/${top_acc[i].id})** (${Number(top_acc[i].star).toFixed(2)}★) ${top_acc[i].mod}
 ${top_acc[i].rank} *${top_acc[i].diff}* ◆ **Acc:** ${Number(top_acc[i].acc).toFixed(2)}%
 \`Acc skill: ${Number(top_acc[i].skill).toFixed(2)}★\`\n\n`
                     }
