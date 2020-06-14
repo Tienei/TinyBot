@@ -18,7 +18,7 @@ module.exports = async function (name, mode, beatmapID, limit) {
         let check_type = modedetail.check_type
         let top = []
         if (check_type == "Bancho") {
-            let scores = await osuApi.getScores({u: name, m: mode, b: beatmapID, limit: limit})
+            let scores = await osuApi.getScores({u: name, m: modenum, b: beatmapID, limit: limit})
             for (var i = 0; i < scores.length; i++) {
                 let count300 = Number(scores[i].counts['300'])
                 let count100 = Number(scores[i].counts['100'])

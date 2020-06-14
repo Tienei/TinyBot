@@ -44,11 +44,13 @@ function get_db(data1, data2, data3, data4) {
 
 function cache_beatmap_ID(message = new Message(), beatmapid, mode) {
     if (message.guild !== null) {
-        for (let i = 0; i < saved_map_id.length; i++) {
-            if (saved_map_id[i].server == message.channel.id) saved_map_id.splice(i, 1)
+        for (let i = 0; i < stored_map_ID.length; i++) {
+            if (stored_map_ID[i].server == message.channel.id) {
+                stored_map_ID.splice(i, 1)
+                i--
+            }
         }
-        saved_map_id.push({id:beatmapid,server:message.channel.id, mode: mode})
-        if (!config.config.debug.disable_db_save) db.saved_map_id.findAndModify({query: {}, update: {'0': saved_map_id}}, function(){})
+        if (!config.config.debug.disable_db_save) db.saved_map_id.findAndModify({query: {}, update: {'0': stored_map_ID}}, function(){})
         stored_map_ID.push({id:beatmapid,server:message.channel.id, mode: mode})
     } else {
         stored_map_ID.push({id:beatmapid,user:message.author.id, mode: mode})
@@ -1379,7 +1381,6 @@ async function compare(message = new Message()) {
         }
         fx.general.cmd_cooldown.set(message, command, 3000)
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-p", "v_count": 1}])
-        let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
         let mode = ''
         let storedid = 0
         // Loop variable
@@ -1422,6 +1423,7 @@ async function compare(message = new Message()) {
         let check_type = modedetail.check_type
         let modenum = modedetail.modenum
         let a_mode = modedetail.a_mode
+        let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let scores = await fx.osu.get_osu_scores(name, mode, storedid)
         scores.sort(function (a,b) {
             a1 = Number(a.pp)
