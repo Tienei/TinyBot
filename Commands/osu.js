@@ -1964,5 +1964,6 @@ module.exports = {
     beatmaplinkdetail,
     topleaderboard,
     serverleaderboard,
-    acccalc
+    acccalc,
+    cache_beatmap_ID
 }

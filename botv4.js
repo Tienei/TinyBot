@@ -198,9 +198,9 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                         for (let channel of player.trackonchannel) {
                             for (mode1 of channel.modes) {
                                 if (mode1.mode == mode && mode1.limit >= best[i].top) {
-                                    stored_map_ID.push({id:beatmap.beatmapid,server: channel.id, mode: check_type})
                                     embed.setColor(bot.channels.cache.get(channel.id).guild.me.displayColor)
-                                    bot.channels.cache.get(channel.id).send({embed})
+                                    let msg = await bot.channels.cache.get(channel.id).send({embed})
+                                    cmds.osu.cache_beatmap_ID(msg, beatmap.beatmapid, check_type)
                                 }
                             }
                         }
