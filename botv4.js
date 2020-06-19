@@ -200,7 +200,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                                 if (mode1.mode == mode && mode1.limit >= best[i].top) {
                                     embed.setColor(bot.channels.cache.get(channel.id).guild.me.displayColor)
                                     let msg = await bot.channels.cache.get(channel.id).send({embed})
-                                    cmds.osu.cache_beatmap_ID(msg, beatmap.beatmapid, check_type)
+                                    cmds.osu.cache_beatmap_ID(msg, beatmap.beatmapid, mode)
                                 }
                             }
                         }
