@@ -10,7 +10,7 @@ module.exports = function (message = new Message(), check_type, modeicon, suppor
         pfp_link = `http://s.ppy.sh/a/${id}.png?date=${refresh}`
     } else if (check_type == 'Ripple') {
         profile_link = `https://ripple.moe/u/${id}`
-        pfp_link = `http://a.ripple.moe/${id}?date=${refresh}`
+        pfp_link = `http://a.ripple.moe/${id}?${refresh}`
     } else if (check_type == 'Akatsuki') {
         profile_link = `https://akatsuki.pw/u/${id}`
         pfp_link = `http://a.akatsuki.pw/${id}?date=${refresh}`

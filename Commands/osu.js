@@ -189,7 +189,7 @@ async function osu(message = new Message(), mode) {
                 pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
             } else if (check_type == 'Ripple') {
                 profile_link = `https://ripple.moe/u/${user.id}`
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
+                pfp_link = `http://a.ripple.moe/${user.id}?${refresh}`
             } else if (check_type == 'Akatsuki') {
                 profile_link = `https://akatsuki.pw/u/${user.id}`
                 pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
@@ -494,7 +494,7 @@ Most common mods: ${sortedmod}`)
                 pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
             } else if (check_type == 'Ripple') {
                 profile_link = `https://ripple.moe/u/${user.id}`
-                pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`
+                pfp_link = `http://a.ripple.moe/${user.id}?${refresh}`
             } else if (check_type == 'Akatsuki') {
                 profile_link = `https://akatsuki.pw/u/${user.id}`
                 pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
@@ -803,7 +803,7 @@ async function osu_card(message = new Message(), mode) {
 
         let pfp_link = ''
         if (check_type == 'Bancho')        pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`;
-        else if (check_type == 'Ripple')   pfp_link = `http://a.ripple.moe/${user.id}?date=${refresh}`;
+        else if (check_type == 'Ripple')   pfp_link = `http://a.ripple.moe/${user.id}?${refresh}`;
         else if (check_type == 'Akatsuki') pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`;
         else if (check_type == 'Horizon')  pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`;
         else if (check_type == 'Enjuu')    pfp_link = `http://a.enjuu.click/${user.id}?date=${refresh}`;
@@ -939,6 +939,7 @@ async function osutop(message = new Message(), mode) {
         let modenum = modedetail.modenum
         let a_mode = modedetail.a_mode
         let pfp_link = `http://a.${modedetail.link}/{user_id}?date=${refresh}`
+        if (check_type == 'Ripple') pfp_link = `http://a.${modedetail.link}/{user_id}?${refresh}`
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         if (suffix.suffix.find(s => s.suffix == "-p").position > -1) {
             let numberoption = suffix.suffix.find(s => s.suffix == "-p").value[0]
@@ -961,7 +962,6 @@ async function osutop(message = new Message(), mode) {
                 throw 'User not found!'
             }
             pfp_link = pfp_link.replace('{user_id}', user.id)
-            console.log(pfp_link)
             let username = user.username
             let best = await fx.osu.get_osu_top(name, mode, Number(numberrange[1]), 'best', true)
             if (best[Number(numberrange[0]) - 1] == undefined) {
@@ -1581,7 +1581,7 @@ async function osuset(message = new Message(), type) {
             settype = 'ripplename'
             name = user.username
             profilelink = `https://ripple.moe/u/${user.id}`
-            imagelink = `http://a.ripple.moe/${user.id}?date=${refresh}`
+            imagelink = `http://a.ripple.moe/${user.id}?${refresh}`
         } else if (type == 'Horizon') {
             user = await fx.osu.rippleAPI.apiCall(`/v1/users`, 'Horizon-std', {name: suffix.check})
             settype = 'horizonname'
