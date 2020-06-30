@@ -241,7 +241,9 @@ function changelog(message = new Message()) {
 ** [June 12th, 2020]: **
 New acc formula
 ** [June 13th, 2020]: **
-- Added osu -accts`]
+- Added osu -accts
+** [June 30th, 2020]: **
+- Change score design`]
 
     let loadpage = async function (page, pages) {
         pages = changes

@@ -1322,7 +1322,7 @@ async function recent(message = new Message()) {
                 cache_beatmap_ID(message, recent[i].beatmapid, mode)
                 if (recent[i].letter == 'F') {
                     nopp = '(No pp)'
-                    date = '⬥ ' + date
+                    date = '• ' + date
                     mapcompleted = `**Map Completion:** ${Number(fc_stat.mapcomplete).toFixed(2)}%`
                 }
                 let scoreoverlay = fx.osu.score_overlay(undefined,recent[i].title,recent[i].beatmapid,fc_stat.star,shortenmod,fc_stat.pp,nopp,rank,recent[i].diff,recent[i].score,recent[i].combo,recent[i].fc,recent[i].acc,recent[i].accdetail,fc_stat.fcguess,mapcompleted,date,'beatmap')
@@ -1354,7 +1354,7 @@ async function recent(message = new Message()) {
             cache_beatmap_ID(message, recent[0].beatmapid, mode)
             if (recent[0].letter == 'F') {
                 nopp = '(No pp)'
-                date = '⬥ ' + date
+                date = '• ' + date
                 mapcompleted = `**Map Completion:** ${Number(fc_stat.mapcomplete).toFixed(2)}%`
             }
             let scoreoverlay = fx.osu.score_overlay(undefined,recent[0].title,recent[0].beatmapid,fc_stat.star,shortenmod,fc_stat.pp,nopp,rank,recent[0].diff,recent[0].score,recent[0].combo,recent[0].fc,recent[0].acc,recent[0].accdetail,fc_stat.fcguess,mapcompleted,date,'beatmap')
@@ -1455,9 +1455,9 @@ async function compare(message = new Message()) {
                     }
                     let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                     gathering += `
-${i+1}. **${shortenmod}** Score (${fc_stat.star}★) | ***${scores[i].pp.toFixed(2)}pp*** ${unrankedpp}
-${rank} **Score:** ${scores[i].score} | **Combo:** ${scores[i].combo}/${beatmap.fc}
-**Accuracy:** ${scores[i].acc.toFixed(2)}% ${scores[i].accdetail} ${fc_stat.fcguess}
+${i+1}. \`${shortenmod}\` Score (${fc_stat.star}★) • <:pp:727488945314594826>: **${scores[i].pp.toFixed(2)}** ${unrankedpp}
+${rank} • ${scores[i].score} • **x**${scores[i].combo}/${beatmap.fc}
+${scores[i].acc.toFixed(2)}% ${scores[i].accdetail} • ${fc_stat.fcguess}
 ${date}
 `         
                 }

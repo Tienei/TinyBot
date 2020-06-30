@@ -27,17 +27,17 @@ module.exports = async function (name, mode, beatmapID, limit) {
                 let countgeki = Number(scores[i].counts.geki)
                 let countkatu = Number(scores[i].counts.katu)
                 let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
-                let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
-                if (mode == 1) {
+                let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
+                if (modenum == 1) {
                     acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
-                    accdetail = `[${count300}/${count100}/${countmiss}]`
+                    accdetail = `[ ${count300} • ${count100} • ${countmiss} ]`
                 }
-                if (mode == 2) {
+                if (modenum == 2) {
                     acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                 }
-                if (mode == 3) {
+                if (modenum == 3) {
                     acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
-                    accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                    accdetail = `[ ${countgeki} • ${count300} • ${countkatu} • ${count100} • ${count50} • ${countmiss} ]`
                 }
                 top[i] = new Score([
                     "",
@@ -73,17 +73,17 @@ module.exports = async function (name, mode, beatmapID, limit) {
                 let countgeki = Number(scores[i].countgeki)
                 let countkatu = Number(scores[i].countkatu)
                 let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
-                let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
-                if (mode == 1) {
+                let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
+                if (modenum == 1) {
                     acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
-                    accdetail = `[${count300}/${count100}/${countmiss}]`
+                    accdetail = `[ ${count300} • ${count100} • ${countmiss} ]`
                 }
-                if (mode == 2) {
+                if (modenum == 2) {
                     acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                 }
-                if (mode == 3) {
+                if (modenum == 3) {
                     acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
-                    accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                    accdetail = `[ ${countgeki} • ${count300} • ${countkatu} • ${count100} • ${count50} • ${countmiss} ]`
                 }
                 top[i] = new Score([
                     "",

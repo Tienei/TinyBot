@@ -37,21 +37,21 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                 let countgeki = Number(best[i].counts.geki)
                 let countkatu = Number(best[i].counts.katu)
                 let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
-                let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
                 let star = 0
                 if (modenum == 1 || modenum == 2 || modenum == 3) {
                     star = Number(best[i].beatmap.difficulty.rating).toFixed(2)
                 }
                 if (modenum == 1) {
                     acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
-                    accdetail = `[${count300}/${count100}/${countmiss}]`
+                    accdetail = `[ ${count300} • ${count100} • ${countmiss} ]`
                 }
                 if (modenum == 2) {
                     acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                 }
                 if (modenum == 3) {
                     acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
-                    accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                    accdetail = `[ ${countgeki} • ${count300} • ${countkatu} • ${count100} • ${count50} • ${countmiss} ]`
                 }
                 top[i] = new Osutop([
                                     //Score
@@ -93,17 +93,17 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                 let countgeki = Number(best[i].counts.geki)
                 let countkatu = Number(best[i].counts.katu)
                 let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
-                let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+                let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
                 if (modenum == 1) {
                     acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
-                    accdetail = `[${count300}/${count100}/${countmiss}]`
+                    accdetail = `[ ${count300} • ${count100} • ${countmiss} ]`
                 }
                 if (modenum == 2) {
                     acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
                 }
                 if (modenum == 3) {
                     acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
-                    accdetail = `[${countgeki}/${count300}/${countkatu}/${count100}/${count50}/${countmiss}]`
+                    accdetail = `[ ${countgeki} • ${count300} • ${countkatu} • ${count100} • ${count50} • ${countmiss} ]`
                 }
                 top[i] = new Osutop([
                                     //Score
@@ -141,7 +141,18 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             let count50 = Number(best.scores[i].count_50)
             let countmiss = Number(best.scores[i].count_miss)
             let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
-            let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+            let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
+            if (modenum == 1) {
+                acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
+                accdetail = `[ ${count300} • ${count100} • ${countmiss} ]`
+            }
+            if (modenum == 2) {
+                acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
+            }
+            if (modenum == 3) {
+                acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
+                accdetail = `[ ${countgeki} • ${count300} • ${countkatu} • ${count100} • ${count50} • ${countmiss} ]`
+            }
             let diff = ''
             let title = ''
             let artist = ''
@@ -205,7 +216,18 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             let count50 = Number(best.scores[i].count_50)
             let countmiss = Number(best.scores[i].count_miss)
             let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
-            let accdetail = `[${count300}/${count100}/${count50}/${countmiss}]`
+            let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
+            if (modenum == 1) {
+                acc = Number((0.5 * count100 + count300) / (count300 + count100 + countmiss) * 100)
+                accdetail = `[ ${count300} • ${count100} • ${countmiss} ]`
+            }
+            if (modenum == 2) {
+                acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
+            }
+            if (modenum == 3) {
+                acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
+                accdetail = `[ ${countgeki} • ${count300} • ${countkatu} • ${count100} • ${count50} • ${countmiss} ]`
+            }
             let diff = ''
             let title = ''
             let artist = ''

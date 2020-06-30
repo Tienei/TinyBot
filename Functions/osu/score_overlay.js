@@ -2,10 +2,10 @@ module.exports = function (top = 0, title, id, star, shortenmod, pp, nopp = '', 
     let showtop = ''
     let showtitle = ''
     if (top > 0) {
-        showtop = `${top}. `
+        showtop = `${top}.`
     }
     if (fcguess !== '') {
-        fcguess = '◆ ' + fcguess
+        fcguess = '• ' + fcguess
     }
     if (type == 'beatmap') {
         showtitle = `[${title}](https://osu.ppy.sh/b/${id})`
@@ -15,9 +15,9 @@ module.exports = function (top = 0, title, id, star, shortenmod, pp, nopp = '', 
         showtitle = title
     }
     return `
-${showtop}**${showtitle}** (${star}★) ${shortenmod} ◆ ${(score).toLocaleString('en')}
-${rank} *${diff}* ◆ ***${pp.toFixed(2)}pp*** ${nopp} ${fcguess}
-x${combo}/${fc} ◆ **Acc:** ${acc.toFixed(2)}% ${accdetail} 
-${mapcompletion} ${date}
+${showtop} **${showtitle}** (${star}★) \`${shortenmod}\` • ${(score).toLocaleString('en')}
+${rank} *${diff}* • <:pp:727488945314594826>: **${pp.toFixed(2)}** ${nopp} ${fcguess}
+**x**${combo}/${fc} • ${acc.toFixed(2)}% ${accdetail}
+${mapcompletion} ${date}    
 `
 }
