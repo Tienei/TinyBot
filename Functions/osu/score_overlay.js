@@ -16,7 +16,7 @@ module.exports = function (top = 0, title, id, star, shortenmod, pp, nopp = '', 
     }
     return `
 ${showtop} **${showtitle}** (${star}★) \`${shortenmod}\` • ${(score).toLocaleString('en')}
-${rank} *${diff}* • <:pp:727488945314594826>: **${pp.toFixed(2)}** ${nopp} ${fcguess}
+${rank} *${diff}* • <:pp:727503496282112032>: **${pp.toFixed(2)}** ${nopp} ${fcguess}
 **x**${combo}/${fc} • ${acc.toFixed(2)}% ${accdetail}
 ${mapcompletion} ${date}    
 `
