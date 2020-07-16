@@ -117,10 +117,11 @@ bot.on("ready", (ready) => {
 
     // check if player is online (osu!)
 
-    let max_api_request_per_min = 10 // 900
+    let max_api_request_per_min = 900
     let max_irc_bancho_request_per_min = 200
     let check_online_delay = 10000
     let track_delay = 10000 //miliseconds 
+    let total_online_player = 0
 
     function change_online_checking_delay() {
         let total_player = osu_track.filter(player => player.type == "Bancho").length
@@ -129,7 +130,7 @@ bot.on("ready", (ready) => {
     }
 
     function change_tracking_delay() {
-        let total_online_player = 0
+        total_online_player = 0
         for (let player of osu_track) {
             if (player.online && player.type == "Bancho") total_online_player++
         }
@@ -170,7 +171,7 @@ bot.on("ready", (ready) => {
     async function real_time_osu_track() {
         // Calculate tracking delay
         // osutrack
-        console.log(`osutrack: Checking, tracking delay: ${track_delay}, online: ${check_online_delay}`)
+        console.log(`osutrack: Checking, tracking delay: ${track_delay}, online: ${check_online_delay}, found online: ${total_online_player}`)
         for (let player of osu_track) {
             try {
                 // Get player if online
