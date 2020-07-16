@@ -6,6 +6,17 @@ const config = require('./../../config')
 const path = './beatmap-cache/'
 let current_process = []
 
+async function downloadFile(beatmapid) {
+    let map = ''
+    try {
+        map = (await request.get(`https://bloodcat.com/osu/b/${beatmapid}`).timeout({deadline:5000})).text
+    } catch (error) {}
+    if (map == '') {
+        map = (await request.get(`https://osu.ppy.sh/osu/${beatmapid}`).timeout({deadline:5000})).text
+    } 
+    return map
+}
+
 module.exports = async function (beatmapid) {
     let parser = new calc.parser()
     if (fs.existsSync(`${path}${beatmapid}.osu`)) {
@@ -15,16 +26,16 @@ module.exports = async function (beatmapid) {
         return parser
     } else if (current_process.includes(`${path}${beatmapid}.osu`)) {
         console.log("Already saving file")  
-        let map = (await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)).text
+        let map = await downloadFile(beatmapid)
         parser.feed(map)
         return parser
     } else {
         current_process.push(`${path}${beatmapid}.osu`)
-        let map = (await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)).text
-        if (!config.config.debug.command) {
+        let map = await downloadFile(beatmapid)
+        //if (!config.config.debug.command) {
             let encode = lz_string.compressToEncodedURIComponent(map)
             fs.writeFileSync(`${path}${beatmapid}.osu`, encode)
-        }
+        //}
         parser.feed(map)
         current_process.shift()
         return parser
