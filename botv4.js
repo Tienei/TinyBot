@@ -160,6 +160,7 @@ bot.on("ready", (ready) => {
                 } else {
                     player.online = true
                 }
+                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
             } catch (error) {
 
             }
