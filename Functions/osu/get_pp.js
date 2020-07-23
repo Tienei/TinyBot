@@ -72,7 +72,7 @@ module.exports = async function (mode, parser, beatmapid, bitpresent, score, com
             fcguess = `${fcpp}pp for ${fcacc}%`
         }
         if (mode == 'mania') {
-            fcguess = `• ${fcpp}pp for ${fcacc} scores`
+            fcguess = `• ${fcpp}pp for ${fcacc}`
         }
     }
     return {pp, star, fcguess, mapcomplete}

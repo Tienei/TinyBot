@@ -165,6 +165,7 @@ bot.on("ready", (ready) => {
                     let a_mode = modedetail.a_mode
                     let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
                     best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
+                    best.sort(function(a,b) {return new Date(a.date).getTime()-new Date(b.date).getTime()})
                     for (let i = 0; i < best.length; i++) {
                         console.log('Found')
                         let user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
@@ -326,22 +327,6 @@ bot.on("message", (message) => {
         if (command == bot_prefix + 'checkperm' && message.guild !== null) {
             cmds.general.checkcomp(message)
         }
-
-        // Custom commands
-
-        /*if (command == bot_prefix + 'customcmd' && message.guild !== null) {
-            let data = cmds.custom_cmd.custom_cmd(message, custom_command)
-            if (data !== null) {
-                custom_command = data
-                if (!config.config.debug.disable_db_save) db.custom_command.findAndModify({query: {}, update: custom_command}, function(){})
-            }
-        }
-
-        if (message.guild !== null) {
-            if (custom_command[message.guild.id] !== undefined && custom_command[message.guild.id].find(cmd => cmd.cmd == command) !== undefined) {
-                cmds.custom_cmd.cmd_detection(message, custom_command)
-            }
-        }   */
 
         // Easter Egg
 

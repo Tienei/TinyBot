@@ -7,12 +7,12 @@ const path = './beatmap-cache/'
 let current_process = []
 
 async function downloadFile(beatmapid) {
-    let map = ''
+    let map = undefined
     try {
-        map = (await request.get(`https://bloodcat.com/osu/b/${beatmapid}`).timeout({deadline:5000})).text
+        map = (await request.get(`https://osu.ppy.sh/osu/${beatmapid}`)).text
     } catch (error) {}
-    if (map == '') {
-        map = (await request.get(`https://osu.ppy.sh/osu/${beatmapid}`).timeout({deadline:5000})).text
+    if (map == undefined) {
+        map = (await request.get(`https://bloodcat.com/osu/b/${beatmapid}`)).text
     } 
     return map
 }
@@ -32,10 +32,10 @@ module.exports = async function (beatmapid) {
     } else {
         current_process.push(`${path}${beatmapid}.osu`)
         let map = await downloadFile(beatmapid)
-        //if (!config.config.debug.command) {
+        if (!config.config.debug.command) {
             let encode = lz_string.compressToEncodedURIComponent(map)
             fs.writeFileSync(`${path}${beatmapid}.osu`, encode)
-        //}
+        }
         parser.feed(map)
         current_process.shift()
         return parser

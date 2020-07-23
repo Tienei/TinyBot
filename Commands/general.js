@@ -231,19 +231,12 @@ function avatar(message = new Message(), command) {
 
 function changelog(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let changes = [`**[June 8th, 2020]:**
-- Readded checkcomp
-- Added ping (Discord ping)
-- Added a way to check prefix if you forgot
-** [June 11th, 2020]: **
-- Added compare for Ripple API based server
-- Fixed API throw error when getting "unavailable map" (only private server)
-** [June 12th, 2020]: **
-New acc formula
-** [June 13th, 2020]: **
-- Added osu -accts
-** [June 30th, 2020]: **
-- Change score design`]
+    let changes = [`\`Quality and Performance update:\`
+**[July 23th, 2020]:**
+- Changed scores UI
+- Changed maps UI
+- Removed custom command
+- Fixed beatmap links`]
 
     let loadpage = async function (page, pages) {
         pages = changes

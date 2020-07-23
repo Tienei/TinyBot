@@ -978,7 +978,14 @@ async function osutop(message = new Message(), mode) {
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                let scoreoverlay = fx.osu.score_overlay(i+1,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+                let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
+                                                        id: best[i].beatmapid, star: fc_stat.star,
+                                                        shortenmod: shortenmod, pp: best[i].pp,
+                                                        letter: best[i].letter, diff: beatmap.diff,
+                                                        score: best[i].score, combo: best[i].combo,
+                                                        fc: beatmap.fc, acc: best[i].acc,
+                                                        accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
+                                                        date: date, type: 'top', rank:rank})
                 top += scoreoverlay
             }
             const embed = new MessageEmbed()
@@ -1015,7 +1022,14 @@ async function osutop(message = new Message(), mode) {
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                let scoreoverlay = fx.osu.score_overlay(best[i].top,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+                let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: beatmap.title,
+                                                        id: best[i].beatmapid, star: fc_stat.star,
+                                                        shortenmod: shortenmod, pp: best[i].pp,
+                                                        letter: best[i].letter, diff: beatmap.diff,
+                                                        score: best[i].score, combo: best[i].combo,
+                                                        fc: beatmap.fc, acc: best[i].acc,
+                                                        accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
+                                                        date: date, type: 'top', rank:rank})
                 top += scoreoverlay
             }
             const embed = new MessageEmbed()
@@ -1049,7 +1063,14 @@ async function osutop(message = new Message(), mode) {
                     let parser = ''
                     if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                     let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                    let scoreoverlay = fx.osu.score_overlay(i+1,beatmap.title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,beatmap.diff,best[i].score,best[i].combo,beatmap.fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+                    let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
+                                                            id: best[i].beatmapid, star: fc_stat.star,
+                                                            shortenmod: shortenmod, pp: best[i].pp,
+                                                            letter: best[i].letter, diff: beatmap.diff,
+                                                            score: best[i].score, combo: best[i].combo,
+                                                            fc: beatmap.fc, acc: best[i].acc,
+                                                            accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
+                                                            date: date, type: 'top', rank:rank})
                     top += scoreoverlay
                 } else if (checktop > 4) {
                     break
@@ -1107,7 +1128,14 @@ async function osutop(message = new Message(), mode) {
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                         let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                        let scoreoverlay = fx.osu.score_overlay(i+1,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
+                                                                id: best[i].beatmapid, star: fc_stat.star,
+                                                                shortenmod: shortenmod, pp: best[i].pp,
+                                                                letter: best[i].letter, diff: best[i].diff,
+                                                                score: best[i].score, combo: best[i].combo,
+                                                                fc: best[i].fc, acc: best[i].acc,
+                                                                accdetail: best[i].accdetail, fcguess: best[i].fcguess,
+                                                                date: date, type: 'top', rank:rank})
                         gathering += scoreoverlay
                     }
                 }
@@ -1139,7 +1167,14 @@ async function osutop(message = new Message(), mode) {
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                let scoreoverlay = fx.osu.score_overlay(best[i].top,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+                let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: beatmap.title,
+                                                        id: best[i].beatmapid, star: fc_stat.star,
+                                                        shortenmod: shortenmod, pp: best[i].pp,
+                                                        letter: best[i].letter, diff: beatmap.diff,
+                                                        score: best[i].score, combo: best[i].combo,
+                                                        fc: beatmap.fc, acc: best[i].acc,
+                                                        accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
+                                                        date: date, type: 'top', rank:rank})
                 top += scoreoverlay
             }
             const embed = new MessageEmbed()
@@ -1173,7 +1208,14 @@ async function osutop(message = new Message(), mode) {
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                         let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                        let scoreoverlay = fx.osu.score_overlay(best[i].top,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+                        let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: best[i].title,
+                                                                id: best[i].beatmapid, star: fc_stat.star,
+                                                                shortenmod: shortenmod, pp: best[i].pp,
+                                                                letter: best[i].letter, diff: best[i].diff,
+                                                                score: best[i].score, combo: best[i].combo,
+                                                                fc: best[i].fc, acc: best[i].acc,
+                                                                accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
+                                                                date: date, type: 'top', rank:rank})
                         gathering += scoreoverlay
                     }
                 }
@@ -1202,7 +1244,14 @@ async function osutop(message = new Message(), mode) {
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                let scoreoverlay = fx.osu.score_overlay(i+1,best[i].title,best[i].beatmapid,fc_stat.star,shortenmod,best[i].pp,undefined,rank,best[i].diff,best[i].score,best[i].combo,best[i].fc,best[i].acc,best[i].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+                let scoreoverlay = fx.osu.score_overlay({top: i+1, title: best[i].title,
+                                                        id: best[i].beatmapid, star: fc_stat.star,
+                                                        shortenmod: shortenmod, pp: best[i].pp,
+                                                        letter: best[i].letter, diff: best[i].diff,
+                                                        score: best[i].score, combo: best[i].combo,
+                                                        fc: best[i].fc, acc: best[i].acc,
+                                                        accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
+                                                        date: date, type: 'top', rank:rank})
                 top += scoreoverlay
             }
             const embed = new MessageEmbed()
@@ -1293,7 +1342,14 @@ async function recent(message = new Message()) {
             let parser = await fx.osu.precalc(best[0].beatmapid)     
             if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
             let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
-            let scoreoverlay = fx.osu.score_overlay(undefined,beatmap.title,best[0].beatmapid,fc_stat.star,shortenmod,best[0].pp,undefined,rank,beatmap.diff,best[0].score,best[0].combo,beatmap.fc,best[0].acc,best[0].accdetail,fc_stat.fcguess,undefined,date,'beatmap')
+            let scoreoverlay = fx.osu.score_overlay({title: beatmap.title,
+                                                    id: best[0].beatmapid, star: fc_stat.star,
+                                                    shortenmod: shortenmod, pp: best[0].pp,
+                                                    letter: best[0].letter, diff: beatmap.diff,
+                                                    score: best[0].score, combo: best[0].combo,
+                                                    fc: beatmap.fc, acc: best[0].acc,
+                                                    accdetail: best[0].accdetail, fcguess: fc_stat.fcguess,
+                                                    date: date, type: 'top', rank:rank})
             const embed = new MessageEmbed()
             .setAuthor(`Top ${best[0].top} osu!${modename} play for ${username}:`, `http://s.ppy.sh/a/${userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`)
@@ -1325,7 +1381,15 @@ async function recent(message = new Message()) {
                     date = '• ' + date
                     mapcompleted = `**Map Completion:** ${Number(fc_stat.mapcomplete).toFixed(2)}%`
                 }
-                let scoreoverlay = fx.osu.score_overlay(undefined,recent[i].title,recent[i].beatmapid,fc_stat.star,shortenmod,fc_stat.pp,nopp,rank,recent[i].diff,recent[i].score,recent[i].combo,recent[i].fc,recent[i].acc,recent[i].accdetail,fc_stat.fcguess,mapcompleted,date,'beatmap')
+                let scoreoverlay = fx.osu.score_overlay({top: i+1, title: recent[i].title,
+                                                        id: recent[i].beatmapid, star: fc_stat.star,
+                                                        shortenmod: shortenmod, pp: fc_stat.pp,
+                                                        letter: recent[i].letter, diff: recent[i].diff,
+                                                        score: recent[i].score, combo: recent[i].combo,
+                                                        fc: recent[i].fc, acc: recent[i].acc,
+                                                        accdetail: recent[i].accdetail, fcguess: fc_stat.fcguess,
+                                                        date: date, type: 'top', rank:rank,
+                                                        mapcompletion: mapcompleted})
                 top += scoreoverlay
             }
             const embed = new MessageEmbed()
@@ -1345,7 +1409,6 @@ async function recent(message = new Message()) {
             let shortenmod = modandbit.shortenmod
             let bitpresent = modandbit.bitpresent
             let date = fx.osu.time_played(recent[0].date)
-            let nopp = ''
             let mapcompleted = ''
             let parser = ''
             if (modenum == 0 ) {parser = await fx.osu.precalc(recent[0].beatmapid)}
@@ -1353,16 +1416,23 @@ async function recent(message = new Message()) {
             let osuname = getplayer.username
             cache_beatmap_ID(message, recent[0].beatmapid, mode)
             if (recent[0].letter == 'F') {
-                nopp = '(No pp)'
                 date = '• ' + date
-                mapcompleted = `**Map Completion:** ${Number(fc_stat.mapcomplete).toFixed(2)}%`
+                mapcompleted = `Completed: ${Number(fc_stat.mapcomplete).toFixed(2)}%`
             }
-            let scoreoverlay = fx.osu.score_overlay(undefined,recent[0].title,recent[0].beatmapid,fc_stat.star,shortenmod,fc_stat.pp,nopp,rank,recent[0].diff,recent[0].score,recent[0].combo,recent[0].fc,recent[0].acc,recent[0].accdetail,fc_stat.fcguess,mapcompleted,date,'beatmap')
+            let scoreoverlay = fx.osu.score_overlay({title: recent[0].title       , id: recent[0].beatmapid,
+                                                    star: fc_stat.star            , shortenmod: shortenmod,
+                                                    pp: fc_stat.pp                , letter: recent[0].letter,
+                                                    rank: rank                    , diff: recent[0].diff,
+                                                    score: recent[0].score        , combo: recent[0].combo,
+                                                    fc: recent[0].fc              , acc: recent[0].acc,
+                                                    accdetail: recent[0].accdetail, fcguess: fc_stat.fcguess,
+                                                    type: 'recent'})
             const embed = new MessageEmbed()
             .setAuthor(`Most recent osu! ${modename} play for ${osuname}:`, `http://s.ppy.sh/a/${recent[0].userid}.png?date=${refresh}`)
             .setThumbnail(`https://b.ppy.sh/thumb/${recent[0].beatmapsetID}l.jpg`)
             .setColor(embedcolor)
-            .setDescription(scoreoverlay);
+            .setDescription(scoreoverlay)
+            .setFooter(`${mapcompleted} ${date}`);
             message.channel.send({embed})
         }
     } catch (error) {
@@ -1541,7 +1611,14 @@ async function score(message = new Message()) {
                         unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
                     }
                     let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
-                    gathering += fx.osu.score_overlay(i+1,shortenmod,beatmap.beatmapid,fc_stat.star,'',scores[i].pp,unrankedpp,rank,beatmap.diff,scores[i].score,scores[i].combo,beatmap.fc,scores[i].acc,scores[i].accdetail,fc_stat.fcguess,undefined,date,'none')
+                    gathering += fx.osu.score_overlay({top: i+1, title: beatmap.title,
+                                                        id: scores[i].beatmapid, star: fc_stat.star,
+                                                        shortenmod: shortenmod, pp: scores[i].pp,
+                                                        letter: scores[i].letter, diff: beatmap.diff,
+                                                        score: scores[i].score, combo: scores[i].combo,
+                                                        fc: beatmap.fc, acc: scores[i].acc,
+                                                        accdetail: scores[i].accdetail, fcguess: fc_stat.fcguess,
+                                                        date: date, type: 'top', rank:rank})
                 }
             }
             pages[page-1] = gathering
@@ -1687,7 +1764,14 @@ async function map(message = new Message()){
                             unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
                         }
                         let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
-                        let scoreoverlay = fx.osu.score_overlay(i+1,scores[i].username,scores[i].userid,fc_stat.star,shortenmod,scores[i].pp,unrankedpp,rank,beatmap.diff,scores[i].score,scores[i].combo,beatmap.fc,scores[i].acc,scores[i].accdetail,fc_stat.fcguess,undefined,date,'profile')
+                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
+                                                                id: scores[i].beatmapid, star: fc_stat.star,
+                                                                shortenmod: shortenmod, pp: scores[i].pp,
+                                                                letter: scores[i].letter, diff: beatmap.diff,
+                                                                score: scores[i].score, combo: scores[i].combo,
+                                                                fc: beatmap.fc, acc: scores[i].acc,
+                                                                accdetail: scores[i].accdetail, fcguess: fc_stat.fcguess,
+                                                                date: date, type: 'top', rank:rank})
                         gathering += scoreoverlay
                     }
                 }
@@ -1769,7 +1853,7 @@ ${mapdetail}
 }
 
 async function beatmaplinkdetail(message = new Message(), bot_prefix) {
-    try {
+ 
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         let option = msg.split(" ")
@@ -1810,21 +1894,17 @@ async function beatmaplinkdetail(message = new Message(), bot_prefix) {
             if (map.length == 0) {
                 throw 'Is this even a valid link?'
             }
+            let creator_user = await fx.osu.get_osu_profile(map.creator, 'Bancho-std', 0, false, false)
             let modedetail = fx.osu.get_mode_detail(mode)
             let modenum = modedetail.modenum
-            let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
+            let embed = await fx.osu.map_detail_overlay({map: map, beatmapid: beatmapid, 
+                                                            modenum: modenum, bitpresent: bitpresent, 
+                                                            mods: mods, embedcolor: embedcolor,
+                                                            creator_user: creator_user})
             cache_beatmap_ID(message, beatmapid, mode)
-            const embed = new MessageEmbed()
-            .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid[i]}?m=${mode}`)
-            .setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapsetID}l.jpg`)
-            .setColor(embedcolor)
-            .setDescription(map_embed)
-            .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`);
             message.channel.send({embed});
         }
-    } catch (error) {
-        message.channel.send(String(error))
-    }
+   
 }
 
 async function topleaderboard(message = new Message(), type) {
