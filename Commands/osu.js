@@ -1780,7 +1780,10 @@ async function map(message = new Message()){
             fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${beatmap.title} (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5), 240000)
         } else {
             let map = await fx.osu.get_osu_beatmap(beatmapid, mode)
-            let map_embed = await fx.osu.map_detail_overlay(map, beatmapid, modenum, bitpresent, mods)
+            let creator_user = await fx.osu.get_osu_profile(map.creator, 'Bancho-std', 0, false, false)
+            let map_embed = await fx.osu.map_detail_overlay({map: map, modenum: modenum, 
+                                                            bitpresent: bitpresent, mods: mods,
+                                                            embedcolor: embedcolor, creator_user: creator_user})
             cache_beatmap_ID(message, beatmapid, mode)
             const embed = new MessageEmbed()
             .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid}?m=${mode}`)
