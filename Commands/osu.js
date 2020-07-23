@@ -1166,12 +1166,12 @@ async function osutop(message = new Message(), mode) {
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                 let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: beatmap.title,
+                let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: best[i].title,
                                                         id: best[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: best[i].pp,
-                                                        letter: best[i].letter, diff: beatmap.diff,
+                                                        letter: best[i].letter, diff: best[i].diff,
                                                         score: best[i].score, combo: best[i].combo,
-                                                        fc: beatmap.fc, acc: best[i].acc,
+                                                        fc: best[i].fc, acc: best[i].acc,
                                                         accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
                                                         date: date, type: 'top', rank:rank})
                 top += scoreoverlay
