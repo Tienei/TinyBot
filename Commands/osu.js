@@ -1786,12 +1786,6 @@ async function map(message = new Message()){
                                                         mods: mods, embedcolor: embedcolor,
                                                         creator_user: creator_user})
             cache_beatmap_ID(message, beatmapid, mode)
-            const embed = new MessageEmbed()
-            .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid}?m=${mode}`)
-            .setThumbnail(`https://b.ppy.sh/thumb/${map.beatmapsetID}l.jpg`)
-            .setColor(embedcolor)
-            .setDescription(map_embed)
-            .setFooter(`${map.approvalStatus} ◆ ❤: ${map.favorite}`);
             message.channel.send({embed});
         }
     } catch (error) {
