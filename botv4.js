@@ -115,67 +115,11 @@ bot.on("ready", (ready) => {
     setInterval(server_count, 1800000)
     if (!config.config.debug.command) setInterval(topgg_server_count, 1800000)
 
-    // check if player is online (osu!)
-
-    let max_api_request_per_min = 900
-    let max_irc_bancho_request_per_min = 200
-    let check_online_delay = 10000
-    let track_delay = 10000 //miliseconds 
-    let total_online_player = 0
-
-    function change_online_checking_delay() {
-        let total_player = osu_track.filter(player => player.type == "Bancho").length
-        check_online_delay = 60000/(max_irc_bancho_request_per_min/(1+total_player))
-        if (check_online_delay < 5000) check_online_delay = 5000
-    }
-
-    function change_tracking_delay() {
-        total_online_player = 0
-        for (let player of osu_track) {
-            if (player.online && player.type == "Bancho") total_online_player++
-        }
-        track_delay = 60000/(max_api_request_per_min/(1+total_online_player))
-        if (track_delay < 10000) track_delay = 10000
-    }
-
-    async function osu_check_online() {
-        console.log("check")
-        for (let player of osu_track) {
-            try {
-                if (player.online == undefined) {
-                    player.online = false
-                    player.offlineTry = 0
-                }
-                if (player.type == "Bancho") {
-                    let online = (await osu_client.getUser(player.name).stats()).online
-                    if (player.online && !online) {
-                        if (player.offlineTry >= 2) {
-                            player.online = false
-                            player.offlineTry = 0
-                        } else player.offlineTry++
-                    }
-                    if (online) {
-                        player.online = true
-                    }
-                } else {
-                    player.online = true
-                }
-                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-            } catch (error) {
-
-            }
-        }
-        change_online_checking_delay()
-        setTimeout(osu_check_online, check_online_delay)
-    }
-
+    // osutrack
     async function real_time_osu_track() {
-        // Calculate tracking delay
-        // osutrack
-        console.log(`osutrack: Checking, tracking delay: ${track_delay}, online: ${check_online_delay}, found online: ${total_online_player}`)
+        console.log('osutrack: Checking')
         for (let player of osu_track) {
             try {
-                // Get player if online
                 let modes = []
                 for (let channel of player.trackonchannel) {
                     if (bot.channels.cache.get(channel.id) == undefined) {
@@ -187,20 +131,29 @@ bot.on("ready", (ready) => {
                             if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                         }
                     } else {
-                        if (player.online) {
-                            for (let mode of channel.modes) {
-                                if (modes.find(m => m.mode == mode.mode) == undefined) {
-                                    modes.push({"mode": mode.mode, "limit": mode.limit})
-                                } else {
-                                    if (mode.limit > modes.find(m => m.mode == mode.mode).limit) {
-                                        modes.find(m => m.mode == mode.mode).limit = mode.limit
-                                    }
+                        for (let mode of channel.modes) {
+                            if (mode.limit > 100) {
+                                mode.limit = 100
+                                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            }
+                            if (mode.limit < 1) {
+                                mode.limit = 1
+                                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            }
+                            if (String(mode.limit).search(/^\d+$/) < 0) {
+                                mode.limit = 50
+                                if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                            }
+                            if (modes.find(m => m.mode == mode.mode) == undefined) {
+                                modes.push({"mode": mode.mode, "limit": mode.limit})
+                            } else {
+                                if (mode.limit > modes.find(m => m.mode == mode.mode).limit) {
+                                    modes.find(m => m.mode == mode.mode).limit = mode.limit
                                 }
                             }
                         }
                     }
                 }
-                // Get data
                 for (let m of modes) {
                     let mode = m.mode
                     let limit = m.limit
@@ -213,7 +166,7 @@ bot.on("ready", (ready) => {
                     let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
                     best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
                     for (let i = 0; i < best.length; i++) {
-                        console.log(`Found: ${player.name}`)
+                        console.log('Found')
                         let user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
                         console.log(best[i].beatmapid, mode)
                         let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
@@ -265,21 +218,9 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                 console.log(error.stack)
             }
         }
-        change_tracking_delay()
-        setTimeout(real_time_osu_track, track_delay)
     }
-
-    let check_loading = setInterval(load_track, 1000)
-    function load_track() {
-        if (loading == 0) {
-            clearInterval(check_loading)
-            change_online_checking_delay()
-            osu_check_online()
-            if (config.config.debug.osutrack == false) {
-                change_tracking_delay()
-                real_time_osu_track()
-            }
-        }
+    if (config.config.debug.osutrack == false) {
+        setInterval(real_time_osu_track, 180000)
     }
 });
 
