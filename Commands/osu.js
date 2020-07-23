@@ -1781,9 +1781,10 @@ async function map(message = new Message()){
         } else {
             let map = await fx.osu.get_osu_beatmap(beatmapid, mode)
             let creator_user = await fx.osu.get_osu_profile(map.creator, 'Bancho-std', 0, false, false)
-            let map_embed = await fx.osu.map_detail_overlay({map: map, modenum: modenum, 
-                                                            bitpresent: bitpresent, mods: mods,
-                                                            embedcolor: embedcolor, creator_user: creator_user})
+            let embed = await fx.osu.map_detail_overlay({map: map, beatmapid: beatmapid, 
+                                                        modenum: modenum, bitpresent: bitpresent, 
+                                                        mods: mods, embedcolor: embedcolor,
+                                                        creator_user: creator_user})
             cache_beatmap_ID(message, beatmapid, mode)
             const embed = new MessageEmbed()
             .setAuthor(`${map.title} by ${map.creator}`,'',`https://osu.ppy.sh/b/${beatmapid}?m=${mode}`)
