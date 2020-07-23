@@ -165,6 +165,7 @@ bot.on("ready", (ready) => {
                     let a_mode = modedetail.a_mode
                     let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
                     best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
+                    best.sort(function(a,b) {return new Date(a.date).getTime()-new Date(b.date).getTime()})
                     for (let i = 0; i < best.length; i++) {
                         console.log('Found')
                         let user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
