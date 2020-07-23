@@ -1,4 +1,5 @@
 const { Message, MessageEmbed } = require('discord.js')
+const ranking_letter = require('./ranking_letter')
 
 module.exports = function (message = new Message(), check_type, modeicon, supporter, modename, name, id, pp, rank, country, ct_rank, acc, playcount, level, playstyle, ss, s, a, stat_text, stat_icon, refresh) {
     // Setup for modes
@@ -67,7 +68,7 @@ module.exports = function (message = new Message(), check_type, modeicon, suppor
     // Field 2
     let field2 = ''
     if (ss !== undefined && s !== undefined && a !== undefined) {
-        field2 += `<:rankingX:520932410746077184>: ${ss}\n<:rankingS:520932426449682432>: ${s}\n<:rankingA:520932311613571072>: ${a}`
+        field2 += `${ranking_letter('SS')}: ${ss}\n${ranking_letter('S')}: ${s}\n${ranking_letter('A')}: ${a}`
     }
     let embed = new MessageEmbed()
     embed.setColor(embedcolor)
