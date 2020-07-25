@@ -1380,7 +1380,7 @@ async function recent(message = new Message()) {
                     date = '• ' + date
                     mapcompleted = `**Map Completion:** ${Number(fc_stat.mapcomplete).toFixed(2)}%`
                 }
-                let scoreoverlay = fx.osu.score_overlay({top: i+1, title: recent[i].title,
+                let scoreoverlay = fx.osu.score_overlay({top: Number(i)+1, title: recent[i].title,
                                                         id: recent[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: fc_stat.pp,
                                                         letter: recent[i].letter, diff: recent[i].diff,
@@ -1763,14 +1763,14 @@ async function map(message = new Message()){
                             unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
                         }
                         let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
-                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
-                                                                id: scores[i].beatmapid, star: fc_stat.star,
+                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: scores[i].username,
+                                                                id: scores[i].userid, star: fc_stat.star,
                                                                 shortenmod: shortenmod, pp: scores[i].pp,
                                                                 letter: scores[i].letter, diff: beatmap.diff,
                                                                 score: scores[i].score, combo: scores[i].combo,
                                                                 fc: beatmap.fc, acc: scores[i].acc,
                                                                 accdetail: scores[i].accdetail, fcguess: fc_stat.fcguess,
-                                                                date: date, type: 'top', rank:rank})
+                                                                date: date, type: 'map', rank:rank})
                         gathering += scoreoverlay
                     }
                 }

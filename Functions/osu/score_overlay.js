@@ -12,6 +12,8 @@ module.exports = function ({top = 0, title, id, star, shortenmod, pp, rank, diff
         showtitle = `**[${title}](https://osu.ppy.sh/b/${id})** `
     } else if (type == 'score') {
         showtitle = ''
+    } else if (type == 'map') {
+        showtitle = `**[${title}](https://osu.ppy.sh/osu/${id})** `
     }
     let line1 = `${showtop} ${showtitle} (${star}★) \`${shortenmod}\` • ${(score).toLocaleString('en')}`
     let line2 = `\n${rank} *${diff}* • **${showpp}** ${fcguess}`
