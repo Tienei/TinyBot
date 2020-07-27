@@ -806,6 +806,10 @@ bot.on("message", (message) => {
                     message.channel.send(`${userid} has been unban from making any report`)
                 }
             }
+            if (command == bot_prefix + 'memory') {
+                let memory = process.memoryUsage()
+                message.channel.send(`Used: **${Math.round(memory.heapUsed / 1024 / 1024 * 100)/100}** MB\nTotal: **${Math.round(memory.heapTotal / 1024 / 1024 * 100)/100}** MB`)
+            }
         }
     }
 })
