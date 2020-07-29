@@ -6,10 +6,9 @@ const bot = new Client({
     cacheRoles: true,
     cacheEmojis: false,
     cachePresences: false,
-    fetchAllMembers: true,
-    messageCacheMaxSize: 20, 
-    messageCacheLifetime: 120, 
-    messageSweepInterval: 240});
+    messageCacheMaxSize: 10, 
+    messageCacheLifetime: 60, 
+    messageSweepInterval: 120});
 bot.login(process.env.BOT_TOKEN)
 const bancho = require('bancho.js')
 const osu_client = new bancho.BanchoClient({ username: process.env.BANCHO_USERNAME, password: process.env.BANCHO_PASSWORD, limiterTimespan: 60000, limiterPrivate: 270, limiterPublic: 54 });
