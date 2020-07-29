@@ -1,6 +1,6 @@
 const request = require('superagent')
 const cheerio = require('cheerio')
-const { Message } = require('discord.js')
+const { Message } = require('discord.js-light')
 const fs = require('fs')
 const fx = require('./../Functions/load_fx')
 

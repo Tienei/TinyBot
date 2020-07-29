@@ -1,5 +1,5 @@
 var cooldown = {}
-const { Message } = require('discord.js')
+const { Message } = require('discord.js-light')
 
 function set(message = new Message(),cdcommand,time) {
     if (cooldown[message.author.id] == undefined) {

@@ -1,4 +1,4 @@
-const { Message } = require('discord.js')
+const { Message } = require('discord.js-light')
 const config = require('../../config')
 
 module.exports = function (user_data, message = new Message(), name, type) {

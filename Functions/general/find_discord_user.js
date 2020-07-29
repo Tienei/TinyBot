@@ -1,4 +1,4 @@
-const { Message } = require('discord.js')
+const { Message } = require('discord.js-light')
 
 module.exports = function (message = new Message(), name = name.toLowerCase()) {
     if (name !== '') {

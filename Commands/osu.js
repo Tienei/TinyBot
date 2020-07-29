@@ -1,4 +1,4 @@
-const { Attachment, MessageEmbed, Message } = require('discord.js')
+const { Attachment, MessageEmbed, Message } = require('discord.js-light')
 const cheerio = require('cheerio')
 const generate = require('node-chartist');
 const sharp = require('sharp')

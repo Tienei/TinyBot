@@ -1,4 +1,4 @@
-const { Message } = require('discord.js')
+const { Message } = require('discord.js-light')
 
 function easter_detection(message = new Message(), easter_egg) {
     let number = ee_number

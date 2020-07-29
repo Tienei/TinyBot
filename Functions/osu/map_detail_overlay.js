@@ -6,7 +6,7 @@ const ctb_pp_calc = require('./ctb_pp_calc')
 const mania_pp_calc = require('./mania_pp_calc')
 const beatmap_detail = require('./beatmap_detail')
 const diff_icon = require('./get_diff_icon')
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed } = require('discord.js-light')
 
 
 module.exports = async function ({map, beatmapid, modenum, bitpresent, mods, embedcolor, creator_user}) {

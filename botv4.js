@@ -8,7 +8,7 @@ let server_data = {}
 let report_ban_data = {}
 
 require('dotenv').config();
-const Discord = require('discord.js');
+const Discord = require('discord.js-light');
 const nodeosu = require('node-osu');
 const jimp = require('jimp')
 const config = require('./config.js');
@@ -298,6 +298,12 @@ bot.on("message", (message) => {
         if (command == bot_prefix + 'suggestion' && message.guild !== null) {
             if (!report_ban_data.hasOwnProperty(message.author.id)) cmds.general.suggestion(message)
             else message.channel.send("You have been ban from reporting any suggestion/bugs")
+        }
+
+        if (command == bot_prefix + 'memory') {
+            let total_memory = '**512** MB' //hardcoded
+            let memory = process.memoryUsage()
+            message.channel.send(`Memory Usage: **${Math.round(memory.heapUsed / 1024 / 1024 * 100)/100}** MB/${total_memory}`)
         }
         
 
@@ -805,10 +811,6 @@ bot.on("message", (message) => {
                     if (!config.config.debug.disable_db_save) db.report_ban.findAndModify({query: {}, update: report_ban_data}, function(){})
                     message.channel.send(`${userid} has been unban from making any report`)
                 }
-            }
-            if (command == bot_prefix + 'memory') {
-                let memory = process.memoryUsage()
-                message.channel.send(`Used: **${Math.round(memory.heapUsed / 1024 / 1024 * 100)/100}** MB\nTotal: **${Math.round(memory.heapTotal / 1024 / 1024 * 100)/100}** MB`)
             }
         }
     }

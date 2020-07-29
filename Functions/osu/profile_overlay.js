@@ -1,4 +1,4 @@
-const { Message, MessageEmbed } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js-light')
 const ranking_letter = require('./ranking_letter')
 
 module.exports = function (message = new Message(), check_type, modeicon, supporter, modename, name, id, pp, rank, country, ct_rank, acc, playcount, level, playstyle, ss, s, a, stat_text, stat_icon, refresh) {

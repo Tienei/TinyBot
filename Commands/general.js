@@ -2,7 +2,7 @@ const bot = require('./../client').bot
 const config = require('../config')
 const fx = require('./../Functions/load_fx')
 const package = require('../package.json')
-const { Message, MessageEmbed } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js-light')
 
 let bot_command_help = []
 
@@ -232,11 +232,13 @@ function avatar(message = new Message(), command) {
 function changelog(message = new Message()) {
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
     let changes = [`\`Quality and Performance update:\`
-**[July 23th, 2020]:**
+**[July 23rd, 2020]:**
 - Changed scores UI
 - Changed maps UI
 - Removed custom command
-- Fixed beatmap links`]
+- Fixed beatmap links
+**[July 29th, 2020]:**
+- Changed library to reduce RAM usage`]
 
     let loadpage = async function (page, pages) {
         pages = changes
@@ -257,7 +259,7 @@ function bot_info(message = new Message()) {
 ◆ My senpai server: [server](https://discord.gg/H2mQMxd)
 ◆ Consider donating if you like the bot and help the creator: [donate](https://ko-fi.com/tienei)`)
     .addField('Supported osu servers', `◆ \`Bancho\` \`Ripple\` \`Akatsuki\` \`Enjuu\` \`Horizon\` \`Gatari\``)
-    .addField('Dependencies',`\`discord.js\`: ${package.dependencies['discord.js']}, \`ojsama\`: ${package.dependencies.ojsama}, \`osu!api\`: 1.0, \`Ripple API\`: 1.0`);
+    .addField('Dependencies',`\`discord.js-light\`: ${package.dependencies['discord.js-light']}, \`ojsama\`: ${package.dependencies.ojsama}, \`osu!api\`: 1.0, \`Ripple API\`: 1.0`);
     message.channel.send({embed})
 }
 

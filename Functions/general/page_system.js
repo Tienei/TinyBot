@@ -1,4 +1,4 @@
-const { Message, MessageEmbed } = require('discord.js')
+const { Message, MessageEmbed } = require('discord.js-light')
 
 module.exports = async function (message = new Message(), page_fx, author, thumbnail, color, max_page, max_duration = 120000) {
     var page = 1
