@@ -1984,7 +1984,7 @@ async function serverleaderboard(message = new Message()) {
         }
         fx.general.cmd_cooldown.set(message, command, 3000)
         let player = []
-        let members = message.guild.members.cache.array()
+        let members = (await message.guild.members.fetch({query: ""})).array()
         for (let i = 0; i < members.length; i++) {
             let user = members[i]
             if (user_data[user.id]) {
