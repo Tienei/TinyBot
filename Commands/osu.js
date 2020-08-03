@@ -90,11 +90,22 @@ Good   ${visual}   Bad`)
     }
 }
 
-async function osuavatar(message = new Message(), mode) {
+async function osuavatar(message = new Message(), a_mode) {
     let msg = message.content.toLowerCase();
     let refresh = Math.round(Math.random()* 2147483648)
     let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
+    let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-akatsuki", "v_count": 0},
+                                                    {"suffix": "-ripple", "v_count": 0},
+                                                    {"suffix": "-gatari", "v_count": 0},
+                                                    {"suffix": "-enjuu", "v_count": 0},
+                                                    {"suffix": "-horizon", "v_count": 0},])
+    // Set the correct mode
+    const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+    let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
+    server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+    let temp = server_suffix.substring(1)
+    let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
+    // Get Information
     let check_type = fx.osu.get_mode_detail(mode).check_type
     let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
     let pfp_link = ''
@@ -126,7 +137,7 @@ async function osuavatar(message = new Message(), mode) {
     message.channel.send({embed})
 }
 
-async function osu(message = new Message(), mode) {
+async function osu(message = new Message(), a_mode) {
     try {
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
@@ -136,11 +147,23 @@ async function osu(message = new Message(), mode) {
             throw 'You need to wait 3 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 3000)
-        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-d", "v_count": 0},
+        let suffix = fx.osu.check_suffix(msg, true, [{"suffix": "-d", "v_count": 0},
                                                         {"suffix": "-rank", "v_count": 1},
                                                         {"suffix": "-ts", "v_count": 0},
                                                         {"suffix": "-accts", "v_count": 0},
-                                                        {"suffix": "-g", "v_count": 0}])
+                                                        {"suffix": "-g", "v_count": 0},
+                                                        {"suffix": "-akatsuki", "v_count": 0},
+                                                        {"suffix": "-ripple", "v_count": 0},
+                                                        {"suffix": "-gatari", "v_count": 0},
+                                                        {"suffix": "-enjuu", "v_count": 0},
+                                                        {"suffix": "-horizon", "v_count": 0},])
+        // Set the correct mode
+        const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+        let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
+        server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+        let temp = server_suffix.substring(1)
+        let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
+        //
         let modedetail = fx.osu.get_mode_detail(mode)
         let a_mode = modedetail.a_mode
         let modename = modedetail.modename
@@ -639,16 +662,25 @@ ${top_acc[i].rank} *${top_acc[i].diff}* ◆ **Acc:** ${Number(top_acc[i].acc).to
     }
 }
 
-async function osu_card(message = new Message(), mode) {
+async function osu_card(message = new Message(), a_mode) {
     try {
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
-        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
+        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-akatsuki", "v_count": 0},
+                                                        {"suffix": "-ripple", "v_count": 0},
+                                                        {"suffix": "-gatari", "v_count": 0},
+                                                        {"suffix": "-enjuu", "v_count": 0},
+                                                        {"suffix": "-horizon", "v_count": 0},])
+        // Set the correct mode
+        const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+        let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
+        server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+        let temp = server_suffix.substring(1)
+        let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
         // Get Information
         let modedetail = fx.osu.get_mode_detail(mode)
         let modenum = modedetail.modenum
         let check_type = modedetail.check_type
-        let a_mode = modedetail.a_mode
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         if (a_mode == 'rx') {
             throw 'Card is only available for other modes except relax'
@@ -914,7 +946,7 @@ async function osu_card(message = new Message(), mode) {
     }
 }
 
-async function osutop(message = new Message(), mode) {
+async function osutop(message = new Message(), a_mode) {
     try {
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
@@ -924,19 +956,30 @@ async function osutop(message = new Message(), mode) {
             throw 'You need to wait 3 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 3000)
-        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-p", "v_count": 1},
+        let suffix = fx.osu.check_suffix(msg, true, [{"suffix": "-p", "v_count": 1},
                                                     {"suffix": "-r", "v_count": 0},
                                                     {"suffix": "-m", "v_count": 1},
                                                     {"suffix": "-g", "v_count": 1},
                                                     {"suffix": "-s", "v_count": 1},
                                                     {"suffix": "-a", "v_count": 0},
-                                                    {"suffix": "-page", "v_count": 0}])
+                                                    {"suffix": "-page", "v_count": 0},
+                                                    {"suffix": "-akatsuki", "v_count": 0},
+                                                    {"suffix": "-ripple", "v_count": 0},
+                                                    {"suffix": "-gatari", "v_count": 0},
+                                                    {"suffix": "-enjuu", "v_count": 0},
+                                                    {"suffix": "-horizon", "v_count": 0},])
+        // Set the correct mode
+        const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+        let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
+        server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+        let temp = server_suffix.substring(1)
+        let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
+        //
         let top = ''
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
         let check_type = modedetail.check_type
         let modenum = modedetail.modenum
-        let a_mode = modedetail.a_mode
         let pfp_link = `http://a.${modedetail.link}/{user_id}?date=${refresh}`
         if (check_type == 'Ripple') pfp_link = `http://a.${modedetail.link}/{user_id}?${refresh}`
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
@@ -1282,39 +1325,31 @@ async function recent(message = new Message()) {
                                                     {"suffix": "-ctb", "v_count": 0},
                                                     {"suffix": "-mania", "v_count": 0},
                                                     {"suffix": "-rx", "v_count": 0},
-                                                    {"suffix": "-bancho", "v_count": 0},
                                                     {"suffix": "-ripple", "v_count": 0},
-                                                    {"suffix": "-akat", "v_count": 0},
-                                                    {"suffix": "-hrz", "v_count": 0},
+                                                    {"suffix": "-akatsuki", "v_count": 0},
+                                                    {"suffix": "-horizon", "v_count": 0},
                                                     {"suffix": "-enjuu", "v_count": 0},
                                                     {"suffix": "-gatari", "v_count": 0},])
-        let mode = "Bancho"
-        if (suffix.suffix.find(s => s.suffix == "-bancho").position > -1) {
-            mode = 'Bancho'
-        } else if (suffix.suffix.find(s => s.suffix == "-ripple").position > -1) {
-            mode = 'Ripple'
-        } else if (suffix.suffix.find(s => s.suffix == "-akat").position > -1) {
-            mode = 'Akatsuki'
-        } else if (suffix.suffix.find(s => s.suffix == "-hrz").position > -1) {
-            mode = 'Horizon'
-        } else if (suffix.suffix.find(s => s.suffix == "-enjuu").position > -1) {
-            mode = 'Enjuu'
-        } else if (suffix.suffix.find(s => s.suffix == "-gatari").position > -1) {
-            mode = 'Gatari'
-        }
+        let a_mode;
         let osu_mode_check = ["-std", "-taiko", "-ctb", "-mania", "-rx"]
         for (let osu_mode of osu_mode_check) {
             if (suffix.suffix.find(s => s.suffix == osu_mode).position > -1) {
-                mode += osu_mode
+                a_mode = osu_mode.slice(1)
             }
         }
-        if (!mode.includes('-')) {
-            mode += '-std'
+        if (!a_mode) {
+            a_mode = 'std'
         }
+        // Set the correct mode
+        const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+        let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
+        server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+        let temp = server_suffix.substring(1)
+        let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
+        //
         // Make recent best get modes later
         let modedetail = fx.osu.get_mode_detail(mode)
         let modenum = modedetail.modenum
-        let a_mode = modedetail.a_mode
         let check_type = modedetail.check_type
         let modename = modedetail.modename
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
