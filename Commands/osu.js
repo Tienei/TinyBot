@@ -165,7 +165,6 @@ async function osu(message = new Message(), a_mode) {
         let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
         //
         let modedetail = fx.osu.get_mode_detail(mode)
-        let a_mode = modedetail.a_mode
         let modename = modedetail.modename
         let modeicon = modedetail.modeicon
         let modenum = modedetail.modenum
