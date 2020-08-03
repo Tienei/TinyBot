@@ -1,6 +1,6 @@
 const { Message } = require('discord.js-light')
 
-function easter_detection(message = new Message(), easter_egg) {
+function easter_detection(message = new Message(), easter_egg, ee_number) {
     let number = ee_number
     if (easter_egg[message.author.id] == undefined) {
         easter_egg[message.author.id] = number

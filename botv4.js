@@ -586,7 +586,7 @@ bot.on("message", (message) => {
         }
 
         if (ee[msg] !== undefined) {
-            easter_egg = cmds.easter_egg.easter_detection(message, easter_egg)
+            easter_egg = cmds.easter_egg.easter_detection(message, easter_egg, ee_number)
             if (!config.config.debug.disable_db_save) db.easter_egg.findAndModify({query: {}, update: easter_egg}, function(){})
         }
 
