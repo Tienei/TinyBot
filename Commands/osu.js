@@ -1018,7 +1018,7 @@ async function osutop(message = new Message(), a_mode) {
                 cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
                                                         id: best[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: best[i].pp,
@@ -1062,7 +1062,7 @@ async function osutop(message = new Message(), a_mode) {
                 cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: beatmap.title,
                                                         id: best[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: best[i].pp,
@@ -1103,7 +1103,7 @@ async function osutop(message = new Message(), a_mode) {
                     cache_beatmap_ID(message, best[i].beatmapid, mode)
                     let parser = ''
                     if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                    let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                    let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                     let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
                                                             id: best[i].beatmapid, star: fc_stat.star,
                                                             shortenmod: shortenmod, pp: best[i].pp,
@@ -1168,7 +1168,7 @@ async function osutop(message = new Message(), a_mode) {
                         cache_beatmap_ID(message, best[i].beatmapid, mode)
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                        let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                        let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                         let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
                                                                 id: best[i].beatmapid, star: fc_stat.star,
                                                                 shortenmod: shortenmod, pp: best[i].pp,
@@ -1207,7 +1207,7 @@ async function osutop(message = new Message(), a_mode) {
                 cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: best[i].title,
                                                         id: best[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: best[i].pp,
@@ -1248,7 +1248,7 @@ async function osutop(message = new Message(), a_mode) {
                         cache_beatmap_ID(message, best[i].beatmapid, mode)
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                        let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                        let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                         let scoreoverlay = fx.osu.score_overlay({top: best[i].top, title: best[i].title,
                                                                 id: best[i].beatmapid, star: fc_stat.star,
                                                                 shortenmod: shortenmod, pp: best[i].pp,
@@ -1284,7 +1284,7 @@ async function osutop(message = new Message(), a_mode) {
                 cache_beatmap_ID(message, best[i].beatmapid, mode)
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
                 let scoreoverlay = fx.osu.score_overlay({top: i+1, title: best[i].title,
                                                         id: best[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: best[i].pp,
@@ -1374,7 +1374,7 @@ async function recent(message = new Message()) {
             cache_beatmap_ID(message, best[0].beatmapid, mode)
             let parser = await fx.osu.precalc(best[0].beatmapid)     
             if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
-            let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+            let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, best[0].pp, check_type, a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
             let scoreoverlay = fx.osu.score_overlay({title: beatmap.title,
                                                     id: best[0].beatmapid, star: fc_stat.star,
                                                     shortenmod: shortenmod, pp: best[0].pp,
@@ -1407,7 +1407,7 @@ async function recent(message = new Message()) {
                 let mapcompleted = ''
                 let parser = ''
                 if (modenum == 0) {parser = await fx.osu.precalc(recent[i].beatmapid)}
-                let fc_stat = await fx.osu.get_pp(a_mode, parser, recent[i].beatmapid, bitpresent, recent[i].score, recent[i].combo, recent[i].fc, recent[i].count300, recent[i].count100, recent[i].count50, recent[i].countmiss, recent[i].countgeki, recent[i].countkatu, recent[i].acc, recent[i].perfect, true)
+                let fc_stat = await fx.osu.get_pp(recent[i].pp, check_type, a_mode, parser, recent[i].beatmapid, bitpresent, recent[i].score, recent[i].combo, recent[i].fc, recent[i].count300, recent[i].count100, recent[i].count50, recent[i].countmiss, recent[i].countgeki, recent[i].countkatu, recent[i].acc, recent[i].perfect, true)
                 cache_beatmap_ID(message, recent[i].beatmapid, mode)
                 if (recent[i].letter == 'F') {
                     nopp = '(No pp)'
@@ -1445,7 +1445,7 @@ async function recent(message = new Message()) {
             let mapcompleted = ''
             let parser = ''
             if (modenum == 0 ) {parser = await fx.osu.precalc(recent[0].beatmapid)}
-            let fc_stat = await fx.osu.get_pp(a_mode, parser, recent[0].beatmapid, bitpresent, recent[0].score, recent[0].combo, recent[0].fc, recent[0].count300, recent[0].count100, recent[0].count50, recent[0].countmiss, recent[0].countgeki, recent[0].countkatu, recent[0].acc, recent[0].perfect, true)
+            let fc_stat = await fx.osu.get_pp(recent[0].pp, check_type, a_mode, parser, recent[0].beatmapid, bitpresent, recent[0].score, recent[0].combo, recent[0].fc, recent[0].count300, recent[0].count100, recent[0].count50, recent[0].countmiss, recent[0].countgeki, recent[0].countkatu, recent[0].acc, recent[0].perfect, true)
             let osuname = getplayer.username
             cache_beatmap_ID(message, recent[0].beatmapid, mode)
             if (recent[0].letter == 'F') {
@@ -1556,7 +1556,7 @@ async function compare(message = new Message()) {
                             unrankedpp = `(Loved: ${Number(comparepp.pp.total).toFixed(2)}pp)`
                         }
                     }
-                    let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+                    let fc_stat = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                     gathering += `
 ${i+1}. \`${shortenmod}\` Score (${fc_stat.star}★) • **${scores[i].pp.toFixed(2)}pp** ${unrankedpp}
 ${rank} • ${scores[i].score} • **x**${scores[i].combo}/${beatmap.fc}
@@ -1640,10 +1640,10 @@ async function score(message = new Message()) {
                     let date = fx.osu.time_played(scores[i].date)
                     let unrankedpp = undefined
                     if (beatmap.approvalStatus !== "Ranked" && beatmap.approvalStatus !== "Approved") {
-                        let comparepp = await fx.osu.get_pp(a_mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
+                        let comparepp = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
                         unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
                     }
-                    let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+                    let fc_stat = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                     gathering += fx.osu.score_overlay({top: i+1, title: beatmap.title,
                                                         id: scores[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: scores[i].pp,
@@ -1804,10 +1804,10 @@ async function map(message = new Message()){
                         let date = fx.osu.time_played(scores[i].date)
                         let unrankedpp = undefined
                         if (beatmap.approvalStatus !== "Ranked" && beatmap.approvalStatus !== "Approved") {
-                            let comparepp = await fx.osu.get_pp(a_mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
+                            let comparepp = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
                             unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
                         }
-                        let fc_stat = await fx.osu.get_pp(a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+                        let fc_stat = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                         let scoreoverlay = fx.osu.score_overlay({top: i+1, title: scores[i].username,
                                                                 id: scores[i].userid, star: fc_stat.star,
                                                                 shortenmod: shortenmod, pp: scores[i].pp,
