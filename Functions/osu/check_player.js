@@ -21,19 +21,19 @@ module.exports = function (user_data, message = new Message(), name, type) {
                 }
                 return osuname
             } else {
-                let error_text = `Looks like you didn't link your profile to an osu account, do **${config.config.bot_prefix}{server_cmd} (username)** to link your account`
+                let error_text = `Looks like you didn't link your profile to an osu account, do **${config.config.bot_prefix}osuset (username) {server_cmd}** to link your account`
                 if (type == 'Bancho') {
-                    error_text = error_text.replace('{server_cmd}', 'osuset')
+                    error_text = error_text.replace('{server_cmd}', '')
                 } else if (type == 'Akatsuki') {
-                    error_text = error_text.replace('{server_cmd}', 'akatsukiset')
+                    error_text = error_text.replace('{server_cmd}', '-akatsuki')
                 } else if (type == 'Ripple') {
-                    error_text = error_text.replace('{server_cmd}', 'rippleset')
+                    error_text = error_text.replace('{server_cmd}', '-ripple')
                 } else if (type == 'Horizon') {
-                    error_text = error_text.replace('{server_cmd}', 'horizonset')
+                    error_text = error_text.replace('{server_cmd}', '-horizon')
                 } else if (type == 'Enjuu') {
-                    error_text = error_text.replace('{server_cmd}', 'enjuuset')
+                    error_text = error_text.replace('{server_cmd}', '-enjuu')
                 } else if (type == 'Gatari') {
-                    error_text = error_text.replace('{server_cmd}', 'gatariset')
+                    error_text = error_text.replace('{server_cmd}', '-gatari')
                 }
                 throw error_text
             }
