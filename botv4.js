@@ -6,6 +6,7 @@ let easter_egg = {}
 let custom_command = {}
 let server_data = {}
 let report_ban_data = {}
+let server_ban = {}
 
 require('dotenv').config();
 const Discord = require('discord.js-light');
@@ -21,7 +22,7 @@ const bot = clients.bot
 const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id", 'report_ban'])
+const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id", 'report_ban', 'server_ban'])
 
 let topgg_client = ''
 if (!config.config.debug.command) {
@@ -98,6 +99,10 @@ bot.on("ready", (ready) => {
             // Get cached map id
             saved_map_id = await new Promise(resolve => {
                 db.saved_map_id.find((err, docs) => resolve(docs[0]['0']));
+            });
+            // Get server ban data
+            server_ban = await new Promise(resolve => {
+                db.server_ban.find((err, docs) => resolve(docs[0]));
             });
             stored_map_ID = saved_map_id
             cmds.osu.get_db(user_data, stored_map_ID, saved_map_id, db)
@@ -241,6 +246,13 @@ bot.on("guildMemberAdd", (member) => {
         }
     }
    welcome_message()
+})
+
+bot.on("guildCreate", (guild) => {
+    if (server_ban[guild.id]) {
+        message.channel.send("Sorry the owner has ban the server from using this bot. Sayonara")
+    }
+    guild.leave()
 })
 
 bot.on("message", (message) => {
@@ -673,6 +685,14 @@ bot.on("message", (message) => {
                     if (!config.config.debug.disable_db_save) db.report_ban.findAndModify({query: {}, update: report_ban_data}, function(){})
                     message.channel.send(`${userid} has been unban from making any report`)
                 }
+            }
+            if (command == bot_prefix + 'serverban') {
+                let serverid = msg.split(" ")[1]
+                server_ban[serverid] = true
+                let server = bot.guilds.cache.array().find(g => g.id == serverid)
+                message.channel.send(`${serverid} (${server.name}) has been ban from using the bot`)
+                server.leave()
+                if (!config.config.debug.disable_db_save) db.server_ban.findAndModify({query: {}, update: server_ban}, function(){})
             }
         }
     }
