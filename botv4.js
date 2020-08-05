@@ -248,17 +248,6 @@ bot.on("guildMemberAdd", (member) => {
    welcome_message()
 })
 
-bot.on("guildCreate", (guild) => {
-    try {
-        if (server_ban[guild.id]) {
-            guild.channels.cache.array()[0].send("Sorry the owner has ban the server from using this bot. Sayonara")
-        }
-        guild.leave()
-    } catch {
-        guild.leave()
-    }
-})
-
 bot.on("message", (message) => {
     if (config.config.debug.command == true && message.author.id !== "292523841811513348") {
         return;
