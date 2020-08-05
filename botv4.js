@@ -184,7 +184,7 @@ bot.on("ready", (ready) => {
                         let ppgain = (Number(user.pp).toFixed(2) - Number(player_mode_detail.lasttotalpp)).toFixed(2)
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
-                        let fc_stat = await fx.osu.get_pp(a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+                        let fc_stat = await fx.osu.get_pp(pp, check_type, a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
                         let star = fc_stat.star
                         let fcguess = ''
                         if (best[i].letter == 'F') {
@@ -249,10 +249,14 @@ bot.on("guildMemberAdd", (member) => {
 })
 
 bot.on("guildCreate", (guild) => {
-    if (server_ban[guild.id]) {
-        message.channel.send("Sorry the owner has ban the server from using this bot. Sayonara")
+    try {
+        if (server_ban[guild.id]) {
+            guild.channels.cache.array()[0].send("Sorry the owner has ban the server from using this bot. Sayonara")
+        }
+        guild.leave()
+    } catch {
+        guild.leave()
     }
-    guild.leave()
 })
 
 bot.on("message", (message) => {
@@ -687,12 +691,16 @@ bot.on("message", (message) => {
                 }
             }
             if (command == bot_prefix + 'serverban') {
-                let serverid = msg.split(" ")[1]
-                server_ban[serverid] = true
-                let server = bot.guilds.cache.array().find(g => g.id == serverid)
-                message.channel.send(`${serverid} (${server.name}) has been ban from using the bot`)
-                server.leave()
-                if (!config.config.debug.disable_db_save) db.server_ban.findAndModify({query: {}, update: server_ban}, function(){})
+                try {
+                    let serverid = msg.split(" ")[1]
+                    server_ban[serverid] = true
+                    let server = bot.guilds.cache.array().find(g => g.id == serverid)
+                    message.channel.send(`${serverid} (${server.name}) has been ban from using the bot`)
+                    if (!config.config.debug.disable_db_save) db.server_ban.findAndModify({query: {}, update: server_ban}, function(){})
+                    server.leave()
+                } catch (error) {
+                    message.channel.send(String(error))
+                }
             }
         }
     }
