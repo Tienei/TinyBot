@@ -1663,18 +1663,29 @@ async function score(message = new Message()) {
     }
 }
 
-async function osuset(message = new Message(), type) {
+async function osuset(message = new Message()) {
     try {
         let msg = message.content.toLowerCase();
         let refresh = Math.round(Math.random()* 2147483648)
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": undefined, "v_count": 0}])
+        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-akatsuki", "v_count": 0},
+                                                        {"suffix": "-ripple", "v_count": 0},
+                                                        {"suffix": "-gatari", "v_count": 0},
+                                                        {"suffix": "-enjuu", "v_count": 0},
+                                                        {"suffix": "-horizon", "v_count": 0},])
+        // Set the correct mode
+        const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+        let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
+        server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+        let temp = server_suffix.substring(1)
+        let type = temp.charAt(0).toUpperCase() + temp.slice(1)
+        //
         let user = ''
         let name = ''
         let settype = ''
         let profilelink = ''
         let imagelink = ''
-        if (type == 'Osu') {
+        if (type == 'Bancho') {
             user = await osuApi.getUser({u: suffix.check})
             settype = 'osuname'
             name = user.name
