@@ -1374,7 +1374,7 @@ async function recent(message = new Message()) {
             cache_beatmap_ID(message, best[0].beatmapid, mode)
             let parser = await fx.osu.precalc(best[0].beatmapid)     
             if (modenum == 0) {parser = await fx.osu.precalc(best[0].beatmapid)}
-            let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, best[0].pp, check_type, a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
+            let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[0].beatmapid, bitpresent, best[0].score, best[0].combo, best[0].fc, best[0].count300, best[0].count100, best[0].count50, best[0].countmiss, best[0].countgeki, best[0].countkatu, best[0].acc, best[0].perfect, true)
             let scoreoverlay = fx.osu.score_overlay({title: beatmap.title,
                                                     id: best[0].beatmapid, star: fc_stat.star,
                                                     shortenmod: shortenmod, pp: best[0].pp,
