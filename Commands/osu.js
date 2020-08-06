@@ -1483,7 +1483,17 @@ async function compare(message = new Message()) {
             throw 'You need to wait 3 seconds before using this again!'
         }
         fx.general.cmd_cooldown.set(message, command, 3000)
-        let suffix = fx.osu.check_suffix(msg, false, [{"suffix": "-p", "v_count": 1}])
+        let suffix = fx.osu.check_suffix(msg, true, [{"suffix": "-p", "v_count": 0},
+                                                    {"suffix": "-std", "v_count": 0},
+                                                    {"suffix": "-taiko", "v_count": 0},
+                                                    {"suffix": "-ctb", "v_count": 0},
+                                                    {"suffix": "-mania", "v_count": 0},
+                                                    {"suffix": "-ripple", "v_count": 0},
+                                                    {"suffix": "-akatsuki", "v_count": 0},
+                                                    {"suffix": "-horizon", "v_count": 0},
+                                                    {"suffix": "-enjuu", "v_count": 0},
+                                                    {"suffix": "-gatari", "v_count": 0},])
+        let a_mode;
         let mode = ''
         let storedid = 0
         // Loop variable
@@ -1521,11 +1531,32 @@ async function compare(message = new Message()) {
                 throw "No beatmap found this far back!"
             }
         } while (counter < get)
+        //
+        let osu_mode_check = ["-std", "-taiko", "-ctb", "-mania"]
+        for (let osu_mode of osu_mode_check) {
+            if (suffix.suffix.find(s => s.suffix == osu_mode).position > -1) {
+                a_mode = osu_mode.slice(1)
+                mode = `${mode.slice(0, mode.indexOf('-'))}-${a_mode}`
+                break;
+            }
+        }
+        if (!a_mode) {
+            a_mode = '-std'
+            mode = mode.slice(0, mode.indexOf('-')-1) + a_mode
+        }
+        // Set the correct mode
+        const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+        let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
+        if (server_suffix) {
+            server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+            let temp = server_suffix.substring(1)
+            mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
+        }
+        //
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
         let check_type = modedetail.check_type
         let modenum = modedetail.modenum
-        let a_mode = modedetail.a_mode
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         let scores = await fx.osu.get_osu_scores(name, mode, storedid)
         scores.sort(function (a,b) {
@@ -1609,13 +1640,12 @@ async function score(message = new Message()) {
             console.log(args[0], mode)
         }
         let suffix = fx.osu.check_suffix(msg, false, [{"suffix": link, "v_count": 0}])
-        console.log(suffix.check)
         let modedetail = fx.osu.get_mode_detail(mode)
         let modename = modedetail.modename
         let modenum = modedetail.modenum
         let a_mode = modedetail.a_mode
         let name = fx.osu.check_player(user_data, message, suffix.check, 'Bancho')
-        let scores = await fx.osu.get_osu_scores(name, modenum, beatmapid)
+        let scores = await fx.osu.get_osu_scores(name, mode, beatmapid)
         scores.sort(function (a,b) {
             a1 = Number(a.pp)
             b1 = Number(b.pp)
@@ -1643,7 +1673,7 @@ async function score(message = new Message()) {
                         let comparepp = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, scores[i].beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect, true)
                         unrankedpp = `(❤: ${Number(comparepp.pp).toFixed(2)}pp)`
                     }
-                    let fc_stat = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
+                    let fc_stat = await fx.osu.get_pp(scores[i].pp, mode, a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, scores[i].fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                     gathering += fx.osu.score_overlay({top: i+1, title: beatmap.title,
                                                         id: scores[i].beatmapid, star: fc_stat.star,
                                                         shortenmod: shortenmod, pp: scores[i].pp,
