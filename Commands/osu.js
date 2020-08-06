@@ -1541,8 +1541,8 @@ async function compare(message = new Message()) {
             }
         }
         if (!a_mode) {
-            a_mode = '-std'
-            mode = mode.slice(0, mode.indexOf('-')-1) + a_mode
+            a_mode = 'std'
+            mode = `${mode.slice(0, mode.indexOf('-'))}-${a_mode}`
         }
         // Set the correct mode
         const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
