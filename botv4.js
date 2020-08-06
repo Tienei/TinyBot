@@ -22,7 +22,7 @@ const bot = clients.bot
 const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id", 'report_ban', 'server_ban'])
+const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id", 'report_ban'])
 
 let topgg_client = ''
 if (!config.config.debug.command) {
@@ -99,10 +99,6 @@ bot.on("ready", (ready) => {
             // Get cached map id
             saved_map_id = await new Promise(resolve => {
                 db.saved_map_id.find((err, docs) => resolve(docs[0]['0']));
-            });
-            // Get server ban data
-            server_ban = await new Promise(resolve => {
-                db.server_ban.find((err, docs) => resolve(docs[0]));
             });
             stored_map_ID = saved_map_id
             cmds.osu.get_db(user_data, stored_map_ID, saved_map_id, db)
@@ -504,8 +500,9 @@ bot.on("message", (message) => {
                 'avatar':       () => cmds.general.avatar(message, command),
                 'changelog':    () => cmds.general.changelog(message),
                 'bot':          () => cmds.general.bot_info(message),
+                'suggestion':   () => cmds.general.suggestion(message),
+                'report':       () => cmds.general.report(message),
                 'prefix':       () => {if (message.guild) prefix()},
-                'report':       () => {if (message.guild) report()},
                 'memory':       () => memory(),
                 'checkperm':    () => {if (message.guild) cmds.general.checkcomp(message)},
                 'ee':           () => ee(),
@@ -545,6 +542,7 @@ bot.on("message", (message) => {
                 'maniatop':     () => cmds.osu.osutop(message, 'mania'),
                 'relaxtop':     () => cmds.osu.osutop(message, 'rx'),
                 'rxtop':        () => cmds.osu.osutop(message, 'rx'),
+                'scores':       () => cmds.osu.score(message),
                 'osuset':       () => cmds.osu.osuset(message),
                 'acc':          () => cmds.osu.acccalc(message),
                 'osutrack':     () => osutrack(),
@@ -677,18 +675,6 @@ bot.on("message", (message) => {
                     }
                     if (!config.config.debug.disable_db_save) db.report_ban.findAndModify({query: {}, update: report_ban_data}, function(){})
                     message.channel.send(`${userid} has been unban from making any report`)
-                }
-            }
-            if (command == bot_prefix + 'serverban') {
-                try {
-                    let serverid = msg.split(" ")[1]
-                    server_ban[serverid] = true
-                    let server = bot.guilds.cache.array().find(g => g.id == serverid)
-                    message.channel.send(`${serverid} (${server.name}) has been ban from using the bot`)
-                    if (!config.config.debug.disable_db_save) db.server_ban.findAndModify({query: {}, update: server_ban}, function(){})
-                    server.leave()
-                } catch (error) {
-                    message.channel.send(String(error))
                 }
             }
         }
