@@ -1541,7 +1541,7 @@ async function compare(message = new Message()) {
             }
         }
         if (!a_mode) {
-            a_mode = 'std'
+            a_mode = mode.slice(mode.indexOf('-')+1)
             mode = `${mode.slice(0, mode.indexOf('-'))}-${a_mode}`
         }
         // Set the correct mode
