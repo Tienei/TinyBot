@@ -140,6 +140,8 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             let count100 = Number(best.scores[i].count_100)
             let count50 = Number(best.scores[i].count_50)
             let countmiss = Number(best.scores[i].count_miss)
+            let countgeki = Number(best.scores[i].count_geki)
+            let countkatu = Number(best.scores[i].count_katu)
             let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
             let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
             if (modenum == 1) {
@@ -215,6 +217,8 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             let count100 = Number(best.scores[i].count_100)
             let count50 = Number(best.scores[i].count_50)
             let countmiss = Number(best.scores[i].count_miss)
+            let countgeki = Number(best.scores[i].count_geki)
+            let countkatu = Number(best.scores[i].count_katu)
             let acc = Number((300 * count300 + 100 * count100 + 50 * count50) / (300 * (count300 + count100 + count50 + countmiss)) * 100)
             let accdetail = `[ ${count300} • ${count100} • ${count50} • ${countmiss} ]`
             if (modenum == 1) {
