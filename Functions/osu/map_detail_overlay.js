@@ -40,43 +40,43 @@ module.exports = async function ({map, beatmapid, modenum, bitpresent, mods, emb
     } else if (modenum == 1) {
         maxCombo = "Can't calculated"
         let mapinfo = await other_modes_precalc(beatmapid, 1, bitpresent)
-        let acc95 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 95, 0, bitpresent).toFixed(2)
-        let acc97 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 97, 0, bitpresent).toFixed(2)
-        let acc99 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 99, 0, bitpresent).toFixed(2)
-        let acc100 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 100, 0, bitpresent).toFixed(2)
+        let acc95 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 95, 0, bitpresent)
+        let acc97 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 97, 0, bitpresent)
+        let acc99 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 99, 0, bitpresent)
+        let acc100 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 100, 0, bitpresent)
         let {totallength, d_bpm, cs, ar, od, hp} = getMapDetail({mods, timetotal: map.timetotal,
-                                                                bpm: map.bpm, cs: acc100.cs, ar: acc100.ar,
-                                                                od: acc100.od, hp:acc100.hp})
+                                                                bpm: map.bpm, cs: map.cs, ar: map.ar,
+                                                                od: map.od, hp:map.hp})
         star = Number(mapinfo.star).toFixed(2)
         bpm = d_bpm
         time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
         mapdetail = `**OD:** ${od} • **HP:** ${hp}`
-        ppdetail = `**95%**-${Number(acc95.pp.total).toFixed(2)}pp • **97%**-${Number(acc97.pp.total).toFixed(2)}pp • **99%**-${Number(acc99.pp.total).toFixed(2)}pp • **100%**-${Number(acc100.pp.total).toFixed(2)}pp`
+        ppdetail = `**95%**-${Number(acc95).toFixed(2)}pp • **97%**-${Number(acc97).toFixed(2)}pp • **99%**-${Number(acc99).toFixed(2)}pp • **100%**-${Number(acc100).toFixed(2)}pp`
     } else if (modenum == 2) {
         maxCombo = map.fc
         let mapinfo = await other_modes_precalc(beatmapid, 2, bitpresent)
-        let acc95 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 95, 0, bitpresent).toFixed(2)
-        let acc97 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 97, 0, bitpresent).toFixed(2)
-        let acc99 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 99, 0, bitpresent).toFixed(2)
-        let acc100 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 100, 0, bitpresent).toFixed(2)
+        let acc95 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 95, 0, bitpresent)
+        let acc97 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 97, 0, bitpresent)
+        let acc99 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 99, 0, bitpresent)
+        let acc100 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 100, 0, bitpresent)
         let {totallength, d_bpm, cs, ar, od, hp} = getMapDetail({mods, timetotal: map.timetotal,
-                                                                bpm: map.bpm, cs: acc100.cs, ar: acc100.ar,
-                                                                od: acc100.od, hp:acc100.hp})
+                                                                bpm: map.bpm, cs: map.cs, ar: map.ar,
+                                                                od: map.od, hp:map.hp})
         star = Number(mapinfo.star).toFixed(2)
         bpm = d_bpm
         time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
         mapdetail = `**AR:** ${ar} • **OD:** ${od} • **HP:** ${hp} • **CS:** ${cs}`
-        ppdetail = `**95%**-${Number(acc95.pp.total).toFixed(2)}pp • **97%**-${Number(acc97.pp.total).toFixed(2)}pp • **99%**-${Number(acc99.pp.total).toFixed(2)}pp • **100%**-${Number(acc100.pp.total).toFixed(2)}pp`
+        ppdetail = `**95%**-${Number(acc95).toFixed(2)}pp • **97%**-${Number(acc97).toFixed(2)}pp • **99%**-${Number(acc99).toFixed(2)}pp • **100%**-${Number(acc100).toFixed(2)}pp`
     } else if (modenum == 3) {
         maxCombo = "Can't calculated"
         let mapinfo = await other_modes_precalc(beatmapid, 3, bitpresent)
-        let score700k = mania_pp_calc(mapinfo.star, mapinfo.od, 700000, mapinfo.fc, bitpresent).toFixed(2)
-        let score800k = mania_pp_calc(mapinfo.star, mapinfo.od, 800000, mapinfo.fc, bitpresent).toFixed(2)
-        let score900k = mania_pp_calc(mapinfo.star, mapinfo.od, 900000, mapinfo.fc, bitpresent).toFixed(2)
-        let score1m = mania_pp_calc(mapinfo.star, mapinfo.od, 1000000, mapinfo.fc, bitpresent).toFixed(2)
+        let score700k = mania_pp_calc(mapinfo.star, mapinfo.od, 700000, mapinfo.fc, bitpresent)
+        let score800k = mania_pp_calc(mapinfo.star, mapinfo.od, 800000, mapinfo.fc, bitpresent)
+        let score900k = mania_pp_calc(mapinfo.star, mapinfo.od, 900000, mapinfo.fc, bitpresent)
+        let score1m = mania_pp_calc(mapinfo.star, mapinfo.od, 1000000, mapinfo.fc, bitpresent)
         let {totallength, d_bpm, cs, ar, od, hp} = getMapDetail({mods, timetotal: map.timetotal,
-                                                                bpm: map.bpm, cs: acc100.cs, ar: acc100.ar,
-                                                                od: acc100.od, hp:acc100.hp})
+                                                                bpm: map.bpm, cs: map.cs, ar: map.ar,
+                                                                od: map.od, hp:map.hp})
         star = Number(mapinfo.star).toFixed(2)
         bpm = d_bpm
         time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`

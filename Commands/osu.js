@@ -90,6 +90,92 @@ Good   ${visual}   Bad`)
     }
 }
 
+function get_profile_link({id, mode, refresh}) {
+    let { link } = fx.osu.get_mode_detail(mode)
+    return {profile_link: `http://${link}/u/${id}`,
+            pfp_link: `http://a.${link}/${id}?${refresh}`}
+}
+
+async function calc_player_skill({best, modenum}) {
+    let star_avg = 0, aim_avg = 0, speed_avg = 0, acc_avg = 0, old_acc_avg = 0, finger_control_avg = 0;
+    let bpm_avg = 0, cs_avg = 0, ar_avg = 0, od_avg = 0, hp_avg = 0, timetotal_avg = 0, timedrain_avg = 0;
+    let mod_avg = [], top_star = [], top_aim = [], top_speed = [], top_old_acc = [], top_acc = [];
+    for (let i = 0; i < 50; i++) {
+        let modandbit = fx.osu.mods_enum(best[i].mod)
+        //
+        let parser, map_info, detail;
+        if (modenum == 0) {
+            parser = await fx.osu.precalc(best[i].beatmapid)
+            map_info = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,'acc')
+            detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),map_info.cs,map_info.ar,map_info.od,map_info.hp)
+            // Calc skills
+            let star_skill = map_info.star.total
+            let aim_skill = (map_info.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
+            let speed_skill = (map_info.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
+            let old_acc_skill = (Math.pow(map_info.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(map_info.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+            let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
+            if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
+                aim_skill /= 1.05
+                speed_skill /= 1.05
+            }
+            let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
+            if (modandbit.shortenmod.includes('FL')) {
+                acc_skill *= (0.095 * Math.log10(map_info.star.nsingles*900000000))
+            }
+            // Set number to var
+            star_avg += star_skill
+            aim_avg += aim_skill
+            speed_avg +=  speed_skill
+            if (acc_skill !== Infinity) acc_avg += acc_skill
+            old_acc_avg += old_acc_skill
+            // Push beatmap top skill
+            top_star.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: star_skill})
+            top_aim.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: aim_skill})
+            top_speed.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: speed_skill})
+            top_old_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: old_acc_skill})
+            top_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: acc_skill})
+        } else {
+            parser = await fx.osu.other_modes_precalc(best[i].beatmapid, modenum, modandbit.bitpresent)
+            detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),map_info.cs,map_info.ar,map_info.od,map_info.hp)
+            star_avg += parser.star
+            if (modenum == 1) {
+                speed_avg += Math.pow(parser.star/1.1, Math.log(detail.bpm)/Math.log(parser.star*20))
+                let temp_acc = Math.pow(parser.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                if (temp_acc !== Infinity) acc_avg += temp_acc
+            } else if (modenum == 2) {
+                aim_avg += Math.pow(parser.star, Math.log(detail.bpm)/Math.log(parser.star*20)) * (Math.pow(parser.cs, 0.1) / Math.pow(4, 0.1))
+                let temp_acc = Math.pow(parser.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.1) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
+                if (temp_acc !== Infinity) acc_avg += temp_acc
+            } else if (modenum == 3) {
+                speed_avg += Math.pow(parser.star/1.1, Math.log(detail.bpm)/Math.log(parser.star*20))
+                let temp_acc = Math.pow(parser.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.075) * (Math.pow(parser.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(parser.hp, 0.02) / (Math.pow(5, 0.02)))
+                if (temp_acc !== Infinity) acc_avg += temp_acc
+                finger_control_avg += Math.pow(parser.star, 1.1 * Math.pow(detail.bpm/250, 0.4) * (Math.log(parser.circle + parser.slider)/Math.log(parser.star*900)) * (Math.pow(parser.od, 0.4) / Math.pow(8, 0.4)) * (Math.pow(parser.hp, 0.2) / Math.pow(7.5, 0.2)) * Math.pow(parser.cs/4, 0.1))
+            }
+        }
+        bpm_avg += detail.bpm
+        cs_avg += detail.cs
+        ar_avg += detail.ar
+        od_avg += detail.od
+        hp_avg += detail.hp
+        timetotal_avg += detail.timetotal
+        timedrain_avg += detail.timedrain
+        let find_mod = mod_avg.find(m => m.mod == modandbit.shortenmod.substr(1))
+        if (find_mod == undefined) {
+            mod_avg.push({mod: modandbit.shortenmod.substr(1), count: 1})
+        } else {
+            find_mod.count += 1
+        }
+        //
+    }
+    return {star_avg: star_avg, aim_avg: aim_avg, speed_avg: speed_avg, acc_avg: acc_avg, 
+            old_acc_avg: old_acc_avg, finger_control_avg: finger_control_avg,
+            bpm_avg: bpm_avg, cs_avg: cs_avg, ar_avg: ar_avg, od_avg: od_avg, hp_avg: hp_avg, 
+            timetotal_avg: timetotal_avg, timedrain_avg: timedrain_avg, mod_avg: mod_avg,
+            top_star: top_star, top_aim: top_aim, top_speed: top_speed, top_old_acc: top_old_acc,
+            top_acc: top_acc}
+}
+
 async function osuavatar(message = new Message(), a_mode) {
     let msg = message.content.toLowerCase();
     let refresh = Math.round(Math.random()* 2147483648)
@@ -106,30 +192,13 @@ async function osuavatar(message = new Message(), a_mode) {
     let temp = server_suffix.substring(1)
     let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
     // Get Information
-    let check_type = fx.osu.get_mode_detail(mode).check_type
+    let { link } = fx.osu.get_mode_detail(mode)
     let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
-    let pfp_link = ''
-    let username = ''
-    let id = 0
-    if (check_type == 'Bancho') {
-        let user = await osuApi.apiCall('/get_user', {u: name})
-        username = user[0].username
-        id = user[0].user_id
-        pfp_link = `https://a.ppy.sh/${id}_1?date=${refresh}`
-    } else if (check_type == 'Gatari') {
-        let options = {u: name, mode: 0}
-        const i_resp = await request.get('https://api.gatari.pw/users/get').query(options);
-        let user_info = (i_resp.body).users[0];
-        username = user_info.username
-        id = user_info.id
-        pfp_link = `https://a.gatari.pw/${id}?date=${refresh}`
-    } else {
-        let serverlink = fx.osu.get_mode_detail(mode).link
-        let user = await fx.osu.rippleAPI.apiCall(`/v1/users`, mode, {name: name})
-        username = user.username
-        id = user.id
-        pfp_link = `https://a.${serverlink}/${id}?date=${refresh}`
+    async function get_data() {
+        let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
+        return {username: user.username, id: id, pfp_link: `https://a.${link}/${id}?date=${refresh}`}
     }
+    let {username, id, pfp_link} = get_data();
     const embed = new MessageEmbed()
     .setAuthor(`Avatar for ${username}`)
     .setColor(embedcolor)
@@ -164,11 +233,7 @@ async function osu(message = new Message(), a_mode) {
         let temp = server_suffix.substring(1)
         let mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
         //
-        let modedetail = fx.osu.get_mode_detail(mode)
-        let modename = modedetail.modename
-        let modeicon = modedetail.modeicon
-        let modenum = modedetail.modenum
-        let check_type = modedetail.check_type
+        let {modename, modeicon, modenum, check_type} = fx.osu.get_mode_detail(mode)
         let name = fx.osu.check_player(user_data, message, suffix.check, check_type)
         if (a_mode !== 'rx' && suffix.suffix.find(s => s.suffix == "-d").position > -1) {
             let user = await fx.osu.get_osu_profile(name, mode, 30, false)
@@ -204,28 +269,7 @@ async function osu(message = new Message(), a_mode) {
             if (user.playstyle) field1 += `**Play Style:** ${user.playstyle}\n`;
             if (user.ss && user.s && user.a) field1 += `<:rankingX:520932410746077184> : ${user.ss} (${Number(user.ss/totalrank*100).toFixed(2)}%) <:rankingS:520932426449682432> : ${user.s} (${Number(user.s/totalrank*100).toFixed(2)}%) <:rankingA:520932311613571072> : ${user.a} (${Number(user.a/totalrank*100).toFixed(2)}%)`;
 
-            let profile_link = ''
-            let pfp_link = ''
-            if (check_type == 'Bancho') {
-                profile_link = `https://osu.ppy.sh/users/${user.id}`
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
-            } else if (check_type == 'Ripple') {
-                profile_link = `https://ripple.moe/u/${user.id}`
-                pfp_link = `http://a.ripple.moe/${user.id}?${refresh}`
-            } else if (check_type == 'Akatsuki') {
-                profile_link = `https://akatsuki.pw/u/${user.id}`
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (check_type == 'Horizon') {
-                profile_link = `https://lemres.de/u/${user.id}`
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            } else if (check_type == 'Enjuu') {
-                profile_link = `https://enjuu.click/u/${user.id}`
-                pfp_link = `http://a.enjuu.click/${user.id}?date=${refresh}`
-            } else if (check_type == 'Gatari') {
-                profile_link = `https://gatari.pw/u/${user.id}`
-                pfp_link = `http://a.gatari.pw/${user.id}?date=${refresh}`
-            }
-
+            let {profile_link, pfp_link} = get_profile_link({id: user.id, refresh: refresh, mode: mode})
             let embed = new MessageEmbed()
             .setDescription(`${desc}**osu!${modename} Statistics for [${user.username}](${profile_link})**`)
             .setThumbnail(pfp_link)
@@ -238,101 +282,10 @@ async function osu(message = new Message(), a_mode) {
             if (best.length < 50) {
                 throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
             }
-            let star_avg = 0
-            let aim_avg = 0
-            let speed_avg = 0
-            let finger_control_avg = 0
-            let acc_avg = 0
-            let old_acc_avg = 0
-            let bpm_avg = 0
-            let cs_avg = 0
-            let ar_avg = 0
-            let od_avg = 0
-            let hp_avg = 0
-            let timetotal_avg = 0
-            let timedrain_avg = 0
-            let mod_avg = []
+            let {star_avg, aim_avg, speed_avg, acc_avg, old_acc_avg, finger_control_avg,
+                bpm_avg, cs_avg, ar_avg, od_avg, hp_avg, timetotal_avg, timedrain_avg, 
+                mod_avg} = await calc_player_skill({best: best, modenum: modenum})
             let sortedmod = ''
-            for (let i = 0; i < 50; i++) {
-                let modandbit = fx.osu.mods_enum(best[i].mod)
-                if (modenum == 0) {
-                    let parser = await fx.osu.precalc(best[i].beatmapid)
-                    let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,'acc')
-                    let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
-                    star_avg += thing.star.total
-                    let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
-                    let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
-                    aim_avg += aim_skill
-                    speed_avg +=  speed_skill
-                    old_acc_avg += (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    //
-                    let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
-                    if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
-                        aim_skill /= 1.05
-                        speed_skill /= 1.05
-                    }
-                    let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    if (modandbit.shortenmod.includes('FL')) {
-                        acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
-                    }
-                    if (acc_skill !== Infinity) acc_avg += acc_skill
-                    bpm_avg += detail.bpm
-                    cs_avg += detail.cs
-                    ar_avg += detail.ar
-                    od_avg += detail.od
-                    hp_avg += detail.hp
-                    timetotal_avg += detail.timetotal
-                    timedrain_avg += detail.timedrain
-                }
-                if (modenum == 1) {
-                    let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 1, modandbit.bitpresent)
-                    let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0, 0, mapinfo.od, mapinfo.hp)
-                    star_avg += mapinfo.star
-                    speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                    let temp_acc = Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
-                    if (temp_acc !== Infinity) acc_avg += temp_acc
-                    bpm_avg += detail.bpm
-                    od_avg += detail.od
-                    hp_avg += detail.hp
-                    timetotal_avg += detail.timetotal
-                    timedrain_avg += detail.timedrain
-                }
-                if (modenum == 2) {
-                    let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 2, modandbit.bitpresent)
-                    let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
-                    star_avg += mapinfo.star
-                    aim_avg += Math.pow(mapinfo.star, Math.log(detail.bpm)/Math.log(mapinfo.star*20)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
-                    let temp_acc = Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.1) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
-                    if (temp_acc !== Infinity) acc_avg += temp_acc
-                    bpm_avg += detail.bpm
-                    cs_avg += detail.cs
-                    ar_avg += detail.ar
-                    od_avg += detail.od
-                    hp_avg += detail.hp
-                    timetotal_avg += detail.timetotal
-                    timedrain_avg += detail.timedrain
-                }
-                if (modenum == 3) {
-                    let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 3, modandbit.bitpresent)
-                    let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0,0,0,0)
-                    star_avg += mapinfo.star
-                    speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                    let temp_acc = Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.075) * (Math.pow(mapinfo.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(mapinfo.hp, 0.02) / (Math.pow(5, 0.02)))
-                    if (temp_acc !== Infinity) acc_avg += temp_acc
-                    finger_control_avg += Math.pow(mapinfo.star, 1.1 * Math.pow(detail.bpm/250, 0.4) * (Math.log(mapinfo.circle + mapinfo.slider)/Math.log(mapinfo.star*900)) * (Math.pow(mapinfo.od, 0.4) / Math.pow(8, 0.4)) * (Math.pow(mapinfo.hp, 0.2) / Math.pow(7.5, 0.2)) * Math.pow(mapinfo.cs/4, 0.1))
-                    bpm_avg += detail.bpm
-                    od_avg += mapinfo.od
-                    hp_avg += mapinfo.hp
-                    timetotal_avg += detail.timetotal
-                    timedrain_avg += detail.timedrain
-                }
-                let find_mod = mod_avg.find(m => m.mod == modandbit.shortenmod.substr(1))
-                if (find_mod == undefined) {
-                    mod_avg.push({mod: modandbit.shortenmod.substr(1), count: 1})
-                } else {
-                    find_mod.count += 1
-                }
-            }
             mod_avg.sort((a,b) => b.count - a.count)
             for (let i in mod_avg) {
                 sortedmod += '`' + mod_avg[i].mod + '`: ' + `${Number(mod_avg[i].count / 50 * 100).toFixed(2)}% **(${mod_avg[i].count})**, `
@@ -344,8 +297,8 @@ async function osu(message = new Message(), a_mode) {
             if (modenum == 0) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50).toFixed(2)}★
-Speed skill: ${Number(speed_avg/50*1.03).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50*1.02).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50*1.06).toFixed(2)}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_acc_avg/50).toFixed(2)}★)
 Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
@@ -447,48 +400,8 @@ Most common mods: ${sortedmod}`)
                 throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
             }
             let msg1 = await message.channel.send('Calculating skills...') 
-            let star_avg = 0
-            let aim_avg = 0
-            let speed_avg = 0
-            let finger_control_avg = 0
-            let acc_avg = 0
-            let old_acc_avg = 0
-            let top_star = []
-            let top_aim = []
-            let top_speed = []
-            let top_old_acc = []
-            let top_acc = []
-            for (let i = 0; i < 50; i++) {
-                let modandbit = fx.osu.mods_enum(best[i].mod)
-                if (modenum == 0) {
-                    let parser = await fx.osu.precalc(best[i].beatmapid)
-                    let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
-                    let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
-                    let star_skill = thing.star.total
-                    let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
-                    let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
-                    let old_acc_skill = (Math.pow(thing.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(thing.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    star_avg += star_skill
-                    aim_avg += aim_skill
-                    speed_avg += speed_skill
-                    old_acc_avg += old_acc_skill
-                    let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
-                    if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
-                        aim_skill /= 1.05
-                        speed_skill /= 1.05
-                    }
-                    let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    if (modandbit.shortenmod.includes('FL')) {
-                        acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
-                    }
-                    if (acc_skill !== Infinity) acc_avg += acc_skill
-                    top_star.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: star_skill})
-                    top_aim.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: aim_skill})
-                    top_speed.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: speed_skill})
-                    top_old_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: old_acc_skill})
-                    top_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: acc_skill})
-                }
-            }
+            let {star_avg, aim_avg, speed_avg, acc_avg, old_acc_avg,
+                top_star, top_aim, top_speed, top_old_acc, top_acc} = await calc_player_skill({best: best, modenum: modenum})
             top_star.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
             top_aim.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
             top_speed.sort(function(a,b){return b.skill-a.skill}).splice(3,100)
@@ -508,34 +421,14 @@ Most common mods: ${sortedmod}`)
             textloading(top_speed)
             textloading(top_old_acc)
             textloading(top_acc)
-            let profile_link = ''
-            let pfp_link = ''
-            if (check_type == 'Bancho') {
-                profile_link = `https://osu.ppy.sh/users/${user.id}`
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
-            } else if (check_type == 'Ripple') {
-                profile_link = `https://ripple.moe/u/${user.id}`
-                pfp_link = `http://a.ripple.moe/${user.id}?${refresh}`
-            } else if (check_type == 'Akatsuki') {
-                profile_link = `https://akatsuki.pw/u/${user.id}`
-                pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`
-            } else if (check_type == 'Horizon') {
-                profile_link = `https://lemres.de/u/${user.id}`
-                pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`
-            } else if (check_type == 'Enjuu') {
-                profile_link = `https://enjuu.click/u/${user.id}`
-                pfp_link = `http://a.enjuu.click/${user.id}?date=${refresh}`
-            } else if (check_type == 'Gatari') {
-                profile_link = `https://gatari.pw/u/${user.id}`
-                pfp_link = `http://a.gatari.pw/${user.id}?date=${refresh}`
-            }
+            let {profile_link, pfp_link} = get_profile_link({id: user.id, refresh: refresh, mode: mode})
             const embed = new MessageEmbed()
             .setDescription(`${modeicon} **Osu!${modename} top skill for: [${user.username}](${profile_link})**`)
             .setThumbnail(pfp_link)
             .addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50).toFixed(2)}★
-Speed skill: ${Number(speed_avg/50*1.03).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50*1.02).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50*1.06).toFixed(2)}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_acc_avg/50).toFixed(2)}★)`)
             .addField('Top star skill:', field[0])
             .addField('Top aim skill:', field[1])
@@ -563,30 +456,7 @@ Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_a
                 throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
             }
             let msg1 = await message.channel.send('Calculating skills...') 
-            let acc_avg = 0
-            let top_acc = []
-            for (let i = 0; i < 50; i++) {
-                let modandbit = fx.osu.mods_enum(best[i].mod)
-                if (modenum == 0) {
-                    let parser = await fx.osu.precalc(best[i].beatmapid)
-                    let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
-                    let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
-                    let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
-                    let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
-                    let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
-                    if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
-                        aim_skill /= 1.05
-                        speed_skill /= 1.05
-                    }
-                    let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                    if (modandbit.shortenmod.includes('FL')) {
-                        acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
-                    }
-                    if (acc_skill !== Infinity) acc_avg += acc_skill
-                    let rank = fx.osu.ranking_letter(best[i].letter)
-                    top_acc.push({title: best[i].title, diff: best[i].diff, skill: acc_skill, mod: modandbit.shortenmod, rank: rank, acc: best[i].acc, star: thing.star.total, id: best[i].beatmapid})
-                }
-            }
+            let {acc_avg, top_acc} = await calc_player_skill({best: best, modenum: modenum})
             top_acc.sort(function(a,b){return b.skill-a.skill})
             let loadpage = async function (page, pages) {
                 let gathering = ''
@@ -601,12 +471,7 @@ ${top_acc[i].rank} *${top_acc[i].diff}* ◆ **Acc:** ${Number(top_acc[i].acc).to
                 pages[page-1] = gathering
                 return pages
             }
-            let profile_link = ''
-            let pfp_link = ''
-            if (check_type == 'Bancho') {
-                profile_link = `https://osu.ppy.sh/users/${user.id}`
-                pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`
-            }
+            let {pfp_link} = get_profile_link({id: user.id, refresh: refresh, mode: mode})
             fx.general.page_system(message, {load: loadpage}, `Osu!${modename} top acc skill for: ${user.username} (Page {page} of {max_page})`, pfp_link, embedcolor, 50/5, 240000)
             if (mode == "Bancho-std") {
                 for (let [key,value] of Object.entries(user_data)) {
@@ -692,81 +557,19 @@ async function osu_card(message = new Message(), a_mode) {
         if (best.length < 50) {
             throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
         }
-        let msg1 = await message.channel.send('Calculating skills...') 
-        let star_avg = 0
-        let aim_avg = 0
-        let speed_avg = 0
-        let finger_control_avg = 0
-        let acc_avg = 0
-        for (let i = 0; i < 50; i++) {
-            let modandbit = fx.osu.mods_enum(best[i].mod)
-            if (modenum == 0) {
-                let parser = await fx.osu.precalc(best[i].beatmapid)
-                let thing = fx.osu.osu_pp_calc(parser,modandbit.bitpresent,0,0,0,0,0,0)
-                let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),thing.cs,thing.ar,thing.od,thing.hp)
-                star_avg += thing.star.total
-                let aim_skill = (thing.star.aim * (Math.pow(detail.cs, 0.1) / Math.pow(4, 0.1)))*2
-                let speed_skill = (thing.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
-                aim_avg += aim_skill
-                speed_avg += speed_skill
-                let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
-                if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
-                    aim_skill /= 1.05
-                    speed_skill /= 1.05
-                }
-                let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(thing.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
-                if (modandbit.shortenmod.includes('FL')) {
-                    acc_skill *= (0.095 * Math.log10(thing.star.nsingles*900000000))
-                }
-                if (acc_skill !== Infinity) acc_avg += acc_skill
-            }
-            if (modenum == 1) {
-                let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 1, modandbit.bitpresent)
-                let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0, 0, mapinfo.od, mapinfo.hp)
-                star_avg += mapinfo.star
-                speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                let temp_acc = Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.05) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
-                if (temp_acc !== Infinity) acc_avg += temp_acc
-            }
-            if (modenum == 2) {
-                let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 2, modandbit.bitpresent)
-                let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), mapinfo.cs, mapinfo.ar, mapinfo.od, mapinfo.hp)
-                star_avg += mapinfo.star
-                aim_avg += Math.pow(mapinfo.star, Math.log(detail.bpm)/Math.log(mapinfo.star*20)) * (Math.pow(mapinfo.cs, 0.1) / Math.pow(4, 0.1))
-                let temp_acc = Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3.5)/Math.pow(100, 3.5)) * 1.1) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(5, 0.02)))
-                if (temp_acc !== Infinity) acc_avg += temp_acc
-            }
-            if (modenum == 3) {
-                let mapinfo = await fx.osu.other_modes_precalc(best[i].beatmapid, 3, modandbit.bitpresent)
-                let detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain, Number(best[i].bpm), 0,0,0,0)
-                star_avg += mapinfo.star
-                speed_avg += Math.pow(mapinfo.star/1.1, Math.log(detail.bpm)/Math.log(mapinfo.star*20))
-                let temp_acc = Math.pow(mapinfo.star, (Math.pow(best[i].acc, 3)/Math.pow(100, 3)) * 1.075) * (Math.pow(mapinfo.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(mapinfo.hp, 0.02) / (Math.pow(5, 0.02)))
-                if (temp_acc !== Infinity) acc_avg += temp_acc
-                finger_control_avg += Math.pow(mapinfo.star, 1.1 * Math.pow(detail.bpm/250, 0.4) * (Math.log(mapinfo.circle + mapinfo.slider)/Math.log(mapinfo.star*900)) * (Math.pow(mapinfo.od, 0.4) / Math.pow(8, 0.4)) * (Math.pow(mapinfo.hp, 0.2) / Math.pow(7.5, 0.2)) * Math.pow(mapinfo.cs/4, 0.1))
-            }
-        }
+        let msg1 = await message.channel.send('Calculating skills...')
+        let {star_avg, aim_avg, speed_avg, acc_avg,
+            finger_control_avg} = await calc_player_skill({best: best, modenum: modenum})
         star_avg = Number(star_avg / 50)
-        aim_avg = Number(aim_avg / 50 * 100).toFixed(0)
-        speed_avg = Number(speed_avg / 50 * 100*1.03).toFixed(0)
+        aim_avg = Number(aim_avg / 50 * 100*1.02).toFixed(0)
+        speed_avg = Number(speed_avg / 50 * 100*1.06).toFixed(0)
         acc_avg = Number(acc_avg / 50 * 100).toFixed(0)
         finger_control_avg = Number(finger_control_avg/50 * 100).toFixed(0)
         // Process image
         msg1.edit('Processing Image...')
-        let card = ''
-        if (acc_avg >= 0 && acc_avg < 300) {
-            card = await jimp.read('./osu_card/card/common_osu.png')
-        } else if (acc_avg >= 300 && acc_avg < 525) {
-            card = await jimp.read('./osu_card/card/rare_osu.png')
-        } else if (acc_avg >= 525 && acc_avg < 700) {
-            card = await jimp.read('./osu_card/card/elite_osu.png')
-        } else if (acc_avg >= 700 && acc_avg < 825) {
-            card = await jimp.read('./osu_card/card/super_rare_osu.png')
-        } else if (acc_avg >= 825 && acc_avg < 900) {
-            card = await jimp.read('./osu_card/card/ultra_rare_osu.png')
-        } else if (acc_avg >= 900) {
-            card = await jimp.read('./osu_card/card/master_osu.png')
-        }
+        let card_name = ['common_osu', 'rare_osu', 'elite_osu', 'super_rare_osu', 'ultra_rare_osu', 'master_osu']
+        let get_card_name = Number(acc_avg >= 300) + Number(acc_avg >= 525) + Number(acc_avg >= 725) + Number(acc_avg >= 825) + Number(acc_avg >= 900)
+        let card = await jimp.read(`./osu_card/card/${card_name[get_card_name]}.png`)
         // Special card
         let special;
         if (modenum == 0 && check_type == "Bancho") {
@@ -792,52 +595,23 @@ async function osu_card(message = new Message(), a_mode) {
                 }
             }
             if (special) {
-                if (user.id == 124493) { // Cokiezi
-                    aim_avg *= 1.05
-                    speed_avg *= 1.075
-                    acc_avg *= 1.075
-                } else if (user.id == 39828) { // WWW
-                    aim_avg *= 1.075
-                    speed_avg *= 1.025
-                    acc_avg *= 1.05
-                } else if (user.id == 50265) { // hvick
-                    aim_avg *= 1.05
-                    speed_avg *= 1.05
-                    acc_avg *= 1.075
-                } else if (user.id == 2558286) { // Rafis
-                    aim_avg *= 1.05
-                    speed_avg *= 1.05
-                    acc_avg *= 1.025
-                } else if (user.id == 5339515) { // Mathi
-                    aim_avg *= 1.05
-                    speed_avg *= 1.05
-                    acc_avg *= 1.025
-                } else if (user.id == 4650315) { // idke
-                    aim_avg *= 1.05
-                    speed_avg *= 1.05
-                    acc_avg *= 1.075
-                } else if (user.id == 4504101) { // whitecat
-                    aim_avg *= 1.075
-                    speed_avg *= 1.025
-                    acc_avg *= 1.025
-                } else if (user.id == 6447454) { // merami
-                    aim_avg *= 1.025
-                    speed_avg *= 1.075
-                    acc_avg *= 1.025
-                }
+                let multiplier = [1.025, 1.05, 1.075]
+                let player_id = [{id: '124493', skill_mul: [1,2,2]}, {id: '39828', skill_mul: [2,0,1]}, 
+                                {id: '50265', skill_mul: [1,1,2]}, {id: '2558286', skill_mul: [1,1,0]}, 
+                                {id: '5339515', skill_mul: [1,1,0]}, {id: '4650315', skill_mul: [1,1,2]},
+                                {id: '4504101', skill_mul: [2,0,0]}, {id: '6447454', skill_mul: [0,2,0]}]
+                // Cookiezi, WWW, hvick, Rafis, Mathi, idke, WhiteCar, Merami. Skill_mul oreder: aim, speed, acc
+                let player = player_id.find(p => p.id == user.id)
+                aim_avg *= multiplier[player.skill_mul[0]]
+                speed_avg *= multiplier[player.skill_mul[1]]
+                acc_avg *= multiplier[player.skill_mul[2]]
                 aim_avg = aim_avg.toFixed(0)
                 speed_avg = speed_avg.toFixed(0)
                 acc_avg = acc_avg.toFixed(0)
             }
         }
 
-        let pfp_link = ''
-        if (check_type == 'Bancho')        pfp_link = `http://s.ppy.sh/a/${user.id}.png?date=${refresh}`;
-        else if (check_type == 'Ripple')   pfp_link = `http://a.ripple.moe/${user.id}?${refresh}`;
-        else if (check_type == 'Akatsuki') pfp_link = `http://a.akatsuki.pw/${user.id}?date=${refresh}`;
-        else if (check_type == 'Horizon')  pfp_link = `http://a.lemres.de/${user.id}?date=${refresh}`;
-        else if (check_type == 'Enjuu')    pfp_link = `http://a.enjuu.click/${user.id}?date=${refresh}`;
-        else if (check_type == 'Gatari')   pfp_link = `http://a.gatari.pw/${user.id}?date=${refresh}`;
+        let {pfp_link} = get_profile_link({id: user.id, refresh: refresh, mode: mode})
         let pfp = await jimp.read(pfp_link)
         pfp.resize(320,320)
         card.composite(pfp, 40,110)
@@ -869,32 +643,24 @@ async function osu_card(message = new Message(), a_mode) {
         nametext.contain(220, 27, jimp.HORIZONTAL_ALIGN_CENTER)
         card.composite(nametext, 150, 50)
         // Stat
-        let skillname = ''
-        let skillnumber = ''
-        let text_line_spacing = 10
-        let stat_number_x = 0
-        if (modenum == 0) {
-            skillname = `Aim:\nSpeed:\nAccuracy:`
-            skillnumber = `${aim_avg}\n${speed_avg}\n${acc_avg}`
-            stat_number_x = 170
-            if (special) {
-                skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
+        function card_stat() {
+            let skill_holder = [aim_avg, speed_avg, acc_avg, finger_control_avg]
+            let skill_name_holder = ['Aim', 'Speed', 'Accuracy', 'Finger Control']
+            let modenum_skill = [{skill: [0,1,2]}, {skill: [1,2]}, {skill: [0,2]}, {skill: [3,1,2]}]
+            let skillname = '', skillnumber = '', stat_number_x = 170;
+            for (let num of modenum_skill[modenum].skill) {
+                skillname += `${skill_name_holder[num]}:\n`
+                skillnumber += `${skill_holder[num]}\n`
             }
+            if (modenum == 3) {
+                stat_number_x = 230
+            }
+            return {skillname: skillname, skillnumber: skillnumber, stat_number_x: stat_number_x}
         }
-        if (modenum == 1) {
-            skillname = `Speed:\nAccuracy:`
-            skillnumber = `${speed_avg}\n${acc_avg}`
-            stat_number_x = 170
-        }
-        if (modenum == 2) {
-            skillname = `Aim:\nAccuracy:`
-            skillnumber = `${aim_avg}\n${acc_avg}`
-            stat_number_x = 170
-        }
-        if (modenum == 3) {
-            skillname = `Finger Control:\nSpeed:\nAccuracy:`
-            skillnumber = `${finger_control_avg}\n${speed_avg}\n${acc_avg}`
-            stat_number_x = 230
+        let {skillname, skillnumber, stat_number_x} = card_stat()
+        let text_line_spacing = 10
+        if (special) {
+            skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
         }
         let stattext = await jimp.read(text2png(skillname, {
             color: text_color,
@@ -1488,6 +1254,7 @@ async function compare(message = new Message()) {
                                                     {"suffix": "-taiko", "v_count": 0},
                                                     {"suffix": "-ctb", "v_count": 0},
                                                     {"suffix": "-mania", "v_count": 0},
+                                                    {"suffix": "-bancho", "v_count": 0},
                                                     {"suffix": "-ripple", "v_count": 0},
                                                     {"suffix": "-akatsuki", "v_count": 0},
                                                     {"suffix": "-horizon", "v_count": 0},
@@ -1545,10 +1312,10 @@ async function compare(message = new Message()) {
             mode = `${mode.slice(0, mode.indexOf('-'))}-${a_mode}`
         }
         // Set the correct mode
-        const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
+        const server_list = ['-bancho', '-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon']
         let server_suffix = suffix.suffix.find(s => server_list.includes(s.suffix) && s.position > -1)
         if (server_suffix) {
-            server_suffix = (server_suffix) ? server_suffix.suffix : '-bancho'
+            server_suffix = (server_suffix) ? server_suffix.suffix : `-${mode.slice(0,mode.indexOf('-'))}`
             let temp = server_suffix.substring(1)
             mode = `${temp.charAt(0).toUpperCase() + temp.slice(1)}-${a_mode}`
         }
@@ -1855,7 +1622,7 @@ async function map(message = new Message()){
             fx.general.page_system(message, {load: loadpage}, `Top osu!${modename} Plays for ${beatmap.title} (Page {page} of {max_page})`, `https://b.ppy.sh/thumb/${beatmap.beatmapsetID}l.jpg`, embedcolor, Math.ceil(scores.length / 5), 240000)
         } else {
             let map = await fx.osu.get_osu_beatmap(beatmapid, mode)
-            let creator_user = await fx.osu.get_osu_profile(map.creator, 'Bancho-std', 0, false, false)
+            let creator_user = await fx.osu.get_osu_profile(map.creator, mode, 0, false, false)
             let embed = await fx.osu.map_detail_overlay({map: map, beatmapid: beatmapid, 
                                                         modenum: modenum, bitpresent: bitpresent, 
                                                         mods: mods, embedcolor: embedcolor,

@@ -252,7 +252,7 @@ bot.on("message", (message) => {
         let msg = message.content.toLowerCase();
         refresh = Math.round(Math.random()* 2147483648)
         let command = msg.split(' ')[0]
-        let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
+        let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor) // Bot crash
 
         let bot_prefix = config.config.bot_default_prefix
 
