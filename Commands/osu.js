@@ -128,12 +128,16 @@ async function calc_player_skill({best, modenum}) {
             speed_avg +=  speed_skill
             if (acc_skill !== Infinity) acc_avg += acc_skill
             old_acc_avg += old_acc_skill
+            let rank = fx.osu.ranking_letter(best[i].letter)
             // Push beatmap top skill
-            top_star.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: star_skill})
-            top_aim.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: aim_skill})
-            top_speed.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: speed_skill})
-            top_old_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: old_acc_skill})
-            top_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: acc_skill})
+            const beatmap_obj = {id: best[i].id, title: best[i].title, diff: best[i].diff, 
+                                star: map_info.star.total, mod: modandbit.shortenmod, acc: best[i].acc,
+                                rank: rank}
+            top_star.push({...beatmap_obj, skill: star_skill})
+            top_aim.push({...beatmap_obj, skill: aim_skill})
+            top_speed.push({...beatmap_obj, skill: speed_skill})
+            top_old_acc.push({...beatmap_obj, skill: old_acc_skill})
+            top_acc.push({...beatmap_obj, skill: acc_skill})
         } else {
             parser = await fx.osu.other_modes_precalc(best[i].beatmapid, modenum, modandbit.bitpresent)
             detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),parser.cs,parser.ar,parser.od,parser.hp)
@@ -412,7 +416,7 @@ Most common mods: ${sortedmod}`)
             function textloading (top) {
                 let text = ''
                 for (let i in top) {
-                    text += `${top[i].beatmap}: **${Number(top[i].skill).toFixed(2)}★**\n`
+                    text += `${top[i].title} [${top[i].diff}]: **${Number(top[i].skill).toFixed(2)}★**\n`
                 }
                 field.push(text)
             }
@@ -935,7 +939,7 @@ async function osutop(message = new Message(), a_mode) {
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
                         let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
+                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: best[i].title,
                                                                 id: best[i].beatmapid, star: fc_stat.star,
                                                                 shortenmod: shortenmod, pp: best[i].pp,
                                                                 letter: best[i].letter, diff: best[i].diff,
