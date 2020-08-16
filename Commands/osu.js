@@ -568,7 +568,7 @@ async function osu_card(message = new Message(), a_mode) {
         // Process image
         msg1.edit('Processing Image...')
         let card_name = ['common_osu', 'rare_osu', 'elite_osu', 'super_rare_osu', 'ultra_rare_osu', 'master_osu']
-        let get_card_name = Number(acc_avg >= 300) + Number(acc_avg >= 525) + Number(acc_avg >= 725) + Number(acc_avg >= 825) + Number(acc_avg >= 900)
+        let get_card_name = Number(acc_avg >= 300) + Number(acc_avg >= 525) + Number(acc_avg >= 700) + Number(acc_avg >= 825) + Number(acc_avg >= 900)
         let card = await jimp.read(`./osu_card/card/${card_name[get_card_name]}.png`)
         // Special card
         let special;
