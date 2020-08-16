@@ -945,7 +945,7 @@ async function osutop(message = new Message(), a_mode) {
                                                                 letter: best[i].letter, diff: best[i].diff,
                                                                 score: best[i].score, combo: best[i].combo,
                                                                 fc: best[i].fc, acc: best[i].acc,
-                                                                accdetail: best[i].accdetail, fcguess: best[i].fcguess,
+                                                                accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
                                                                 date: date, type: 'top', rank:rank})
                         gathering += scoreoverlay
                     }
