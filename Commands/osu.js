@@ -136,7 +136,7 @@ async function calc_player_skill({best, modenum}) {
             top_acc.push({beatmap: `${best[i].title} [${best[i].diff}]`, skill: acc_skill})
         } else {
             parser = await fx.osu.other_modes_precalc(best[i].beatmapid, modenum, modandbit.bitpresent)
-            detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),map_info.cs,map_info.ar,map_info.od,map_info.hp)
+            detail = fx.osu.beatmap_detail(modandbit.shortenmod, best[i].timetotal, best[i].timedrain,Number(best[i].bpm),parser.cs,parser.ar,parser.od,parser.hp)
             star_avg += parser.star
             if (modenum == 1) {
                 speed_avg += Math.pow(parser.star/1.1, Math.log(detail.bpm)/Math.log(parser.star*20))

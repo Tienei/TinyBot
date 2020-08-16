@@ -45,8 +45,8 @@ module.exports = async function ({map, beatmapid, modenum, bitpresent, mods, emb
         let acc99 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 99, 0, bitpresent)
         let acc100 = taiko_pp_calc(mapinfo.star, mapinfo.od, mapinfo.fc, 100, 0, bitpresent)
         let {totallength, d_bpm, cs, ar, od, hp} = getMapDetail({mods, timetotal: map.timetotal,
-                                                                bpm: map.bpm, cs: map.cs, ar: map.ar,
-                                                                od: map.od, hp:map.hp})
+                                                                bpm: map.bpm, cs: mapinfo.cs, ar: mapinfo.ar,
+                                                                od: mapinfo.od, hp:mapinfo.hp})
         star = Number(mapinfo.star).toFixed(2)
         bpm = d_bpm
         time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
@@ -60,8 +60,8 @@ module.exports = async function ({map, beatmapid, modenum, bitpresent, mods, emb
         let acc99 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 99, 0, bitpresent)
         let acc100 = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, 100, 0, bitpresent)
         let {totallength, d_bpm, cs, ar, od, hp} = getMapDetail({mods, timetotal: map.timetotal,
-                                                                bpm: map.bpm, cs: map.cs, ar: map.ar,
-                                                                od: map.od, hp:map.hp})
+                                                                bpm: map.bpm, cs: mapinfo.cs, ar: mapinfo.ar,
+                                                                od: mapinfo.od, hp:mapinfo.hp})
         star = Number(mapinfo.star).toFixed(2)
         bpm = d_bpm
         time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
@@ -75,8 +75,8 @@ module.exports = async function ({map, beatmapid, modenum, bitpresent, mods, emb
         let score900k = mania_pp_calc(mapinfo.star, mapinfo.od, 900000, mapinfo.fc, bitpresent)
         let score1m = mania_pp_calc(mapinfo.star, mapinfo.od, 1000000, mapinfo.fc, bitpresent)
         let {totallength, d_bpm, cs, ar, od, hp} = getMapDetail({mods, timetotal: map.timetotal,
-                                                                bpm: map.bpm, cs: map.cs, ar: map.ar,
-                                                                od: map.od, hp:map.hp})
+                                                                bpm: map.bpm, cs: mapinfo.cs, ar: mapinfo.ar,
+                                                                od: mapinfo.od, hp:mapinfo.hp})
         star = Number(mapinfo.star).toFixed(2)
         bpm = d_bpm
         time = `${Math.floor(totallength / 60)}:${('0' + (totallength - Math.floor(totallength / 60) * 60)).slice(-2)}`
