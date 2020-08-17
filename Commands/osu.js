@@ -1826,11 +1826,14 @@ async function serverleaderboard(message = new Message()) {
         let command = msg.split(' ')[0]
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
-            throw 'You need to wait 3 seconds before using this again!'
+            throw 'You need to wait 20 seconds before using this again!'
         }
-        fx.general.cmd_cooldown.set(message, command, 3000)
+        fx.general.cmd_cooldown.set(message, command, 20000)
         let player = []
-        let members = (await message.guild.members.fetch({query: ""})).array()
+        let members = message.guild.members.cache.array().filter(m => m.user.bot == false)
+        if (members.length == 0) {
+            members = (await message.guild.members.fetch({query: ""})).array()
+        }
         for (let i = 0; i < members.length; i++) {
             let user = members[i]
             if (user_data[user.id]) {
