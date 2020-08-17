@@ -2,11 +2,8 @@ let user_data = {}
 let osu_track = []
 let stored_map_ID = []
 let saved_map_id = []
-let easter_egg = {}
-let custom_command = {}
 let server_data = {}
 let report_ban_data = {}
-let server_ban = {}
 
 require('dotenv').config();
 const Discord = require('discord.js-light');
@@ -22,7 +19,7 @@ const bot = clients.bot
 const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["user_data","osu_track","easter_egg","custom_command","server_data", "saved_map_id", 'report_ban'])
+const db = mongojs(process.env.DB_URL, ["user_data","osu_track","server_data", "saved_map_id"])
 
 let topgg_client = ''
 if (!config.config.debug.command) {
@@ -30,18 +27,6 @@ if (!config.config.debug.command) {
     const topgg = require("dblapi.js")
     topgg_client = new topgg(process.env.TOPGG_KEY, bot)
 }
-let osuApi = new nodeosu.Api(process.env.OSU_KEY, {
-    notFoundAsError: false,
-    completeScores: true
-});
-
-let osuApi_no_bm = new nodeosu.Api(process.env.OSU_KEY, {
-    notFoundAsError: false,
-    completeScores: false
-});
-
-let ee = JSON.parse(process.env.EASTER_EGG)
-let ee_number = 0
 
 let loading = 2
 let refresh = 0
@@ -73,27 +58,9 @@ bot.on("ready", (ready) => {
                 db.osu_track.find((err, docs) => resolve(docs[0]['0']));
             });
 
-            // Get easter egg data
-            easter_egg = await new Promise(resolve => {
-                db.easter_egg.find((err, docs) => resolve(docs[0]));
-            });
-            for (let i = 0 ; i < Object.keys(ee).length; i++) {
-                ee_number += '0'
-            }
-
-            // Get custom commands data
-            custom_command = await new Promise(resolve => {
-                db.custom_command.find((err, docs) => resolve(docs[0]));
-            });
-
             // Get server data
             server_data = await new Promise(resolve => {
                 db.server_data.find((err, docs) => resolve(docs[0]));
-            });
-
-            // Get report ban data
-            report_ban_data = await new Promise(resolve => {
-                db.report_ban.find((err, docs) => resolve(docs[0]));
             });
 
             // Get cached map id
@@ -271,26 +238,10 @@ bot.on("message", (message) => {
                 if (!config.config.debug.disable_db_save) db.server_data.findAndModify({query: {}, update: server_data}, function(){});
             }
         }
-        function report() {
-            if (!report_ban_data.hasOwnProperty(message.author.id)) cmds.general.report(message)
-            else message.channel.send("You have been ban from reporting any suggestion/bugs")
-        }
-        function suggestion() {
-            if (!report_ban_data.hasOwnProperty(message.author.id)) cmds.general.suggestion(message)
-            else message.channel.send("You have been ban from reporting any suggestion/bugs")
-        }
         function memory() {
             let total_memory = '**512** MB' //hardcoded
             let memory = process.memoryUsage()
             message.channel.send(`Memory Usage: **${Math.round(memory.heapUsed / 1024 / 1024 * 100)/100}** MB/${total_memory}`)
-        }
-        function ee() {
-            if (easter_egg[message.author.id] !== undefined) {
-                let number = easter_egg[message.author.id]
-                message.channel.send(`You have found: **${number.match(/1/g).length} easter egg(s)**`)
-            } else {
-                message.channel.send("You haven't found any!")
-            }
         }
         async function osutrack() {
             try {
@@ -505,7 +456,6 @@ bot.on("message", (message) => {
                 'prefix':       () => {if (message.guild) prefix()},
                 'memory':       () => memory(),
                 'checkperm':    () => {if (message.guild) cmds.general.checkcomp(message)},
-                'ee':           () => ee(),
                 'corona':       () => cmds.corona.corona_live_update(message),
                 // Fun
                 'hug':          () => cmds.fun.tenor(message, 5, 'anime hug', 'you got a hug from', 'Sorry to see you alone...'),
@@ -587,11 +537,6 @@ bot.on("message", (message) => {
                 message.channel.send(respone[roll])
             }
         }
-
-        /*if (ee[msg] !== undefined) {
-            easter_egg = cmds.easter_egg.easter_detection(message, easter_egg, ee_number)
-            if (!config.config.debug.disable_db_save) db.easter_egg.findAndModify({query: {}, update: easter_egg}, function(){})
-        }*/
 
         // Detection
         // Beatmap Detection
