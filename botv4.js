@@ -19,7 +19,7 @@ const bot = clients.bot
 const osu_client = clients.osu_client
 // Database
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["user_data","osu_track","server_data", "saved_map_id"])
+const db = mongojs(process.env.DB_URL, ["user_data","osu_track","server_data", "saved_map_id", "report_ban"])
 
 let topgg_client = ''
 if (!config.config.debug.command) {
@@ -61,6 +61,11 @@ bot.on("ready", (ready) => {
             // Get server data
             server_data = await new Promise(resolve => {
                 db.server_data.find((err, docs) => resolve(docs[0]));
+            });
+
+            // Get report ban data
+            report_ban_data = await new Promise(resolve => {
+                db.report_ban.find((err, docs) => resolve(docs[0]));
             });
 
             // Get cached map id
