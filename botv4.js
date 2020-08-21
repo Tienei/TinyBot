@@ -139,6 +139,10 @@ bot.on("ready", (ready) => {
                     let best = await fx.osu.get_osu_top(player.name, mode, limit, 'best', true)
                     best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
                     best.sort(function(a,b) {return new Date(a.date).getTime()-new Date(b.date).getTime()})
+                    if (best.length > 0) {
+                        player.recenttimeplay = best[best.length-1].date
+                        if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                    }
                     for (let i = 0; i < best.length; i++) {
                         console.log('Found')
                         let user = await fx.osu.get_osu_profile(player.name, mode, 0, false, false)
@@ -182,10 +186,6 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                         player_mode_detail.lasttotalpp = user.pp
                         player_mode_detail.lastrank = user.rank
                         player_mode_detail.lastcountryrank = user.countryrank
-                        player.recenttimeplay = best[i].date
-                        if (i == best.length - 1) {
-                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                        }
                     }  
                 }
             } catch (error) {
@@ -194,7 +194,7 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
         }
     }
     if (config.config.debug.osutrack == false) {
-        setInterval(real_time_osu_track, 180000)
+        setInterval(real_time_osu_track, 240000)
     }
 });
 
