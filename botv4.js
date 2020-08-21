@@ -186,6 +186,9 @@ ${rank} *${beatmap.diff}* | **Scores:** ${best[i].score} | **Combo:** ${best[i].
                         player_mode_detail.lasttotalpp = user.pp
                         player_mode_detail.lastrank = user.rank
                         player_mode_detail.lastcountryrank = user.countryrank
+                        if (i == best.length - 1) {
+                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
+                        }
                     }  
                 }
             } catch (error) {
