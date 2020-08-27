@@ -1589,6 +1589,7 @@ async function map(message = new Message()){
         let modename = modedetail.modename
         let modenum = modedetail.modenum
         let a_mode = modedetail.a_mode
+        let check_type = modedetail.check_type
         if (suffix.suffix.find(s => s.suffix == "-l").position > -1) {
             let scores = await fx.osu.get_osu_scores(undefined, mode, beatmapid, 50)
             let beatmap = await fx.osu.get_osu_beatmap(beatmapid, mode)
