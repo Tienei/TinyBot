@@ -114,9 +114,11 @@ async function calc_player_skill({best, modenum}) {
             let speed_skill = (map_info.star.speed * (Math.pow(detail.bpm, 0.09) / Math.pow(200, 0.09)) * (Math.pow(detail.ar, 0.1) / Math.pow(6, 0.1)))*2
             let old_acc_skill = (Math.pow(map_info.star.aim, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.092 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.3, best[i].combo/best[i].fc) - 0.3))) + Math.pow(map_info.star.speed, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.099 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
             let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
+            aim_avg += aim_skill
+            speed_avg +=  speed_skill
             if ((modandbit.shortenmod.includes('DT') || modandbit.shortenmod.includes('NC')) && unbalance_limit) {
-                aim_skill /= 1.05
-                speed_skill /= 1.05
+                aim_skill /= 1.06
+                speed_skill /= 1.06
             }
             let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(detail.od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(detail.hp, 0.02) / (Math.pow(6, 0.02)))
             if (modandbit.shortenmod.includes('FL')) {
@@ -124,8 +126,6 @@ async function calc_player_skill({best, modenum}) {
             }
             // Set number to var
             star_avg += star_skill
-            aim_avg += aim_skill
-            speed_avg +=  speed_skill
             if (acc_skill !== Infinity) acc_avg += acc_skill
             old_acc_avg += old_acc_skill
             let rank = fx.osu.ranking_letter(best[i].letter)
@@ -301,8 +301,8 @@ async function osu(message = new Message(), a_mode) {
             if (modenum == 0) {
                 embed.addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50*1.02).toFixed(2)}★
-Speed skill: ${Number(speed_avg/50*1.06).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50).toFixed(2)}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_acc_avg/50).toFixed(2)}★)
 Length: (Total: ${Math.floor(timetotal_avg / 60)}:${('0' + (timetotal_avg - Math.floor(timetotal_avg / 60) * 60)).slice(-2)}, Drain: ${Math.floor(timedrain_avg / 60)}:${('0' + (timedrain_avg - Math.floor(timedrain_avg / 60) * 60)).slice(-2)})
 BPM: ${Number(bpm_avg/50).toFixed(0)} / CS: ${Number(cs_avg/50).toFixed(2)} / AR: ${Number(ar_avg/50).toFixed(2)} / OD: ${Number(od_avg/50).toFixed(2)} / HP: ${Number(hp_avg/50).toFixed(2)}
@@ -431,8 +431,8 @@ Most common mods: ${sortedmod}`)
             .setThumbnail(pfp_link)
             .addField(`${user.username} average skill:`, `
 Star: ${Number(star_avg/50).toFixed(2)}★
-Aim skill: ${Number(aim_avg/50*1.02).toFixed(2)}★
-Speed skill: ${Number(speed_avg/50*1.06).toFixed(2)}★
+Aim skill: ${Number(aim_avg/50).toFixed(2)}★
+Speed skill: ${Number(speed_avg/50).toFixed(2)}★
 Accuracy skill: ${Number(acc_avg/50).toFixed(2)}★ (Old formula: ${Number(old_acc_avg/50).toFixed(2)}★)`)
             .addField('Top star skill:', field[0])
             .addField('Top aim skill:', field[1])
@@ -565,8 +565,8 @@ async function osu_card(message = new Message(), a_mode) {
         let {star_avg, aim_avg, speed_avg, acc_avg,
             finger_control_avg} = await calc_player_skill({best: best, modenum: modenum})
         star_avg = Number(star_avg / 50)
-        aim_avg = Number(aim_avg / 50 * 100*1.02).toFixed(0)
-        speed_avg = Number(speed_avg / 50 * 100*1.06).toFixed(0)
+        aim_avg = Number(aim_avg / 50 * 100).toFixed(0)
+        speed_avg = Number(speed_avg / 50 * 100).toFixed(0)
         acc_avg = Number(acc_avg / 50 * 100).toFixed(0)
         finger_control_avg = Number(finger_control_avg/50 * 100).toFixed(0)
         // Process image
