@@ -214,6 +214,7 @@ bot.on("guildMemberAdd", (member) => {
             placeholder.print(text, 347, 10, member.user.username + ',')
             placeholder.write('./welcome.png')
             bot.channels.cache.get("487479898903150612").send(`<@${member.id}>`, {files: ['./welcome.png']})
+            member.roles.add(member.guild.roles.cache.find(r => r.name == "495543009107116032"))
         }
     }
    welcome_message()
