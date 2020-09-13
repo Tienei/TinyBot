@@ -95,15 +95,7 @@ bot.on("ready", (ready) => {
             try {
                 let modes = []
                 for (let channel of player.trackonchannel) {
-                    if (bot.channels.cache.get(channel.id) == undefined) {
-                        if (player.trackonchannel.length > 1) {
-                            player.trackonchannel.splice(player.trackonchannel.findIndex(c => c.id == channel.id), 1)
-                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                        } else {
-                            osu_track.splice(osu_track.findIndex(p => p.name == player.name && p.type == player.type), 1)
-                            if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
-                        }
-                    } else {
+                    
                         for (let mode of channel.modes) {
                             if (mode.limit > 100) {
                                 mode.limit = 100
@@ -124,7 +116,7 @@ bot.on("ready", (ready) => {
                                     modes.find(m => m.mode == mode.mode).limit = mode.limit
                                 }
                             }
-                        }
+                        
                     }
                 }
                 for (let m of modes) {
