@@ -49,8 +49,8 @@ module.exports = async function (api_pp, check_type, a_mode, parser, beatmapid, 
     if (a_mode == 'ctb') {
         let mapinfo = await other_modes_precalc(beatmapid, 2, bitpresent)
         star = Number(mapinfo.star).toFixed(2)
-        let count300 = mapinfo.fc - count100 - countkatu - count50
-        fcacc = Number((count50 + count100 + count300) / (countkatu + 0 + count50 + count100 + count300) * 100).toFixed(2)
+        let count300 = mapinfo.fc - count100 - count50
+        fcacc = Number((count50 + count100 + count300) / (0 + 0 + count50 + count100 + count300) * 100).toFixed(2)
         fcpp = ctb_pp_calc(mapinfo.star, mapinfo.ar, mapinfo.fc, mapinfo.fc, fcacc, 0, bitpresent).toFixed(2)
         mapcomplete = ((count300 + countkatu + count100 + count50 + countmiss) / (mapinfo.circle + mapinfo.slider))* 100
         if (check_type == "Bancho") {
