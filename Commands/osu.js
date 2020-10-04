@@ -1361,8 +1361,8 @@ async function compare(message = new Message()) {
                     let fc_stat = await fx.osu.get_pp(scores[i].pp, check_type, a_mode, parser, beatmap.beatmapid, bitpresent, scores[i].score, scores[i].combo, beatmap.fc, scores[i].count300, scores[i].count100, scores[i].count50, scores[i].countmiss, scores[i].countgeki, scores[i].countkatu, scores[i].acc, scores[i].perfect)
                     gathering += `
 ${i+1}. \`${shortenmod}\` Score (${fc_stat.star}★) • **${scores[i].pp.toFixed(2)}pp** ${unrankedpp}
-${rank} • ${scores[i].score} • **x**${scores[i].combo}/${beatmap.fc}
-${scores[i].acc.toFixed(2)}% ${scores[i].accdetail} • ${fc_stat.fcguess}
+${rank} • ${scores[i].score} • ${scores[i].combo}/${beatmap.fc}
+${scores[i].acc.toFixed(2)}% \`${scores[i].accdetail}\` • ${fc_stat.fcguess}
 ${date}
 `         
                 }

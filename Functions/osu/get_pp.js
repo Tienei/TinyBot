@@ -91,7 +91,7 @@ module.exports = async function (api_pp, check_type, a_mode, parser, beatmapid, 
             fcguess = `${fcpp}pp for ${fcacc}%`
         }
         if (a_mode == 'mania') {
-            fcguess = `• ${fcpp}pp for ${fcacc}`
+            fcguess = `${fcpp}pp for ${fcacc}`
         }
     }
     return {pp, star, fcguess, mapcomplete}

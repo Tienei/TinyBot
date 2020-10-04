@@ -101,6 +101,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
                 }
                 if (modenum == 2) {
                     acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
+                    accdetail = `[ ${count300} • ${count100} • ${countkatu} • ${countmiss} ]`
                 }
                 if (modenum == 3) {
                     acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
@@ -151,6 +152,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             }
             if (modenum == 2) {
                 acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
+                accdetail = `[ ${count300} • ${count100} • ${countkatu} • ${countmiss} ]`
             }
             if (modenum == 3) {
                 acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
@@ -228,6 +230,7 @@ module.exports = async function (name, mode, limit, type, no_bm = false) {
             }
             if (modenum == 2) {
                 acc = Number((count50 + count100 + count300) / (countkatu + countmiss + count50 + count100 + count300) * 100)
+                accdetail = `[ ${count300} • ${count100} • ${countkatu} • ${countmiss} ]`
             }
             if (modenum == 3) {
                 acc = Number((50 * count50 + 100 * count100 + 200 * countkatu + 300 * (count300 + countgeki)) / (300 * (countmiss + count50 + count100 + countkatu + count300 + countgeki)) * 100)
