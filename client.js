@@ -1,6 +1,6 @@
 const { Client, Intents } = require('discord.js-light');
 const TinyIntents = new Intents()
-TinyIntents.add('GUILDS', 'GUILD_EMOJIS', 'GUILD_INVITES','GUILD_MESSAGES','GUILD_MESSAGE_REACTIONS','DIRECT_MESSAGES','DIRECT_MESSAGE_REACTIONS', 'GUILD_MEMBERS')
+TinyIntents.add('GUILDS', 'GUILD_EMOJIS', 'GUILD_INVITES','GUILD_MESSAGES','GUILD_MESSAGE_REACTIONS','DIRECT_MESSAGES','DIRECT_MESSAGE_REACTIONS')
 const bot = new Client({
     cacheGuilds: true,
     cacheChannels: true,
