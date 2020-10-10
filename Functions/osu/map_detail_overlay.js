@@ -84,7 +84,7 @@ module.exports = async function ({map, beatmapid, modenum, bitpresent, mods, emb
         ppdetail = `**700k**-${Number(score700k).toFixed(2)}pp • **800k**-${Number(score800k).toFixed(2)}pp • **900k**-${Number(score900k).toFixed(2)}pp • **1m**-${Number(score1m).toFixed(2)}pp`
     }
     let embed_desc = `${diff_icon(star)} __${map.diff}__
-Mapped by: [**${map.creator}**](https://osu.ppy.sh/users/${creator_user.id})
+Mapped by: [**${map.creator}**](https://osu.ppy.sh/users/${creator_user?.id})
 **Difficulty:** ${star}★ ${diffdetail}
 **Max Combo:** ${maxCombo}
 ${mapdetail}`
@@ -96,7 +96,7 @@ ${mapdetail}`
     let embed_download = `[bancho](https://osu.ppy.sh/d/${map.beatmapsetID}) • [bancho no vid](https://osu.ppy.sh/d/${map.beatmapsetID}n) • [bloodcat](http://bloodcat.com/osu/s/${map.beatmapsetID})`
     let embed_pp = `${ppdetail}`
     let embed = new MessageEmbed()
-    embed.setAuthor(`${map.title} (${map.artist})`, `https://a.ppy.sh/${creator_user.id}?0.png`)
+    embed.setAuthor(`${map.title} (${map.artist})`, `https://a.ppy.sh/${creator_user?.id}?0.png`)
     embed.addField('\u200B', embed_desc, true)
     embed.addField('\u200B', embed_mapdetail, true)
     embed.addField('Downloads', embed_download)

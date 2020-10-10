@@ -1,6 +1,9 @@
 {
   "name": "tinybot",
   "version": "4.1.0",
+  "engines": {
+    "node": "14.x"
+  },
   "description": "",
   "main": "botv4.js",
   "scripts": {
