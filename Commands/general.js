@@ -158,7 +158,9 @@ function changelog(message = new Message()) {
 - Changed library to reduce RAM usage
 **[August 3rd, 2020]:**
 - Changed osu commands
-The new osu commands now follow this theme: **(prefix)(mode name)command name -(server name)**`]
+The new osu commands now follow this theme: **(prefix)(mode name)command name -(server name)**
+**[October 10th, 2020]:**
+- Fixed map related commands`]
 
     let loadpage = async function (page, pages) {
         pages = changes
