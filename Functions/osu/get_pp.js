@@ -86,7 +86,7 @@ module.exports = async function (api_pp, check_type, a_mode, parser, beatmapid, 
             pp = api_pp
         }
     }
-    if (perfect == 0) {
+    if (!perfect) {
         if (a_mode == 'std' || a_mode == 'taiko' || a_mode == 'ctb') {
             fcguess = `${fcpp}pp for ${fcacc}%`
         }
