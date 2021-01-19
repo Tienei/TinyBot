@@ -4,7 +4,8 @@ let config = {
     debug: {
         osutrack: false,
         command: false,
-        disable_db_save: false
+        disable_db_save: false,
+        cache: true
     },
     // Modify by code
     bot_prefix: '!'
