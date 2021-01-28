@@ -458,6 +458,7 @@ bot.on("message", (message) => {
                 'memory':       () => memory(),
                 'checkperm':    () => {if (message.guild) cmds.general.checkcomp(message)},
                 'corona':       () => cmds.corona.corona_live_update(message),
+                'donate':       () => cmds.general.donate(message),
                 // Fun
                 'hug':          () => cmds.fun.tenor(message, 5, 'anime hug', 'you got a hug from', 'Sorry to see you alone...'),
                 'cuddle':       () => cmds.fun.tenor(message, 8, 'anime cuddle', 'you got a cuddle from', 'Sorry to see you alone...'),
