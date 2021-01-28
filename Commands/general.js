@@ -70,14 +70,14 @@ function help(message = new Message(), command) {
             addhelp('acc', 'acc (300) (100) (50) (miss)', 'Accuracy calculator', '**Needs all options to be calculated**', 'acc 918 23 2 0')
             addhelp('leaderboard', 'leaderboard', 'Get a list of top player in the server\nNote: The player stats will only be updated if the you type **!osu** or a specific player **!osu (player name)** only if they in the server', 'None', 'leaderboard')
             addhelp('corona', 'corona', 'Check the stats for current corona virus pandemic\n`Total Cases`: Total corona virus cases in a country\n:bed:: Active cases in a country (Still ill)\n:skull:: Total deaths in a country\n:green_heart:: Total recoveries in a country', 'None', 'corona')
-            addhelp('donate', 'donate', 'Creator\'s donation link', '', 'donate')
+            addhelp('donate', 'donate', 'Creator\'s donation link and info about donations', '', 'donate')
         }
-        let generalhelp = '**[General]:** `avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `bot` `prefix` `corona` `checkperm` `donate` '
+        let generalhelp = '**[General]:** `avatar` `credit` `changelog` `help` `ping` `report` `suggestion` `ee` `bot` `prefix` `corona` `checkperm`'
         let funhelp = '**[Fun]:** `hug` `cuddle` `slap` `kiss` `pat` `poke` `cry` `blush` `pout` `trivia`'
         let osuhelp = '**[osu!]:** `banchoping` `osu` `taiko` `ctb` `mania` `relax` `osutop` `taikotop` `ctbtop` `maniatop` `relaxtop` `osutrack` `untrack` `osutracklist` `map` `osuset` `osuavatar` `recent` `compare` `scores` `acc` `topglobal` `topcountry` `leaderboard` `osucard` `taikocard` `ctbcard` `maniacard`'
         let text = ''
         if (msg.substring(command.length+1) == '') {
-            text = `${generalhelp}\n${funhelp}\n${osuhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**\nIf you forgot the prefix, remember: **<Ping the bot> check_prefix**\nConsider donating if you like the bot and help the creator: [donate](https://ko-fi.com/tienei)`
+            text = `**[Donate]:** \`donate\`\n${generalhelp}\n${funhelp}\n${osuhelp}\n\nFor more detailed infomation, type **${config.config.bot_prefix}help (command)**\nIf you forgot the prefix, remember: **<Ping the bot> check_prefix**\n\`Consider donating!:\` [donate](https://ko-fi.com/tienei)`
         } else {
             let getcmd = msg.substring(command.length+1)
             if (bot_command_help.find(helpcmd => helpcmd.command).helptext == undefined) {
@@ -337,9 +337,13 @@ Good   ${visual}   Bad`)
 async function donate(message = new Message()) {
     try {
         const embed = new MessageEmbed()
-        .setDescription("Support the creator here: [donate](https://ko-fi.com/tienei)");
+        .setDescription("Support the creator here: [donate](https://ko-fi.com/tienei)" +
+"\n\nIf you like the bot and want to support the development of it, please consider donating!" +
+"\n\nDonations will mostly go towards the bot development and will make the bot runs 5 times faster and better with more advanced features" +
+" and also helped prolong the life of TinyBot since currently the bot is hosted on a cloud server that costs money.")
+        .setThumbnail(message.client.user.avatarURL({format: 'png', size: 512}));
         message.channel.send({embed})
-    } catch (err) {}
+    } catch (err) {console.log(err)}
 }
 
 module.exports = {
