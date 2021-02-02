@@ -31,6 +31,7 @@ module.exports = {
         mods_enum           : require('./osu/mods_enum'),
         time_played         : require('./osu/time_played'),
         beatmap_detail      : require('./osu/beatmap_detail'),
-        rippleAPI           : require('./osu/rippleAPI')
+        rippleAPI           : require('./osu/rippleAPI'),
+        get_profile_link    : require('./osu/get_profile_link')
     }
 }

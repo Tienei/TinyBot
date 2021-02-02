@@ -572,7 +572,7 @@ async function osu_card(message = new Message(), a_mode) {
         msg1.edit('Processing Image...')
         let card_name = ['common_osu', 'rare_osu', 'elite_osu', 'super_rare_osu', 'ultra_rare_osu', 'master_osu']
         let get_card_name = Number(acc_avg >= 300) + Number(acc_avg >= 525) + Number(acc_avg >= 700) + Number(acc_avg >= 825) + Number(acc_avg >= 900)
-        let card = await jimp.read(`./osu_card/card/${card_name[get_card_name]}.png`)
+        let card;
         // Special card
         let special;
         if (modenum == 0 && check_type == "Bancho") {
@@ -596,13 +596,22 @@ async function osu_card(message = new Message(), a_mode) {
                     star_avg = 10
                     break
                 }
+                if (user.id == 2611813) {
+                    special = 'lunpai'
+                    card = await jimp.read('./osu_card/card/lunpai.png')
+                }
+                if (user.id == 7464885) {
+                    special = 'celsea'
+                    card = await jimp.read('./osu_card/card/rin.png')
+                }
             }
             if (special) {
-                let multiplier = [1.025, 1.05, 1.075]
-                let player_id = [{id: '124493', skill_mul: [1,2,2]}, {id: '39828', skill_mul: [2,0,1]}, 
-                                {id: '50265', skill_mul: [1,1,2]}, {id: '2558286', skill_mul: [1,1,0]}, 
-                                {id: '5339515', skill_mul: [1,1,0]}, {id: '4650315', skill_mul: [1,1,2]},
-                                {id: '4504101', skill_mul: [2,0,0]}, {id: '6447454', skill_mul: [0,2,0]}]
+                let multiplier = [1, 1.025, 1.05, 1.075]
+                let player_id = [{id: '124493', skill_mul: [3,3,3]}, {id: '39828', skill_mul: [3,1,2]}, 
+                                {id: '50265', skill_mul: [2,2,3]}, {id: '2558286', skill_mul: [2,2,1]}, 
+                                {id: '5339515', skill_mul: [2,2,1]}, {id: '4650315', skill_mul: [2,2,3]},
+                                {id: '4504101', skill_mul: [3,1,1]}, {id: '6447454', skill_mul: [1,3,1]},
+                                {id: '2611813', skill_mul: [0,0,0]}, {id: '7464885', skill_mul: [0,0,0]}]
                 // Cookiezi, WWW, hvick, Rafis, Mathi, idke, WhiteCar, Merami. Skill_mul oreder: aim, speed, acc
                 let player = player_id.find(p => p.id == user.id)
                 aim_avg *= multiplier[player.skill_mul[0]]
@@ -613,8 +622,9 @@ async function osu_card(message = new Message(), a_mode) {
                 acc_avg = acc_avg.toFixed(0)
             }
         }
-
-        let {pfp_link} = get_profile_link({id: user.id, refresh: refresh, mode: mode})
+        if (card == undefined) card = await jimp.read(`./osu_card/card/${card_name[get_card_name]}.png`);
+        let {pfp_link} = fx.osu.get_profile_link({id: user.id, refresh: refresh, mode: mode})
+        if (special == "lunpai") pfp_link = "https://i.imgur.com/3epazAt.png";
         let pfp = await jimp.read(pfp_link)
         pfp.resize(320,320)
         card.composite(pfp, 40,110)
@@ -625,17 +635,16 @@ async function osu_card(message = new Message(), a_mode) {
         mode_icon.resize(80,80)
         card.composite(mode_icon, 20, 20)
         // Get username
-        let text_color = 'white'
         let n_text_color = 'white'
         if (special == 'whitecat') {
             n_text_color = '#D19D23'
         }
+        let local_font = {localFontPath: './font/Antipasto.otf', localFontName: 'Antipasto'}
         let nametext = await jimp.read(text2png(user.username, {
             color: n_text_color,
             font: '80px Antipasto',
-            localFontPath: './font/Antipasto.otf',
-            localFontName: 'Antipasto',
-            lineSpacing: 15}))
+            lineSpacing: 15,
+            ...local_font}))
         let nametextw = nametext.getWidth()
         let nametexth = nametext.getHeight()
         if (nametextw / 220 >= nametexth / 27) {
@@ -662,28 +671,33 @@ async function osu_card(message = new Message(), a_mode) {
         }
         let {skillname, skillnumber, stat_number_x} = card_stat()
         let text_line_spacing = 10
-        if (special) {
+        let special_except = ["lunpai", "celsea"]
+        if (special && !special_except.includes(special)) {
             skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
         }
         let stattext = await jimp.read(text2png(skillname, {
-            color: text_color,
+            color: 'white',
             font: '34px Antipasto',
-            localFontPath: './font/Antipasto.otf',
-            localFontName: 'Antipasto',
             lineSpacing: text_line_spacing,
-            textAlign: 'right'}))
+            textAlign: 'right',
+            ...local_font}))
         card.composite(stattext, 20, 444)
         let statnumber = await jimp.read(text2png(skillnumber, {
-            color: text_color,
+            color: 'white',
             font: '34px Antipasto',
-            localFontPath: './font/Antipasto.otf',
-            localFontName: 'Antipasto',
             lineSpacing: 16,
-            textAlign: 'left'}))
+            textAlign: 'left',
+            ...local_font}))
         card.composite(statnumber, stat_number_x, 444)
         // Star
-        let fullstar = await jimp.read('./osu_card/full_star.png')
-        let halfstar = await jimp.read('./osu_card/half_star.png')
+        let fullstar, halfstar;
+        if (special == "lunpai") {
+            fullstar = await jimp.read('./osu_card/full_paw.png')
+            halfstar = await jimp.read('./osu_card/half_paw.png')
+        } else {
+            fullstar = await jimp.read('./osu_card/full_star.png')
+            halfstar = await jimp.read('./osu_card/half_star.png')
+        }
         let star_width = 32
         let width = (Math.floor(star_avg) + ((star_avg % 1) >= 0.5 ? 1 : 0)) * star_width + 2
         let starholder = await new jimp(width, 33, 0x00000000)
@@ -705,10 +719,10 @@ async function osu_card(message = new Message(), a_mode) {
         msg1.edit('Done!')
         message.channel.send({
             files: [{
-              attachment: await card.getBufferAsync(jimp.MIME_PNG),
-              name: 'card.png'
+            attachment: await card.getBufferAsync(jimp.MIME_PNG),
+            name: 'card.png'
             }]
-          })
+        })
     } catch (error) {
         message.channel.send(String(error))
     }
