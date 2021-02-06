@@ -24,7 +24,7 @@
     "mongojs": "^3.1.0",
     "node-chartist": "^1.0.5",
     "node-osu": "github:tienei/node-osu",
-    "ojsama": "^1.2.5",
+    "ojsama": "^2.1.0",
     "rx-akatsuki-pp": "^1.0.1",
     "superagent": "^5.2.2",
     "text2png": "^2.3.0"
