@@ -930,19 +930,20 @@ async function osutop(message = new Message(), a_mode) {
                     break
                 }
             }
-        } else if (check_type == "Bancho" && suffix.suffix.find(s => s.suffix == "-page").position > -1) {
-            let user = await osuApi.getUser({u: name})
+        } else if (suffix.suffix.find(s => s.suffix == "-page").position > -1) {
+            let user = await fx.osu.get_osu_profile(name, mode, 0, false, false)
             if (user == null) {
                 throw 'User not found!'
             }
             pfp_link = pfp_link.replace('{user_id}', user.id)
-            let best = await fx.osu.get_osu_top(name, mode, 100, 'best')
-            let username = user.name
+            let best = await fx.osu.get_osu_top(name, mode, 100, 'best', true)
+            let username = user.username
             let loadpage = async function (page, pages) {
                 let gathering = ''
                 for (let n = 0; n < 5; n++) {
                     let i = (page - 1) * 5 - 1 + (n+1)
                     if (i <= best.length- 1) {
+                        let beatmap = await fx.osu.get_osu_beatmap(best[i].beatmapid, mode)
                         let rank = fx.osu.ranking_letter(best[i].letter)
                         let modandbit = fx.osu.mods_enum(best[i].mod)
                         let shortenmod = modandbit.shortenmod
@@ -951,13 +952,13 @@ async function osutop(message = new Message(), a_mode) {
                         cache_beatmap_ID(message, best[i].beatmapid, mode)
                         let parser = ''
                         if (modenum == 0) {parser = await fx.osu.precalc(best[i].beatmapid)}
-                        let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, best[i].fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
-                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: best[i].title,
+                        let fc_stat = await fx.osu.get_pp(best[i].pp, check_type, a_mode, parser, best[i].beatmapid, bitpresent, best[i].score, best[i].combo, beatmap.fc, best[i].count300, best[i].count100, best[i].count50, best[i].countmiss, best[i].countgeki, best[i].countkatu, best[i].acc, best[i].perfect)
+                        let scoreoverlay = fx.osu.score_overlay({top: i+1, title: beatmap.title,
                                                                 id: best[i].beatmapid, star: fc_stat.star,
                                                                 shortenmod: shortenmod, pp: best[i].pp,
-                                                                letter: best[i].letter, diff: best[i].diff,
+                                                                letter: best[i].letter, diff: beatmap.diff,
                                                                 score: best[i].score, combo: best[i].combo,
-                                                                fc: best[i].fc, acc: best[i].acc,
+                                                                fc: beatmap.fc, acc: best[i].acc,
                                                                 accdetail: best[i].accdetail, fcguess: fc_stat.fcguess,
                                                                 date: date, type: 'top', rank:rank})
                         gathering += scoreoverlay
