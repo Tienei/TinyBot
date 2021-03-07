@@ -604,6 +604,10 @@ async function osu_card(message = new Message(), a_mode) {
                     special = 'celsea'
                     card = await jimp.read('./osu_card/card/rin.png')
                 }
+                if (user.id == 7990747) {
+                    special = 'aika_asphyxia'
+                    card = await jimp.read('./osu_card/card/aika_asphyxia.png')
+                }
             }
             if (special) {
                 let multiplier = [1, 1.025, 1.05, 1.075]
@@ -611,7 +615,8 @@ async function osu_card(message = new Message(), a_mode) {
                                 {id: '50265', skill_mul: [2,2,3]}, {id: '2558286', skill_mul: [2,2,1]}, 
                                 {id: '5339515', skill_mul: [2,2,1]}, {id: '4650315', skill_mul: [2,2,3]},
                                 {id: '4504101', skill_mul: [3,1,1]}, {id: '6447454', skill_mul: [1,3,1]},
-                                {id: '2611813', skill_mul: [0,0,0]}, {id: '7464885', skill_mul: [0,0,0]}]
+                                {id: '2611813', skill_mul: [0,0,0]}, {id: '7464885', skill_mul: [0,0,0]},
+                                {id: '7990747', skill_mul: [0,0,0]}]
                 // Cookiezi, WWW, hvick, Rafis, Mathi, idke, WhiteCar, Merami. Skill_mul oreder: aim, speed, acc
                 let player = player_id.find(p => p.id == user.id)
                 aim_avg *= multiplier[player.skill_mul[0]]
@@ -671,7 +676,7 @@ async function osu_card(message = new Message(), a_mode) {
         }
         let {skillname, skillnumber, stat_number_x} = card_stat()
         let text_line_spacing = 10
-        let special_except = ["lunpai", "celsea"]
+        let special_except = ["lunpai", "celsea", "aika_asphyxia"]
         if (special && !special_except.includes(special)) {
             skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
         }
@@ -694,6 +699,9 @@ async function osu_card(message = new Message(), a_mode) {
         if (special == "lunpai") {
             fullstar = await jimp.read('./osu_card/full_paw.png')
             halfstar = await jimp.read('./osu_card/half_paw.png')
+        } else if (special == "aika_asphyxia") {
+            fullstar = await jimp.read('./osu_card/aika_asphyxia_full_star.png')
+            halfstar = await jimp.read('./osu_card/aika_asphyxia_half_star.png')
         } else {
             fullstar = await jimp.read('./osu_card/full_star.png')
             halfstar = await jimp.read('./osu_card/half_star.png')
