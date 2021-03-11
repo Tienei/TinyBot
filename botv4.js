@@ -74,7 +74,7 @@ bot.on("ready", (ready) => {
             });
             stored_map_ID = saved_map_id
             cmds.osu.get_db(user_data, stored_map_ID, saved_map_id, db)
-
+            console.log("Loaded database")
             loading -= 1
         } catch(error) {
             loading = 0
