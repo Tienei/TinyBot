@@ -39,5 +39,5 @@ module.exports = function (mod,time_total,time_drain,bpm,cs,ar,od,hp) {
     ar = (ar > 11) ? 11 : ar
     od = (od > 11) ? 11 : od
     hp = (hp > 11) ? 11 : hp
-    return {bpm: bpm, cs: cs, ar: ar, od: od, hp: hp, time_total: time_total, time_drain: time_drain}
+    return {bpm: bpm, cs: cs, ar: ar, od: od, hp: hp, timetotal: time_total, timedrain: time_drain}
 }
