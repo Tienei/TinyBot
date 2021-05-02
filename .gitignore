@@ -1,5 +1,6 @@
 node_modules
-local-testing
-unused-code
+test
+beatmap-cache
 .env
 package-lock.json
+.VSCodeCounter

@@ -1,74 +1,66 @@
-const { Constants } = require('node-osu')
-
-module.exports = function (mod) {
-    const numbermods = [
-        {mod: "NF", bitpresent: Constants.Mods.NoFail,      pos: 31},
-        {mod: "EZ", bitpresent: Constants.Mods.Easy,        pos: 30},
-        {mod: "TD", bitpresent: Constants.Mods.TouchDevice, pos: 29},
-        {mod: "HD", bitpresent: Constants.Mods.Hidden,      pos: 28},
-        {mod: "HR", bitpresent: Constants.Mods.HardRock,    pos: 27},
-        {mod: "SD", bitpresent: Constants.Mods.SuddenDeath, pos: 26},
-        {mod: "DT", bitpresent: Constants.Mods.DoubleTime,  pos: 25},
-        {mod: "RX", bitpresent: Constants.Mods.Relax,       pos: 24},
-        {mod: "HT", bitpresent: Constants.Mods.HalfTime,    pos: 23},
-        {mod: "NC", bitpresent: Constants.Mods.Nightcore,   pos: 22},
-        {mod: "FL", bitpresent: Constants.Mods.Flashlight,  pos: 21},
-        {mod: "AU", bitpresent: Constants.Mods.Autoplay,    pos: 20},
-        {mod: "SO", bitpresent: Constants.Mods.SpunOut,     pos: 19},
-        {mod: "AP", bitpresent: Constants.Mods.Relax2,      pos: 18},
-        {mod: "PF", bitpresent: Constants.Mods.Perfect,     pos: 17},
-        {mod: "4K", bitpresent: Constants.Mods.Key4,        pos: 16},
-        {mod: "5K", bitpresent: Constants.Mods.Key5,        pos: 15},
-        {mod: "6K", bitpresent: Constants.Mods.Key6,        pos: 14},
-        {mod: "7K", bitpresent: Constants.Mods.Key7,        pos: 13},
-        {mod: "8K", bitpresent: Constants.Mods.Key8,        pos: 12},
-        {mod: "FI", bitpresent: Constants.Mods.FadeIn,      pos: 11},
-        {mod: "RD", bitpresent: Constants.Mods.Random,      pos: 10},
-        {mod: "CN", bitpresent: Constants.Mods.Cinema,      pos: 9},
-        {mod: "TG", bitpresent: Constants.Mods.Target,      pos: 8},
-        {mod: "9K", bitpresent: Constants.Mods.Key9,        pos: 7},
-        {mod: "KC", bitpresent: Constants.Mods.KeyCoop,     pos: 6},
-        {mod: "1K", bitpresent: Constants.Mods.Key1,        pos: 5},
-        {mod: "3K", bitpresent: Constants.Mods.Key3,        pos: 4},
-        {mod: "2K", bitpresent: Constants.Mods.Key2,        pos: 3},
-        {mod: "V2", bitpresent: Constants.Mods.ScoreV2,     pos: 2},
-        {mod: "MR", bitpresent: Constants.Mods.Mirror,      pos: 1}
-    ]
-    let shortenmod = '+';
-    let bitpresent = 0
-    if (isNaN(mod) == false) {
-        bitpresent = mod
+const numbermods = [
+    {mod_text: "MR", mod_bit: 1 << 30},
+    {mod_text: "V2", mod_bit: 1 << 29},
+    {mod_text: "2K", mod_bit: 1 << 28},
+    {mod_text: "3K", mod_bit: 1 << 27},
+    {mod_text: "1K", mod_bit: 1 << 26},
+    {mod_text: "KC", mod_bit: 1 << 25},
+    {mod_text: "9K", mod_bit: 1 << 24},
+    {mod_text: "TG", mod_bit: 1 << 23},
+    {mod_text: "CN", mod_bit: 1 << 22},
+    {mod_text: "RD", mod_bit: 1 << 21},
+    {mod_text: "FI", mod_bit: 1 << 20},
+    {mod_text: "8K", mod_bit: 1 << 19},
+    {mod_text: "7K", mod_bit: 1 << 18},
+    {mod_text: "6K", mod_bit: 1 << 17},
+    {mod_text: "5K", mod_bit: 1 << 16},
+    {mod_text: "4K", mod_bit: 1 << 15},
+    {mod_text: "PF", mod_bit: 1 << 14},
+    {mod_text: "AP", mod_bit: 1 << 13},
+    {mod_text: "SO", mod_bit: 1 << 12},
+    {mod_text: "AU", mod_bit: 1 << 11},
+    {mod_text: "FL", mod_bit: 1 << 10},
+    {mod_text: "NC", mod_bit: 1 << 9},
+    {mod_text: "HT", mod_bit: 1 << 8},
+    {mod_text: "RX", mod_bit: 1 << 7},
+    {mod_text: "DT", mod_bit: 1 << 6},
+    {mod_text: "SD", mod_bit: 1 << 5},
+    {mod_text: "HR", mod_bit: 1 << 4},
+    {mod_text: "HD", mod_bit: 1 << 3},
+    {mod_text: "TD", mod_bit: 1 << 2},
+    {mod_text: "EZ", mod_bit: 1 << 1},
+    {mod_text: "NF", mod_bit: 1}
+]
+module.exports = ({mod}) => {
+    let mod_text = '+';
+    let mod_num = 0
+    if (!isNaN(mod)) {
+        mod_num = mod
         let bit = mod.toString(2)
         let fullbit = "0000000000000000000000000000000".substr(bit.length) + bit
-        for (var i = 31; i >= 0; i--) {
-            if (fullbit[i] == 1) {
-                shortenmod += numbermods.find(m => m.pos == i+1).mod
+        for (let i = 30; i >= 0; i--) {
+            if (fullbit[i] == 1)  {
+                mod_text += numbermods[i].mod_text
             }
         }
     } else {
         mod = mod.toUpperCase()
         if (mod !== 'NM') {
-            for (var i = 0; i < mod.length / 2; i++) {
-                let find_mod = numbermods.find(m => m.mod == mod.substr(i*2, 2))
-                shortenmod += find_mod.mod
-                bitpresent += find_mod.bitpresent
-                if (find_mod.mod == 'NC') {
-                    bitpresent += Constants.Mods.DoubleTime
+            for (let i = 0; i < mod.length / 2; i++) {
+                let find_mod = numbermods.find(m => m.mod_text == mod.substr(i*2, 2))
+                mod_text += find_mod.mod_text
+                mod_num += find_mod.mod_bit
+                if (find_mod.mod_text == 'NC') {
+                    mod_num += 1 << 6
                 }
-                if (find_mod.mod == 'PF') {
-                    bitpresent += Constants.Mods.SuddenDeath
+                if (find_mod.mod_text == 'PF') {
+                    mod_num += 1 << 5
                 }
             }
         }
     }
-    if (shortenmod.includes('NC') && shortenmod.includes('DT')) {
-        shortenmod = shortenmod.replace('DT', '')
-    }
-    if (shortenmod.includes('PF') && shortenmod.includes('SD')) {
-        shortenmod = shortenmod.replace('SD', '')
-    }
-    if (bitpresent == 0) {
-        shortenmod += 'NM'
-    }
-    return {shortenmod: shortenmod, bitpresent: Number(bitpresent)}
+    if (mod_text.includes('NC') && mod_text.includes('DT')) mod_text = mod_text.replace('DT', '');
+    if (mod_text.includes('PF') && mod_text.includes('SD')) mod_text = mod_text.replace('SD', '');
+    if (mod_num == 0) mod_text += 'NM';
+    return {mod_text: mod_text, mod_num: mod_num}
 }

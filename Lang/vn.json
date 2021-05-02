@@ -1,0 +1,39 @@
+{
+    "avatar": {
+        "text": "Ảnh đại diện cho {username}"
+    },
+    "bug_and_suggest": {
+        "bug": "Lỗi",
+        "suggestion": "Ý kiến"
+    },
+    "osu": {
+        "profile": {
+            "desc1": "Tình hình osu!{modename} cho: [{username}]({profile_link})",
+            "desc2": "{modeicon} **Thống kê chi tiết của [{username}]({profile_link})**",
+            "prev_username": "Đã từng biết với tên là",
+            "performance": "Trình độ",
+            "global_rank": "Hạng thế giới",
+            "acc": "Độ chính xác",
+            "play_count": "Số lần chơi",
+            "play_style": "Kiểu chơi",
+            "lvl": "Cấp độ",
+            "rank": "Hạng",
+            "ranked_score": "Điểm được xếp hạng",
+            "total_score": "Tổng điểm"
+        },
+        "fx_calc_pp": {
+            "completed": "Đã hoàn thành",
+            "fc_guess": "{fcpp}pp cho {fcacc}"
+        },
+        "fx_check_player": {
+            "author_text": "Hình như bạn chưa kết nối tài khoản {type} của bạn, đánh **{prefix}osuset (username) {server_cmd}** để kết nối tài khoản.",
+            "others_text": "Người bạn vừa nhắc đến chưa kết nối tài khoản của họ."
+        }
+    },
+    "errors": {
+        "osu": {
+            "player_null": "Không tìm thấy người chơi!",
+            "no_recent_play": "Không tìm thấy lần chơi gần nhất trong 24 giờ của người chơi này"
+        }
+    }
+}

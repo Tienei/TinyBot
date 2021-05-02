@@ -1,32 +1,28 @@
 {
-  "name": "tinybot",
-  "version": "4.1.0",
-  "engines": {
-    "node": "14.x"
-  },
-  "description": "",
-  "main": "botv4.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bancho.js": "^0.9.7",
-    "canvas": "^2.6.1",
-    "chalk": "^3.0.0",
-    "cheerio": "^1.0.0-rc.3",
-    "dblapi.js": "^2.4.0",
-    "discord.js-light": "^3.1.2",
-    "dotenv": "^8.2.0",
-    "jimp": "^0.9.3",
-    "lz-string": "^1.4.4",
-    "mongojs": "^3.1.0",
-    "node-chartist": "^1.0.5",
-    "node-osu": "github:tienei/node-osu",
-    "ojsama": "^2.1.0",
-    "rx-akatsuki-pp": "^1.0.1",
-    "superagent": "^5.2.2",
-    "text2png": "^2.3.0"
-  }
+    "name": "tinybot",
+    "version": "5.0.0",
+    "description": "",
+    "main": "botv4.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cheerio": "^1.0.0-rc.5",
+        "dblapi.js": "^2.4.1",
+        "discord.js-light": "^3.5.7",
+        "dotenv": "^8.2.0",
+        "jimp": "^0.16.1",
+        "lz-string": "^1.4.4",
+        "mongojs": "^3.1.0",
+        "node-chartist": "^1.0.5",
+        "ojsama": "^2.2.0",
+        "superagent": "^6.1.0",
+        "svg2img": "^0.9.0",
+        "text2png": "^2.3.0"
+    },
+    "engines": {
+        "node": "14.x"
+    }
 }

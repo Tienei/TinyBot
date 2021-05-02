@@ -1,0 +1,40 @@
+{
+    "avatar": {
+        "text": "Avatar for {username}"
+    },
+    "bug_and_suggest": {
+        "bug": "Bug",
+        "suggestion": "Suggestion"
+    },
+    "osu": {
+        "profile": {
+            "desc1": "osu!{modename} status for: [{username}]({profile_link})",
+            "desc2": "{modeicon} **Detailed statistic of [{username}]({profile_link})**",
+            "prev_username": "Formerly known as",
+            "performance": "Performance",
+            "global_rank": "Global Rank",
+            "acc": "Accuracy",
+            "play_count": "Play Count",
+            "play_style": "Play Style",
+            "lvl": "Level",
+            "rank": "Rank",
+            "ranked_score": "Ranked Score",
+            "total_score": "Total Score"
+        },
+        "fx_calc_pp": {
+            "completed": "Completed",
+            "fc_guess": "{fcpp}pp for {fcacc}"
+        },
+        "fx_check_player": {
+            "author_text": "Looks like you didn't link your profile to a(n) {type} account, do **{prefix}osuset (username) {server_cmd}** to link your account.",
+            "others_text": "The person you mentioned doesn't link their profile to the bot, **yet**."
+        }
+    },
+    "errors": {
+        "osu": {
+            "player_null": "Player not found!",
+            "no_recent_play": "No play found within 24 hours of this player",
+            "relax_err": "Relax isn't supported in this command"
+        }
+    }
+}

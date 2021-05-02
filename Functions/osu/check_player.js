@@ -1,70 +1,38 @@
 const { Message } = require('discord.js-light')
-const config = require('../../config')
+const error_report = require('../../Utils/error')
+const getLocalText = require('../../Lang/lang_handler')
 
-module.exports = function (user_data, message = new Message(), name, type) {
+/** 
+ * @param {{message: Message}} 
+ */
+module.exports = ({user_data, message, name, type, prefix, lang}) => {
     try {
-        let osuname = ''
+        let localText = getLocalText({lang: lang}).osu.fx_check_player
         if (name == '') {
-            if (user_data[message.author.id] !== undefined) {
-                if (type == 'Bancho') {
-                    osuname = user_data[message.author.id].osuname
-                } else if (type == 'Akatsuki') {
-                    osuname = user_data[message.author.id].akatsukiname
-                } else if (type == 'Ripple') {
-                    osuname = user_data[message.author.id].ripplename
-                } else if (type == 'Horizon') {
-                    osuname = user_data[message.author.id].horizonname
-                } else if (type == 'Enjuu') {
-                    osuname = user_data[message.author.id].enjuuname
-                } else if (type == 'Gatari') {
-                    osuname = user_data[message.author.id].gatariname
-                }
-                return osuname
+            if (user_data[message.author.id]?.name?.[type.toLowerCase()]) {
+                return user_data[message.author.id].name[type.toLowerCase()]
             } else {
-                let error_text = `Looks like you didn't link your profile to an osu account, do **${config.config.bot_prefix}osuset (username) {server_cmd}** to link your account`
-                if (type == 'Bancho') {
-                    error_text = error_text.replace('{server_cmd}', '')
-                } else if (type == 'Akatsuki') {
-                    error_text = error_text.replace('{server_cmd}', '-akatsuki')
-                } else if (type == 'Ripple') {
-                    error_text = error_text.replace('{server_cmd}', '-ripple')
-                } else if (type == 'Horizon') {
-                    error_text = error_text.replace('{server_cmd}', '-horizon')
-                } else if (type == 'Enjuu') {
-                    error_text = error_text.replace('{server_cmd}', '-enjuu')
-                } else if (type == 'Gatari') {
-                    error_text = error_text.replace('{server_cmd}', '-gatari')
-                }
-                throw error_text
+                let error_text = localText.author_text.replace('{type}', type).replace('{prefix}', prefix)
+                if (type == 'Bancho') error_text = error_text.replace('{server_cmd}', '')
+                else error_text = error_text.replace('{server_cmd}', `-${type.toLowerCase()}`)
+                message.channel.send(error_report({type: 'custom', err_message: error_text}))
+                return null
             }
         } else {
             let id = ''
-            if (name.includes('@') == true) {
+            if (name.includes('@')) {
                 id = message.mentions.users.first().id
-                if (user_data[id] !== undefined) {
-                    if (type == 'Bancho') {
-                        osuname = user_data[id].osuname
-                    } else if (type == 'Akatsuki') {
-                        osuname = user_data[id].akatsukiname
-                    } else if (type == 'Ripple') {
-                        osuname = user_data[id].ripplename
-                    } else if (type == 'Horizon') {
-                        osuname = user_data[id].horizonname
-                    } else if (type == 'Enjuu') {
-                        osuname = user_data[id].enjuuname
-                    } else if (type == 'Gatari') {
-                        osuname = user_data[id].gatariname
-                    }
-                    return osuname
+                if (user_data[id] && user_data[id]?.name?.[type.toLowerCase()]) {
+                    return user_data[id].name[type.toLowerCase()]
                 } else {
-                    return name
+                    message.channel.send(error_report({type: 'custom', err_message: localText.others_text}))
+                    return null
                 }
             } else {
                 return name
             }
-    
         }
-    } catch (error) {
-        message.channel.send(String(error))
+    } catch (err) {
+        message.channel.send(error_report({type: 'normal', err_message: err.stack.toString()}))
     }
 }

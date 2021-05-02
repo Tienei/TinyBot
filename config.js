@@ -1,13 +1,14 @@
 let config = {
-    bot_ver: 'v4.4',
-    bot_default_prefix: '!',
+    bot_ver: 'v5.0',
+    bot_default_prefix: 't!',
     debug: {
-        osutrack: false,
-        command: false,
-        disable_db_save: false
-    },
-    // Modify by code
-    bot_prefix: '!'
+        disable_osutrack: false,
+        dev_only: false,
+        disable_db_save: false,
+        cache: true,
+        ignore_server_prefix: false,
+        disable_server_count: false
+    }
 }
 
 function update_bot_prefix(prefix) {

@@ -1,4 +1,4 @@
-module.exports = function (mod,time_total,time_drain,bpm,cs,ar,od,hp) {
+module.exports = ({mod,time_total,time_drain,bpm,cs,ar,od,hp}) => {
     let mods = []
     mod = mod.replace('+', '').toUpperCase()
     for (let i = 0; i < mod.length; i+=2) {
@@ -32,12 +32,12 @@ module.exports = function (mod,time_total,time_drain,bpm,cs,ar,od,hp) {
         od = (79.5 - odms) / 6
         hp *= 1.4
     }
-    if (mods.includes('EZ')) EZ();
-    if (mods.includes('HR')) HR();
-    if (mods.includes('HT')) HT();
-    if (mods.includes('DT')) DT();
+    if (mods.includes('EZ'))                        EZ();
+    if (mods.includes('HR'))                        HR();
+    if (mods.includes('HT'))                        HT();
+    if (mods.includes('DT') || mods.includes('NC')) DT();
     ar = (ar > 11) ? 11 : ar
     od = (od > 11) ? 11 : od
     hp = (hp > 11) ? 11 : hp
-    return {bpm: bpm, cs: cs, ar: ar, od: od, hp: hp, timetotal: time_total, timedrain: time_drain}
+    return {bpm: bpm, cs: cs, ar: ar, od: od, hp: hp, time_total: time_total, time_drain: time_drain}
 }

@@ -1,0 +1,39 @@
+{
+    "avatar": {
+        "text": "{username}의 프로필사진"    
+    },
+    "bug_and_suggest": {
+        "bug": "버그", 
+        "suggestion": "제안"              
+    },
+    "osu": {
+        "profile": {
+            "desc1": "[{username}]({profile_link})의 osu!{modename} 진행 상황 ",
+            "desc2": "{modeicon} **[{username}]({profile_link})의 상세한 통계 **",
+            "prev_username": "이전에 ~로서 알려진",
+            "performance": "퍼포먼스",
+            "global_rank": "세계 순위",
+            "acc": "정확도",
+            "play_count": "플레이 횟수",
+            "play_style": "플레이 방식",
+            "lvl": "레벨",
+            "rank": "순위",
+            "ranked_score": "랭크된 점수",
+            "total_score": " 전체 점수"
+        },
+        "fx_calc_pp": {
+            "completed": "완료된",
+            "fc_guess": "{fcacc}일때 {fcpp}"
+        },
+        "fx_check_player": {
+            "author_text": "당신의 {type} 프로필이 연결되지 않은 것 같아요. **{prefix}osuset (username) {server_cmd}**를 통해 당신의 계정과 연결해주세요.",
+            "others_text": "당신이 언급한 분의 프로필이 봇과 **아직** 연결되어 있지 않아요."
+        }
+    },
+    "errors": {
+        "osu": {
+            "player_null": "플레이어를 찾지 못했어요!",                    
+            "no_recent_play": "플레이어의 24시간 내의 플레이 기록이 없어요."         
+        }                   
+    }
+}

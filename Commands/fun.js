@@ -1,8 +1,11 @@
 const { Message, MessageEmbed } = require("discord.js")
-const fx = require('./../Functions/load_fx')
+const fx = require('./../Functions/fx_handler')
 const request = require('superagent')
 
-async function trivia(message = new Message()){
+/** 
+* @param {{message: Message}} 
+*/
+async function trivia({message}){
     function shuffle(arr) {
         arr.sort(() => Math.random() - 0.5);
         return arr;
@@ -119,19 +122,23 @@ async function trivia(message = new Message()){
     }
 }
 
-async function tenor(message = new Message(), start, search, action, aloneaction) {
+/** 
+ * @param {{message: Message}} 
+ */
+async function tenor({message, search, action, alone_action}) {
     try {
         let msg = message.content.toLowerCase();
         let embedcolor = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
         let text = ''
-        let user_to_find = msg.substring(start)
-        let user = fx.general.find_discord_user(message, user_to_find)
-        if ((user == null || user.id == message.author.id) || (action == undefined)) {
+        let suffix = fx.general.check_suffix({check_msg: msg, two_arg: false, suffix: [{"suffix": undefined, "v_count": 0}]})
+        let user = suffix.check.replace(/[<@>]/gm, '')
+        if ((user == null || user == message.author.id) || (action == undefined)) {
             text = aloneaction
         } else {
-            text = `<@${user.id}>, ${action} <@${message.author.id}>`
+            text = `<@${user}>, ${action} <@${message.author.id}>`
         }
-        let gif = (await request.get(`https://api.tenor.com/v1/search?q=${search}&key=${process.env.TENOR_KEY}&limit=25&media_filter=minimal&contentfilter=medium`)).body
+        let gif = await (await request.get(`https://api.tenor.com/v1/search?q=${search}&key=${process.env.TENOR_KEY}&limit=25&media_filter=minimal&contentfilter=medium`)).body
+        console.log(gif)
         const embed = new MessageEmbed()
         .setColor(embedcolor)
         .setDescription(text)
@@ -142,7 +149,10 @@ async function tenor(message = new Message(), start, search, action, aloneaction
     }
 }
 
-function roll(message = new Message()) {
+/** 
+ * @param {{message: Message}} 
+ */
+function roll({message}) {
     try {
         let msg = message.content.toLowerCase()
         let number = msg.split(' ')[1]
@@ -154,7 +164,10 @@ function roll(message = new Message()) {
     }
 }
 
-function eight_ball(message = new Message()) {
+/** 
+ * @param {{message: Message}} 
+ */
+function eight_ball({message}) {
     try {
         let msg = message.content.toLowerCase()
         let command = msg.split(' ')[0]
@@ -174,7 +187,10 @@ function eight_ball(message = new Message()) {
     }
 }
 
-function rate_waifu(message = new Message()) {
+/** 
+ * @param {{message: Message}} 
+ */
+function rate_waifu({message}) {
     try {
         let msg = message.content.toLowerCase()
         let command = msg.split(' ')[0]

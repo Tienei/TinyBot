@@ -1,6 +1,6 @@
 module.exports = {
     general    : require('./general'),
-    fun        : require('./fun'),
+    owner      : require('./owner'),
     osu        : require('./osu'),
-    corona     : require('./corona')
+    fun        : require('./fun')
 }
