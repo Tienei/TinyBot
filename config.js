@@ -1,6 +1,6 @@
 let config = {
     bot_ver: 'v5.0',
-    bot_default_prefix: 't!',
+    bot_default_prefix: '!',
     debug: {
         disable_osutrack: false,
         dev_only: false,
