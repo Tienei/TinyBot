@@ -50,12 +50,6 @@ module.exports = ({mod}) => {
                 let find_mod = numbermods.find(m => m.mod_text == mod.substr(i*2, 2))
                 mod_text += find_mod.mod_text
                 mod_num += find_mod.mod_bit
-                if (find_mod.mod_text == 'NC') {
-                    mod_num += 1 << 6
-                }
-                if (find_mod.mod_text == 'PF') {
-                    mod_num += 1 << 5
-                }
             }
         }
     }
