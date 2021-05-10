@@ -54,10 +54,11 @@ module.exports = ({pp, mode, parser, mod_num, mod_text, score, combo, fc, star, 
             }
         }
         if (perfect == 0) {
-            fcguess = localText.fc_guess.replace("{fcpp}", fcpp).replace("{fcacc}", fcacc)
+            fcguess = `${fcacc}`
             if (a_mode == 'std' || a_mode == 'taiko' || a_mode == 'ctb') {
                 fcguess += `%`
             }
+            fcguess += ` ⇒ ${fcpp}pp`
         }
         return {pp: Number(pp), star: Number(star).toFixed(2), fcguess: fcguess, mapcomplete: mapcomplete}
     } catch (err) {

@@ -1,3 +1,5 @@
+const score_fm = require('../score_format')
+
 module.exports = function ({top = 0, title, beatmap_id, star, mod_text, pp, rank_icon, diff, score, rank,
     combo, fc, acc, acc_detail, fcguess, mapcomplete = '', time_ago = '', type})  {
     let showtop = ''
@@ -18,9 +20,9 @@ module.exports = function ({top = 0, title, beatmap_id, star, mod_text, pp, rank
     } else if (type == 'map') {
         showtitle = `**[${title}](https://osu.ppy.sh/osu/${beatmap_id})** `
     }
-    let line1 = `${showtop} ${showtitle} (${star}★) \`${mod_text}\` • ${(score).toLocaleString('en')}`
-    let line2 = `\n${rank_icon} *${diff}* • **${showpp}** ${fcguess}`
-    let line3 = `\nx${combo}/${fc} • ${acc.toFixed(2)}% \`${acc_detail}\``
+    let line1 = `${showtop} ${showtitle} (${star}★) \`${mod_text}\` • ${score_fm({score: score})}`
+    let line2 = `\n${rank_icon} *${diff}* • **${showpp}** • x${combo}/${fc}\n`
+    let line3 = `${acc.toFixed(2)}% \`${acc_detail}\` ${fcguess}`
     let line4 = `\n${showmapcomplete}${time_ago}`
     if (type == 'recent') line4 = '';
     return `${line1}${line2}${line3}${line4}\n\n`
