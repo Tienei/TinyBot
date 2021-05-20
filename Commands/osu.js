@@ -424,6 +424,10 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
                     special = 'aika_asphyxia'
                     card = await jimp.read('./osu_card/card/aika_asphyxia.png')
                 }
+                if (user.id == 8926244) {
+                    special = 'kahli'
+                    card = await jimp.read('./osu_card/card/kahli.png')
+                }
             }
             if (special) {
                 let multiplier = [1, 1.025, 1.05, 1.075]
@@ -432,8 +436,8 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
                                 {id: '5339515', skill_mul: [2,2,1]}, {id: '4650315', skill_mul: [2,2,3]},
                                 {id: '4504101', skill_mul: [3,1,1]}, {id: '6447454', skill_mul: [1,3,1]},
                                 {id: '2611813', skill_mul: [0,0,0]}, {id: '7464885', skill_mul: [0,0,0]},
-                                {id: '7990747', skill_mul: [0,0,0]}]
-                // Cookiezi, WWW, hvick, Rafis, Mathi, idke, WhiteCar, Merami. Skill_mul oreder: aim, speed, acc
+                                {id: '7990747', skill_mul: [0,0,0]}, {id: '8926244', skill_mul: [0,0,0]}]
+                // Cookiezi, WWW, hvick, Rafis, Mathi, idke, WhiteCar, Merami. Skill_mul order: aim, speed, acc
                 let player = player_id.find(p => p.id == user.id)
                 aim_avg *= multiplier[player.skill_mul[0]]
                 speed_avg *= multiplier[player.skill_mul[1]]
@@ -456,14 +460,14 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         mode_icon.resize(80,80)
         card.composite(mode_icon, 20, 20)
         // Get username
-        let n_text_color = 'white'
+        let name_color = 'white'
         if (special == 'whitecat') {
-            n_text_color = '#D19D23'
+            name_color = '#D19D23'
         }
         let local_font = {localFontPath: './font/Antipasto.otf', localFontName: 'Antipasto'}
         let nametext = await jimp.read(text2png(user.username, {
-            color: n_text_color,
-            font: '80px Antipasto',
+            color: name_color,
+            font: '160px Antipasto',
             lineSpacing: 15,
             ...local_font}))
         let nametextw = nametext.getWidth()
@@ -492,29 +496,39 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
             return {skillname: skillname, skillnumber: skillnumber, stat_number_x: stat_number_x}
         }
         let {skillname, skillnumber, stat_number_x} = card_stat()
+        let stat_color = 'white'
+        let stat_shadow = {size: 1, opacity: 0.35, x: 2, y: 2, blur: 1}
+        if (special == 'kahli') {
+            stat_color = '#e0ffff'
+            stat_shadow.opacity = 0.75
+        }
         let text_line_spacing = 10
-        let special_except = ["lunpai", "celsea", "aika_asphyxia"]
+        let special_except = ["lunpai", "celsea", "aika_asphyxia", "kahli"]
         if (special && !special_except.includes(special)) {
             skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
         }
         let stattext = await jimp.read(text2png(skillname, {
-            color: 'white',
+            color: stat_color,
             font: '34px Antipasto',
             lineSpacing: text_line_spacing,
             textAlign: 'right',
             ...local_font}))
-        card.composite(stattext, 20, 444)
+        let stattext_cv = new jimp(stattext.getWidth() * 1.1, stattext.getHeight() * 1.1, 0x00000000)
+        stattext_cv.composite(stattext, 0, 0).shadow(stat_shadow)
+        card.composite(stattext_cv, 20, 444)
         let statnumber = await jimp.read(text2png(skillnumber, {
-            color: 'white',
+            color: stat_color,
             font: '34px Antipasto',
             lineSpacing: 16,
             textAlign: 'left',
             ...local_font}))
-        card.composite(statnumber, stat_number_x, 444)
+        let statnumber_cv = new jimp(stattext.getWidth() * 1.1, stattext.getHeight() * 1.1, 0x00000000)
+        statnumber_cv.composite(statnumber, 0, 0).shadow(stat_shadow)
+        card.composite(statnumber_cv, stat_number_x, 444)
         // Star
         let fullstar, halfstar;
         if (special == "lunpai") {
-            fullstar = await jimp.read('./osu_card/full_paw.png')
+            fullstar = await jimp.read('./osu_card/full_paw.png')   
             halfstar = await jimp.read('./osu_card/half_paw.png')
         } else if (special == "cookiezi") {
             fullstar = await jimp.read('./osu_card/full_chocomint.png')
@@ -522,6 +536,9 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         } else if (special == "aika_asphyxia") {
             fullstar = await jimp.read('./osu_card/aika_asphyxia_full_star.png')
             halfstar = await jimp.read('./osu_card/aika_asphyxia_half_star.png')
+        } else if (special == "kahli") {
+            fullstar = await jimp.read('./osu_card/full_shooting_star.png')
+            halfstar = await jimp.read('./osu_card/half_shooting_star.png')
         } else {
             fullstar = await jimp.read('./osu_card/full_star.png')
             halfstar = await jimp.read('./osu_card/half_star.png')
