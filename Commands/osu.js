@@ -472,12 +472,13 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
             ...local_font}))
         let nametextw = nametext.getWidth()
         let nametexth = nametext.getHeight()
-        if (nametextw / 220 >= nametexth / 27) {
+        let max_name_h = (user.username.search(/[gjpqy]/gmi) > -1) ? 35 : 27
+        if (nametextw / 220 >= nametexth / max_name_h) {
             nametext.resize(220, jimp.AUTO).quality(100)
         } else {
-            nametext.resize(jimp.AUTO, 27).quality(100)
+            nametext.resize(jimp.AUTO, max_name_h).quality(100)
         }
-        nametext.contain(220, 27, jimp.HORIZONTAL_ALIGN_CENTER)
+        nametext.contain(220, max_name_h, jimp.HORIZONTAL_ALIGN_CENTER)
         card.composite(nametext, 150, 50)
         // Stat
         function card_stat() {
