@@ -222,9 +222,9 @@ async function osu({message, embed_color, refresh, a_mode, lang, prefix}) {
             field1 += `**${localText.lvl}:** ${user.level}\n**${localText.acc}:** ${user.acc}%\n**${localText.play_count}:** ${user.playcount.toLocaleString('en')}\n`
             field1 += `**${localText.ranked_score}:** ${user.ranked_score.toLocaleString('en')} • **${localText.total_score}:** ${user.total_score.toLocaleString('en')}\n`
             let total_count_rank = user.count_ssh + user.count_ss + user.count_sh + user.count_s + user.count_a
-            field1 += `${fx.osu.get_icon({type: "rank_SSH"})}: ${user.count_ss.toLocaleString('en')} (${(user.count_ssh/total_count_rank*100).toFixed(2)}%) • `
+            field1 += `${fx.osu.get_icon({type: "rank_SSH"})}: ${user.count_ssh.toLocaleString('en')} (${(user.count_ssh/total_count_rank*100).toFixed(2)}%) • `
             field1 += `${fx.osu.get_icon({type: "rank_SS"})}: ${user.count_ss.toLocaleString('en')} (${(user.count_ss/total_count_rank*100).toFixed(2)}%)\n`
-            field1 += `${fx.osu.get_icon({type: "rank_SH"})}: ${user.count_ss.toLocaleString('en')} (${(user.count_sh/total_count_rank*100).toFixed(2)}%) • `
+            field1 += `${fx.osu.get_icon({type: "rank_SH"})}: ${user.count_sh.toLocaleString('en')} (${(user.count_sh/total_count_rank*100).toFixed(2)}%) • `
             field1 += `${fx.osu.get_icon({type: "rank_S"})}: ${user.count_s.toLocaleString('en')} (${(user.count_s/total_count_rank*100).toFixed(2)}%)\n`
             field1 += `${fx.osu.get_icon({type: "rank_A"})}: ${user.count_a.toLocaleString('en')} (${(user.count_a/total_count_rank*100).toFixed(2)}%)`
             // Rank history image
@@ -464,18 +464,18 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         if (special == 'whitecat') {
             name_color = '#D19D23'
         }
-        let local_font = {localFontPath: './font/Antipasto.otf', localFontName: 'Antipasto'}
+        let local_font = {localFontPath: './font/Somatic.otf', localFontName: 'Somatic'}
         let nametext = await jimp.read(text2png(user.username, {
             color: name_color,
-            font: '160px Antipasto',
+            font: '160px Somatic',
             lineSpacing: 15,
             ...local_font}))
         let nametextw = nametext.getWidth()
         let nametexth = nametext.getHeight()
         if (nametextw / 220 >= nametexth / 27) {
-            nametext.resize(220, jimp.AUTO)
+            nametext.resize(220, jimp.AUTO).quality(100)
         } else {
-            nametext.resize(jimp.AUTO, 27)
+            nametext.resize(jimp.AUTO, 27).quality(100)
         }
         nametext.contain(220, 27, jimp.HORIZONTAL_ALIGN_CENTER)
         card.composite(nametext, 150, 50)
@@ -502,24 +502,24 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
             stat_color = '#e0ffff'
             stat_shadow.opacity = 0.75
         }
-        let text_line_spacing = 10
+        let text_line_spacing = 8
         let special_except = ["lunpai", "celsea", "aika_asphyxia", "kahli"]
         if (special && !special_except.includes(special)) {
             skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
         }
         let stattext = await jimp.read(text2png(skillname, {
             color: stat_color,
-            font: '34px Antipasto',
+            font: '28px Somatic',
             lineSpacing: text_line_spacing,
             textAlign: 'right',
             ...local_font}))
         let stattext_cv = new jimp(stattext.getWidth() * 1.1, stattext.getHeight() * 1.1, 0x00000000)
         stattext_cv.composite(stattext, 0, 0).shadow(stat_shadow)
-        card.composite(stattext_cv, 20, 444)
+        card.composite(stattext_cv, 24, 444)
         let statnumber = await jimp.read(text2png(skillnumber, {
             color: stat_color,
-            font: '34px Antipasto',
-            lineSpacing: 16,
+            font: '28px Somatic',
+            lineSpacing: 15.2,
             textAlign: 'left',
             ...local_font}))
         let statnumber_cv = new jimp(stattext.getWidth() * 1.1, stattext.getHeight() * 1.1, 0x00000000)
