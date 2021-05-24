@@ -472,7 +472,7 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
             ...local_font}))
         let nametextw = nametext.getWidth()
         let nametexth = nametext.getHeight()
-        let max_name_h = (user.username.search(/[gjpqy]/gmi) > -1) ? 35 : 27
+        let max_name_h = (user.username.search(/[gjpqy]/gm) > -1) ? 35 : 27
         if (nametextw / 220 >= nametexth / max_name_h) {
             nametext.resize(220, jimp.AUTO).quality(100)
         } else {
