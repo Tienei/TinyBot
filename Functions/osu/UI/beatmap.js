@@ -16,10 +16,10 @@ module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_col
     let detail = beatmap_detail({mod: mod_text, time_total: map.time_total, bpm: map.bpm, 
                                 cs: map.cs, ar: map.ar,od: map.od, hp: map.hp})
     for (let d in detail) {
-        if (d == 'bpm' || d == 'time_total') Number(detail[d]).toFixed(0)
-        else detail[d] = Number(detail[d]).toFixed(2)
+        if (d == 'bpm' || d == 'time_total') detail[d] = Number(Number(detail[d]).toFixed(0))
+        else detail[d] = Number(Number(detail[d]).toFixed(2))
     }
-    let {cs, ar, od , hp, time_total, bpm} = detail
+    let {cs, ar, od , hp, bpm, time_total} = detail
     let time = `${Math.floor(time_total / 60)}:${('0' + (time_total - Math.floor(time_total / 60) * 60)).slice(-2)}`
     if (modenum == 0) {
         let acc_list = acc_calc_list.map(a => std_pp_calc({parser: parser, mod_num: mod_num, 
