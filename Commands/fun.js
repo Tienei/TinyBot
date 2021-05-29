@@ -43,7 +43,6 @@ async function trivia({message}){
         }
         shuffled_answers = shuffle(answers)
     } else if (question_type == 'boolean') {
-        console.log(decodeURIComponent(question.results[0].correct_answer))
         if (decodeURIComponent(question.results[0].correct_answer) == 'True') {
             shuffled_answers[0] = decodeURIComponent(question.results[0].correct_answer)
             shuffled_answers[1] = decodeURIComponent(question.results[0].incorrect_answers[0])
@@ -51,7 +50,6 @@ async function trivia({message}){
             shuffled_answers[1] = decodeURIComponent(question.results[0].correct_answer)
             shuffled_answers[0] = decodeURIComponent(question.results[0].incorrect_answers[0])
         }
-        console.log(shuffled_answers)
     }
     let diff = question.results[0].difficulty
     diff = diff.charAt(0).toUpperCase() + diff.slice(1)
@@ -138,7 +136,6 @@ async function tenor({message, search, action, alone_action}) {
             text = `<@${user}>, ${action} <@${message.author.id}>`
         }
         let gif = await (await request.get(`https://api.tenor.com/v1/search?q=${search}&key=${process.env.TENOR_KEY}&limit=25&media_filter=minimal&contentfilter=medium`)).body
-        console.log(gif)
         const embed = new MessageEmbed()
         .setColor(embedcolor)
         .setDescription(text)
