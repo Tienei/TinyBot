@@ -15,7 +15,7 @@ const { measureText } = require('jimp')
 const score = require('../Functions/osu/UI/score')
 // Database
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["user_data_v5", "server_data", "saved_map_id"])
+const db = mongojs(process.env.DB_URL, ["user_data_v5", "server_data", "saved_map_id"], {tls: true})
 let user_data = {}
 let beatmapID_cache = []
 //
@@ -99,9 +99,7 @@ function set_mode({suffix, a_mode = undefined, default_a_mode = 'std', default_c
     check_type = (check_type) ? check_type : default_check_type
     if (compare) return {check_type: check_type, a_mode: a_mode}
     else {
-        let temp = check_type.substring(1)
-        check_type = temp.charAt(0).toUpperCase() + temp.slice(1)
-        return `${check_type}-${a_mode}`
+        return `${check_type.substring(1)}-${a_mode}`
     }
 }
 
@@ -383,7 +381,7 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         let card;
         // Special card
         let special;
-        if (modenum == 0 && check_type == "Bancho") {
+        if (modenum == 0 && check_type == "bancho") {
             let s_player = [39828, 50265, 2558286, 5339515, 4650315]
             for (let i in s_player) {
                 if (user.id == s_player[i]) {

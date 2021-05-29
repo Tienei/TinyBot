@@ -11,7 +11,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false}) => {
         let modenum = modedetail.modenum
         let a_mode = modedetail.a_mode
         let check_type = modedetail.check_type
-        if (check_type == 'Bancho') {
+        if (check_type == 'bancho') {
             let req_opt = {u: name, m: modenum, limit: limit}
             let best = await BanchoAPI({ver: 1, endpoint: `get_user_${type}`, param: req_opt})
             for (let i = 0; i < best.length; i++) {
@@ -74,7 +74,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false}) => {
                     top[i].addBeatmapInfo(data)
                 }
             }
-        } else if (check_type == 'Gatari') {
+        } else if (check_type == 'gatari') {
             let user_param = {u: name}
             let user = await (await superagent.get("https://api.gatari.pw/users/get").query(user_param)).body
             let best_param = {id: user.users[0].id, mode: modenum, p: 1, l: limit}
@@ -141,7 +141,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false}) => {
                 }
             }
         } else {
-            let ripple_relax = (a_mode == 'rx' && check_type == 'Ripple') ? 1 : 0
+            let ripple_relax = (a_mode == 'rx' && check_type == 'ripple') ? 1 : 0
             let relax = (a_mode == 'rx') ? 1 : 0
             let best = await RippleAPI({endpoint: `/v1/users/scores/${type}`, mode: mode, options: 
                                         {name: name, mode: modenum, rx: relax, l: limit, relax: ripple_relax}})

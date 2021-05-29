@@ -9,7 +9,7 @@ const fx = require('./Functions/fx_handler')
 const config = require('./config')
 // Database
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["user_data_v5", "server_data", "saved_map_id"])
+const db = mongojs(process.env.DB_URL, ["user_data_v5", "server_data", "saved_map_id"], {tls: true})
 let server_data = {}
 //
 if (!config.config.debug.disable_server_count) {

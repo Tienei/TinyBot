@@ -7,7 +7,7 @@ const superagent = require('superagent')
 module.exports = async ({name, mode, event = false, ver}) => {
     try {
         let {a_mode, check_type, modenum} = get_mode_detail({mode: mode})
-        if (check_type == 'Bancho') {
+        if (check_type == 'bancho') {
             if (ver == 2) {
                 let url_mode_list = ['osu', 'taiko', 'fruits', 'mania']
                 let user = await BanchoAPI({ver: 2, endpoint: `users/${name}/${url_mode_list[modenum]}`})
@@ -33,7 +33,7 @@ module.exports = async ({name, mode, event = false, ver}) => {
                                     country_rank: user[0].pp_country_rank, country_code: user[0].country.toLowerCase(), 
                                     pp: user[0].pp_raw})
             }
-        } else if (check_type == 'Gatari') {
+        } else if (check_type == 'gatari') {
             let options = {u: name, mode: modenum}
             const s_resp = await superagent.get('https://api.gatari.pw/user/stats').query(options);
             const i_resp = await superagent.get('https://api.gatari.pw/users/get').query(options);
@@ -48,7 +48,7 @@ module.exports = async ({name, mode, event = false, ver}) => {
                                 pp: Number(user_stats.pp).toFixed(2), global_rank: Number(user_stats.rank),
                                 country_rank: Number(user_stats.country_rank), country_code: user_info.country.toLowerCase(),
                                 level: Number(user_stats.level), acc: Number(user_stats.avg_accuracy).toFixed(2)})
-        } else if (check_type == 'Akatsuki') {
+        } else if (check_type == 'akatsuki') {
             let user = await RippleAPI({endpoint: `/v1/users/full`, mode: mode, options: {name: name}})
             if (!user) return null
             let relax = (a_mode == 'rx') ? 1 : 0
@@ -64,14 +64,14 @@ module.exports = async ({name, mode, event = false, ver}) => {
                                 level: Number(user.stats[relax][a_mode].level).toFixed(2),
                                 acc: Number(user.stats[relax][a_mode].accuracy).toFixed(2),})
         } else {
-            let ripple_relax = (a_mode == 'rx' && check_type == 'Ripple') ? 1 : 0
-            let user = (a_mode == 'rx' && check_type !== 'Ripple') 
+            let ripple_relax = (a_mode == 'rx' && check_type == 'ripple') ? 1 : 0
+            let user = (a_mode == 'rx' && check_type !== 'ripple') 
             ? await RippleAPI({endpoint: `/v1/users/rxfull`, mode: mode, options: {name: name}})
             : await RippleAPI({endpoint: `/v1/users/full`, mode: mode, options: {name: name, relax: ripple_relax}});
             if (!user) return null  
             a_mode = (a_mode == 'rx') ? 'std' : a_mode
             let online_status = undefined
-            if (check_type == 'Horizon') {
+            if (check_type == 'horizon') {
                 online_status = await (await superagent.get(`https://c.lemres.de/api/v1/playerstatus?uid=${user.id}`)).body.Status
                 online_status = online_status !== 'Offline' ? online_status : 'Offline'
             }

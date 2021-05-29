@@ -21,7 +21,7 @@ module.exports = ({pp, mode, parser, mod_num, mod_text, score, combo, fc, star, 
             fcpp = Number(fccalc.pp.total).toFixed(2)
             fcacc = fccalc.acc
             star = Number(fccalc.star.total).toFixed(2)
-            if (check_type == "Bancho" && recent) {
+            if (check_type == "bancho" && recent) {
                 let end = fccalc.star.objects[fccalc.star.objects.length - 1].obj.time - fccalc.star.objects[0].obj.time
                 let point = fccalc.star.objects[count_300 + count_100 + count_50 + count_miss - 1].obj.time - fccalc.star.objects[0].obj.time
                 mapcomplete = `${localText.completed}: ${Number((point / end) * 100).toFixed(2)}%`
@@ -33,7 +33,7 @@ module.exports = ({pp, mode, parser, mod_num, mod_text, score, combo, fc, star, 
             let count_300 = fc - count_100
             fcacc = Number(Number((0.5 * count_100 + count_300) / (count_300 + count_100) * 100).toFixed(2))
             fcpp = taiko_pp_calc({star: star, od: od, combo: fc, acc: fcacc, miss: 0, mod: mod_text}).toFixed(2)
-            if (check_type == "Bancho" && recent) {
+            if (check_type == "bancho" && recent) {
                 mapcomplete = `${localText.completed}: ${((count_300 + count_100 + count_miss) / circle + slider)* 100}%`
                 pp = taiko_pp_calc({star: star, od: od, combo: fc, acc: acc, miss: count_miss, mod: mod_text}).toFixed(2)
             }
@@ -41,14 +41,14 @@ module.exports = ({pp, mode, parser, mod_num, mod_text, score, combo, fc, star, 
             let count_300 = fc - count_100 - count_50
             fcacc = Number((count_50 + count_100 + count_300) / (count_50 + count_100 + count_300) * 100).toFixed(2)
             fcpp = ctb_pp_calc({star: star, ar: ar, fc: fc, combo: fc, acc: fcacc, miss: 0, mod: mod_text}).toFixed(2)
-            if (check_type == "Bancho" && recent) {
+            if (check_type == "bancho" && recent) {
                 mapcomplete = `${localText.completed}: ${((count_300 + count_katu + count_100 + count_50 + count_miss) / (circle + slider))* 100}%`
                 pp = ctb_pp_calc({star: star, ar: ar, fc: fc, combo: combo, acc: acc, miss: count_miss, mod: mod_text}).toFixed(2)
             }
         } else if (a_mode == 'mania') {
             fcacc = Number(21.7147240951625 * Math.log(score/10000)*10000).toFixed(0)
             fcpp = mania_pp_calc({mod: mod_text, star: star, score: fcacc, od: od, obj_count: fc}).toFixed(2)
-            if (check_type == "Bancho" && recent) {
+            if (check_type == "bancho" && recent) {
                 mapcomplete = `${localText.completed}: ${((count_300 + count_katu + count_100 + count_geki + count_50 + count_miss) / (circle + slider))* 100}%`
                 pp = mania_pp_calc({mod: mod_text, star: star, score: score, od: od, obj_count: fc})
             }

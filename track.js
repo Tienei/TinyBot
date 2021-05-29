@@ -1,5 +1,5 @@
 const mongojs = require('mongojs')
-const db = mongojs(process.env.DB_URL, ["osu_track"])
+const db = mongojs(process.env.DB_URL, ["osu_track"], {tls: true})
 const config = require('./config')
 const fx = require("./Functions/fx_handler")
 
@@ -42,7 +42,7 @@ process.on("message",
     if (message.cmd.startsWith('add')) {
         try {
             let {channel_id, mode, limit, check_type, user} = message.value
-            let player = osu_track.find(pl => pl.name.toLowerCase() == user.username.toLowerCase() && pl.type == check_type)
+            let player = osu_track.find(pl => pl.name.toLowerCase() == user.username.toLowerCase() && pl.type.toLowerCase() == check_type)
             if (player) {
                 if (player.trackonchannel.find(channel => channel.id == channel_id)) {
                     if (player.trackonchannel.find(channel => channel.id == channel_id).modes.find(m => m.mode == mode)) {
@@ -93,7 +93,7 @@ process.on("message",
                     if (pl.name.toLowerCase() == name.toLowerCase()) player.push(pl)
                 }
             } else {
-                let find_plr = osu_track.find(pl => pl.name.toLowerCase() == name.toLowerCase() && pl.type == check_type)
+                let find_plr = osu_track.find(pl => pl.name.toLowerCase() == name.toLowerCase() && pl.type.toLowerCase() == check_type)
                 if (find_plr) player.push(find_plr)
             }
             if (player.length > 0) {
@@ -171,6 +171,8 @@ async function real_time_osu_track() {
                             modes.find(m => m.mode == mode.mode).limit = mode.limit
                         }
                     }
+                    // temp fix
+                    mode.mode = mode.mode.toLowerCase()
                 }
             }
             for (let m of modes) {

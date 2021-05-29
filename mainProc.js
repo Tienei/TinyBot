@@ -66,10 +66,10 @@ async function runProc() {
             }
         })
         child_proc.on("error", (err) => {
-            console.log(err)  
+            console.log("err", err)  
         })
         child_proc.on("exit", (err) => {
-            console.log(err)  
+            console.log("exit", err)  
         })
         setTimeout(() => {
             console.log("ping")

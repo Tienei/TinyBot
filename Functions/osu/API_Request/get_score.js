@@ -7,7 +7,7 @@ module.exports = async ({name, mode, beatmap_id, limit}) => {
     try {
         let {modenum, a_mode, check_type} = get_mode_detail({mode: mode})
         let scores = []
-        if (check_type == 'Bancho') {
+        if (check_type == 'bancho') {
             let score = await BanchoAPI({ver: 1, endpoint: 'get_scores', param: {u: name, b: beatmap_id, limit: limit, m: modenum}})
             for (let i = 0; i < score.length; i++) {
                 let count_300 = Number(score[i].count300)
