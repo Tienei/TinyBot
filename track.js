@@ -154,6 +154,10 @@ async function real_time_osu_track() {
                 for (let mode of channel.modes) {
                     // temp fix
                     mode.mode = mode.mode.toLowerCase()
+                    for (let mode_detail of player.modedetail) {
+                        mode_detail.mode = mode_detail.mode.toLowerCase();
+                    }
+                    //
                     if (mode.limit > 100) {
                         mode.limit = 100
                         if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})

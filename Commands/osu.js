@@ -1008,7 +1008,7 @@ async function beatmap_link_detection({message, embed_color, refresh, lang, pref
     }
     fx.general.cmd_cooldown.set({message: message, cmd: command, time: 3000})
     let beatmap_id;
-    let mode = 'Bancho-';
+    let mode = 'bancho-';
     if (msg.startsWith("https://osu.ppy.sh/b/")) {
         let a_mode_list = ['std', 'taiko', 'ctb', 'mania']
         let args = msg.split('/')[4].split(' ')[0].split('?')
