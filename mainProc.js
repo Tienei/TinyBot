@@ -66,10 +66,20 @@ async function runProc() {
             }
         })
         child_proc.on("error", (err) => {
-            console.log("err", err)  
+            console.log("err", err)
+            console.log(`------------------------------------\n` +
+                        `Child Processes restarting!\n` + 
+                        `------------------------------------`)
+            for (let proc of processes) {
+                proc.kill('SIGINT')
+            }
+            osutrack_proc.kill('SIGINT')
+            setTimeout(() => {
+                startUp()
+            }, 25)
         })
-        child_proc.on("exit", (err) => {
-            console.log("exit", err)  
+        child_proc.on("close", (err) => {
+            console.log("close")
         })
         setTimeout(() => {
             console.log("ping")
@@ -78,11 +88,11 @@ async function runProc() {
     }
 }
 
-async function getShardNum() {
+async function startUp() {
     let child_count = await Discord.Util.fetchRecommendedShards(process.env.BOT_TOKEN)
     console.log(child_count)
     process.env.PROCESS_COUNT = child_count
     runProc()
 }
 
-getShardNum()
+startUp()

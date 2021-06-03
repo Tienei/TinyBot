@@ -1000,7 +1000,7 @@ async function map({message, embed_color, refresh, lang, prefix}) {
  * @param {{message: Message}} 
  */
 async function beatmap_link_detection({message, embed_color, refresh, lang, prefix}) {
-    let msg = message.content.toLowerCase()
+    let msg = message.cleanContent.toLowerCase()
     let command = msg.split(' ')[0]
     if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
         message.channel.send(error_report({type: 'custom', err_message: 'You need to wait 3 seconds before using this again!'}))
