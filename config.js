@@ -2,12 +2,13 @@ let config = {
     bot_ver: 'v5.0',
     bot_default_prefix: '!',
     debug: {
-        disable_osutrack: false,
-        dev_only: false,
-        disable_db_save: false,
-        cache: true,
-        ignore_server_prefix: false,
-        disable_server_count: false
+        cache:                  true,
+        dev_only:               false,
+        disable_data_db_load:   false,
+        disable_db_save:        false,
+        disable_osutrack:       false,
+        disable_server_count:   false,
+        ignore_server_prefix:   false,
     }
 }
 

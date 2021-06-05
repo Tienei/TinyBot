@@ -100,7 +100,8 @@ process.on("message",
                 for (let track of player) {
                     if (track.trackonchannel.length > 1) {
                         if (track.trackonchannel.find(channel => channel.id == channel_id)) {
-                            osu_track.find(pl => pl.name.toLowerCase() == track.name.toLowerCase()).trackonchannel.splice(track.trackonchannel.findIndex(channel => channel.id == channel_id), 1)
+                            osu_track.find(pl => pl.name.toLowerCase() == track.name.toLowerCase() && pl.type.toLowerCase() == check_type)
+                            .trackonchannel.splice(track.trackonchannel.findIndex(channel => channel.id == channel_id), 1);
                             if (!config.config.debug.disable_db_save) db.osu_track.findAndModify({query: {}, update: {'0': osu_track}}, function(){})
                             process.send({...message, send_type: 'database', value: {removed: true, proc_id: message.value.proc_id}})
                         } else {

@@ -102,18 +102,20 @@ DiscordCL.on("ready", () => {
     async function load_db() {
         try {
             console.log("Loading data")
-            // Get User data
-            let user_data = await new Promise(resolve => {
-                db.user_data_v5.find((err, docs) => resolve(docs[0]));
-            });
-            // Get server data
-            server_data = await new Promise(resolve => {
-                db.server_data.find((err, docs) => resolve(docs[0]));
-            });
-            let saved_map_id = await new Promise(resolve => {
-                db.saved_map_id.find((err, docs) => resolve(docs[0]['0']));
-            });
-            cmds.osu.push_db({user: user_data, saved_map_id: saved_map_id})
+            if (!config.config.debug.disable_data_db_load) {
+                // Get User data
+                let user_data = await new Promise(resolve => {
+                    db.user_data_v5.find((err, docs) => resolve(docs[0]));
+                });
+                // Get server data
+                server_data = await new Promise(resolve => {
+                    db.server_data.find((err, docs) => resolve(docs[0]));
+                });
+                let saved_map_id = await new Promise(resolve => {
+                    db.saved_map_id.find((err, docs) => resolve(docs[0]['0']));
+                });
+                cmds.osu.push_db({user: user_data, saved_map_id: saved_map_id})
+            }
             console.log("Done")
             loading -= 1
         } catch(err) {
@@ -282,6 +284,30 @@ DiscordCL.on("message", (message) => {
                 }
                 if (msg.startsWith(bot_prefix)) owner_cmd_list[command.substring(bot_prefix.length)]?.()
             }
+            // Mention bot
+            if (message?.mentions?.users?.find(u => u.id == DiscordCL.user.id)) {
+                let cmd = msg.split(' ')[1]
+                if (cmd == 'check_prefix') {
+                    message.channel.send(`Your current prefix in the server is: ${bot_prefix}`)
+                } else {
+                    let respone =  [`Yes? ${message.author.username} <:chinohappy:450684046129758208>`,
+                                `Why you keep pinging me?`,
+                                `Stop pinging me! <:chinoangry:450686707881213972>`,
+                                `What do you need senpai? <:chinohappy:450684046129758208>`,
+                                `<:chinopinged:450680698613792783>`,
+                                `Hewwo ${message.author.username}! <:chinohappy:450684046129758208>`,
+                                `Me is sleepy Zzz.........`,
+                                `Where is my senpai? :c`,
+                                `Me is busy working for ${DiscordCL.guilds.cache.size} servers right now`,
+                                `Poked you! :3`,
+                                `Me don't know what me is doing right now qwq`,
+                                `Me love my senpai`,
+                                `Please don't bully my senpai!`]
+                    let roll = Math.floor(Math.random()*respone.length)
+                    message.channel.send(respone[roll])
+                }
+            }
+    
         }
     } catch(err) {
         message.channel.send(error_report({type: 'normal', err_message: err.stack.toString()}))
