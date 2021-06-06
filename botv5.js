@@ -285,7 +285,7 @@ DiscordCL.on("message", (message) => {
                 if (msg.startsWith(bot_prefix)) owner_cmd_list[command.substring(bot_prefix.length)]?.()
             }
             // Mention bot
-            if (message?.mentions?.users?.find(u => u.id == DiscordCL.user.id)) {
+            if (msg.includes(`<@${DiscordCL.user.id}>`) == true || msg.includes(`<@!${DiscordCL.user.id}>`) == true) {
                 let cmd = msg.split(' ')[1]
                 if (cmd == 'check_prefix') {
                     message.channel.send(`Your current prefix in the server is: ${bot_prefix}`)
