@@ -1,5 +1,6 @@
 const { fork } = require('child_process');
 const Discord = require('discord.js-light')
+let starting = true;
 
 require('dotenv').config()
 
@@ -9,7 +10,8 @@ async function runProc() {
     for (let i = 0; i < process.env.PROCESS_COUNT; i++) {
         processes[i] = fork('./botv5.js', [], {env: {...process.env, PROCESS_ID: i}})
     }
-    
+
+    starting = false;
     // osutrack proc messages
     
     osutrack_proc.on("message", (message) => {
@@ -66,17 +68,20 @@ async function runProc() {
             }
         })
         child_proc.on("error", (err) => {
-            console.log("err", err)
-            console.log(`------------------------------------\n` +
-                        `Child Processes restarting!\n` + 
-                        `------------------------------------`)
-            for (let proc of processes) {
-                proc.kill('SIGINT')
+            if (!starting) {
+                starting = true;
+                console.log("err", err)
+                console.log(`------------------------------------\n` +
+                            `Child Processes restarting!\n` + 
+                            `------------------------------------`)
+                for (let proc of processes) {
+                    proc.kill('SIGINT')
+                }
+                osutrack_proc.kill('SIGINT')
+                setTimeout(() => {
+                    startUp()
+                }, 1000)
             }
-            osutrack_proc.kill('SIGINT')
-            setTimeout(() => {
-                startUp()
-            }, 25)
         })
         child_proc.on("close", (err) => {
             console.log("close")
