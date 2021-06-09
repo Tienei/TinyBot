@@ -68,23 +68,23 @@ async function runProc() {
             }
         })
         child_proc.on("error", (err) => {
+            console.log("err")
+        })
+        child_proc.on("close", (err) => {
+            console.log("close")
             if (!starting) {
                 starting = true;
-                console.log("err", err)
                 console.log(`------------------------------------\n` +
                             `Child Processes restarting!\n` + 
                             `------------------------------------`)
+                osutrack_proc.kill('SIGKILL')
                 for (let proc of processes) {
-                    proc.kill('SIGINT')
+                    proc.kill('SIGKILL')
                 }
-                osutrack_proc.kill('SIGINT')
                 setTimeout(() => {
                     startUp()
                 }, 1000)
             }
-        })
-        child_proc.on("close", (err) => {
-            console.log("close")
         })
         setTimeout(() => {
             console.log("ping")
