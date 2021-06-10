@@ -6,11 +6,16 @@ module.exports = async ({best, modenum}) => {
     try {
         let star_avg = 0, aim_avg = 0, speed_avg = 0, acc_avg = 0;
         let bpm_avg = 0, cs_avg = 0, ar_avg = 0, od_avg = 0, hp_avg = 0, timetotal_avg = 0, timedrain_avg = 0;
+        let calc_count = 50;
         let mod_avg = [];
         for (let i = 0; i < 50; i++) {
             let parser, map_info;
             if (modenum == 0) {
                 parser = await precalc({beatmap_id: best[i].beatmap_id})
+                if (parser.nline == 1) {
+                    calc_count--
+                    continue
+                }
                 map_info = std_pp_calc({parser: parser, mod_num: best[i].mod_num, mode: 'acc'})
                 let {hp, cs} = beatmap_detail({mod: best[i].mod_text, hp: parser.map.hp, cs: parser.map.cs})
                 // Calc skill
@@ -74,7 +79,8 @@ module.exports = async ({best, modenum}) => {
         }
         return {star_avg: star_avg, aim_avg: aim_avg, speed_avg: speed_avg*1.03, acc_avg: acc_avg, 
                 bpm_avg: bpm_avg, cs_avg: cs_avg, ar_avg: ar_avg, od_avg: od_avg, hp_avg: hp_avg, 
-                timetotal_avg: timetotal_avg, timedrain_avg: timedrain_avg, mod_avg: mod_avg}
+                timetotal_avg: timetotal_avg, timedrain_avg: timedrain_avg, mod_avg: mod_avg,
+                calc_count: calc_count}
     } catch (err) {
         console.log(err)
     }

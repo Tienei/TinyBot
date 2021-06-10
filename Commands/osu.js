@@ -118,7 +118,8 @@ async function osu_ts({message, embed_color, refresh, name, mode, skill, skill_n
         throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
     }
     let msg1 = await message.channel.send('Calculating skills...')
-    await fx.osu.calc_player_skill({best: best, modenum: modenum})
+    let {calc_count} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
+    best = best.filter(a => a[skill])
     best.sort((a,b) => b[skill] - a[skill])
     // Page function
     async function load_page({page}) {
@@ -133,6 +134,9 @@ ${best[i].rank_icon} *${best[i].diff}* ◆ **Acc:** ${Number(best[i].acc).toFixe
         }
         return desc
     }
+
+    if (calc_count == 50) msg1.delete()
+    else msg1.edit(`**Some top play(s) have missing info, some numbers on the embed may not be accurate. Calculated top play: ${calc_count}/50**`);
     let {pfp_link} = fx.osu.get_profile_link({id: user.id, mode: mode, refresh: refresh})
     const embed = new MessageEmbed()
     .setAuthor(`osu!${modename} top ${skill_name} for: ${user.username}`)
@@ -275,7 +279,7 @@ async function osu({message, embed_color, refresh, a_mode, lang, prefix}) {
                 throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
             }
             let msg1 = await message.channel.send('Calculating skills...')
-            let {star_avg, aim_avg, speed_avg, acc_avg} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
+            let {star_avg, aim_avg, speed_avg, acc_avg, calc_count} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
             let field = []
             function textloading (skill) {
                 let text = ''
@@ -292,6 +296,9 @@ async function osu({message, embed_color, refresh, a_mode, lang, prefix}) {
             let {profile_link, pfp_link} = fx.osu.get_profile_link({id: user.id, refresh: refresh, mode: mode})
             let aim_field = 'Top aim skill:'
             if (modenum == 3) aim_field = 'Top finger control skill:'
+
+            if (calc_count == 50) msg1.delete()
+            else msg1.edit(`**Some top play(s) have missing info, some numbers on the embed may not be accurate. Calculated top play: ${calc_count}/50**`);
             const embed = new MessageEmbed()
             .setDescription(`${modeicon} **Osu!${modename} top skill for: [${user.username}](${profile_link})**`)
             .setThumbnail(pfp_link)
@@ -368,12 +375,12 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         }
         let msg1 = await message.channel.send('Calculating skills...');
         let {star_avg, aim_avg, speed_avg, acc_avg,
-            finger_control_avg} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
-        star_avg = Number(star_avg / 50)
-        aim_avg = Number(aim_avg / 50 * 100).toFixed(0)
-        speed_avg = Number(speed_avg / 50 * 100).toFixed(0)
-        acc_avg = Number(acc_avg / 50 * 100).toFixed(0)
-        finger_control_avg = Number(finger_control_avg/50 * 100).toFixed(0)
+            finger_control_avg, calc_count} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
+        star_avg = Number(star_avg / calc_count)
+        aim_avg = Number(aim_avg / calc_count * 100).toFixed(0)
+        speed_avg = Number(speed_avg / calc_count * 100).toFixed(0)
+        acc_avg = Number(acc_avg / calc_count * 100).toFixed(0)
+        finger_control_avg = Number(finger_control_avg/ calc_count * 100).toFixed(0)
         // Process image
         msg1.edit('Processing Image...')
         let card_name = ['common_osu', 'rare_osu', 'elite_osu', 'super_rare_osu', 'ultra_rare_osu', 'master_osu']
@@ -560,7 +567,8 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
             card.composite(starholder, 15, 556)
         }
         
-        msg1.edit('Done!')
+        if (calc_count == 50) msg1.delete()
+        else msg1.edit(`**Some top play(s) have missing info, some numbers on the card may not be accurate. Calculated top play: ${calc_count}/50**`);
         message.channel.send({
             files: [{
               attachment: await card.getBufferAsync(jimp.MIME_PNG),
