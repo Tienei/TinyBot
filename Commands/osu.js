@@ -1109,6 +1109,7 @@ async function osutrack({message, embed_color, refresh, lang, prefix}) {
     try {
         if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
             message.channel.send(error_report({type: 'custom', err_message: 'You need to have `Manage Channels` permission to set osutrack'}))
+            return;
         }
         let msg = message.content.toLowerCase();
         let command = msg.split(' ')[0]
@@ -1163,8 +1164,10 @@ async function osutrack({message, embed_color, refresh, lang, prefix}) {
  */
 async function untrack({message, embed_color, refresh, lang, prefix}) {
     try {
-        if (message.member.hasPermission("MANAGE_CHANNELS") == false)
+        if (message.member.hasPermission("MANAGE_CHANNELS") == false) {
             message.channel.send(error_report({type: 'custom', err_message: 'You need to have `Manage Channels` permission to untrack'}))
+            return;
+        }
         let msg = message.content.toLowerCase();
         let command = msg.split(' ')[0]
         if (fx.general.cmd_cooldown.cooldown[message.author.id] !== undefined && fx.general.cmd_cooldown.cooldown[message.author.id].indexOf(command) !== -1) {
