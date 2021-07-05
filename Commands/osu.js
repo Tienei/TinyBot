@@ -19,7 +19,8 @@ const db = mongojs(process.env.DB_URL, ["user_data_v5", "server_data", "saved_ma
 let user_data = {}
 let beatmapID_cache = []
 //
-const check_server_suffix = [{"suffix": "-akatsuki", "v_count": 0},
+const check_server_suffix = [{"suffix": "-bancho", "v_count": 0},
+                            {"suffix": "-akatsuki", "v_count": 0},
                             {"suffix": "-ripple", "v_count": 0},
                             {"suffix": "-gatari", "v_count": 0},
                             {"suffix": "-enjuu", "v_count": 0},
@@ -88,19 +89,14 @@ function push_db({user, saved_map_id}) {
     beatmapID_cache = saved_map_id
 }
 
-function set_mode({suffix, a_mode = undefined, default_a_mode = 'std', default_check_type = '-bancho', compare = false}) {
+function set_mode({suffix, a_mode = undefined, default_a_mode = 'std', default_check_type = 'bancho'}) {
     if (!a_mode) {
-        let a_mode_list = ['-std', '-taiko', '-ctb', '-mania', '-rx']
-        a_mode = a_mode_list.find(m => suffix[m])
-        a_mode = (a_mode) ? a_mode.slice(1) : default_a_mode
+        a_mode = check_mode_suffix.find(m => suffix?.[m.suffix])?.suffix
+        a_mode = (a_mode) ? a_mode.replace('-', '') : default_a_mode
     }
-    const server_list = ['-akatsuki', '-ripple', '-gatari', '-enjuu', '-horizon', '-ainu', '-datenshi', '-ezppfarm', '-kurikku']
-    let check_type = server_list.find(s => suffix[s])
-    check_type = (check_type) ? check_type : default_check_type
-    if (compare) return {check_type: check_type, a_mode: a_mode}
-    else {
-        return `${check_type.substring(1)}-${a_mode}`
-    }
+    let check_type = check_server_suffix.find(s => suffix?.[s.suffix])?.suffix
+    check_type = (check_type) ? check_type.replace('-', '') : default_check_type
+    return `${check_type}-${a_mode}`
 }
 
 /** 
@@ -296,9 +292,7 @@ async function osu({message, embed_color, refresh, a_mode, lang, prefix}) {
             let {profile_link, pfp_link} = fx.osu.get_profile_link({id: user.id, refresh: refresh, mode: mode})
             let aim_field = 'Top aim skill:'
             if (modenum == 3) aim_field = 'Top finger control skill:'
-
-            if (calc_count == 50) msg1.delete()
-            else msg1.edit(`**Some top play(s) have missing info, some numbers on the embed may not be accurate. Calculated top play: ${calc_count}/50**`);
+            if (calc_count !== 50) msg1.edit(`**Some top play(s) have missing info, some numbers on the embed may not be accurate. Calculated top play: ${calc_count}/50**`);
             const embed = new MessageEmbed()
             .setDescription(`${modeicon} **Osu!${modename} top skill for: [${user.username}](${profile_link})**`)
             .setThumbnail(pfp_link)
@@ -817,18 +811,15 @@ async function compare({message, embed_color, refresh, lang, prefix}) {
                                                                                     {"suffix": "-l", "v_count": 0},
                                                                                     ...check_mode_suffix,
                                                                                     ...check_server_suffix]})
-        let mode, beatmap_id;
         let beatmap_cache = beatmapID_cache.find(c => c.channel == message.channel.id)
         if (!beatmap_cache)  {
             message.channel.send(error_report({type: 'custom', err_message: "No play found in this channel"}))
             return;
         }
-        mode = beatmap_cache.mode
-        beatmap_id = beatmap_cache.beatmap_id
+        let beatmap_id = beatmap_cache.beatmap_id
         // Set the correct mode
-        let get_mode = set_mode({suffix: suffix, default_a_mode: null, default_check_type: null, compare: true})
-        mode = (get_mode.a_mode) ? `${mode.split('-')[0]}-${get_mode.a_mode}` : mode
-        mode = (get_mode.check_type) ? `${get_mode.check_type}-${mode.split('-')[1]}` : mode
+        let mode_type = beatmap_cache.mode.split("-")
+        let mode = set_mode({suffix: suffix, default_a_mode: mode_type[1], default_check_type: mode_type[0]})
         //
         let {modename, check_type, modenum} = fx.osu.get_mode_detail({mode: mode})
         let name = fx.osu.check_player({user_data: user_data, message: message, name: suffix.check, type: check_type,
