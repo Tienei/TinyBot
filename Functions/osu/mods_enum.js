@@ -49,7 +49,7 @@ module.exports = ({mod}) => {
             for (let i = 0; i < mod.length / 2; i++) {
                 let find_mod = numbermods.find(m => m.mod_text == mod.substr(i*2, 2))
                 mod_text += find_mod.mod_text
-                mod_num += find_mod.mod_bit
+                mod_num |= find_mod.mod_bit
             }
         }
     }
