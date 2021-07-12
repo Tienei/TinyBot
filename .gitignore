@@ -4,3 +4,4 @@ beatmap-cache
 .env
 package-lock.json
 .VSCodeCounter
+run.cmd

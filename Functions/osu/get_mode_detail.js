@@ -40,11 +40,11 @@ const modelist = [
 {modename: "Ainu CTB",        modenum: 2, a_mode: 'ctb'  , check_type: 'ainu'    , link: 'ainu.pw'},
 {modename: "Ainu Mania",      modenum: 3, a_mode: 'mania', check_type: 'ainu'    , link: 'ainu.pw'},
         // Datenshi
-{modename: "Datenshi",        modenum: 0, a_mode: 'std'  , check_type: 'datenshi', link: 'osu.troke.id'},
-{modename: "Datenshi Taiko",  modenum: 1, a_mode: 'taiko', check_type: 'datenshi', link: 'osu.troke.id'},
-{modename: "Datenshi CTB",    modenum: 2, a_mode: 'ctb'  , check_type: 'datenshi', link: 'osu.troke.id'},
-{modename: "Datenshi Mania",  modenum: 3, a_mode: 'mania', check_type: 'datenshi', link: 'osu.troke.id'},
-{modename: "Danteshi Relax",  modenum: 0, a_mode: 'rx'   , check_type: 'datenshi', link: 'osu.troke.id'},
+{modename: "Datenshi",        modenum: 0, a_mode: 'std'  , check_type: 'datenshi', link: 'osu.datenshi.pw'},
+{modename: "Datenshi Taiko",  modenum: 1, a_mode: 'taiko', check_type: 'datenshi', link: 'osu.datenshi.pw'},
+{modename: "Datenshi CTB",    modenum: 2, a_mode: 'ctb'  , check_type: 'datenshi', link: 'osu.datenshi.pw'},
+{modename: "Datenshi Mania",  modenum: 3, a_mode: 'mania', check_type: 'datenshi', link: 'osu.datenshi.pw'},
+{modename: "Danteshi Relax",  modenum: 0, a_mode: 'rx'   , check_type: 'datenshi', link: 'osu.datenshi.pw'},
         // EZPPFarm
 {modename: "EZPPFarm",        modenum: 0, a_mode: 'std'  , check_type: 'ezppfarm', link: 'ez-pp.farm'},
 {modename: "EZPPFarm Taiko",  modenum: 1, a_mode: 'taiko', check_type: 'ezppfarm', link: 'ez-pp.farm'},
