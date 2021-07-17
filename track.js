@@ -147,7 +147,7 @@ process.on("message",
 
 async function real_time_osu_track() {
     console.log('osutrack: Checking')
-    track_time = osu_track.length*0.15*1000
+    track_time = osu_track.length*0.175*1000
     for (let player of osu_track) {
         try {
             let modes = []
@@ -252,7 +252,7 @@ async function load_db() {
         db.osu_track.find((err, docs) => resolve(docs[0]['0']));
     });
     console.log('osu_track done')
-    track_time = osu_track.length*0.15*1000
+    track_time = osu_track.length*0.175*1000
     if (!config.config.debug.disable_osutrack) {
         startTracking()
     }
