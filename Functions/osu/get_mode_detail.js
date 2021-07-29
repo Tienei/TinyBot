@@ -1,4 +1,4 @@
-const get_icon = require('./icon_lib')
+const get_icon = require('../general/icon_lib')
 
 const modelist = [
         // Bancho

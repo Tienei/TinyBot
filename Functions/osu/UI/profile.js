@@ -1,5 +1,5 @@
 const get_profile_link = require('./../get_profile_link')
-const get_icon = require('./../icon_lib')
+const get_icon = require('./../../general/icon_lib')
 const { MessageEmbed } = require('discord.js-light')
 const getLocalText = require('../../../Lang/lang_handler')
 

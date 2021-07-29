@@ -4,7 +4,7 @@ class Profile {
     constructor({username, id, playcount, ranked_score, total_score, global_rank, country_rank,
                 level, pp, acc, count_ssh, count_ss, count_sh, count_s, count_a, online, supporter, playstyle, country_code,
                 rank_history, prev_username, cover_url, discord_tag}) {
-        const get_icon = require('../Functions/osu/icon_lib')
+        const get_icon = require('../Functions/general/icon_lib')
         this.username = username
         this.prev_username = prev_username?.length ? prev_username : []
         this.id = id
@@ -36,7 +36,7 @@ class Profile {
 class Score {
     constructor({top, beatmap_id, score, combo, count_50, count_100, count_300, count_miss, count_katu, count_geki,
                 perfect, mod_num, user_id, username, date, rank, pp, acc, acc_detail}) {
-        const get_icon = require('../Functions/osu/icon_lib')
+        const get_icon = require('../Functions/general/icon_lib')
         const get_mod_text = require('../Functions/osu/mods_enum')
         const time_ago = require('../Functions/osu/time_ago')
         // Score

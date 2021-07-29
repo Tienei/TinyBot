@@ -210,7 +210,7 @@ async function osu({message, embed_color, refresh, a_mode, lang, prefix}) {
             }
             let {pfp_link, profile_link} = fx.osu.get_profile_link({id: user.id, mode: mode, refresh: refresh})
             let localText = getLocalText({lang: lang}).osu.profile
-            let verified = (user.discord_tag == message.author.tag) ? fx.osu.get_icon({type: "osu_verified"}) : ''
+            let verified = (user.discord_tag == message.author.tag) ? fx.general.get_icon({type: "osu_verified"}) : ''
             let desc = `${modeicon}${verified} **Detailed statistic of [${user.username}](${profile_link})**`
             desc += (user.prev_username.length) ? `\n${localText.prev_username}: ${user.prev_username.join(', ')}` : ''
             desc += (user.playstyle.length) ? `\n${localText.play_style}: ${user.playstyle.join(', ')}` : ''
@@ -220,11 +220,11 @@ async function osu({message, embed_color, refresh, a_mode, lang, prefix}) {
             field1 += `**${localText.lvl}:** ${user.level}\n**${localText.acc}:** ${user.acc}%\n**${localText.play_count}:** ${user.playcount.toLocaleString('en')}\n`
             field1 += `**${localText.ranked_score}:** ${user.ranked_score.toLocaleString('en')} • **${localText.total_score}:** ${user.total_score.toLocaleString('en')}\n`
             let total_count_rank = user.count_ssh + user.count_ss + user.count_sh + user.count_s + user.count_a
-            field1 += `${fx.osu.get_icon({type: "rank_SSH"})}: ${user.count_ssh.toLocaleString('en')} (${(user.count_ssh/total_count_rank*100).toFixed(2)}%) • `
-            field1 += `${fx.osu.get_icon({type: "rank_SS"})}: ${user.count_ss.toLocaleString('en')} (${(user.count_ss/total_count_rank*100).toFixed(2)}%)\n`
-            field1 += `${fx.osu.get_icon({type: "rank_SH"})}: ${user.count_sh.toLocaleString('en')} (${(user.count_sh/total_count_rank*100).toFixed(2)}%) • `
-            field1 += `${fx.osu.get_icon({type: "rank_S"})}: ${user.count_s.toLocaleString('en')} (${(user.count_s/total_count_rank*100).toFixed(2)}%)\n`
-            field1 += `${fx.osu.get_icon({type: "rank_A"})}: ${user.count_a.toLocaleString('en')} (${(user.count_a/total_count_rank*100).toFixed(2)}%)`
+            field1 += `${fx.general.get_icon({type: "rank_SSH"})}: ${user.count_ssh.toLocaleString('en')} (${(user.count_ssh/total_count_rank*100).toFixed(2)}%) • `
+            field1 += `${fx.general.get_icon({type: "rank_SS"})}: ${user.count_ss.toLocaleString('en')} (${(user.count_ss/total_count_rank*100).toFixed(2)}%)\n`
+            field1 += `${fx.general.get_icon({type: "rank_SH"})}: ${user.count_sh.toLocaleString('en')} (${(user.count_sh/total_count_rank*100).toFixed(2)}%) • `
+            field1 += `${fx.general.get_icon({type: "rank_S"})}: ${user.count_s.toLocaleString('en')} (${(user.count_s/total_count_rank*100).toFixed(2)}%)\n`
+            field1 += `${fx.general.get_icon({type: "rank_A"})}: ${user.count_a.toLocaleString('en')} (${(user.count_a/total_count_rank*100).toFixed(2)}%)`
             // Rank history image
             const g_options = 
             {width: 800, height: 222, 

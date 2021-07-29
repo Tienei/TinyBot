@@ -6,7 +6,7 @@ const mania_pp_calc = require('./../PP_Calculation/mania_pp_calc')
 const { MessageEmbed } = require('discord.js-light') 
 const get_mode_detail = require('./../get_mode_detail')
 const beatmap_detail = require('./../beatmap_detail')
-const get_icon = require('./../icon_lib')
+const get_icon = require('./../../general/icon_lib')
 
 module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_color}) => {
     let {modenum} = get_mode_detail({mode: mode})
