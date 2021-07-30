@@ -63,6 +63,19 @@ module.exports = async ({name, mode, event = false, ver}) => {
                                 country_code: user.country.toLowerCase(),
                                 level: Number(user.stats[relax][a_mode].level).toFixed(2),
                                 acc: Number(user.stats[relax][a_mode].accuracy).toFixed(2),})
+        } else if (check_type == 'datenshi') {
+            let user_compact = await RippleAPI({endpoint: `/v1/users`, mode: mode, options: {name: name}})
+            let user = (a_mode == 'rx' && check_type !== 'ripple') 
+            ? await RippleAPI({endpoint: `/v1/users/rxfull`, mode: mode, options: {id: user_compact.id}})
+            : await RippleAPI({endpoint: `/v1/users/full`, mode: mode, options: {id: user_compact.id}});
+            if (!user) return null  
+            a_mode = (a_mode == 'rx') ? 'std' : a_mode
+            return new Profile({username: user.username, id: Number(user.id), playcount: Number(user[a_mode].playcount),
+                                ranked_score: Number(user[a_mode].ranked_score), total_score: Number(user[a_mode].total_score),
+                                pp: Number(user[a_mode].pp), global_rank: Number(user[a_mode].global_leaderboard_rank),
+                                country_rank: Number(user[a_mode].country_leaderboard_rank), 
+                                country_code: user.country.toLowerCase(), level: Number(user[a_mode].level).toFixed(2),
+                                acc: Number(user[a_mode].accuracy).toFixed(2)})
         } else {
             let ripple_relax = (a_mode == 'rx' && check_type == 'ripple') ? 1 : 0
             let user = (a_mode == 'rx' && check_type !== 'ripple') 
