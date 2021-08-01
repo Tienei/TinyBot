@@ -109,12 +109,16 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                         perfect: best[i].perfect, mod_num: mods_enum({mod: best[i].mods.join("")}).mod_num, 
                                         date: best[i].created_at, rank: best[i].rank, pp: best[i].pp, acc: acc, acc_detail: accdetail, 
                                         top: i+1, user_id: best[i].user_id})
-                    let bm = await precalc({beatmap_id: best[i].beatmap.id})
+                    let bm, fc = 0;
+                    if (modenum == 0) {
+                        let bm = await precalc({beatmap_id: best[i].beatmap.id})
+                        fc = bm.map.max_combo()
+                    }
                     let data = new Beatmap({title: best[i].beatmapset.title, creator: best[i].beatmapset.creator,
                                             diff: best[i].beatmap.version, source: best[i].beatmapset.source,
                                             artist: best[i].beatmapset.artist, bpm: best[i].beatmap.bpm,
                                             beatmapset_id: best[i].beatmapset.id,
-                                            fc: bm.map.max_combo(), star: best[i].beatmap.difficulty_rating,
+                                            fc: fc, star: best[i].beatmap.difficulty_rating,
                                             time_total: best[i].beatmap.total_length,
                                             time_drain: best[i].beatmap.hit_length, circle: best[i].beatmap.circles,
                                             slider: best[i].beatmap.count_sliders, spinner: best[i].beatmap.count_spinners,
