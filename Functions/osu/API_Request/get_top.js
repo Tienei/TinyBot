@@ -120,7 +120,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                             beatmapset_id: best[i].beatmapset.id,
                                             fc: fc, star: best[i].beatmap.difficulty_rating,
                                             time_total: best[i].beatmap.total_length,
-                                            time_drain: best[i].beatmap.hit_length, circle: best[i].beatmap.circles,
+                                            time_drain: best[i].beatmap.hit_length, circle: best[i].beatmap.count_circles,
                                             slider: best[i].beatmap.count_sliders, spinner: best[i].beatmap.count_spinners,
                                             a_mode: a_mode, ar: best[i].beatmap.ar, 
                                             hp: best[i].beatmap.drain, cs: best[i].beatmap.cs,
