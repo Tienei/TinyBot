@@ -5,7 +5,7 @@ module.exports = ({star, a_mode}) => {
     let diff = 1
     if (star >= 7 && star < 8) diff = 9
     else if (star >= 8) diff = 10
-    else {
+    else if (star >= 1.75 && star < 7) {
         diff += Math.ceil((star - 1.74999) / 0.75)
     }
     return get_icon({type: `diff_${a_mode}_${diff}`})
