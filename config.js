@@ -1,5 +1,5 @@
 let config = {
-    bot_ver: 'v5.0',
+    bot_ver: 'v5.1',
     bot_default_prefix: '!',
     debug: {
         cache:                  true,

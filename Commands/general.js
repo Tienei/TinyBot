@@ -92,6 +92,10 @@ Use External Emojis: ${compatibility[4]}`);
  */
 function bug_and_suggest({message, embed_color, type, lang}) {
     let msg = fx.general.check_suffix({check_msg: message.content, suffix: [{"suffix": undefined, "v_count": 0}]})
+    if (msg.check?.replace(" ", "") == "") {
+        message.channel.send("You need to type a suggestion/bug report!")
+        return
+    }
     process.send({send_type: 'all', cmd: 'bug_and_suggest', 
                 value: {
                     channel_id: message.channel.id, msg: msg.check, type: type,
@@ -121,26 +125,12 @@ ${text}: ${message.msg}`);
  */
 function changelog({message}) {
     let embed_color = (message.guild == null ? "#7f7fff": message.guild.me.displayColor)
-    let changes = [`\`Lunar New Year update:\`
-**[March 21st, 2021]**
-- Sharding implementation!
-- Updated \`osutrack\` UI
-- Changed \`osu -d\` UI
-- Added rank history graph in \`osu -d\`
-- Added support for 4 private servers: \`Datenshi\` \`EZPPFarm\` \`Kurikku\` \`Ainu\`
-- Added \`osu -aimts\` \`osu -speedts\`
-- \`osu -accts\`, \`osu -aimts\`, \`osu-speedts\` now support other modes
-- New osucard design!
-- \`osutop -p\`, \`osutop -page\` is now a concatenate suffix (More detail type \`!help osutop\`)
-- Changed \`osutop -p\` now convert automatically to a page when you give a larger range than 5
-- Changed \`osutop -s\` from searching beatmap title to play variable
-- \`recent -l\` now list the plays as pages
-- Removed commands: \`leaderboard\` \`topglobal\` \`topcountry\` \`acc\``,
-`**[March 30th, 2021]**
-- Fixed compare not responding when player doesn't have the plays
-- Reimproved error respond
-- Added \`osutop -c\`
-- Added hyperlinks on \`compare\` and \`map\``]
+    let changes = [`\`Performance and UI update:\`
+**[August 1st, 2021]**
+- Changed scores request from api v1 to api v2
+- Changed scores UI
+- Updated caching mechanism
+- Fixed empty message when doing report/suggestion`]
     function load_page({page}) {
         return changes[page-1]
     }

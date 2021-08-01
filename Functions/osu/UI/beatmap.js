@@ -6,10 +6,10 @@ const mania_pp_calc = require('./../PP_Calculation/mania_pp_calc')
 const { MessageEmbed } = require('discord.js-light') 
 const get_mode_detail = require('./../get_mode_detail')
 const beatmap_detail = require('./../beatmap_detail')
-const get_icon = require('./../../general/icon_lib')
+const get_diff_icon = require('../get_diff_icon')
 
 module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_color}) => {
-    let {modenum} = get_mode_detail({mode: mode})
+    let {modenum, a_mode} = get_mode_detail({mode: mode})
     let diffdetail = '', ppdetail = '', mapdetail = '';
     let star = (modenum !== 0) ? Number(map.star).toFixed(2) : 0
     let acc_calc_list = [95,97,99,100]
@@ -47,13 +47,7 @@ module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_col
         mapdetail = `**Keys:** ${cs} • **OD:** ${od} • **HP:** ${hp}`
         ppdetail = score_calc_list.map((v, i) => `**${score_text_list[i]}**-${Number(score_list[i]).toFixed(2)}pp`).join(' • ')
     }
-    let diff_icon = ''
-    if (star >= 6.5) diff_icon = get_icon({type: "diff_expert_plus"})
-    else if (star >= 5.3) diff_icon = get_icon({type: "diff_expert"})
-    else if (star >= 4) diff_icon = get_icon({type: "diff_insane"})
-    else if (star >= 2.7) diff_icon = get_icon({type: "diff_hard"})
-    else if (star >= 2) diff_icon = get_icon({type: "diff_normal"})
-    else diff_icon = get_icon({type: "diff_easy"})
+    let diff_icon = get_diff_icon({star: star, a_mode: a_mode})
     
     if (creator_user?.id == undefined) {
         creator_user = {

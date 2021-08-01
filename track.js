@@ -207,7 +207,7 @@ async function real_time_osu_track() {
                         pp = 'No PP'
                     }
                     best[i].addBeatmapInfo(beatmap)
-                    let desc = fx.osu.ui.score({...best[i], star: star, fcguess: fcguess, type: 'top', top: -1})
+                    let desc = fx.osu.ui.score({...best[i], star: star, fcguess: fcguess, type: 'top', top: -1, a_mode: a_mode})
                     desc = desc.substring(0, desc.length-1)
                     desc += `**#${player_mode_detail.lastrank} → #${user.global_rank} (:flag_${user.country_code}: : #${player_mode_detail.lastcountryrank} → #${user.country_rank})** | Total PP: **${user.pp}**`
                     for (let channel of player.trackonchannel) {
