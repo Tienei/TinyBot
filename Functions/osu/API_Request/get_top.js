@@ -80,7 +80,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
             } else if (ver == 2) {
                 let url_mode_list = ['osu', 'taiko', 'fruits', 'mania']
                 let user = await BanchoAPI({ver: 2, endpoint: `users/${name}/${url_mode_list[modenum]}`})
-                let best_param = {mode: url_mode_list[modenum], limit: limit}
+                let best_param = {mode: url_mode_list[modenum], limit: limit, include_fails: 1}
                 let best = await BanchoAPI({ver: 2, endpoint: `users/${user.id}/scores/${type}`, param: best_param})
                 for (let i = 0; i < best.length; i++) {
                     let count_300 = Number(best[i].statistics.count_300)

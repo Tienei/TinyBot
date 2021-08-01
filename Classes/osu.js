@@ -61,11 +61,7 @@ class Score {
         this.acc_detail = acc_detail
         this.rank_icon = get_icon({type: `rank_${rank}`})
         this.mod_text = get_mod_text({mod: this.mod_num}).mod_text
-        let destruct_date = this.date.split(" ")
-        destruct_date.splice(1, 0, "T")
-        destruct_date.push(".000Z")
-        destruct_date = destruct_date.join("")
-        this.time_ago = time_ago({time: destruct_date})
+        this.time_ago = time_ago({time: date})
     }
     addBeatmapInfo({title, creator, diff, source, artist, bpm, beatmapset_id, fc, star, time_total, time_drain,
                     circle, spinner, slider, od, ar, hp, cs}) {
