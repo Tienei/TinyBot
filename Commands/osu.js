@@ -379,76 +379,57 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         msg1.edit('Processing Image...')
         let card_name = ['common_osu', 'rare_osu', 'elite_osu', 'super_rare_osu', 'ultra_rare_osu', 'master_osu']
         let get_card_name = Number(acc_avg >= 300) + Number(acc_avg >= 525) + Number(acc_avg >= 700) + Number(acc_avg >= 825) + Number(acc_avg >= 900)
-        let card;
+        //
+        let card =  await jimp.read(`./osu_card/card/${card_name[get_card_name]}.png`)
+        let fullstar = await jimp.read('./osu_card/star/full_star.png')
+        let halfstar = await jimp.read('./osu_card/star/half_star.png');
         // Special card
-        let special;
-        if (modenum == 0 && check_type == "bancho") {
-            let s_player = [39828, 50265, 2558286, 5339515, 4650315]
-            for (let i in s_player) {
-                if (user.id == s_player[i]) {
-                    special = 'normal'
-                    card = await jimp.read('./osu_card/card/legendary_osu.png')
-                    star_avg = 10
-                    break
-                }
-                if (user.id == 4504101) {
-                    special = 'whitecat'
-                    card = await jimp.read('./osu_card/card/legendary_osu_whitecat.png')
-                    star_avg = 10
-                    break
-                }
-                if (user.id == 124493) {
-                    special = 'cookiezi'
-                    card = await jimp.read('./osu_card/card/legendary_osu_cookiezi.png')
-                    star_avg = 10
-                    break
-                }
-                if (user.id == 6447454) {
-                    special = 'merami'
-                    card = await jimp.read('./osu_card/card/legendary_osu_merami.png')
-                    star_avg = 10
-                    break
-                }
-                if (user.id == 2611813) {
-                    special = 'lunpai'
-                    card = await jimp.read('./osu_card/card/lunpai.png')
-                    break
-                }
-                if (user.id == 7464885) {
-                    special = 'celsea'
-                    card = await jimp.read('./osu_card/card/rin.png')
-                    break
-                }
-                if (user.id == 7990747) {
-                    special = 'aika_asphyxia'
-                    card = await jimp.read('./osu_card/card/aika_asphyxia.png')
-                }
-                if (user.id == 8926244) {
-                    special = 'kahli'
-                    card = await jimp.read('./osu_card/card/kahli.png')
-                }
+        let special_plr, card_check = false;
+        let special_info = [{'id': '124493',    'mode': 'std',      'name': 'cookiezi',         'card': true, 'star': 'chocomint'},
+                            {'id': '7990747',   'mode': 'std',      'name': 'aika_asphyxia',    'card': true, 'star': 'diamond'},
+                            {'id': '8926244',   'mode': 'std',      'name': 'kahli',            'card': true, 'star': 'shooting_star'},
+                            {'id': '2611813',   'mode': 'std',      'name': 'lunpai',           'card': true, 'star': 'paw'},
+                            {'id': '4504101',   'mode': 'std',      'name': 'whitecat',         'card': true},
+                            {'id': '6447454',   'mode': 'std',      'name': 'aetrna',           'card': true},
+                            {'id': '7464885',   'mode': 'std',      'name': 'celsea',           'card': true},
+                            {'id': '39828',     'mode': 'std',      'name': 'www',              'card': true},
+                            {'id': '50265',     'mode': 'std',      'name': 'hvick'},
+                            {'id': '2558286',   'mode': 'std',      'name': 'rafis'},
+                            {'id': '5339515',   'mode': 'std',      'name': 'mathi'},
+                            {'id': '4650315',   'mode': 'std',      'name': 'idke'},
+                            {'id': '58710',     'mode': 'std',      'name': 'h1ko'},
+                            {'id': '211278',    'mode': 'std',      'name': 'flute'},
+                            {'id': '352328',    'mode': 'std',      'name': 'rrtyui'},
+                            {'id': '713266',    'mode': 'std',      'name': 'sayonara-bye'},
+                            {'id': '4787150',   'mode': 'std',      'name': 'vaxei'},
+                            {'id': '7562902',   'mode': 'std',      'name': 'mrekk'},
+                            {'id': '2774767',   'mode': 'taiko',    'name': 'tasuke912'},
+                            {'id': '6170507',   'mode': 'taiko',    'name': '_yu68'},
+                            {'id': '11199742',  'mode': 'taiko',    'name': 'nameless_ll'},
+                            {'id': '983349',    'mode': 'taiko',    'name': 'applerss'},
+                            {'id': '214187',    'mode': 'ctb'  ,    'name': 'exgon'},
+                            {'id': '533210',    'mode': 'ctb'  ,    'name': 'dusk'},
+                            {'id': '3885626',   'mode': 'ctb'  ,    'name': 'motion'},
+                            {'id': '4447639',   'mode': 'ctb'  ,    'name': 'irregularity'},
+                            {'id': '140148',    'mode': 'mania',    'name': 'jhlee0133'},
+                            {'id': '259972',    'mode': 'mania',    'name': 'jakads'},]
+        let check_plr = special_info.find(p => p.id == user.id && p.mode == a_mode)
+        if (check_plr) {
+            special_plr = check_plr.name
+            if (check_plr?.card) {
+                card_check = true
+                card = await jimp.read(`./osu_card/card/${check_plr.id}.png`)
+            } else {
+                card = await jimp.read('./osu_card/card/legendary_osu.png')
             }
-            if (special) {
-                let multiplier = [1, 1.025, 1.05, 1.075]
-                let player_id = [{id: '124493', skill_mul: [3,3,3]}, {id: '39828', skill_mul: [3,1,2]}, 
-                                {id: '50265', skill_mul: [2,2,3]}, {id: '2558286', skill_mul: [2,2,1]}, 
-                                {id: '5339515', skill_mul: [2,2,1]}, {id: '4650315', skill_mul: [2,2,3]},
-                                {id: '4504101', skill_mul: [3,1,1]}, {id: '6447454', skill_mul: [1,3,1]},
-                                {id: '2611813', skill_mul: [0,0,0]}, {id: '7464885', skill_mul: [0,0,0]},
-                                {id: '7990747', skill_mul: [0,0,0]}, {id: '8926244', skill_mul: [0,0,0]}]
-                // Cookiezi, WWW, hvick, Rafis, Mathi, idke, WhiteCar, Merami. Skill_mul order: aim, speed, acc
-                let player = player_id.find(p => p.id == user.id)
-                aim_avg *= multiplier[player.skill_mul[0]]
-                speed_avg *= multiplier[player.skill_mul[1]]
-                acc_avg *= multiplier[player.skill_mul[2]]
-                aim_avg = aim_avg.toFixed(0)
-                speed_avg = speed_avg.toFixed(0)
-                acc_avg = acc_avg.toFixed(0)
+            if (check_plr?.star) {
+                fullstar = await jimp.read(`./osu_card/star/full_${check_plr.star}.png`)
+                halfstar = await jimp.read(`./osu_card/star/half_${check_plr.star}.png`)
             }
         }
-        if (card == undefined) card = await jimp.read(`./osu_card/card/${card_name[get_card_name]}.png`);
+        //
         let {pfp_link} = fx.osu.get_profile_link({id: user.id, refresh: refresh, mode: mode})
-        if (special == "lunpai") pfp_link = "https://i.imgur.com/3epazAt.png";
+        if (special_plr == "lunpai") pfp_link = "https://i.imgur.com/3epazAt.png";
         let pfp = await jimp.read(pfp_link)
         pfp.resize(320,320)
         card.composite(pfp, 40,110)
@@ -460,7 +441,7 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         card.composite(mode_icon, 20, 20)
         // Get username
         let name_color = 'white'
-        if (special == 'whitecat') {
+        if (special_plr == 'whitecat') {
             name_color = '#D19D23'
         }
         let local_font = {localFontPath: './font/Somatic.otf', localFontName: 'Somatic'}
@@ -498,15 +479,11 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         let {skillname, skillnumber, stat_number_x} = card_stat()
         let stat_color = 'white'
         let stat_shadow = {size: 1, opacity: 0.35, x: 2, y: 2, blur: 1}
-        if (special == 'kahli') {
+        if (special_plr == 'kahli') {
             stat_color = '#e0ffff'
             stat_shadow.opacity = 0.75
         }
         let text_line_spacing = 8
-        let special_except = ["lunpai", "celsea", "aika_asphyxia", "kahli"]
-        if (special && !special_except.includes(special)) {
-            skillnumber = `${aim_avg}+\n${speed_avg}+\n${acc_avg}+`
-        }
         let stattext = await jimp.read(text2png(skillname, {
             color: stat_color,
             font: '28px Somatic',
@@ -526,23 +503,6 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         statnumber_cv.composite(statnumber, 0, 0).shadow(stat_shadow)
         card.composite(statnumber_cv, stat_number_x, 444)
         // Star
-        let fullstar, halfstar;
-        if (special == "lunpai") {
-            fullstar = await jimp.read('./osu_card/full_paw.png')   
-            halfstar = await jimp.read('./osu_card/half_paw.png')
-        } else if (special == "cookiezi") {
-            fullstar = await jimp.read('./osu_card/full_chocomint.png')
-            halfstar = await jimp.read('./osu_card/half_chocomint.png')
-        } else if (special == "aika_asphyxia") {
-            fullstar = await jimp.read('./osu_card/aika_asphyxia_full_star.png')
-            halfstar = await jimp.read('./osu_card/aika_asphyxia_half_star.png')
-        } else if (special == "kahli") {
-            fullstar = await jimp.read('./osu_card/full_shooting_star.png')
-            halfstar = await jimp.read('./osu_card/half_shooting_star.png')
-        } else {
-            fullstar = await jimp.read('./osu_card/full_star.png')
-            halfstar = await jimp.read('./osu_card/half_star.png')
-        }
         let star_width = 32
         let width = (Math.floor(star_avg) + ((star_avg % 1) >= 0.5 ? 1 : 0)) * star_width + 2
         let starholder = await new jimp(width, 33, 0x00000000)
@@ -553,7 +513,7 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
                 starholder.composite(fullstar, i*star_width, 0)
             }
         }
-        if (special == undefined || special == 'normal') {
+        if (special_plr == undefined || !card_check) {
             starholder.contain(400,33, jimp.HORIZONTAL_ALIGN_CENTER)
             card.composite(starholder, 10, 551)
         } else {
