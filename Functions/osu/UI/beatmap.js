@@ -32,6 +32,7 @@ module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_col
     if ((mod_num & 64) == 64 || (mod_num & 512) == 512) {
         star *= (a_mode == 'taiko') ? 1.3 : (a_mode == 'ctb' || a_mode == 'mania') ? 1.4 : 1
     }
+    star = star.toFixed(2)
     //
     let {cs, ar, od , hp, bpm, time_total} = detail
     let time = `${Math.floor(time_total / 60)}:${('0' + (time_total - Math.floor(time_total / 60) * 60)).slice(-2)}`
