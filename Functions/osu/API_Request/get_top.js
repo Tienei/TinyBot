@@ -242,7 +242,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                     star = beatmap.difficulty2[a_mode]
                 }
                 let song_name = beatmap.song_name
-                let title = song_name.split(' -')[1]
+                let title = song_name.split(' -')[1].split(' [')[0]
                 let artist = song_name.split(' -')[0]
                 let diff = song_name.match(/\[(.*?)\]/)[1]
                 let data = new Beatmap({beatmapset_id: beatmap.beatmapset_id, title: title, artist: artist, diff: diff,
