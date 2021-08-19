@@ -130,8 +130,8 @@ async function tenor({message, search, action, alone_action}) {
         let text = ''
         let suffix = fx.general.check_suffix({check_msg: msg, two_arg: false, suffix: [{"suffix": undefined, "v_count": 0}]})
         let user = suffix.check.replace(/[<@>]/gm, '')
-        if ((user == null || user == message.author.id) || (action == undefined)) {
-            text = aloneaction
+        if ((user == '' || user == message.author.id) || (action == undefined)) {
+            text = alone_action
         } else {
             text = `<@${user}>, ${action} <@${message.author.id}>`
         }

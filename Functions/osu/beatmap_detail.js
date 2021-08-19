@@ -1,14 +1,12 @@
-module.exports = ({mod,time_total,time_drain,bpm,cs,ar,od,hp}) => {
-    let mods = []
-    mod = mod.replace('+', '').toUpperCase()
-    for (let i = 0; i < mod.length; i+=2) {
-        mods.push(mod.substr(i,2))
-    }
+const get_mode_detail = require('./get_mode_detail')
+
+module.exports = ({mod_num, mode, time_total,time_drain,bpm,cs,ar,od,hp}) => {
+    let {modenum} = get_mode_detail({mode})
     function EZ() {
         cs /= 2; ar /= 2; od /= 2; hp /= 2;
     }
     function HR() {
-        cs *= 1.3; ar *= 1.4; od *= 1.4; hp *=  1.4;
+        cs *= 1.3; ar *= 1.4; od *= 1.4; hp *= 1.4;
         ar = (ar > 10) ? 10 : ar
         od = (od > 10) ? 10 : od
         hp = (hp > 10) ? 10 : hp
@@ -17,25 +15,34 @@ module.exports = ({mod,time_total,time_drain,bpm,cs,ar,od,hp}) => {
         bpm = bpm / 1.33
         time_total *= 1.5
         time_drain *= 1.5
-        let arms = (ar < 6) ? 1600 + ((5 - ar) * 160) : 1600 - ((ar - 5) * 200)
-        ar = (arms <= 1200) ? 5 + ((1200 - arms) / 150) : 5 - ((1200 - arms) / 120)
-        let odms = 106 - (od * 8)
-        od = (79.5 - odms) / 6
+        if (modenum == 0 || modenum == 2) {
+            let arms = (ar < 6) ? 1600 + ((5 - ar) * 160) : 1600 - ((ar - 5) * 200)
+            ar = (arms <= 1200) ? 5 + ((1200 - arms) / 150) : 5 - ((1200 - arms) / 120)
+            let odms = 106 - (od * 8)
+            od = (79.5 - odms) / 6
+        } else if (modenum == 1) {
+            let odms = 66.66 - (od * 4)
+            od = (49.5 - odms) / 3
+        }
     }
     function DT() {
         bpm *= 1.5
         time_total /= 1.5
         time_drain /= 1.5
-        let arms = (ar < 6) ? 800 + ((5 - ar) * 80) : 800 - ((ar - 5) * 100)
-        ar = (arms <= 1200) ? 5 + ((1200 - arms) / 150) : 5 - ((1200 - arms) / 120)
-        let odms = 53 - (od * 4)
-        od = (79.5 - odms) / 6
-        hp *= 1.4
+        if (modenum == 0 || modenum == 2) {
+            let arms = (ar < 6) ? 800 + ((5 - ar) * 80) : 800 - ((ar - 5) * 100)
+            ar = (arms <= 1200) ? 5 + ((1200 - arms) / 150) : 5 - ((1200 - arms) / 120)
+            let odms = 53 - (od * 4)
+            od = (79.5 - odms) / 6
+        } else if (modenum == 1) {
+            let odms = 33.33 - (od * 2)
+            od = (49.5 - odms) / 3
+        }
     }
-    if (mods.includes('EZ'))                        EZ();
-    if (mods.includes('HR'))                        HR();
-    if (mods.includes('HT'))                        HT();
-    if (mods.includes('DT') || mods.includes('NC')) DT();
+    if ((mod_num & 64) == 64 || (mod_num & 512) == 512)     DT();
+    if ((mod_num & 2) == 2)                                 EZ();
+    if ((mod_num & 16) == 16)                               HR();
+    if ((mod_num & 256) == 256)                             HT();
     ar = (ar > 11) ? 11 : ar
     od = (od > 11) ? 11 : od
     hp = (hp > 11) ? 11 : hp

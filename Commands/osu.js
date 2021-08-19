@@ -103,7 +103,7 @@ function set_mode({suffix, a_mode = undefined, default_a_mode = 'std', default_c
  * @param {{message: Message}} 
  */
 async function osu_ts({message, embed_color, refresh, name, mode, skill, skill_name}) {
-    let {modename, modenum} = fx.osu.get_mode_detail({mode: mode})
+    let {modename} = fx.osu.get_mode_detail({mode: mode})
     let user = await fx.osu.api.get_profile({name: name, mode: mode, ver: 1})
     if (!user) {
         message.channel.send(error_report({type: 'custom', err_message: errorLocalText.osu.player_null}))
@@ -114,7 +114,7 @@ async function osu_ts({message, embed_color, refresh, name, mode, skill, skill_n
         throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
     }
     let msg1 = await message.channel.send('Calculating skills...')
-    let {calc_count} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
+    let {calc_count} = await fx.osu.calc_player_skill({best: best, mode: mode})
     best = best.filter(a => a[skill])
     best.sort((a,b) => b[skill] - a[skill])
     // Page function
@@ -123,7 +123,7 @@ async function osu_ts({message, embed_color, refresh, name, mode, skill, skill_n
         let start = (page - 1) * 5
         for (let i = start; i < start + 5; i++) {
             if (!best[i]) break
-            let overlay = `${i+1}. **[${best[i].title}](https://osu.ppy.sh/b/${best[i].id})** (${Number(best[i].star_skill).toFixed(2)}★) ${best[i].mod_text}
+            let overlay = `${i+1}. **[${best[i].title}](https://osu.ppy.sh/b/${best[i].beatmap_id})** (${Number(best[i].star_skill).toFixed(2)}★) ${best[i].mod_text}
 ${best[i].rank_icon} *${best[i].diff}* ◆ **Acc:** ${Number(best[i].acc).toFixed(2)}%
 \`${skill_name.charAt(0).toUpperCase() + skill_name.slice(1)}: ${Number(best[i][skill]).toFixed(2)}★\`\n\n`
             desc += overlay
@@ -369,7 +369,7 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         }
         let msg1 = await message.channel.send('Calculating skills...');
         let {star_avg, aim_avg, speed_avg, acc_avg,
-            finger_control_avg, calc_count} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
+            finger_control_avg, calc_count} = await fx.osu.calc_player_skill({best: best, mode: mode})
         star_avg = Number(star_avg / calc_count)
         aim_avg = Number(aim_avg / calc_count * 100).toFixed(0)
         speed_avg = Number(speed_avg / calc_count * 100).toFixed(0)
@@ -575,17 +575,17 @@ async function osutop({message, embed_color, refresh, a_mode, lang, prefix}) {
         let best = []
         let display_top = [0, 5]
         if (suffix["-r"]) {
-            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: true, type: 'best', ver: 2})
+            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: false, type: 'best', ver: 2})
             best = best.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             embed_title = `Top osu!${modename} recent plays for ${user.username}`
         } else if (suffix["-m"]) {
             let mod = fx.osu.mods_enum({mod: suffix["-m"][0]})
-            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: true, type: 'best', ver: 2})
+            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: false, type: 'best', ver: 2})
             best = best.filter(b => b.mod_num == mod.mod_num).sort((a,b) => b.pp - a.pp)
             embed_title = `Top osu!${modename} ${mod.mod_text.substr(1)} plays for ${user.username}`
         } else if (suffix["-g"]) {
             let g_pp = suffix["-g"][0]
-            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: true, type: 'best', ver: 2})
+            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: false, type: 'best', ver: 2})
             best = best.filter(b => b.pp >= g_pp)
             message.channel.send(`${user.username} has **${best.length}** play(s) above ${g_pp}pp`)
             return
@@ -602,19 +602,19 @@ async function osutop({message, embed_color, refresh, a_mode, lang, prefix}) {
             }
             embed_title = `Top osu!${modename} "${map_name}" map plays for ${user.username}`
         } else if (suffix["-a"]) {
-            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: true, type: 'best', ver: 2})
+            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: false, type: 'best', ver: 2})
             best.sort(function (a,b) {
                 return b.acc - a.acc
             })
             embed_title = `Top osu!${modename} accuracy plays for ${user.username}`
         } else if (suffix["-c"]) {
-            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: true, type: 'best', ver: 2})
+            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: false, type: 'best', ver: 2})
             best.sort(function (a,b) {
                 return b.combo - a.combo
             })
             embed_title = `Top osu!${modename} combo plays for ${user.username}`
         } else {
-            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: true, type: 'best', ver: 2})
+            best = await fx.osu.api.get_top({name: name, mode: mode, limit: 100, no_bm: false, type: 'best', ver: 2})
         }
         if (suffix["-p"]) {
             let p_value = suffix["-p"][0]?.split('-').map(num => Number(num)).sort((a,b) => a - b)
@@ -841,7 +841,7 @@ async function scores({message, embed_color, refresh, lang, prefix}) {
             return;
         }
         fx.general.cmd_cooldown.set({message: message, cmd: command, time: 3000})
-        let beatmap_id, mode = "Bancho-";
+        let beatmap_id, mode = "bancho-";
         if (msg.includes("https://osu.ppy.sh/b/")) {
             let a_mode_list = ['std', 'taiko', 'ctb', 'mania']
             let args = msg.split('/')[4].split(' ')[0].split('?')
@@ -949,7 +949,7 @@ async function map({message, embed_color, refresh, lang, prefix}) {
             let map = await fx.osu.api.get_beatmap({beatmap_id: beatmap_id, limit: 1, mode: mode})
             let creator_user = await fx.osu.api.get_profile({name: map[0].creator, mode: mode, ver: 1})
             let parser = (modenum == 0) ? await fx.osu.precalc({beatmap_id: beatmap_id}) : ''
-            let embed = fx.osu.ui.beatmap({map: map[0], parser: parser, mode: mode, mod_num: mod_num, mod_text: mod_text, 
+            let embed = fx.osu.ui.beatmap({map: map[0], parser: parser, mode: mode, mod_num: mod_num, mod_text: mod_text,
                                             creator_user: creator_user, embed_color: embed_color})
             message.channel.send({embed});
         }
@@ -993,7 +993,7 @@ async function beatmap_link_detection({message, embed_color, refresh, lang, pref
     let map = await fx.osu.api.get_beatmap({beatmap_id: beatmap_id, limit: 1, mode: mode})
     let creator_user = await fx.osu.api.get_profile({name: map[0].creator, mode: mode, ver: 1})
     let parser = (modenum == 0) ? await fx.osu.precalc({beatmap_id: beatmap_id}) : ''
-    let embed = fx.osu.ui.beatmap({map: map[0], parser: parser, mode: mode, mod_num: mod_num, mod_text: mod_text, 
+    let embed = fx.osu.ui.beatmap({map: map[0], parser: parser, mode: mode, mod_num: mod_num, mod_text: mod_text,
                                     creator_user: creator_user, embed_color: embed_color})
     message.channel.send({embed});
 }

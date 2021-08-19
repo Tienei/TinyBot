@@ -5,6 +5,7 @@ const get_mode_detail = require('../get_mode_detail')
 const superagent = require('superagent')
 const precalc = require('../PP_Calculation/precalc')
 const mods_enum = require('../mods_enum')
+const calc = require('ojsama')
 
 module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
     try {
@@ -38,11 +39,15 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                         acc = Number((50 * count_50 + 100 * count_100 + 200 * count_katu + 300 * (count_300 + count_geki)) / (300 * (count_miss + count_50 + count_100 + count_katu + count_300 + count_geki)) * 100)
                         accdetail = `[ ${count_geki} • ${count_300} • ${count_katu} • ${count_100} • ${count_50} • ${count_miss} ]`
                     }
+                    let destruct_date = best[i].date.split(" ")
+                    destruct_date.splice(1, 0, "T")
+                    destruct_date.push(".000Z")
+                    destruct_date = destruct_date.join("")
                     top[i] = new Score({beatmap_id: best[i].beatmap_id, score: best[i].score, combo: best[i].maxcombo,
                                     count_50: count_50, count_100: count_100, count_300: count_300,
                                     count_miss: count_miss, count_katu: count_katu, count_geki: count_geki,
                                     perfect: best[i].perfect, mod_num: best[i].enabled_mods, user_id: best[i].user_id,
-                                    date: best[i].date, rank: best[i].rank, pp: best[i].pp, acc: acc, acc_detail: accdetail, 
+                                    date: destruct_date, rank: best[i].rank, pp: best[i].pp, acc: acc, acc_detail: accdetail, 
                                     top: i+1})
                 }
                 if (!no_bm) {
@@ -111,7 +116,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                         top: i+1, user_id: best[i].user_id})
                     let bm, fc = 0;
                     if (modenum == 0) {
-                        let bm = await precalc({beatmap_id: best[i].beatmap.id})
+                        bm = await precalc({beatmap_id: best[i].beatmap.id})
                         fc = bm.map.max_combo()
                     }
                     let data = new Beatmap({title: best[i].beatmapset.title, creator: best[i].beatmapset.creator,
@@ -125,7 +130,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                             a_mode: a_mode, ar: best[i].beatmap.ar, 
                                             hp: best[i].beatmap.drain, cs: best[i].beatmap.cs,
                                             od: best[i].beatmap.accuracy})
-                    top[i].addBeatmapInfo(data)
+                    top[i].addBeatmapInfo({...data, mode: mode, mod_num: top[i].mod_num})
                 }
             }
         } else if (check_type == 'gatari') {
@@ -228,20 +233,28 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                     mod_num: best.scores[i].mods, user_id: user.id, date: best.scores[i].time,
                                     rank: best.scores[i].rank, pp: Number(best.scores[i].pp), acc: acc,
                                     acc_detail: accdetail, top: i+1})
-            }
-            if (!no_bm) {
-                let beatmaps = top.map(sc => {return RippleAPI({endpoint: `/get_beatmaps`, mode: mode, options: {b: sc.beatmap_id}})})
-                beatmaps = await Promise.all(beatmaps)
-                for (let i = 0; i < top.length; i++) {
-                    let data = new Beatmap({beatmapset_id: beatmaps[i][0].beatmapset_id, title: beatmaps[i][0].title, 
-                                            artist: beatmaps[i][0].artist, bpm: Number(beatmaps[i][0].bpm),
-                                            time_drain: Number(beatmaps[i][0].hit_length),
-                                            time_total: Number(beatmaps[i][0].total_length),
-                                            fc: Number(beatmaps[i][0].max_combo), cs: Number(beatmaps[i][0].diff_size),
-                                            od: Number(beatmaps[i][0].diff_overall), ar: Number(beatmaps[i][0].diff_approach),
-                                            hp: Number(beatmaps[i][0].diff_drain), diff: beatmaps[i][0].version})  
-                    top[i].addBeatmapInfo(data)
+                let bm, cs=0, hp=0, star=0;
+                let beatmap = best.scores[i].beatmap
+                if (modenum == 0) {
+                    bm = await precalc({beatmap_id: beatmap.beatmap_id})
+                    cs = bm.map.cs
+                    hp = bm.map.hp
+                    try {
+                        star = new calc.diff().calc({map: bm.map, mods: top[i].mod_num}).total
+                    } catch (err) {}
+                } else {
+                    star = beatmap.difficulty2[a_mode]
                 }
+                let song_name = beatmap.song_name
+                let title = song_name.split(' -')[0]
+                let artist = song_name.split(' -')[0]
+                let diff = song_name.match(/\[(.*?)\]/)[1]
+                let data = new Beatmap({beatmapset_id: beatmap.beatmapset_id, title: title, artist: artist, diff: diff,
+                                        time_drain: Number(beatmap.hit_length), fc: Number(beatmap.max_combo), 
+                                        od: Number(beatmap.diff_overall), ar: Number(beatmap.diff_approach),
+                                        cs: Number(cs), hp: Number(hp),
+                                        star: Number(star)})  
+                top[i].addBeatmapInfo({...data, mode: mode, mod_num: top[i].mod_num})
             }
         } 
         return top

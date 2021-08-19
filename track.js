@@ -184,7 +184,7 @@ async function real_time_osu_track() {
                 let mode = m.mode
                 let limit = m.limit
                 let player_mode_detail = player.modedetail.find(m => m.mode == mode)
-                let {modename, check_type, modenum, a_mode} = fx.osu.get_mode_detail({mode})
+                let {modename, check_type, modenum, a_mode} = fx.osu.get_mode_detail({mode: mode})
                 let best = await fx.osu.api.get_top({name: player.name, mode: mode, limit: limit, type: 'best', no_bm: true})
                 best = best.filter(b => new Date(b.date).getTime() > new Date(player.recenttimeplay).getTime())
                 best.sort(function(a,b) {return new Date(a.date).getTime()-new Date(b.date).getTime()})
@@ -206,7 +206,7 @@ async function real_time_osu_track() {
                     if (best[i].letter == 'F') {
                         pp = 'No PP'
                     }
-                    best[i].addBeatmapInfo(beatmap)
+                    best[i].addBeatmapInfo({...beatmap, mode: mode, mod_num: best[i].mod_num})
                     let desc = fx.osu.ui.score({...best[i], star: star, fcguess: fcguess, type: 'top', top: -1, a_mode: a_mode})
                     desc = desc.substring(0, desc.length-1)
                     desc += `**#${player_mode_detail.lastrank} → #${user.global_rank} (:flag_${user.country_code}: : #${player_mode_detail.lastcountryrank} → #${user.country_rank})** | Total PP: **${user.pp}**`

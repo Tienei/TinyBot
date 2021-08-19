@@ -1,9 +1,10 @@
-const beatmap_detail = require('./beatmap_detail');
+const get_mode_detail = require('./get_mode_detail')
 const precalc = require('./PP_Calculation/precalc')
 const std_pp_calc = require('./PP_Calculation/std_pp_calc');
 
-module.exports = async ({best, modenum}) => {
+module.exports = async ({best, mode}) => {
     try {
+        let {modenum} = get_mode_detail({mode: mode})
         let star_avg = 0, aim_avg = 0, speed_avg = 0, acc_avg = 0;
         let bpm_avg = 0, cs_avg = 0, ar_avg = 0, od_avg = 0, hp_avg = 0, timetotal_avg = 0, timedrain_avg = 0;
         let calc_count = 50;
@@ -17,10 +18,9 @@ module.exports = async ({best, modenum}) => {
                     continue
                 }
                 map_info = std_pp_calc({parser: parser, mod_num: best[i].mod_num, mode: 'acc'})
-                let {hp, cs} = beatmap_detail({mod: best[i].mod_text, hp: parser.map.hp, cs: parser.map.cs})
                 // Calc skill
                 let star_skill = map_info.star.total
-                let aim_skill = (map_info.star.aim * (Math.pow(cs, 0.1) / Math.pow(4, 0.1)))*2
+                let aim_skill = (map_info.star.aim * (Math.pow(best[i].cs, 0.1) / Math.pow(4, 0.1)))*2
                 let speed_skill = (map_info.star.speed * (Math.pow(best[i].bpm, 0.09) / Math.pow(180, 0.09)) * (Math.pow(best[i].ar, 0.1) / Math.pow(6, 0.1)))*2
                 let unbalance_limit = (Math.abs(aim_skill - speed_skill)) > (Math.pow(5, Math.log(aim_skill + speed_skill) / Math.log(1.7))/2940)
                 aim_avg += aim_skill
@@ -29,7 +29,7 @@ module.exports = async ({best, modenum}) => {
                     aim_skill /= 1.06
                     speed_skill /= 1.06
                 }
-                let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(best[i].od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(hp, 0.02) / (Math.pow(6, 0.02)))
+                let acc_skill = (Math.pow(aim_skill / 2, (Math.pow(best[i].acc, 2.5)/Math.pow(100, 2.5)) * (0.083 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.42, best[i].combo/best[i].fc) - 0.3) )) + Math.pow(speed_skill / 2, (Math.pow(best[i].acc, 2.5)/ Math.pow(100, 2.5)) * (0.0945 * Math.log10(map_info.star.nsingles*900000000) * (Math.pow(1.35, best[i].combo/best[i].fc) - 0.3)))) * (Math.pow(best[i].od, 0.02) / Math.pow(6, 0.02)) * (Math.pow(best[i].hp, 0.02) / (Math.pow(6, 0.02)))
                 if (best[i].mod_text.includes('FL')) {
                     acc_skill *= (0.095 * Math.log10(map_info.star.nsingles*900000000))
                 }

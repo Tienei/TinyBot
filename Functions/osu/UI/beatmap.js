@@ -13,7 +13,7 @@ module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_col
     let diffdetail = '', ppdetail = '', mapdetail = '';
     let star = (modenum !== 0) ? Number(map.star).toFixed(2) : 0
     let acc_calc_list = [95,97,99,100]
-    let detail = beatmap_detail({mod: mod_text, time_total: map.time_total, bpm: map.bpm, 
+    let detail = beatmap_detail({mod_num: mod_num, mode: mode, time_total: map.time_total, bpm: map.bpm, 
                                 cs: map.cs, ar: map.ar,od: map.od, hp: map.hp})
     for (let d in detail) {
         if (d == 'bpm' || d == 'time_total') detail[d] = Number(Number(detail[d]).toFixed(0))

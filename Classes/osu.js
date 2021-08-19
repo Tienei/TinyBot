@@ -63,10 +63,13 @@ class Score {
         this.mod_text = get_mod_text({mod: this.mod_num}).mod_text
         this.time_ago = time_ago({time: date})
     }
-    addBeatmapInfo({title, creator, diff, source, artist, bpm, beatmapset_id, fc, star, time_total, time_drain,
+    addBeatmapInfo({mode, mod_num, title, creator, diff, source, artist, bpm, beatmapset_id, fc, star, time_total, time_drain,
                     circle, spinner, slider, od, ar, hp, cs}) {
-        const beatmap_detail = require('../Functions/osu/beatmap_detail')
-        var {time_total, time_drain, bpm, cs, ar, od, hp} = beatmap_detail({mod: this.mod_text, time_total: Number(time_total), time_drain: Number(time_drain), 
+        const beatmap_detail = require('../Functions/osu/beatmap_detail');
+        const get_mode_detail = require('../Functions/osu/get_mode_detail')
+        let {a_mode} = get_mode_detail({mode: mode})
+        var {time_total, time_drain, bpm, cs, ar, od, hp} = beatmap_detail({mod_num: mod_num, mode: mode, 
+                                                                            time_total: Number(time_total), time_drain: Number(time_drain), 
                                                                             bpm: Number(bpm), cs: Number(cs), ar: Number(ar), od: Number(od), hp: Number(hp)})
         this.title = title
         this.creator = creator
@@ -86,6 +89,10 @@ class Score {
         this.cs = Number(cs)
         this.hp = Number(hp)
         this.ar = Number(ar)
+        //
+        if ((mod_num & 64) == 64 || (mod_num & 512) == 512) {
+            this.star = (a_mode == 'taiko') ? star * 1.3 : (a_mode == 'ctb' || a_mode == 'mania') ? star * 1.4 : Number(star) // Taiko * 1.3, CTB/Mania * 1.4
+        }
     }
     addScoreSkill({acc_skill, speed_skill, aim_skill, star_skill, old_acc_skill}) {
         this.star_skill = star_skill
@@ -108,7 +115,6 @@ class Beatmap {
         this.approved = Number(approved)
         this.approvalStatus = approvalStatus_list[this.approved+2]
         this.beatmapset_id = beatmapset_id
-        this.fc = (a_mode == 'taiko') ? Number(circle) : (a_mode == 'mania') ? Number(circle) + Number(slider) : Number(fc)
         this.star = Number(star)
         this.time_total = Number(time_total)
         this.time_drain = Number(time_drain)
@@ -118,6 +124,9 @@ class Beatmap {
         this.circle = Number(circle)
         this.slider = Number(slider)
         this.spinner = Number(spinner)
+        this.fc = (a_mode == 'taiko') ? this.circle : 
+                    (a_mode == 'ctb') ? Math.round(this.circle + (this.slider * 2.35)) : 
+                    (a_mode == 'mania') ? this.circle + this.slider : Number(fc)
         this.od = Number(od)
         this.cs = Number(cs)
         this.hp = Number(hp)
