@@ -275,7 +275,7 @@ async function osu({message, embed_color, refresh, a_mode, lang, prefix}) {
                 throw "You don't have enough plays to calculate skill (Atleast 50 top plays)"
             }
             let msg1 = await message.channel.send('Calculating skills...')
-            let {star_avg, aim_avg, speed_avg, acc_avg, calc_count} = await fx.osu.calc_player_skill({best: best, modenum: modenum})
+            let {star_avg, aim_avg, speed_avg, acc_avg, calc_count} = await fx.osu.calc_player_skill({best: best, mode: mode})
             let field = []
             function textloading (skill) {
                 let text = ''
