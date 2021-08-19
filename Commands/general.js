@@ -292,7 +292,7 @@ function help({message, prefix}) {
             addhelp('osuset', 'osuset (username)', 'Link your profile to an osu! player', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)\nServer suffixes: `-akatsuki` `-ripple` `-gatari` `-enjuu` `-horizon` `-datenshi` `-kurikku` `-ezppfarm` `-ainu`', 'osuset Tienei')
             addhelp('osuavatar', 'osuavatar (username)', 'Get player\'s osu! avatar', 'username: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'osuavatar Tienei')
             addhelp('map', '[map|m] (options)', 'Get details info of the map of the last play in the server\nLeaderboard `(-l)`: Get the leaderboard of the map of the last play in the server', 'Mods: details info of the map with mods `(Shorten mods)`', 'm HDDT')
-            addhelp('[scores|sc]', 'scores (map link) (username)', 'Get player\'s play on a specific map', 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'scores https://osu.ppy.sh/b/1157868 Cookiezi')
+            addhelp('scores', '[scores|sc] (map link) (username)', 'Get player\'s play on a specific map', 'Map link: Just get a beatmap link\nusername: osu!username of the player (Space replaced with "_" or just use quotation mark ``"``)', 'scores https://osu.ppy.sh/b/1157868 Cookiezi')
             addhelp('donate', 'donate', 'Creator\'s donation link', '', 'donate')
         }
         let generalhelp = '**[General]:** `avatar` `changelog` `help` `ping` `report` `suggestion` `invite` `server` `prefix`'
