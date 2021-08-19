@@ -39,15 +39,11 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                         acc = Number((50 * count_50 + 100 * count_100 + 200 * count_katu + 300 * (count_300 + count_geki)) / (300 * (count_miss + count_50 + count_100 + count_katu + count_300 + count_geki)) * 100)
                         accdetail = `[ ${count_geki} • ${count_300} • ${count_katu} • ${count_100} • ${count_50} • ${count_miss} ]`
                     }
-                    let destruct_date = best[i].date.split(" ")
-                    destruct_date.splice(1, 0, "T")
-                    destruct_date.push(".000Z")
-                    destruct_date = destruct_date.join("")
                     top[i] = new Score({beatmap_id: best[i].beatmap_id, score: best[i].score, combo: best[i].maxcombo,
                                     count_50: count_50, count_100: count_100, count_300: count_300,
                                     count_miss: count_miss, count_katu: count_katu, count_geki: count_geki,
                                     perfect: best[i].perfect, mod_num: best[i].enabled_mods, user_id: best[i].user_id,
-                                    date: destruct_date, rank: best[i].rank, pp: best[i].pp, acc: acc, acc_detail: accdetail, 
+                                    date: best[i].date, rank: best[i].rank, pp: best[i].pp, acc: acc, acc_detail: accdetail, 
                                     top: i+1})
                 }
                 if (!no_bm) {
