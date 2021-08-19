@@ -19,6 +19,20 @@ module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_col
         if (d == 'bpm' || d == 'time_total') detail[d] = Number(Number(detail[d]).toFixed(0))
         else detail[d] = Number(Number(detail[d]).toFixed(2))
     }
+    //
+    if ((mod_num & 2) == 2) {
+        star /= (a_mode == 'ctb') ? 1.25 : 1
+    }
+    if ((mod_num & 256) == 256) {
+        star /= (a_mode == 'taiko') ? 1.2 : (a_mode == 'ctb' || a_mode == 'mania') ? 1.25 : 1
+    }
+    if ((mod_num & 16) == 16) {
+        star *= (a_mode == 'ctb') ? 1.13 : 1
+    }
+    if ((mod_num & 64) == 64 || (mod_num & 512) == 512) {
+        star *= (a_mode == 'taiko') ? 1.3 : (a_mode == 'ctb' || a_mode == 'mania') ? 1.4 : 1
+    }
+    //
     let {cs, ar, od , hp, bpm, time_total} = detail
     let time = `${Math.floor(time_total / 60)}:${('0' + (time_total - Math.floor(time_total / 60) * 60)).slice(-2)}`
     if (modenum == 0) {

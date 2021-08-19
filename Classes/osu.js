@@ -90,8 +90,17 @@ class Score {
         this.hp = Number(hp)
         this.ar = Number(ar)
         //
+        if ((mod_num & 2) == 2) {
+            this.star /= (a_mode == 'ctb') ? 1.25 : 1
+        }
+        if ((mod_num & 256) == 256) {
+            this.star /= (a_mode == 'taiko') ? 1.2 : (a_mode == 'ctb' || a_mode == 'mania') ? 1.25 : 1
+        }
+        if ((mod_num & 16) == 16) {
+            this.star *= (a_mode == 'ctb') ? 1.13 : 1
+        }
         if ((mod_num & 64) == 64 || (mod_num & 512) == 512) {
-            this.star = (a_mode == 'taiko') ? star * 1.3 : (a_mode == 'ctb' || a_mode == 'mania') ? star * 1.4 : Number(star) // Taiko * 1.3, CTB/Mania * 1.4
+            this.star *= (a_mode == 'taiko') ? 1.3 : (a_mode == 'ctb' || a_mode == 'mania') ? 1.4 : 1
         }
     }
     addScoreSkill({acc_skill, speed_skill, aim_skill, star_skill, old_acc_skill}) {

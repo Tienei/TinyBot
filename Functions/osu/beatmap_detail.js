@@ -3,10 +3,12 @@ const get_mode_detail = require('./get_mode_detail')
 module.exports = ({mod_num, mode, time_total,time_drain,bpm,cs,ar,od,hp}) => {
     let {modenum} = get_mode_detail({mode})
     function EZ() {
-        cs /= 2; ar /= 2; od /= 2; hp /= 2;
+        if (modenum !== 3) cs /= 2; 
+        ar /= 2; od /= 2; hp /= 2;
     }
     function HR() {
-        cs *= 1.3; ar *= 1.4; od *= 1.4; hp *= 1.4;
+        if (modenum !== 3) cs *= 1.3; 
+        ar *= 1.4; od *= 1.4; hp *= 1.4;
         ar = (ar > 10) ? 10 : ar
         od = (od > 10) ? 10 : od
         hp = (hp > 10) ? 10 : hp
