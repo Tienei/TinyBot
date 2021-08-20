@@ -11,7 +11,7 @@ const get_diff_icon = require('../get_diff_icon')
 module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_color}) => {
     let {modenum, a_mode} = get_mode_detail({mode: mode})
     let diffdetail = '', ppdetail = '', mapdetail = '';
-    let star = (modenum !== 0) ? Number(map.star).toFixed(2) : 0
+    let star = (modenum !== 0) ? Number(Number(map.star).toFixed(2)) : 0
     let acc_calc_list = [95,97,99,100]
     let detail = beatmap_detail({mod_num: mod_num, mode: mode, time_total: map.time_total, bpm: map.bpm, 
                                 cs: map.cs, ar: map.ar,od: map.od, hp: map.hp})
@@ -32,7 +32,7 @@ module.exports = ({map, parser, mode, mod_num, mod_text, creator_user, embed_col
     if ((mod_num & 64) == 64 || (mod_num & 512) == 512) {
         star *= (a_mode == 'taiko') ? 1.3 : (a_mode == 'ctb' || a_mode == 'mania') ? 1.4 : 1
     }
-    star = star.toFixed(2)
+    star = Number(star.toFixed(2))
     //
     let {cs, ar, od , hp, bpm, time_total} = detail
     let time = `${Math.floor(time_total / 60)}:${('0' + (time_total - Math.floor(time_total / 60) * 60)).slice(-2)}`
