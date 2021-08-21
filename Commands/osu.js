@@ -698,11 +698,13 @@ async function recent({message, embed_color, refresh, lang, prefix}) {
             .setDescription(score_overlay);
             message.channel.send({embed});
         } else if (suffix['-l']) {
+            let temp_msg = await message.channel.send("Getting player info...")
             let user = await fx.osu.api.get_profile({name: name, mode: mode, ver: 1})
             if (!user) {
                 message.channel.send(error_report({type: 'custom', err_message: errorLocalText.osu.player_null}))
                 return
             }
+            temp_msg.edit("Caching beatmap info... (This could take up to 1 minute - a new mechanic to avoid request limited)")
             let {pfp_link} = fx.osu.get_profile_link({id: user.id, mode: mode, refresh: refresh})
             let recents = await fx.osu.api.get_top({name: name, mode: mode, limit: 50, type: 'recent', ver: 2})
             if (recents.length < 1) message.channel.send(error_report({type: 'custom', err_message: 'No recent plays by this player'}))
@@ -712,8 +714,6 @@ async function recent({message, embed_color, refresh, lang, prefix}) {
                 for (let i = start; i < start + 5; i++) {
                     if (!recents[i]) break
                     cache_beatmap_ID({message: message, beatmap_id: recents[i].beatmap_id, mode: mode})
-                    let beatmap = await fx.osu.api.get_beatmap({beatmap_id: recents[i].beatmap_id, mode: mode})
-                    recents[i].addBeatmapInfo(beatmap[0])
                     let parser = (modenum == 0) ? await fx.osu.precalc({beatmap_id: recents[i].beatmap_id}) : ''
                     let {fcguess, mapcomplete, star, pp} = await fx.osu.get_calc_pp({...recents[i], parser: parser, mode: mode, lang: lang, recent: true})
                     let score_overlay = fx.osu.ui.score({...recents[i], mapcomplete: mapcomplete, star: star, fcguess: fcguess, pp: pp, type: 'top'
@@ -722,6 +722,7 @@ async function recent({message, embed_color, refresh, lang, prefix}) {
                 }
                 return desc
             }
+            temp_msg.delete()
             const embed = new MessageEmbed()
             .setAuthor(`osu!${modename} recent plays for ${user.username}`)
             .setThumbnail(pfp_link)
