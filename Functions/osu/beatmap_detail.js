@@ -41,9 +41,9 @@ module.exports = ({mod_num, mode, time_total,time_drain,bpm,cs,ar,od,hp}) => {
             od = (49.5 - odms) / 3
         }
     }
-    if ((mod_num & 64) == 64 || (mod_num & 512) == 512)     DT();
     if ((mod_num & 2) == 2)                                 EZ();
     if ((mod_num & 16) == 16)                               HR();
+    if ((mod_num & 64) == 64 || (mod_num & 512) == 512)     DT();
     if ((mod_num & 256) == 256)                             HT();
     ar = (ar > 11) ? 11 : ar
     od = (od > 11) ? 11 : od
