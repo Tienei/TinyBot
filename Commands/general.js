@@ -175,7 +175,7 @@ async function bot_link({message}) {
     try {
         const embed = new MessageEmbed()
         .setDescription(`[Bot invitation link](https://discordapp.com/api/oauth2/authorize?client_id=470496878941962251&permissions=378944&scope=bot)
-[Bot dev server](https://discord.gg/H2mQMxd)
+[Bot dev server](https://discord.gg/PPDU2Nrf3u)
 [Bot donation link](https://ko-fi.com/tienei)`)
         .setThumbnail(message.client.user.avatarURL({format: 'png', size: 512}));
         message.channel.send({embed})
