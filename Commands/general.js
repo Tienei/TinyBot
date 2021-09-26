@@ -105,7 +105,7 @@ function bug_and_suggest({message, embed_color, type, lang}) {
 
 async function childProc_bug_and_suggest({message, DiscordCL = new Client()}) {
     let localText = getLocalText({lang: message.lang}).bug_and_suggest
-    let channel_id  =    (message.type == 'bug') ? '564396177878155284'  : '564439362218229760'
+    let channel_id  =    (message.type == 'bug') ? '891551230034341899'  : '891551212464394260'
     let text =           (message.type == 'bug') ? localText.bug         : localText.suggestion
     let report_text =    (message.type == 'bug') ? 'Bug'                 : 'Suggestion'
     let channel = DiscordCL.channels.cache.get(channel_id)
