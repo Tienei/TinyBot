@@ -135,7 +135,7 @@ DiscordCL.on("ready", () => {
             })
         })
         total_server_count = total_server_count.reduce((a,b) => a+b)
-        process.send({send_type: 'all', cmd: 'server_count', value: {channel_id: "572093442042232842", total_server_count: total_server_count}})
+        process.send({send_type: 'all', cmd: 'server_count', value: {channel_id: "891565269892350023", total_server_count: total_server_count}})
         topgg_client.postStats(total_server_count)
     }
     if (!config.config.debug.disable_server_count && process.env.PROCESS_ID == 0) {
