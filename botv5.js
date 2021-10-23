@@ -11,12 +11,6 @@ const config = require('./config')
 const mongojs = require('mongojs')
 const db = mongojs(process.env.DB_URL, ["user_data_v5", "server_data", "saved_map_id"], {tls: true})
 let server_data = {}
-//
-if (!config.config.debug.disable_server_count) {
-    // top.gg
-    const topgg = require("dblapi.js")
-    topgg_client = new topgg(process.env.TOPGG_KEY, DiscordCL)
-}
 
 let loading = 1
 
@@ -136,7 +130,6 @@ DiscordCL.on("ready", () => {
         })
         total_server_count = total_server_count.reduce((a,b) => a+b)
         process.send({send_type: 'all', cmd: 'server_count', value: {channel_id: "891565269892350023", total_server_count: total_server_count}})
-        topgg_client.postStats(total_server_count)
     }
     if (!config.config.debug.disable_server_count && process.env.PROCESS_ID == 0) {
         server_count()
