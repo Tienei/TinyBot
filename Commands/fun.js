@@ -139,7 +139,7 @@ async function tenor({message, search, action, alone_action}) {
         const embed = new MessageEmbed()
         .setColor(embedcolor)
         .setDescription(text)
-        .setImage(gif.results[Math.floor(Math.random()*24)].media[0].gif.url);
+        .setImage(gif.results[Math.floor(Math.random()*25-0.01)].media[0].gif.url);
         message.channel.send({embed})
     } catch (error) {
        message.channel.send(String(error))
@@ -153,8 +153,8 @@ function roll({message}) {
     try {
         let msg = message.content.toLowerCase()
         let number = msg.split(' ')[1]
-        if (isNaN(number) || number < 1) number = 100;
-        let rolled = Math.floor(Math.random() * number)
+        if (isNaN(number) || number < 1) number = 101;
+        let rolled = Math.floor(Math.random() * number - 0.01)
         message.channel.send(`You roll ${rolled}!`)
     } catch (error) {
         message.channel.send(String(error))
@@ -176,8 +176,7 @@ function eight_ball({message}) {
                             'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.',
                             'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Cannot predict now.', 'Concentrate and ask again.',
                             "Don't count on it.", 'My reply is no.', 'My sources say no.', 'Outlook not so good.', 'Very doubtful.']
-        let random = Math.floor(Math.random() * 19)
-        if (random > 20) random = 19
+        let random = Math.floor(Math.random() * random_respond.length - 0.01)
         message.channel.send(random_respond[random])
     } catch (error) {
         message.channel.send(String(error))
@@ -195,12 +194,10 @@ function rate_waifu({message}) {
         if (waifu == '') {
             throw 'Type your waifu name please'
         }
-        let score = Math.floor(Math.random() * 101)
-        if (score >= 101) score = 100;
+        let score = Math.floor(Math.random() * 101 - 0.01)
         let random_respond = [`Hmm... i rate ${waifu} a ${score}/100`, `This is tough... ${score}/100`, `Maybe ${waifu} is a ${score}/100`,
                             `I would rate ${waifu} a ${score}/100`, `I rate ${waifu} a solid ${score}/100`]
-        let random = Math.floor(Math.random() * 5)
-        if (random > 6) random = 5
+        let random = Math.floor(Math.random() * random_respond.length - 0.01)
         if (score == 0) message.channel.send(`Your ${waifu} is too ugly! ${score}/100`);
         else if (score == 100) message.channel.send(`Woah! A pefect match! ${score}/100`);
         else message.channel.send(random_respond[random])

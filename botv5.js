@@ -296,7 +296,7 @@ DiscordCL.on("message", (message) => {
                                 `Me don't know what me is doing right now qwq`,
                                 `Me love my senpai`,
                                 `Please don't bully my senpai!`]
-                    let roll = Math.floor(Math.random()*respone.length)
+                    let roll = Math.floor(Math.random()*respone.length-0.01)
                     message.channel.send(respone[roll])
                 }
             }
