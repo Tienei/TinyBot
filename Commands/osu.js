@@ -350,6 +350,7 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         // Set the correct mode
         let mode = set_mode({suffix: suffix, a_mode: a_mode})
         //
+        let msg1 = await message.channel.send('Calculating skills...');
         let {modenum, check_type} = fx.osu.get_mode_detail({mode: mode})
         let name = fx.osu.check_player({user_data: user_data, message: message, name: suffix.check, type: check_type, 
                                         prefix: prefix, lang: lang})
@@ -367,7 +368,6 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
             message.channel.send(error_report({type: 'custom', err_message: "You don't have enough plays to calculate skill (Atleast 50 top plays)"}))
             return
         }
-        let msg1 = await message.channel.send('Calculating skills...');
         let {star_avg, aim_avg, speed_avg, acc_avg,
             finger_control_avg, calc_count} = await fx.osu.calc_player_skill({best: best, mode: mode})
         star_avg = Number(star_avg / calc_count)
@@ -393,6 +393,7 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
                             {'id': '6447454',   'mode': 'std',      'name': 'aetrna',           'card': true},
                             {'id': '7464885',   'mode': 'std',      'name': 'celsea',           'card': true},
                             {'id': '39828',     'mode': 'std',      'name': 'www',              'card': true},
+                            {'id': '12694468',  'mode': 'std',      'name': 'xarief',           'card': true},
                             {'id': '50265',     'mode': 'std',      'name': 'hvick'},
                             {'id': '2558286',   'mode': 'std',      'name': 'rafis'},
                             {'id': '5339515',   'mode': 'std',      'name': 'mathi'},
@@ -441,9 +442,6 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         card.composite(mode_icon, 20, 20)
         // Get username
         let name_color = 'white'
-        if (special_plr == 'whitecat') {
-            name_color = '#D19D23'
-        }
         let local_font = {localFontPath: './font/Somatic.otf', localFontName: 'Somatic'}
         let nametext = await jimp.read(text2png(user.username, {
             color: name_color,
@@ -454,12 +452,15 @@ async function osucard({message, embed_color, refresh, a_mode, lang, prefix}) {
         let nametexth = nametext.getHeight()
         let max_name_h = (user.username.search(/[gjpqy]/gm) > -1) ? 35 : 27
         if (nametextw / 220 >= nametexth / max_name_h) {
-            nametext.resize(220, jimp.AUTO).quality(100)
+            nametext.resize(220, jimp.AUTO)
         } else {
-            nametext.resize(jimp.AUTO, max_name_h).quality(100)
+            nametext.resize(jimp.AUTO, max_name_h)
         }
         nametext.contain(220, max_name_h, jimp.HORIZONTAL_ALIGN_CENTER)
-        card.composite(nametext, 150, 50)
+        let nametext_shadow = {size: 1, opacity: 0.35, x: 2, y: 2, blur: 1}
+        let nametext_cv = new jimp(nametext.getWidth() * 1.25, nametext.getHeight() * 1.25, 0x00000000)
+        nametext_cv.composite(nametext, 0, 0).shadow(nametext_shadow)
+        card.composite(nametext_cv, 150, 50)
         // Stat
         function card_stat() {
             let skill_holder = [aim_avg, speed_avg, acc_avg]

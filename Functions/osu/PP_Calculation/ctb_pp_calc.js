@@ -17,7 +17,7 @@ module.exports = ({star, ar, fc, combo, acc, miss, mod}) => {
     // AR Bonus
     let arbonus = 1
     if (ar>9)  arbonus += 0.1 * (ar - 9.0);
-    if (ar>10) arbonus += 0.1 * (value - 10.0)
+    if (ar>10) arbonus += 0.1 * (ar - 10.0)
     if (ar<8)  arbonus += 0.025 * (8.0 - ar);
     final *= arbonus
     // Hidden bonus
