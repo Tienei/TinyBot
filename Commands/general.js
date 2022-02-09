@@ -96,6 +96,9 @@ function bug_and_suggest({message, embed_color, type, lang}) {
         message.channel.send("You need to type a suggestion/bug report!")
         return
     }
+    if (process.env.REPORT_BAN_GUILD.split(",").includes(message.guild.id)) {
+        message.channel.send("Your guild has been banned from making any more report. If you think the ban is wrong, please visit the support guild.")
+    }
     process.send({send_type: 'all', cmd: 'bug_and_suggest', 
                 value: {
                     channel_id: message.channel.id, msg: msg.check, type: type,
@@ -131,7 +134,7 @@ function changelog({message}) {
 - Changed scores UI
 - Updated caching mechanism
 - Fixed empty message when doing report/suggestion
-** [August 19th, 2021]**
+**[August 19th, 2021]**
 - Improved bot performance
 - Fixed \`!score\`
 - Fixed other modes \`!top\`, \`!map\`, \`!card\`
@@ -140,6 +143,12 @@ function changelog({message}) {
 - Fixed other private server top play showing "undefined"
 - Fixed alone_reacton in all tenor related commands
 - Fixed \`help\` description
+**[Feb 9th, 2022]**
+- Fixed \`!osucard\` for other osu! servers
+- Fixed \`!osutop\` for Gatari
+
+**[ IMPORTANT MESSEEAGE ] **
+The bot will not be receiving any more fixes and instead focusing on developing v6!
 `]
     function load_page({page}) {
         return changes[page-1]

@@ -162,38 +162,37 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                 mod_num: best.scores[i].mods, user_id: user.id, date: best.scores[i].time,
                                 rank: best.scores[i].ranking, pp: Number(best.scores[i].pp), acc: acc,
                                 acc_detail: accdetail, top: i+1})
-            }
-            if (!no_bm) {
-                let beatmaps = top.map(async sc => {
-                    let req_opt = {b: sc.beatmap_id, m: modenum, a: 1}
-                    if (a_mode !== 'std') {
-                        let mod = sc.mod_num
-                        let bit = mod.toString(2)
-                        let fullbit = "0000000000000000000000000000000".substr(bit.length) + bit
-                        let bitpresent = 0
-                        if (fullbit[31 - 2] == 1) bitpresent += 2;
-                        if (fullbit[31 - 5] == 1) bitpresent += 16;
-                        if (fullbit[31 - 7] == 1) bitpresent += 64;
-                        if (fullbit[31 - 9] == 1) bitpresent += 256;
-                        req_opt.mods = bitpresent
-                    }
-                    return BanchoAPI({ver: 1, endpoint: 'get_beatmaps', param: req_opt})
-                })
-                beatmaps = await Promise.all(beatmaps)
-                for (let i = 0; i < top.length; i++) {
-                    let data = new Beatmap({title: beatmaps[i][0].title, creator: beatmaps[i][0].creator,
-                                            diff: beatmaps[i][0].version, source: beatmaps[i][0].source,
-                                            artist: beatmaps[i][0].artist, bpm: beatmaps[i][0].bpm,
-                                            beatmapset_id: beatmaps[i][0].beatmapset_id,
-                                            fc: beatmaps[i][0].max_combo, star: beatmaps[i][0].difficultyrating,
-                                            time_total: beatmaps[i][0].total_length,
-                                            time_drain: beatmaps[i][0].hit_length, circle: beatmaps[i][0].count_normal,
-                                            slider: beatmaps[i][0].count_slider, spinner: beatmaps[i][0].count_spinner,
-                                            a_mode: a_mode, ar: beatmaps[i][0].diff_approach, 
-                                            hp: beatmaps[i][0].diff_drain, cs: beatmaps[i][0].diff_size,
-                                            od: beatmaps[i][0].diff_overall})
-                    top[i].addBeatmapInfo(data)
+                let bm, cs=0, hp=0, od=0, ar=0, bpm=0, star=0;
+                let beatmap = best.scores[i].beatmap
+                if (modenum == 0) {
+                    bm = await precalc({beatmap_id: beatmap.beatmap_id})
+                    cs = bm.map.cs
+                    hp = bm.map.hp
+                    od = bm.map.od
+                    ar = bm.map.ar
+                    try {
+                        let stars = new calc.diff().calc({map: bm.map, mods: top[i].mod_num})
+                        star = stars.total
+                        let bpmchanged = 0
+                        for (var j = 0; j < stars.map.timing_points.length; j++) {
+                            if (stars.map.timing_points[j].change == true) {
+                                bpmchanged += 1
+                                bpm += 60000 / Number(stars.map.timing_points[j].ms_per_beat)
+                            }
+                        }
+                        bpm = Math.round(bpm / bpmchanged)
+                    } catch (err) {}
                 }
+                let song_name = beatmap.song_name
+                let title = song_name.split(' -')[1].split(' [')[0]
+                let artist = song_name.split(' -')[0]
+                let diff = song_name.match(/\[(.*?)\]/)[1]
+                let data = new Beatmap({beatmapset_id: beatmap.beatmapset_id, title: title, artist: artist, diff: diff,
+                                        time_drain: Number(beatmap.hit_length), fc: Number(beatmap.fc), 
+                                        od: Number(od), ar: Number(ar),
+                                        cs: Number(cs), hp: Number(hp),
+                                        star: Number(star), bpm: Number(bpm)})  
+                top[i].addBeatmapInfo({...data, mode: mode, mod_num: top[i].mod_num})
             }
         } else {
             let ripple_relax = (a_mode == 'rx' && check_type == 'ripple') ? 1 : 0
@@ -229,14 +228,25 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                     mod_num: best.scores[i].mods, user_id: user.id, date: best.scores[i].time,
                                     rank: best.scores[i].rank, pp: Number(best.scores[i].pp), acc: acc,
                                     acc_detail: accdetail, top: i+1})
-                let bm, cs=0, hp=0, star=0;
+                let bm, cs=0, hp=0, od=0, ar=0, bpm=0, star=0;
                 let beatmap = best.scores[i].beatmap
                 if (modenum == 0) {
                     bm = await precalc({beatmap_id: beatmap.beatmap_id})
                     cs = bm.map.cs
                     hp = bm.map.hp
+                    od = bm.map.od
+                    ar = bm.map.ar
                     try {
-                        star = new calc.diff().calc({map: bm.map, mods: top[i].mod_num}).total
+                        let stars = new calc.diff().calc({map: bm.map, mods: top[i].mod_num})
+                        star = stars.total
+                        let bpmchanged = 0
+                        for (var j = 0; j < stars.map.timing_points.length; j++) {
+                            if (stars.map.timing_points[j].change == true) {
+                                bpmchanged += 1
+                                bpm += 60000 / Number(stars.map.timing_points[j].ms_per_beat)
+                            }
+                        }
+                        bpm = Math.round(bpm / bpmchanged)
                     } catch (err) {}
                 } else {
                     star = beatmap.difficulty2[a_mode]
@@ -247,9 +257,9 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                 let diff = song_name.match(/\[(.*?)\]/)[1]
                 let data = new Beatmap({beatmapset_id: beatmap.beatmapset_id, title: title, artist: artist, diff: diff,
                                         time_drain: Number(beatmap.hit_length), fc: Number(beatmap.max_combo), 
-                                        od: Number(beatmap.diff_overall), ar: Number(beatmap.diff_approach),
+                                        od: Number(od), ar: Number(ar),
                                         cs: Number(cs), hp: Number(hp),
-                                        star: Number(star)})  
+                                        star: Number(star), bpm: Number(bpm)})  
                 top[i].addBeatmapInfo({...data, mode: mode, mod_num: top[i].mod_num})
             }
         } 
