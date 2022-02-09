@@ -162,7 +162,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                 mod_num: best.scores[i].mods, user_id: user.id, date: best.scores[i].time,
                                 rank: best.scores[i].ranking, pp: Number(best.scores[i].pp), acc: acc,
                                 acc_detail: accdetail, top: i+1})
-                let bm, cs=0, hp=0, od=0, ar=0, bpm=0, star=0;
+                let bm, cs=0, hp=0, od=0, ar=0, bpm=0, fc=0, star=0;
                 let beatmap = best.scores[i].beatmap
                 if (modenum == 0) {
                     bm = await precalc({beatmap_id: beatmap.beatmap_id})
@@ -170,6 +170,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                     hp = bm.map.hp
                     od = bm.map.od
                     ar = bm.map.ar
+                    fc = bm.map.max_combo()
                     try {
                         let stars = new calc.diff().calc({map: bm.map, mods: top[i].mod_num})
                         star = stars.total
@@ -188,7 +189,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                 let artist = song_name.split(' -')[0]
                 let diff = song_name.match(/\[(.*?)\]/)[1]
                 let data = new Beatmap({beatmapset_id: beatmap.beatmapset_id, title: title, artist: artist, diff: diff,
-                                        time_drain: Number(beatmap.hit_length), fc: Number(beatmap.fc), 
+                                        time_drain: Number(beatmap.hit_length), fc: Number(fc), 
                                         od: Number(od), ar: Number(ar),
                                         cs: Number(cs), hp: Number(hp),
                                         star: Number(star), bpm: Number(bpm)})  
@@ -228,7 +229,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                                     mod_num: best.scores[i].mods, user_id: user.id, date: best.scores[i].time,
                                     rank: best.scores[i].rank, pp: Number(best.scores[i].pp), acc: acc,
                                     acc_detail: accdetail, top: i+1})
-                let bm, cs=0, hp=0, od=0, ar=0, bpm=0, star=0;
+                let bm, cs=0, hp=0, od=0, ar=0, bpm=0, fc=0, star=0;
                 let beatmap = best.scores[i].beatmap
                 if (modenum == 0) {
                     bm = await precalc({beatmap_id: beatmap.beatmap_id})
@@ -236,6 +237,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                     hp = bm.map.hp
                     od = bm.map.od
                     ar = bm.map.ar
+                    fc = bm.map.max_combo()
                     try {
                         let stars = new calc.diff().calc({map: bm.map, mods: top[i].mod_num})
                         star = stars.total
@@ -256,7 +258,7 @@ module.exports = async ({name, mode, limit, type, no_bm = false, ver = 1}) => {
                 let artist = song_name.split(' -')[0]
                 let diff = song_name.match(/\[(.*?)\]/)[1]
                 let data = new Beatmap({beatmapset_id: beatmap.beatmapset_id, title: title, artist: artist, diff: diff,
-                                        time_drain: Number(beatmap.hit_length), fc: Number(beatmap.max_combo), 
+                                        time_drain: Number(beatmap.hit_length), fc: Number(fc), 
                                         od: Number(od), ar: Number(ar),
                                         cs: Number(cs), hp: Number(hp),
                                         star: Number(star), bpm: Number(bpm)})  
